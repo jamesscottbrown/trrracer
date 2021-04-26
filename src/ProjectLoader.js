@@ -124,8 +124,8 @@ class ProjectLoader {
             } else if (err.code === 'ENOENT') {
               // file does not exist
               dialog.showErrorBox(
-                'Not a Trrrace project',
-                `The selected directory (${folderName}) is not a valid Trrace project - it does not contain a trrrace.json file`
+                'Not a Trrracer project',
+                `The selected directory (${folderName}) is not a valid Trracer project - it does not contain a trrrace.json file`
               );
             } else {
               console.log(
