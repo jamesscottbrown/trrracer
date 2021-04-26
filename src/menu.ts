@@ -32,7 +32,9 @@ export default class MenuBuilder {
         : this.buildDefaultTemplate();
 
     const menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menu);
+
+    // TODO: uncomment this, and merge this menu with te meu defined in main.dev.tsx
+    //  Menu.setApplicationMenu(menu);
 
     return menu;
   }
