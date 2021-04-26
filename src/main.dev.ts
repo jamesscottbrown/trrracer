@@ -10,11 +10,15 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+
+import fs from 'fs';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+
+import { ProjectLoader } from './ProjectLoader';
 
 export default class AppUpdater {
   constructor() {
@@ -51,7 +55,7 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-const createWindow = async () => {
+const openProjectWindow = async (projectPath: string) => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -91,6 +95,8 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+
+    mainWindow.webContents.send('projectPath', projectPath);
   });
 
   mainWindow.on('closed', () => {
@@ -111,6 +117,71 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+async function createSplashWindow() {
+  const splashWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  //  app_window.loadURL(`file://${__dirname}/no-project-open.html`);
+
+  splashWindow.loadFile('../assets/no-project-open.html');
+
+  const fileManager = new ProjectLoader(splashWindow, openProjectWindow);
+
+  // set open recent submenu
+  let submenuOfOpenRecent = [];
+  let paths = fileManager.readHistory();
+  const allPaths = await paths;
+  if (allPaths !== undefined) {
+    allPaths.paths.map((path) => {
+      submenuOfOpenRecent.push(
+        {
+          label: path,
+          click: function () {
+            fileManager.openRecentProject(path);
+          },
+        },
+        { type: 'separator' }
+      );
+    });
+  }
+
+  // Declare all menu
+  let menu_list = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open Project...',
+          click: function () {
+            fileManager.openProjectPicker();
+          },
+        },
+        {
+          label: 'Open recent...',
+          submenu: submenuOfOpenRecent,
+        },
+      ],
+    },
+  ];
+
+  // set the menu to desktop app
+  const menu_design = Menu.buildFromTemplate(menu_list);
+  Menu.setApplicationMenu(menu_design);
+
+  // recieve new file data and path throught main and renderer method
+  ipcMain.on('newdata', (e, arg) => {
+    fs.writeFile(arg.path, arg.file, (err) => {
+      if (err) {
+        throw err;
+      }
+      console.log('data saved');
+    });
+  });
+}
+
 /**
  * Add event listeners...
  */
@@ -123,7 +194,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.whenReady().then(createWindow).catch(console.log);
+app.whenReady().then(createSplashWindow).catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

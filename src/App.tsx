@@ -1,51 +1,56 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import icon from '../assets/icon.svg';
-import './App.global.css';
+import React, { useState } from 'react';
 
-const Hello = () => {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200px" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-};
+import fs from 'fs';
+import path from 'path';
+import { ipcRenderer } from 'electron';
+
+import Project from './components/Project';
 
 export default function App() {
+  const [folderPath, setPath] = useState<string>('');
+  const [projectData, setProjectData] = useState('');
+
+  ipcRenderer.on('projectPath', (_event, folderName) => {
+    console.log('Received project path:', folderName);
+
+    setPath(folderName);
+
+    fs.readFile(path.join(folderName, 'trrrace.json'), 'utf8', (err, data) => {
+      if (err) {
+        console.log(`Error reading file from disk: ${err}`);
+      } else {
+        // parse JSON string to JSON object
+        setProjectData(JSON.parse(data));
+        console.log(data);
+      }
+    });
+  });
+
+  const saveJSON = (newData) => {
+    fs.writeFile(
+      path.join(folderPath, 'trrrace.json'),
+      JSON.stringify(newData),
+      (err, data) => {
+        if (err) {
+          console.log(`Error writing file to disk: ${err}`);
+        } else {
+          // parse JSON string to JSON object
+          setProjectData(newData);
+          console.log(newData);
+        }
+      }
+    );
+  };
+
+  if (!projectData) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    <Router>
-      <Switch>
-        <Route path="/" component={Hello} />
-      </Switch>
-    </Router>
+    <Project
+      projectData={projectData}
+      folderPath={folderPath}
+      saveJSON={saveJSON}
+    />
   );
 }
