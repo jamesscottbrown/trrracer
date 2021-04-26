@@ -154,6 +154,12 @@ async function createSplashWindow() {
       label: 'File',
       submenu: [
         {
+          label: 'New Project...',
+          click: function () {
+            fileManager.newProjectPicker();
+          },
+        },
+        {
           label: 'Open Project...',
           click: function () {
             fileManager.openProjectPicker();

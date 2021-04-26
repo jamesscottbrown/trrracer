@@ -1,5 +1,7 @@
 import path from 'path';
 
+import emptyProject from './emptyProject.json';
+
 const os = require('os');
 const fs = require('fs-extra');
 const { app, dialog } = require('electron');
@@ -44,6 +46,66 @@ class ProjectLoader {
       .then((res) => res)
       .catch((err) => {
         console.log('Error loading lsit of recently opened files:', err);
+      });
+  }
+
+  newProjectPicker() {
+    dialog
+      .showSaveDialog(this.app_window, {
+        properties: ['openDirectory', 'createDirectory'],
+      })
+      .then((res) => {
+        if (!res.canceled) {
+          console.log('Res:', res);
+          const folderName = res.filePath;
+          const jsonPath = path.join(folderName, 'trrrace.json');
+
+          fs.stat(jsonPath, (err) => {
+            if (err == null) {
+              // already exists
+              dialog.showErrorBox(
+                'Cannot create project',
+                `A new project cannot be created at (${folderName}), as a file or directory already exists at this location.`
+              );
+            } else if (err.code === 'ENOENT') {
+              // file does not exist
+
+              // create directory
+              fs.mkdirp(folderName, (mkdirErr) => {
+                if (mkdirErr) {
+                  dialog.showErrorBox(
+                    'Cannot create project directory',
+                    `Attempting to create the directory (${folderName}) failed with the error ${mkdirErr}.`
+                  );
+                }
+
+                fs.writeFile(
+                  path.join(folderName, 'trrrace.json'),
+                  JSON.stringify(emptyProject),
+                  (writeErr) => {
+                    if (writeErr) {
+                      dialog.showErrorBox(
+                        `Error`,
+                        `An error occurred creating the trrrace.json file: ${writeErr}`
+                      );
+                      return;
+                    }
+
+                    this.saveHistory(folderName);
+                    this.open_project(folderName);
+                  }
+                );
+              });
+            } else {
+              console.log(
+                `Some other error encountered trying to open: ${jsonPath}: ${err.code}`
+              );
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }
 
