@@ -4,6 +4,10 @@ import path from 'path';
 import { copyFileSync } from 'fs';
 import EdiText from 'react-editext';
 
+import { FaExternalLinkAlt } from 'react-icons/fa';
+
+const { ipcRenderer } = require('electron');
+
 import FileUpload from './FileUpload';
 
 const Project = ({ projectData, folderPath, saveJSON }) => {
@@ -52,6 +56,11 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
     saveJSON({ ...projectData, entries: entries });
   };
 
+  const openFile = (fileName) => {
+    console.log('Open file:', path.join(folderPath, fileName));
+    ipcRenderer.send('open-file', path.join(folderPath, fileName));
+  };
+
   return (
     <div>
       <h1>{projectData.title}</h1>
@@ -71,13 +80,21 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
               type="text"
               value={entry.title}
               onSave={(val) => renameEntry(val, i)}
-              editOnViewClick={true}
+              editOnViewClick
+              submitOnUnfocus
             />
           </h3>
 
           <ul>
             {entry.files.map((file) => (
-              <li>{file.title}</li>
+              <li>
+                {file.title}{' '}
+                <FaExternalLinkAlt
+                  onClick={() => openFile(file.title)}
+                  title={'Open file externally'}
+                  size={'12px'}
+                />
+              </li>
             ))}
           </ul>
         </>

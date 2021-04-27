@@ -207,3 +207,8 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+ipcMain.on('open-file', (event, fileName) => {
+  console.log('Open File:', fileName);
+  shell.openPath(fileName);
+});
