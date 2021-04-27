@@ -3,8 +3,6 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const FileUpload = ({ containerStyle, saveFiles }) => {
-
-
   const baseStyle = {
     flex: 1,
     display: 'flex',
@@ -21,19 +19,19 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
     color: 'black',
     outline: 'none',
     transition: 'border .24s ease-in-out',
-    lineHeight: '1.5em'
+    lineHeight: '1.5em',
   };
 
   const activeStyle = {
-    borderColor: '#2196f3'
+    borderColor: '#2196f3',
   };
 
   const acceptStyle = {
-    borderColor: '#00e676'
+    borderColor: '#00e676',
   };
 
   const rejectStyle = {
-    borderColor: '#ff1744'
+    borderColor: '#ff1744',
   };
 
   const {
@@ -41,12 +39,12 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
   } = useDropzone({
     //accept: '.pdf,.doc,.docx',
     onDropAccepted: (files) => {
       saveFiles(files);
-    }
+    },
   });
 
   const style = useMemo(
@@ -54,7 +52,7 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
       ...baseStyle,
       ...(isDragActive ? activeStyle : {}),
       ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {})
+      ...(isDragReject ? rejectStyle : {}),
     }),
     [
       isDragActive,
@@ -63,20 +61,19 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
       acceptStyle,
       activeStyle,
       baseStyle,
-      rejectStyle
+      rejectStyle,
     ]
   );
 
   return (
-    <section className='container' style={{ ...containerStyle }}>
+    <section className="container" style={{ ...containerStyle }}>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
 
         <p>
-          To upload, drag and drop some files here, or{' '}
-          <b>click to select files</b>.
+          Drag and drop some files here, or <b>click to select files</b>, create
+          a new entry.
         </p>
-
       </div>
     </section>
   );
@@ -84,6 +81,6 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
 
 FileUpload.propTypes = {
   containerStyle: PropTypes.object,
-  saveFiles: PropTypes.func
+  saveFiles: PropTypes.func,
 };
 export default FileUpload;

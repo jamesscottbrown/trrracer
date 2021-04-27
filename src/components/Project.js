@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import path from 'path';
 import { copyFileSync } from 'fs';
+import EdiText from 'react-editext';
 
 import FileUpload from './FileUpload';
 
@@ -19,9 +20,6 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
         const destination = path.join(folderPath, file.name);
         copyFileSync(file.path, destination);
         console.log(`${file.path} was copied to ${destination}`);
-
-        saveJSON({ ...projectData, files: [...projectData.files, { name: file.name }] });
-
       } catch (e) {
         console.log('Error', e.stack);
         console.log('Error', e.name);
@@ -30,27 +28,66 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
         console.log('The file could not be copied');
       }
     }
+
+    saveJSON({
+      ...projectData,
+      entries: [
+        ...projectData.entries,
+        { title: 'New entry', files: fileList.map((f) => ({ title: f.name })) },
+      ],
+    });
   };
 
-  return <div>
+  const addEntry = () => {
+    saveJSON({
+      ...projectData,
+      entries: [...projectData.entries, { title: 'New entry', files: [] }],
+    });
+  };
 
-    <h1>{projectData.title}</h1>
+  const renameEntry = (newName, index) => {
+    const entries = projectData.entries.map((d, i) =>
+      index === i ? { ...d, title: newName } : d
+    );
+    saveJSON({ ...projectData, entries: entries });
+  };
 
-    <h2>Tags</h2>
-    <ul>
-      {projectData.tags.map(tag => <li>{tag.title}</li>)}
-    </ul>
+  return (
+    <div>
+      <h1>{projectData.title}</h1>
 
-    <h2>Files</h2>
-    <ul>
-      {projectData.files.map(file => <li>{file.name}</li>)}
-    </ul>
+      <h2>Tags</h2>
+      <ul>
+        {projectData.tags.map((tag) => (
+          <li>{tag.title}</li>
+        ))}
+      </ul>
 
-    <FileUpload
-      saveFiles={saveFiles}
-      containerStyle={{}}
-    />
-  </div>;
+      <h2>Entries</h2>
+      {projectData.entries.map((entry, i) => (
+        <>
+          <h3>
+            <EdiText
+              type="text"
+              value={entry.title}
+              onSave={(val) => renameEntry(val, i)}
+              editOnViewClick={true}
+            />
+          </h3>
+
+          <ul>
+            {entry.files.map((file) => (
+              <li>{file.title}</li>
+            ))}
+          </ul>
+        </>
+      ))}
+
+      <button onClick={addEntry}>Add entry</button>
+
+      <FileUpload saveFiles={saveFiles} containerStyle={{}} />
+    </div>
+  );
 };
 
 export default Project;
