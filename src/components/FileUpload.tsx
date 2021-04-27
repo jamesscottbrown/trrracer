@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 import { useDropzone } from 'react-dropzone';
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';

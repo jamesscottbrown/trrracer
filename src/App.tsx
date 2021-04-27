@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 import React, { useState } from 'react';
 
 import fs from 'fs';
@@ -30,7 +32,7 @@ export default function App() {
     fs.writeFile(
       path.join(folderPath, 'trrrace.json'),
       JSON.stringify(newData),
-      (err, data) => {
+      (err) => {
         if (err) {
           console.log(`Error writing file to disk: ${err}`);
         } else {

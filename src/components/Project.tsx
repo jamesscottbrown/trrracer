@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 import React, { useState } from 'react';
 
 import path from 'path';

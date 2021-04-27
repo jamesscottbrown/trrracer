@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 import path from 'path';
 
 import emptyProject from './emptyProject.json';
