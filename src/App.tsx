@@ -9,10 +9,12 @@ import { ipcRenderer } from 'electron';
 import Project from './components/Project';
 
 import './App.global.css';
+import emptyProject from './emptyProject.json';
+import { ProjectType } from './components/types';
 
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
-  const [projectData, setProjectData] = useState('');
+  const [projectData, setProjectData] = useState<ProjectType>(emptyProject);
 
   ipcRenderer.on('projectPath', (_event, folderName) => {
     console.log('Received project path:', folderName);
@@ -30,7 +32,7 @@ export default function App() {
     });
   });
 
-  const saveJSON = (newData) => {
+  const saveJSON = (newData: ProjectType) => {
     fs.writeFile(
       path.join(folderPath, 'trrrace.json'),
       JSON.stringify(newData),

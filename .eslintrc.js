@@ -9,6 +9,8 @@ module.exports = {
     'import/no-dynamic-require': 'off',
     'no-restricted-syntax': 'off',
     'react/jsx-props-no-spreading': 'off',
+
+    'react/prop-types': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

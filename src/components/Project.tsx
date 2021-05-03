@@ -1,25 +1,34 @@
 /* eslint no-console: off */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import path from 'path';
 import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 import Entry from './Entry';
 
+import { File, FileObj, EntryType, TagType, ProjectType } from './types';
+
 const { ipcRenderer } = require('electron');
 
-const Project = ({ projectData, folderPath, saveJSON }) => {
+interface ProjectProps {
+  projectData: ProjectType;
+  folderPath: string;
+  saveJSON: (a: ProjectType) => void;
+}
+
+const Project = (ProjectPropValues: ProjectProps) => {
+  const { projectData, folderPath, saveJSON } = ProjectPropValues;
+
   console.log(projectData);
 
   // TODO: add files to json file and save
   console.log('projectData:', projectData);
 
-  const saveFiles = (fileList) => {
+  const saveFiles = (fileList: FileObj[]) => {
     console.log(fileList);
 
-    let copiedFiles = [];
+    let copiedFiles: File[] = [];
 
     for (const file of fileList) {
       try {
@@ -40,7 +49,7 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       ...projectData,
       entries: [
         ...projectData.entries,
-        { title: 'New entry', files: copiedFiles },
+        { title: 'New entry', description: '', files: copiedFiles },
       ],
     });
   };
@@ -48,18 +57,25 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
   const addEntry = () => {
     saveJSON({
       ...projectData,
-      entries: [...projectData.entries, { title: 'New entry', files: [] }],
+      entries: [
+        ...projectData.entries,
+        { title: 'New entry', description: '', files: [] },
+      ],
     });
   };
 
-  const updateEntryField = (entryIndex, fieldName, newValue) => {
-    const entries = projectData.entries.map((d, i) =>
+  const updateEntryField = (
+    entryIndex: number,
+    fieldName: string,
+    newValue: any
+  ) => {
+    const entries = projectData.entries.map((d: EntryType, i: number) =>
       entryIndex === i ? { ...d, [fieldName]: newValue } : d
     );
     saveJSON({ ...projectData, entries });
   };
 
-  const openFile = (fileName) => {
+  const openFile = (fileName: string) => {
     console.log('Open file:', path.join(folderPath, fileName));
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
@@ -70,13 +86,13 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
 
       <h2>Tags</h2>
       <ul>
-        {projectData.tags.map((tag) => (
+        {projectData.tags.map((tag: TagType) => (
           <li key={tag.title}>{tag.title}</li>
         ))}
       </ul>
 
       <h2>Entries</h2>
-      {projectData.entries.map((entryData, i) => (
+      {projectData.entries.map((entryData: EntryType, i: number) => (
         <Entry
           /* eslint-disable-next-line react/no-array-index-key */
           key={i}
@@ -104,29 +120,6 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       />
     </div>
   );
-};
-
-Project.propTypes = {
-  projectData: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    tags: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-      })
-    ),
-    entries: PropTypes.arrayOf(
-      PropTypes.shape({
-        description: PropTypes.string,
-        title: PropTypes.string,
-        files: PropTypes.arrayOf(
-          PropTypes.shape({ title: PropTypes.string.isRequired })
-        ),
-      })
-    ),
-  }).isRequired,
-  folderPath: PropTypes.string.isRequired,
-  saveJSON: PropTypes.func.isRequired,
 };
 
 export default Project;

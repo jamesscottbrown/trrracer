@@ -1,22 +1,40 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
 import * as Showdown from 'showdown';
+
 import path from 'path';
 import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 
-const Entry = ({
-  entryData,
-  entryIndex,
-  openFile,
-  updateEntryField,
-  folderPath,
-}) => {
+import { File, FileObj, EntryType } from './types';
+
+interface EntryPropTypes {
+  entryData: EntryType;
+  entryIndex: number;
+  openFile: (a: string) => void;
+  updateEntryField: (
+    entryIndex: number,
+    fieldName: string,
+    newData: any
+  ) => void;
+  folderPath: string;
+}
+
+// (entryIndex, 'files', newFiles)
+
+const Entry = (EntryProps: EntryPropTypes) => {
+  const {
+    entryData,
+    entryIndex,
+    openFile,
+    updateEntryField,
+    folderPath,
+  } = EntryProps;
+
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
@@ -28,7 +46,7 @@ const Entry = ({
 
   const [showFileUpload, setShowFileUpload] = useState(false);
 
-  const saveFiles = (fileList) => {
+  const saveFiles = (fileList: FileObj[]) => {
     console.log(fileList);
 
     let newFiles = entryData.files;
@@ -51,7 +69,7 @@ const Entry = ({
     setShowFileUpload(false);
   };
 
-  const handleChangeTab = (newTab) => {
+  const handleChangeTab = (newTab: 'write' | 'preview') => {
     if (newTab === 'preview') {
       updateEntryField(entryIndex, 'description', value);
     }
@@ -101,7 +119,7 @@ const Entry = ({
       )}
 
       <ul>
-        {entryData.files.map((file) => (
+        {entryData.files.map((file: File) => (
           <li key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
@@ -138,20 +156,6 @@ const Entry = ({
       <hr />
     </>
   );
-};
-
-Entry.propTypes = {
-  entryData: PropTypes.shape({
-    title: PropTypes.string,
-    files: PropTypes.arrayOf(
-      PropTypes.shape({ title: PropTypes.string.isRequired })
-    ),
-    description: PropTypes.string.isRequired,
-  }).isRequired,
-  entryIndex: PropTypes.number.isRequired,
-  openFile: PropTypes.func.isRequired,
-  updateEntryField: PropTypes.func.isRequired,
-  folderPath: PropTypes.string.isRequired,
 };
 
 export default Entry;

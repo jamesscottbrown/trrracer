@@ -209,7 +209,7 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
-ipcMain.on('open-file', (event, fileName) => {
+ipcMain.on('open-file', (_event, fileName) => {
   console.log('Open File:', fileName);
   shell.openPath(fileName);
 });
