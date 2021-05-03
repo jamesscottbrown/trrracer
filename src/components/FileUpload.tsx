@@ -3,6 +3,7 @@
 import { useDropzone } from 'react-dropzone';
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { FileObj } from './types';
 
 const baseStyle = {
   flex: 1,
@@ -35,7 +36,14 @@ const rejectStyle = {
   borderColor: '#ff1744',
 };
 
-const FileUpload = ({ containerStyle, saveFiles, msg }) => {
+interface FileUploadProps {
+  containerStyle: Record<string, unknown>;
+  saveFiles: (fileList: FileObj[]) => void;
+  msg: JSX.Element;
+}
+
+const FileUpload = (props: FileUploadProps) => {
+  const { containerStyle, saveFiles, msg } = props;
   const {
     getRootProps,
     getInputProps,
@@ -49,7 +57,7 @@ const FileUpload = ({ containerStyle, saveFiles, msg }) => {
     },
   });
 
-  const style = useMemo(
+  const style = useMemo<Record<string, unknown>>(
     () => ({
       ...baseStyle,
       ...(isDragActive ? activeStyle : {}),
