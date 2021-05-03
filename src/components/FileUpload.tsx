@@ -4,38 +4,38 @@ import { useDropzone } from 'react-dropzone';
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+const baseStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  paddingTop: '5px',
+  paddingLeft: '10px',
+  paddingRight: '10px',
+  borderWidth: 2,
+  borderRadius: 2,
+  borderColor: 'black',
+  borderStyle: 'dashed',
+  backgroundColor: '#fafafa',
+  color: 'black',
+  outline: 'none',
+  transition: 'border .24s ease-in-out',
+  lineHeight: '1.5em',
+};
+
+const activeStyle = {
+  borderColor: '#2196f3',
+};
+
+const acceptStyle = {
+  borderColor: '#00e676',
+};
+
+const rejectStyle = {
+  borderColor: '#ff1744',
+};
+
 const FileUpload = ({ containerStyle, saveFiles, msg }) => {
-  const baseStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingTop: '5px',
-    paddingLeft: '10px',
-    paddingRight: '10px',
-    borderWidth: 2,
-    borderRadius: 2,
-    borderColor: 'black',
-    borderStyle: 'dashed',
-    backgroundColor: '#fafafa',
-    color: 'black',
-    outline: 'none',
-    transition: 'border .24s ease-in-out',
-    lineHeight: '1.5em',
-  };
-
-  const activeStyle = {
-    borderColor: '#2196f3',
-  };
-
-  const acceptStyle = {
-    borderColor: '#00e676',
-  };
-
-  const rejectStyle = {
-    borderColor: '#ff1744',
-  };
-
   const {
     getRootProps,
     getInputProps,
@@ -56,15 +56,7 @@ const FileUpload = ({ containerStyle, saveFiles, msg }) => {
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {}),
     }),
-    [
-      isDragActive,
-      isDragReject,
-      isDragAccept,
-      acceptStyle,
-      activeStyle,
-      baseStyle,
-      rejectStyle,
-    ]
+    [isDragActive, isDragReject, isDragAccept]
   );
 
   return (
@@ -79,8 +71,9 @@ const FileUpload = ({ containerStyle, saveFiles, msg }) => {
 };
 
 FileUpload.propTypes = {
-  containerStyle: PropTypes.object,
-  saveFiles: PropTypes.func,
-  msg: PropTypes.object,
+  // eslint-disable-next-line react/forbid-prop-types
+  containerStyle: PropTypes.object.isRequired,
+  saveFiles: PropTypes.func.isRequired,
+  msg: PropTypes.node.isRequired,
 };
 export default FileUpload;
