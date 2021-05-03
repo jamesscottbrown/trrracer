@@ -1,11 +1,12 @@
 /* eslint no-console: off */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import path from 'path';
 import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
-import { Entry } from './Entry';
+import Entry from './Entry';
 
 const { ipcRenderer } = require('electron');
 
@@ -70,13 +71,15 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       <h2>Tags</h2>
       <ul>
         {projectData.tags.map((tag) => (
-          <li>{tag.title}</li>
+          <li key={tag.title}>{tag.title}</li>
         ))}
       </ul>
 
       <h2>Entries</h2>
       {projectData.entries.map((entryData, i) => (
         <Entry
+          /* eslint-disable-next-line react/no-array-index-key */
+          key={i}
           entryData={entryData}
           entryIndex={i}
           openFile={openFile}
@@ -85,7 +88,9 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
         />
       ))}
 
-      <button onClick={addEntry}>Add entry</button>
+      <button onClick={addEntry} type="button">
+        Add entry
+      </button>
 
       <FileUpload
         saveFiles={saveFiles}
@@ -99,6 +104,29 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       />
     </div>
   );
+};
+
+Project.propTypes = {
+  projectData: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    tags: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string.isRequired,
+      })
+    ),
+    entries: PropTypes.arrayOf(
+      PropTypes.shape({
+        description: PropTypes.string,
+        title: PropTypes.string,
+        files: PropTypes.arrayOf(
+          PropTypes.shape({ title: PropTypes.string.isRequired })
+        ),
+      })
+    ),
+  }).isRequired,
+  folderPath: PropTypes.string.isRequired,
+  saveJSON: PropTypes.func.isRequired,
 };
 
 export default Project;

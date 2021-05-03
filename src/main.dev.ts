@@ -135,21 +135,22 @@ async function createSplashWindow() {
   const paths = fileManager.readHistory();
   const allPaths = await paths;
   if (allPaths !== undefined) {
-    allPaths.paths.map((path) => {
+    allPaths.paths.map((recentPath) => {
       submenuOfOpenRecent.push(
         {
           label: path,
           click() {
-            fileManager.openRecentProject(path);
+            fileManager.openRecentProject(recentPath);
           },
         },
         { type: 'separator' }
       );
+      return null;
     });
   }
 
   // Declare all menu
-  const menu_list = [
+  const menuList = [
     {
       label: 'File',
       submenu: [
@@ -174,8 +175,8 @@ async function createSplashWindow() {
   ];
 
   // set the menu to desktop app
-  const menu_design = Menu.buildFromTemplate(menu_list);
-  Menu.setApplicationMenu(menu_design);
+  const menuDesign = Menu.buildFromTemplate(menuList);
+  Menu.setApplicationMenu(menuDesign);
 
   // recieve new file data and path throught main and renderer method
   ipcMain.on('newdata', (e, arg) => {

@@ -1,7 +1,7 @@
 /* eslint no-console: off */
 
 import { useDropzone } from 'react-dropzone';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 const FileUpload = ({ containerStyle, saveFiles, msg }) => {
@@ -81,5 +81,6 @@ const FileUpload = ({ containerStyle, saveFiles, msg }) => {
 FileUpload.propTypes = {
   containerStyle: PropTypes.object,
   saveFiles: PropTypes.func,
+  msg: PropTypes.object,
 };
 export default FileUpload;

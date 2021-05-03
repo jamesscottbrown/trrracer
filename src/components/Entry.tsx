@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -8,7 +10,7 @@ import path from 'path';
 import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 
-export const Entry = ({
+const Entry = ({
   entryData,
   entryIndex,
   openFile,
@@ -93,12 +95,14 @@ export const Entry = ({
           />
         </div>
       ) : (
-        <button onClick={() => enableDescription()}>Add description</button>
+        <button onClick={() => enableDescription()} type="button">
+          Add description
+        </button>
       )}
 
       <ul>
         {entryData.files.map((file) => (
-          <li>
+          <li key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
               onClick={() => openFile(file.title)}
@@ -121,13 +125,33 @@ export const Entry = ({
               </>
             }
           />
-          <button onClick={() => setShowFileUpload(false)}>Cancel</button>
+          <button onClick={() => setShowFileUpload(false)} type="button">
+            Cancel
+          </button>
         </>
       ) : (
-        <button onClick={() => setShowFileUpload(true)}>Add files</button>
+        <button onClick={() => setShowFileUpload(true)} type="button">
+          Add files
+        </button>
       )}
 
       <hr />
     </>
   );
 };
+
+Entry.propTypes = {
+  entryData: PropTypes.shape({
+    title: PropTypes.string,
+    files: PropTypes.arrayOf(
+      PropTypes.shape({ title: PropTypes.string.isRequired })
+    ),
+    description: PropTypes.string.isRequired,
+  }).isRequired,
+  entryIndex: PropTypes.number.isRequired,
+  openFile: PropTypes.func.isRequired,
+  updateEntryField: PropTypes.func.isRequired,
+  folderPath: PropTypes.string.isRequired,
+};
+
+export default Entry;
