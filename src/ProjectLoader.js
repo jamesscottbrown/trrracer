@@ -25,20 +25,27 @@ class ProjectLoader {
     this.open_project = openProject;
   }
 
-  saveHistory(path) {
+  saveHistory(projectPath) {
     fs.ensureFile(this.historyPath, (err) => {
       if (err) {
         throw err;
       }
 
-      fs.readJson(this.historyPath, { throws: false }).then((hist) => {
-        const otherPaths =
-          hist == null ? [] : hist.paths.filter((p) => p !== path);
-        fs.writeFile(
-          this.historyPath,
-          JSON.stringify({ ...hist, paths: [...otherPaths, path] })
-        );
-      });
+      fs.readJson(this.historyPath, { throws: false })
+        .then((hist) => {
+          const otherPaths =
+            hist == null ? [] : hist.paths.filter((p) => p !== projectPath);
+          fs.writeFile(
+            this.historyPath,
+            JSON.stringify({ ...hist, paths: [...otherPaths, projectPath] })
+          );
+          return null;
+        })
+        .catch((savingErr) => {
+          console.log(
+            `Error saving updated list of recently opened projects to history file: ${savingErr}`
+          );
+        });
     });
   }
 
@@ -47,7 +54,7 @@ class ProjectLoader {
       .readJson(this.historyPath, { throws: false })
       .then((res) => res)
       .catch((err) => {
-        console.log('Error loading lsit of recently opened files:', err);
+        console.log('Error loading list of recently opened files:', err);
       });
   }
 
@@ -105,6 +112,7 @@ class ProjectLoader {
             }
           });
         }
+        return null;
       })
       .catch((err) => {
         console.log(err);
@@ -136,16 +144,17 @@ class ProjectLoader {
             }
           });
         }
+        return null;
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  openRecentProject(path) {
-    console.log('Opening recent:', path);
-    this.open_project(path);
+  openRecentProject(projectPath) {
+    console.log('Opening recent:', projectPath);
+    this.open_project(projectPath);
   }
 }
 
-export { ProjectLoader };
+export default ProjectLoader;
