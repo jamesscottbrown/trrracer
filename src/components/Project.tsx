@@ -55,7 +55,7 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
     const entries = projectData.entries.map((d, i) =>
       entryIndex === i ? { ...d, [fieldName]: newValue } : d
     );
-    saveJSON({ ...projectData, entries: entries });
+    saveJSON({ ...projectData, entries });
   };
 
   const openFile = (fileName) => {

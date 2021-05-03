@@ -43,7 +43,7 @@ const FileUpload = ({ containerStyle, saveFiles, msg }) => {
     isDragAccept,
     isDragReject,
   } = useDropzone({
-    //accept: '.pdf,.doc,.docx',
+    // accept: '.pdf,.doc,.docx',
     onDropAccepted: (files) => {
       saveFiles(files);
     },

@@ -4,9 +4,9 @@ import ReactMde from 'react-mde';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
 import * as Showdown from 'showdown';
-import FileUpload from './FileUpload';
 import path from 'path';
 import { copyFileSync } from 'fs';
+import FileUpload from './FileUpload';
 
 export const Entry = ({
   entryData,

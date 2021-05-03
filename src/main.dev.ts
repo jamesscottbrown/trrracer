@@ -131,15 +131,15 @@ async function createSplashWindow() {
   const fileManager = new ProjectLoader(splashWindow, openProjectWindow);
 
   // set open recent submenu
-  let submenuOfOpenRecent = [];
-  let paths = fileManager.readHistory();
+  const submenuOfOpenRecent = [];
+  const paths = fileManager.readHistory();
   const allPaths = await paths;
   if (allPaths !== undefined) {
     allPaths.paths.map((path) => {
       submenuOfOpenRecent.push(
         {
           label: path,
-          click: function () {
+          click() {
             fileManager.openRecentProject(path);
           },
         },
@@ -149,19 +149,19 @@ async function createSplashWindow() {
   }
 
   // Declare all menu
-  let menu_list = [
+  const menu_list = [
     {
       label: 'File',
       submenu: [
         {
           label: 'New Project...',
-          click: function () {
+          click() {
             fileManager.newProjectPicker();
           },
         },
         {
           label: 'Open Project...',
-          click: function () {
+          click() {
             fileManager.openProjectPicker();
           },
         },
