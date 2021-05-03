@@ -117,6 +117,14 @@ const openProjectWindow = async (projectPath: string) => {
   new AppUpdater();
 };
 
+interface MenuEntry {
+  label: string;
+  click: () => void;
+}
+interface MenuDivider {
+  type: 'separator';
+}
+
 async function createSplashWindow() {
   const splashWindow = new BrowserWindow({
     webPreferences: {
@@ -131,14 +139,14 @@ async function createSplashWindow() {
   const fileManager = new ProjectLoader(splashWindow, openProjectWindow);
 
   // set open recent submenu
-  const submenuOfOpenRecent = [];
+  const submenuOfOpenRecent: (MenuEntry | MenuDivider)[] = [];
   const paths = fileManager.readHistory();
   const allPaths = await paths;
   if (allPaths !== undefined) {
-    allPaths.paths.map((recentPath) => {
+    allPaths.paths.map((recentPath: string) => {
       submenuOfOpenRecent.push(
         {
-          label: path,
+          label: recentPath,
           click() {
             fileManager.openRecentProject(recentPath);
           },
@@ -179,7 +187,7 @@ async function createSplashWindow() {
   Menu.setApplicationMenu(menuDesign);
 
   // recieve new file data and path throught main and renderer method
-  ipcMain.on('newdata', (e, arg) => {
+  ipcMain.on('newdata', (_e, arg) => {
     fs.writeFile(arg.path, arg.file, (err) => {
       if (err) {
         throw err;
@@ -206,7 +214,7 @@ app.whenReady().then(createSplashWindow).catch(console.log);
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
+  if (mainWindow === null) createSplashWindow().catch(console.log);
 });
 
 ipcMain.on('open-file', (_event, fileName) => {
