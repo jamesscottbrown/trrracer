@@ -18,11 +18,14 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
   const saveFiles = (fileList) => {
     console.log(fileList);
 
+    let copiedFiles = [];
+
     for (const file of fileList) {
       try {
         const destination = path.join(folderPath, file.name);
         copyFileSync(file.path, destination);
         console.log(`${file.path} was copied to ${destination}`);
+        copiedFiles = [...copiedFiles, { title: file.name }];
       } catch (e) {
         console.log('Error', e.stack);
         console.log('Error', e.name);
@@ -36,7 +39,7 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       ...projectData,
       entries: [
         ...projectData.entries,
-        { title: 'New entry', files: fileList.map((f) => ({ title: f.name })) },
+        { title: 'New entry', files: copiedFiles },
       ],
     });
   };
@@ -78,12 +81,22 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
           entryIndex={i}
           openFile={openFile}
           updateEntryField={updateEntryField}
+          folderPath={folderPath}
         />
       ))}
 
       <button onClick={addEntry}>Add entry</button>
 
-      <FileUpload saveFiles={saveFiles} containerStyle={{}} />
+      <FileUpload
+        saveFiles={saveFiles}
+        containerStyle={{}}
+        msg={
+          <>
+            Drag and drop some files here, or <b>click to select files</b>,
+            create a new entry.
+          </>
+        }
+      />
     </div>
   );
 };

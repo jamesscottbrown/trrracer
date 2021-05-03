@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-const FileUpload = ({ containerStyle, saveFiles }) => {
+const FileUpload = ({ containerStyle, saveFiles, msg }) => {
   const baseStyle = {
     flex: 1,
     display: 'flex',
@@ -72,10 +72,7 @@ const FileUpload = ({ containerStyle, saveFiles }) => {
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
 
-        <p>
-          Drag and drop some files here, or <b>click to select files</b>, create
-          a new entry.
-        </p>
+        <p>{msg}</p>
       </div>
     </section>
   );
