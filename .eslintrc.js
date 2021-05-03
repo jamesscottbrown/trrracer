@@ -11,6 +11,17 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
 
     'react/prop-types': 'off',
+
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
   },
   parserOptions: {
     ecmaVersion: 2020,
