@@ -1,16 +1,13 @@
 /* eslint no-console: off */
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import path from 'path';
 import { copyFileSync } from 'fs';
-import EdiText from 'react-editext';
-
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import FileUpload from './FileUpload';
+import { Entry } from './Entry';
 
 const { ipcRenderer } = require('electron');
-
-import FileUpload from './FileUpload';
 
 const Project = ({ projectData, folderPath, saveJSON }) => {
   console.log(projectData);
@@ -51,9 +48,9 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
     });
   };
 
-  const renameEntry = (newName, index) => {
+  const updateEntryField = (entryIndex, fieldName, newValue) => {
     const entries = projectData.entries.map((d, i) =>
-      index === i ? { ...d, title: newName } : d
+      entryIndex === i ? { ...d, [fieldName]: newValue } : d
     );
     saveJSON({ ...projectData, entries: entries });
   };
@@ -75,31 +72,13 @@ const Project = ({ projectData, folderPath, saveJSON }) => {
       </ul>
 
       <h2>Entries</h2>
-      {projectData.entries.map((entry, i) => (
-        <>
-          <h3>
-            <EdiText
-              type="text"
-              value={entry.title}
-              onSave={(val) => renameEntry(val, i)}
-              editOnViewClick
-              submitOnUnfocus
-            />
-          </h3>
-
-          <ul>
-            {entry.files.map((file) => (
-              <li>
-                {file.title}{' '}
-                <FaExternalLinkAlt
-                  onClick={() => openFile(file.title)}
-                  title={'Open file externally'}
-                  size={'12px'}
-                />
-              </li>
-            ))}
-          </ul>
-        </>
+      {projectData.entries.map((entryData, i) => (
+        <Entry
+          entryData={entryData}
+          entryIndex={i}
+          openFile={openFile}
+          updateEntryField={updateEntryField}
+        />
       ))}
 
       <button onClick={addEntry}>Add entry</button>

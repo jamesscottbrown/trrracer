@@ -257,8 +257,10 @@
     "react-dropzone": "^11.3.2",
     "react-editext": "^3.18.0",
     "react-icons": "^4.2.0",
+    "react-mde": "^11.4.0",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.5",
+    "showdown": "^1.9.1",
     "source-map-support": "^0.5.19"
   },
   "devEngines": {

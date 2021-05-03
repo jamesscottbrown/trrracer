@@ -8,6 +8,8 @@ import { ipcRenderer } from 'electron';
 
 import Project from './components/Project';
 
+import './App.global.css';
+
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [projectData, setProjectData] = useState('');
