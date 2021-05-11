@@ -59,23 +59,17 @@ interface EntryPropTypes {
   folderPath: string;
 }
 
-const Entry = (EntryProps: EntryPropTypes) => {
-  const {
-    entryData,
-    entryIndex,
-    openFile,
-    updateEntryField,
-    folderPath,
-  } = EntryProps;
+const Entry = (props: EntryPropTypes) => {
+  const { entryData, entryIndex, openFile, updateEntryField, folderPath } =
+    props;
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'preview'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('preview');
 
   const [showFileUpload, setShowFileUpload] = useState(false);
 
