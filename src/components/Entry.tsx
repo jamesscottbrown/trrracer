@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -12,6 +13,40 @@ import FileUpload from './FileUpload';
 
 import { File, FileObj, EntryType } from './types';
 
+interface EditDateTypes {
+  date: string;
+  entryIndex: number;
+  updateEntryField: (
+    entryIndex: number,
+    fieldName: string,
+    newData: any
+  ) => void;
+}
+
+const EditDate = (props: EditDateTypes) => {
+  const { date, entryIndex, updateEntryField } = props;
+
+  const updateDate = (newDate: Date) => {
+    // if in GMT, the time will be returned in UTC, so will be 11pm of the day before
+    newDate.setHours(newDate.getHours() + 1);
+
+    updateEntryField(
+      entryIndex,
+      'date',
+      newDate.toISOString().substring(0, 10)
+    );
+  };
+
+  return (
+    <DatePicker
+      selected={new Date(date)}
+      onChange={updateDate}
+      dateFormat="dd MMMM yyyy"
+      maxDate={new Date()}
+    />
+  );
+};
+
 interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
@@ -23,8 +58,6 @@ interface EntryPropTypes {
   ) => void;
   folderPath: string;
 }
-
-// (entryIndex, 'files', newFiles)
 
 const Entry = (EntryProps: EntryPropTypes) => {
   const {
@@ -99,6 +132,13 @@ const Entry = (EntryProps: EntryPropTypes) => {
           submitOnUnfocus
         />
       </h3>
+
+      <EditDate
+        date={entryData.date}
+        entryIndex={entryIndex}
+        updateEntryField={updateEntryField}
+      />
+      <br />
 
       {showDescription ? (
         <div className="markdownEditorContainer">

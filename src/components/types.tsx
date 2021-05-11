@@ -13,6 +13,7 @@ interface EntryType {
   description: string;
   title: string;
   files: File[];
+  date: string;
 }
 
 interface TagType {

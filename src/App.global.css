@@ -33,3 +33,7 @@ hr {
   height: fit-content;
   padding: 10px;
 }
+
+
+/* For the date-picker */
+@import '~react-datepicker/dist/react-datepicker.css';
