@@ -96,14 +96,15 @@ const Project = (ProjectPropValues: ProjectProps) => {
     <div>
       <h1>{projectData.title}</h1>
 
+      {/*
       <h2>Tags</h2>
       <ul>
         {projectData.tags.map((tag: TagType) => (
           <li key={tag.title}>{tag.title}</li>
         ))}
       </ul>
+      */}
 
-      <h2>Entries</h2>
       {projectData.entries.map((entryData: EntryType, i: number) => (
         <Entry
           /* eslint-disable-next-line react/no-array-index-key */
@@ -113,6 +114,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           openFile={openFile}
           updateEntryField={updateEntryField}
           folderPath={folderPath}
+          allTags={projectData.tags}
         />
       ))}
 

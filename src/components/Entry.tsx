@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { WithContext as ReactTags } from 'react-tag-input';
 
 import * as Showdown from 'showdown';
 
@@ -11,7 +12,7 @@ import path from 'path';
 import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 
-import { File, FileObj, EntryType } from './types';
+import { File, FileObj, EntryType, TagType } from './types';
 
 interface EditDateTypes {
   date: string;
@@ -57,11 +58,23 @@ interface EntryPropTypes {
     newData: any
   ) => void;
   folderPath: string;
+  allTags: TagType[];
+}
+
+interface ReactTag {
+  id: string;
+  text: string;
 }
 
 const Entry = (props: EntryPropTypes) => {
-  const { entryData, entryIndex, openFile, updateEntryField, folderPath } =
-    props;
+  const {
+    entryData,
+    entryIndex,
+    openFile,
+    updateEntryField,
+    folderPath,
+    allTags,
+  } = props;
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
@@ -115,6 +128,11 @@ const Entry = (props: EntryPropTypes) => {
     tasklists: true,
   });
 
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  };
+
   return (
     <>
       <h3>
@@ -133,6 +151,22 @@ const Entry = (props: EntryPropTypes) => {
         updateEntryField={updateEntryField}
       />
       <br />
+
+      <ReactTags
+        tags={entryData.tags}
+        suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
+        delimiters={[KeyCodes.comma, KeyCodes.enter]}
+        handleDelete={(i: number) =>
+          updateEntryField(
+            entryIndex,
+            'tags',
+            entryData.tags.filter((_tag, index) => index !== i)
+          )
+        }
+        handleAddition={(tag: ReactTag) => {
+          updateEntryField(entryIndex, 'tags', [...entryData.tags, tag]);
+        }}
+      />
 
       {showDescription ? (
         <div className="markdownEditorContainer">
