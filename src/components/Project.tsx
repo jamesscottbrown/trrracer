@@ -49,7 +49,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
       ...projectData,
       entries: [
         ...projectData.entries,
-        { title: 'New entry', description: '', files: copiedFiles },
+        {
+          title: 'New entry',
+          description: '',
+          files: copiedFiles,
+          date: new Date(),
+          tags: [],
+        },
       ],
     });
   };
@@ -64,6 +70,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           description: '',
           files: [],
           date: new Date().toISOString(),
+          tags: [],
         },
       ],
     });
