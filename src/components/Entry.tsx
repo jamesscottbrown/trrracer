@@ -8,11 +8,10 @@ import { WithContext as ReactTags } from 'react-tag-input';
 
 import * as Showdown from 'showdown';
 
-import path from 'path';
-import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 
 import { File, FileObj, EntryType, TagType } from './types';
+import { useProjectState } from './ProjectContext';
 
 interface EditDateTypes {
   date: string;
@@ -57,7 +56,6 @@ interface EntryPropTypes {
     fieldName: string,
     newData: any
   ) => void;
-  folderPath: string;
   allTags: TagType[];
 }
 
@@ -67,14 +65,8 @@ interface ReactTag {
 }
 
 const Entry = (props: EntryPropTypes) => {
-  const {
-    entryData,
-    entryIndex,
-    openFile,
-    updateEntryField,
-    folderPath,
-    allTags,
-  } = props;
+  const { entryData, entryIndex, openFile, updateEntryField, allTags } = props;
+  const [, dispatch] = useProjectState();
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
@@ -87,25 +79,7 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(false);
 
   const saveFiles = (fileList: FileObj[]) => {
-    console.log(fileList);
-
-    let newFiles = entryData.files;
-    for (const file of fileList) {
-      try {
-        const destination = path.join(folderPath, file.name);
-        copyFileSync(file.path, destination);
-        console.log(`${file.path} was copied to ${destination}`);
-        newFiles = [...newFiles, { title: file.name }];
-      } catch (e) {
-        console.log('Error', e.stack);
-        console.log('Error', e.name);
-        console.log('Error', e.message);
-
-        console.log('The file could not be copied');
-      }
-    }
-
-    updateEntryField(entryIndex, 'files', newFiles);
+    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
     setShowFileUpload(false);
   };
 
@@ -139,7 +113,7 @@ const Entry = (props: EntryPropTypes) => {
         <EdiText
           type="text"
           value={entryData.title}
-          onSave={(val) => updateEntryField(entryIndex, 'description', val)}
+          onSave={(val) => updateEntryField(entryIndex, 'title', val)}
           editOnViewClick
           submitOnUnfocus
         />
@@ -164,7 +138,7 @@ const Entry = (props: EntryPropTypes) => {
           )
         }
         handleAddition={(tag: ReactTag) => {
-          updateEntryField(entryIndex, 'tags', [...entryData.tags, tag]);
+          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex });
         }}
       />
 

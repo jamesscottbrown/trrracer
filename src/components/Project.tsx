@@ -3,22 +3,24 @@
 import React from 'react';
 
 import path from 'path';
-import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 import Entry from './Entry';
 
-import { File, FileObj, EntryType, ProjectType } from './types';
+import { useProjectState } from './ProjectContext';
+
+import { EntryType, ProjectType, FileObj } from './types';
 
 const { ipcRenderer } = require('electron');
 
 interface ProjectProps {
   projectData: ProjectType;
   folderPath: string;
-  saveJSON: (a: ProjectType) => void;
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
-  const { projectData, folderPath, saveJSON } = ProjectPropValues;
+  const { projectData, folderPath } = ProjectPropValues;
+
+  const [, dispatch] = useProjectState();
 
   console.log(projectData);
 
@@ -26,54 +28,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
   console.log('projectData:', projectData);
 
   const saveFiles = (fileList: FileObj[]) => {
-    console.log(fileList);
-
-    let copiedFiles: File[] = [];
-
-    for (const file of fileList) {
-      try {
-        const destination = path.join(folderPath, file.name);
-        copyFileSync(file.path, destination);
-        console.log(`${file.path} was copied to ${destination}`);
-        copiedFiles = [...copiedFiles, { title: file.name }];
-      } catch (e) {
-        console.log('Error', e.stack);
-        console.log('Error', e.name);
-        console.log('Error', e.message);
-
-        console.log('The file could not be copied');
-      }
-    }
-
-    saveJSON({
-      ...projectData,
-      entries: [
-        ...projectData.entries,
-        {
-          title: 'New entry',
-          description: '',
-          files: copiedFiles,
-          date: new Date().toISOString(),
-          tags: [],
-        },
-      ],
-    });
+    dispatch({ type: 'ADD_FILES', fileList });
   };
 
   const addEntry = () => {
-    saveJSON({
-      ...projectData,
-      entries: [
-        ...projectData.entries,
-        {
-          title: 'New entry',
-          description: '',
-          files: [],
-          date: new Date().toISOString(),
-          tags: [],
-        },
-      ],
-    });
+    dispatch({ type: 'ADD_ENTRY' });
   };
 
   const updateEntryField = (
@@ -81,10 +40,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     fieldName: string,
     newValue: any
   ) => {
-    const entries = projectData.entries.map((d: EntryType, i: number) =>
-      entryIndex === i ? { ...d, [fieldName]: newValue } : d
-    );
-    saveJSON({ ...projectData, entries });
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
   const openFile = (fileName: string) => {
@@ -96,14 +52,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
     <div>
       <h1>{projectData.title}</h1>
 
-      {/*
       <h2>Tags</h2>
       <ul>
         {projectData.tags.map((tag: TagType) => (
           <li key={tag.title}>{tag.title}</li>
         ))}
       </ul>
-      */}
 
       {projectData.entries.map((entryData: EntryType, i: number) => (
         <Entry
@@ -113,7 +67,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
           entryIndex={i}
           openFile={openFile}
           updateEntryField={updateEntryField}
-          folderPath={folderPath}
           allTags={projectData.tags}
         />
       ))}
