@@ -7,7 +7,7 @@ import { copyFileSync } from 'fs';
 import FileUpload from './FileUpload';
 import Entry from './Entry';
 
-import { File, FileObj, EntryType, TagType, ProjectType } from './types';
+import { File, FileObj, EntryType, ProjectType } from './types';
 
 const { ipcRenderer } = require('electron');
 
@@ -53,7 +53,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           title: 'New entry',
           description: '',
           files: copiedFiles,
-          date: new Date(),
+          date: new Date().toISOString(),
           tags: [],
         },
       ],
