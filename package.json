@@ -30,8 +30,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Trrracer",
+    "appId": "com.electron.Trrracer",
     "files": [
       "dist/",
       "node_modules/",
