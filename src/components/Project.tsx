@@ -1,16 +1,10 @@
 /* eslint no-console: off */
 
-import React from 'react';
+import React, { useState } from 'react';
 
-import path from 'path';
-import FileUpload from './FileUpload';
-import Entry from './Entry';
-
-import { useProjectState } from './ProjectContext';
-
-import { EntryType, ProjectType, FileObj } from './types';
-
-const { ipcRenderer } = require('electron');
+import { ProjectType } from './types';
+import ProjectListView from './ProjectListView';
+import ProjectTimelineView from './ProjectTimelineView';
 
 interface ProjectProps {
   projectData: ProjectType;
@@ -20,73 +14,29 @@ interface ProjectProps {
 const Project = (ProjectPropValues: ProjectProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [, dispatch] = useProjectState();
+  const [viewType, setViewType] = useState('list');
 
-  console.log(projectData);
-
-  // TODO: add files to json file and save
-  console.log('projectData:', projectData);
-
-  const saveFiles = (fileList: FileObj[]) => {
-    dispatch({ type: 'ADD_FILES', fileList });
-  };
-
-  const addEntry = () => {
-    dispatch({ type: 'ADD_ENTRY' });
-  };
-
-  const updateEntryField = (
-    entryIndex: number,
-    fieldName: string,
-    newValue: any
-  ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
-  };
-
-  const openFile = (fileName: string) => {
-    console.log('Open file:', path.join(folderPath, fileName));
-    ipcRenderer.send('open-file', path.join(folderPath, fileName));
-  };
-
-  return (
-    <div>
-      <h1>{projectData.title}</h1>
-
-      <h2>Tags</h2>
-      <ul>
-        {projectData.tags.map((tag: TagType) => (
-          <li key={tag.title}>{tag.title}</li>
-        ))}
-      </ul>
-
-      {projectData.entries.map((entryData: EntryType, i: number) => (
-        <Entry
-          /* eslint-disable-next-line react/no-array-index-key */
-          key={i}
-          entryData={entryData}
-          entryIndex={i}
-          openFile={openFile}
-          updateEntryField={updateEntryField}
-          allTags={projectData.tags}
-        />
-      ))}
-
-      <button onClick={addEntry} type="button">
-        Add entry
-      </button>
-
-      <FileUpload
-        saveFiles={saveFiles}
-        containerStyle={{}}
-        msg={
-          <>
-            Drag and drop some files here, or <b>click to select files</b>,
-            create a new entry.
-          </>
-        }
+  if (viewType === 'list') {
+    return (
+      <ProjectListView
+        projectData={projectData}
+        folderPath={folderPath}
+        setViewType={setViewType}
       />
-    </div>
-  );
+    );
+  }
+
+  if (viewType === 'timeline') {
+    return (
+      <ProjectTimelineView
+        projectData={projectData}
+        folderPath={folderPath}
+        setViewType={setViewType}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default Project;

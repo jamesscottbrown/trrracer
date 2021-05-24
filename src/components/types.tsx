@@ -19,6 +19,7 @@ interface EntryType {
 
 interface TagType {
   title: string;
+  color: string;
 }
 
 interface ProjectType {
@@ -28,4 +29,10 @@ interface ProjectType {
   entries: EntryType[];
 }
 
-export { EntryType, File, FileObj, TagType, ProjectType };
+interface ProjectViewProps {
+  projectData: ProjectType;
+  folderPath: string;
+  setViewType: (viewType: string) => void;
+}
+
+export { EntryType, File, FileObj, TagType, ProjectType, ProjectViewProps };

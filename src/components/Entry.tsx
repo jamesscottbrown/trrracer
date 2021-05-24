@@ -194,8 +194,6 @@ const Entry = (props: EntryPropTypes) => {
           Add files
         </button>
       )}
-
-      <hr />
     </>
   );
 };
