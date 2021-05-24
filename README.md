@@ -2,6 +2,8 @@
 
 Trrracer is a tool for documenting the visualization design process as a Design Study Trace.
 
+**It is currently a prototype udner active development.**
+
 It is implemented as a cross-platform desktop application written in [TypeScript](https://www.typescriptlang.org/) using the [Electron](https://www.electronjs.org/) framework and the [React](https://reactjs.org/) library.
 
 Implementing as a desktop application has two main advantages:
