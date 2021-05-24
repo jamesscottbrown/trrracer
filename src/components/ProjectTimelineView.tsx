@@ -39,7 +39,9 @@ const EntryPlot = (props: EntryPlotProps) => {
 
   return (
     <>
-      <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="white" />
+      <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="white">
+        <title>{entryData.date.toDateString()}</title>
+      </circle>
       <line
         x1={0}
         x2={angledLineWidth}
