@@ -17,7 +17,7 @@ const appStateReducer = (state, action) => {
   const saveJSON = (newProjectData) => {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
-      JSON.stringify(newProjectData),
+      JSON.stringify(newProjectData, null, 4),
       (err) => {
         if (err) {
           console.log(`Error writing file to disk: ${err}`);
