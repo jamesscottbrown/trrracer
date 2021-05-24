@@ -142,7 +142,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, setViewType } = ProjectPropValues;
+  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
@@ -167,7 +167,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     <div>
       <h1>{projectData.title}</h1>
 
-      <ViewTypeControl setViewType={setViewType} />
+      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <h2>Tags</h2>
       <ul style={{ listStyleType: 'none' }}>

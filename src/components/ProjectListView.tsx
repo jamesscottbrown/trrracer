@@ -10,7 +10,7 @@ import ViewTypeControl from './ViewTypeControl';
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, setViewType } = ProjectPropValues;
+  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
 
   const [, dispatch] = useProjectState();
 
@@ -44,7 +44,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     <div>
       <h1>{projectData.title}</h1>
 
-      <ViewTypeControl setViewType={setViewType} />
+      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <h2>Tags</h2>
       <ul style={{ listStyleType: 'none' }}>

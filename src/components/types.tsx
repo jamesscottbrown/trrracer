@@ -32,6 +32,7 @@ interface ProjectType {
 interface ProjectViewProps {
   projectData: ProjectType;
   folderPath: string;
+  viewType: string;
   setViewType: (viewType: string) => void;
 }
 
