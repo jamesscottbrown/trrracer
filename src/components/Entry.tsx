@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
@@ -72,6 +72,13 @@ const Entry = (props: EntryPropTypes) => {
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
+
+  // Update description details when entryData changes.
+  // This happens on timeline view, when user selects different entry to view in detail panel
+  useEffect(() => {
+    setShowDescription(!!entryData.description);
+    setValue(entryData.description);
+  }, [entryData]);
 
   const [selectedTab, setSelectedTab] =
     React.useState<'write' | 'preview'>('preview');
