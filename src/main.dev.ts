@@ -107,10 +107,13 @@ const openProjectWindow = async (projectPath: string) => {
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
-    event.preventDefault();
-    shell.openExternal(url);
-  });
+  const handleRedirect = (e, url) => {
+    if (url !== e.sender.getURL()) {
+      e.preventDefault();
+      shell.openExternal(url);
+    }
+  };
+  mainWindow.webContents.on('will-navigate', handleRedirect);
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
