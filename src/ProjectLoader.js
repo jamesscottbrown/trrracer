@@ -37,7 +37,7 @@ class ProjectLoader {
             hist == null ? [] : hist.paths.filter((p) => p !== projectPath);
           fs.writeFile(
             this.historyPath,
-            JSON.stringify({ ...hist, paths: [...otherPaths, projectPath] })
+            JSON.stringify({ ...hist, paths: [projectPath, ...otherPaths] })
           );
           return null;
         })
@@ -153,6 +153,7 @@ class ProjectLoader {
 
   openRecentProject(projectPath) {
     console.log('Opening recent:', projectPath);
+    this.saveHistory(projectPath);
     this.open_project(projectPath);
   }
 }
