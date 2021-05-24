@@ -2,7 +2,7 @@
 
 import path from 'path';
 
-import emptyProject from './emptyProject.json';
+import getEmptyProject from './emptyProject';
 
 const os = require('os');
 const fs = require('fs-extra');
@@ -90,7 +90,7 @@ class ProjectLoader {
 
                 fs.writeFile(
                   path.join(folderName, 'trrrace.json'),
-                  JSON.stringify(emptyProject),
+                  JSON.stringify(getEmptyProject()),
                   (writeErr) => {
                     if (writeErr) {
                       dialog.showErrorBox(

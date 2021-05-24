@@ -5,7 +5,7 @@ import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
 import { EntryType, File } from './types';
-import emptyProject from '../emptyProject.json';
+import getEmptyProject from '../emptyProject';
 
 export const ProjectContext = createContext();
 
@@ -172,7 +172,7 @@ const appStateReducer = (state, action) => {
 };
 
 const initialState = {
-  projectData: emptyProject,
+  projectData: getEmptyProject(),
   folderPath: null,
 };
 
