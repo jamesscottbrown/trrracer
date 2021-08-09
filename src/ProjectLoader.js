@@ -90,7 +90,7 @@ class ProjectLoader {
 
                 fs.writeFile(
                   path.join(folderName, 'trrrace.json'),
-                  JSON.stringify(getEmptyProject()),
+                  JSON.stringify(getEmptyProject(folderName)),
                   (writeErr) => {
                     if (writeErr) {
                       dialog.showErrorBox(

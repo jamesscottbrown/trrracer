@@ -14,7 +14,7 @@ export function useProjectState() {
 }
 
 const appStateReducer = (state, action) => {
-  const saveJSON = (newProjectData) => {
+  const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
       JSON.stringify(newProjectData, null, 4),
@@ -172,7 +172,7 @@ const appStateReducer = (state, action) => {
 };
 
 const initialState = {
-  projectData: getEmptyProject(),
+  projectData: getEmptyProject('null'),
   folderPath: null,
 };
 
