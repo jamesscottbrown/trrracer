@@ -201,7 +201,7 @@ async function createSplashWindow() {
     splashWindow.webContents.send('noProjectSelected', allPaths.paths);
   });
 
-  ipcMain.on('newProject', (_e) => {
+  ipcMain.on('newProject', () => {
     fileManager.newProjectPicker();
   });
 
