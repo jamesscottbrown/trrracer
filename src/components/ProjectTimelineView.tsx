@@ -11,6 +11,7 @@ import { EntryType, ProjectType, ProjectViewProps, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import ViewTypeControl from './ViewTypeControl';
 import Entry from './Entry';
+import TagList from './TagList';
 
 const { ipcRenderer } = require('electron');
 
@@ -171,14 +172,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
-      <h2>Tags</h2>
-      <ul style={{ listStyleType: 'none' }}>
-        {projectData.tags.map((tag: TagType) => (
-          <li key={tag.title}>
-            <span style={{ color: tag.color }}>•</span> {tag.title}
-          </li>
-        ))}
-      </ul>
+      <TagList tags={projectData.tags} />
 
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
         <div>

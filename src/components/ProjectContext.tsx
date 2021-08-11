@@ -4,7 +4,7 @@ import { copyFileSync } from 'fs';
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
-import { EntryType, File } from './types';
+import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 
 export const ProjectContext = createContext();
@@ -160,6 +160,16 @@ const appStateReducer = (state, action) => {
       );
 
       const newProjectData = { ...state.projectData, entries };
+
+      return saveJSON(newProjectData);
+    }
+
+    case 'UPDATE_TAG_COLOR': {
+      const tags = state.projectData.tags.map((tag: TagType, i: number) =>
+        i === action.tagIndex ? { ...tag, color: action.color } : tag
+      );
+
+      const newProjectData = { ...state.projectData, tags };
 
       return saveJSON(newProjectData);
     }

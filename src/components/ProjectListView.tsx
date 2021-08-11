@@ -2,10 +2,11 @@ import path from 'path';
 import React from 'react';
 
 import { useProjectState } from './ProjectContext';
-import { EntryType, FileObj, ProjectViewProps, TagType } from './types';
+import { EntryType, FileObj, ProjectViewProps } from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import ViewTypeControl from './ViewTypeControl';
+import TagList from './TagList';
 
 const { ipcRenderer } = require('electron');
 
@@ -46,14 +47,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
-      <h2>Tags</h2>
-      <ul style={{ listStyleType: 'none' }}>
-        {projectData.tags.map((tag: TagType) => (
-          <li key={tag.title}>
-            <span style={{ color: tag.color }}>•</span> {tag.title}
-          </li>
-        ))}
-      </ul>
+      <TagList tags={projectData.tags} />
 
       {projectData.entries.map((entryData: EntryType, i: number) => (
         <>
@@ -87,4 +81,5 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     </div>
   );
 };
+
 export default ProjectListView;
