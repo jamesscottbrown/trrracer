@@ -134,7 +134,7 @@ const Entry = (props: EntryPropTypes) => {
       <br />
 
       <ReactTags
-        tags={entryData.tags}
+        tags={entryData.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
         delimiters={[KeyCodes.comma, KeyCodes.enter]}
         handleDelete={(i: number) =>

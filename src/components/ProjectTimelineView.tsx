@@ -67,9 +67,9 @@ const EntryPlot = (props: EntryPlotProps) => {
               y={entryData.y - squareWidth}
               width={squareWidth}
               height={squareWidth}
-              fill={getColor(t.text)}
+              fill={getColor(t)}
             >
-              <title>{t.text}</title>
+              <title>{t}</title>
             </rect>
           );
         })}
