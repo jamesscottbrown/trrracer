@@ -106,7 +106,14 @@ const TagList = (props: TagListProps) => {
               </div>
             )}
 
-            <FaTrashAlt onClick={() => deleteTag(tag.title)} />
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <FaTrashAlt onClick={() => deleteTag(tag.title)} />
+            </span>
           </div>
         ))}
       </div>
