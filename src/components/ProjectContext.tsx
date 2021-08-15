@@ -55,7 +55,7 @@ const appStateReducer = (state, action) => {
 
       const newEntries = state.projectData.entries.map(
         (d: EntryType, i: number) =>
-          entryIndex === i ? { ...d, tags: [...d.tags, newTag] } : d
+          entryIndex === i ? { ...d, tags: [...d.tags, newTag.text] } : d
       );
 
       const newProjectData = {
@@ -170,6 +170,22 @@ const appStateReducer = (state, action) => {
       );
 
       const newProjectData = { ...state.projectData, tags };
+
+      return saveJSON(newProjectData);
+    }
+    case 'UPDATE_TAG_NAME': {
+      const tags = state.projectData.tags.map((tag: TagType, i: number) =>
+        i === action.tagIndex ? { ...tag, title: action.title } : tag
+      );
+
+      const oldTitle = state.projectData.tags[action.tagIndex].title;
+
+      const entries = state.projectData.entries.map((entry: EntryType) => ({
+        ...entry,
+        tags: entry.tags.map((t) => (t === oldTitle ? action.title : t)),
+      }));
+
+      const newProjectData = { ...state.projectData, tags, entries };
 
       return saveJSON(newProjectData);
     }

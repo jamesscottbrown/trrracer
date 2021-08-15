@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import EdiText from 'react-editext';
 import { MdColorLens } from 'react-icons/md';
 import { ColorResult, GithubPicker } from 'react-color';
 
@@ -18,7 +19,7 @@ const TagList = (props: TagListProps) => {
 
   const [, dispatch] = useProjectState();
 
-  const updateTag = (color: ColorResult) => {
+  const updateTagColor = (color: ColorResult) => {
     dispatch({
       type: 'UPDATE_TAG_COLOR',
       tagIndex: tagToChangeColor,
@@ -27,26 +28,68 @@ const TagList = (props: TagListProps) => {
     setTagToChangeColor(false);
   };
 
+  const updateTagName = (tagIndex: number, title: string) => {
+    dispatch({
+      type: 'UPDATE_TAG_NAME',
+      tagIndex,
+      title,
+    });
+  };
+
   return (
     <>
       <h2>Tags</h2>
 
-      <ul style={{ listStyleType: 'none' }}>
+      <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
-          <li key={tag.title}>
-            <span style={{ color: tag.color }}>■</span> {tag.title}{' '}
-            <MdColorLens onClick={() => setTagToChangeColor(i)} />
+          <div
+            key={tag.title}
+            style={{ display: 'grid', gridTemplateColumns: '20px 20px 1fr' }}
+          >
+            <span
+              style={{
+                color: tag.color,
+                cursor: 'default',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              ■
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {' '}
+              <MdColorLens
+                onClick={() => setTagToChangeColor(i)}
+                style={{ verticalAlign: 'middle' }}
+              />
+            </span>
+
+            <EdiText
+              type="text"
+              value={tag.title}
+              onSave={(val) => updateTagName(i, val)}
+              validation={(val) => val.length > 0}
+              validationMessage="Tag name must not be empty"
+              editOnViewClick
+              submitOnEnter
+              submitOnUnfocus
+            />
             {tagToChangeColor === i && (
               <div style={{ marginTop: '10px', marginBottom: '10px' }}>
                 <GithubPicker
                   color={tags[tagToChangeColor].color}
-                  onChangeComplete={(color, event) => updateTag(color, event)}
+                  onChangeComplete={(color) => updateTagColor(color)}
                 />
               </div>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 };

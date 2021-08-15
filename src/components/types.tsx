@@ -14,7 +14,7 @@ interface EntryType {
   title: string;
   files: File[];
   date: string;
-  tags: [];
+  tags: string[];
 }
 
 interface TagType {
