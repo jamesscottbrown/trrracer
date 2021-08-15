@@ -7,13 +7,14 @@ import Entry from './Entry';
 import FileUpload from './FileUpload';
 import ViewTypeControl from './ViewTypeControl';
 import TagList from './TagList';
+import TagFilter from './SetFilterTags';
 
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
 
-  const [, dispatch] = useProjectState();
+  const [{ filterTags }, dispatch] = useProjectState();
 
   console.log(projectData);
 
@@ -41,6 +42,12 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
 
+  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
+    return filterTags.every((requiredTag: string) =>
+      entryData.tags.includes(requiredTag)
+    );
+  });
+
   return (
     <div>
       <h1>{projectData.title}</h1>
@@ -49,7 +56,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <TagList tags={projectData.tags} />
 
-      {projectData.entries.map((entryData: EntryType, i: number) => (
+      <h2>Entries</h2>
+
+      <TagFilter />
+
+      {filteredEntries.map((entryData: EntryType, i: number) => (
         <>
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */

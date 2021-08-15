@@ -12,6 +12,7 @@ import { useProjectState } from './ProjectContext';
 import ViewTypeControl from './ViewTypeControl';
 import Entry from './Entry';
 import TagList from './TagList';
+import TagFilter from './SetFilterTags';
 
 const { ipcRenderer } = require('electron');
 
@@ -99,13 +100,14 @@ const EntryPlot = (props: EntryPlotProps) => {
 
 interface TimelinePlotProps {
   projectData: ProjectType;
+  filteredEntries: EntryType[];
   setSelectedEntryIndex: (entryIndex: number) => void;
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex } = props;
+  const { projectData, setSelectedEntryIndex, filteredEntries } = props;
 
-  const entries = projectData.entries.map((e) => ({
+  const entries = filteredEntries.map((e) => ({
     ...e,
     date: new Date(e.date),
   }));
@@ -150,7 +152,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [, dispatch] = useProjectState();
+  const [{ filterTags }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -166,6 +168,12 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
 
+  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
+    return filterTags.every((requiredTag: string) =>
+      entryData.tags.includes(requiredTag)
+    );
+  });
+
   return (
     <div>
       <h1>{projectData.title}</h1>
@@ -174,10 +182,14 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
       <TagList tags={projectData.tags} />
 
+      <h2>Entries</h2>
+      <TagFilter />
+
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
         <div>
           <TimelinePlot
             projectData={projectData}
+            filteredEntries={filteredEntries}
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
         </div>

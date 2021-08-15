@@ -34,7 +34,11 @@ const appStateReducer = (state, action) => {
   console.log('ACTION:', action);
   switch (action.type) {
     case 'SET_DATA': {
-      return { folderPath: action.folderName, projectData: action.projectData };
+      return {
+        folderPath: action.folderName,
+        projectData: action.projectData,
+        filterTags: [],
+      };
     }
 
     case 'ADD_TAG_TO_ENTRY': {
@@ -205,6 +209,10 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
+    case 'UPDATE_FILTER_TAGS': {
+      return { ...state, filterTags: action.filterTags };
+    }
+
     default: {
       console.log("Can't handle:", action);
       return state;
@@ -215,6 +223,7 @@ const appStateReducer = (state, action) => {
 const initialState = {
   projectData: getEmptyProject(),
   folderPath: null,
+  filterTags: [],
 };
 
 export function ProjectStateProvider({ children }) {

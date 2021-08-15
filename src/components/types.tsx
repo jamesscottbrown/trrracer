@@ -22,6 +22,11 @@ interface TagType {
   color: string;
 }
 
+interface ReactTagType {
+  id: string;
+  text: string;
+}
+
 interface ProjectType {
   title: string;
   description: string;
@@ -36,4 +41,12 @@ interface ProjectViewProps {
   setViewType: (viewType: string) => void;
 }
 
-export { EntryType, File, FileObj, TagType, ProjectType, ProjectViewProps };
+export {
+  EntryType,
+  File,
+  FileObj,
+  TagType,
+  ProjectType,
+  ProjectViewProps,
+  ReactTagType,
+};
