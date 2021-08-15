@@ -190,6 +190,21 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
+    case 'DELETE_TAG': {
+      const tags = state.projectData.tags.filter(
+        (tag: TagType) => tag.title !== action.title
+      );
+
+      const entries = state.projectData.entries.map((e: EntryType) => ({
+        ...e,
+        tags: e.tags.filter((t) => t !== action.title),
+      }));
+
+      const newProjectData = { ...state.projectData, tags, entries };
+
+      return saveJSON(newProjectData);
+    }
+
     default: {
       console.log("Can't handle:", action);
       return state;

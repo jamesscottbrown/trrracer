@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 
 import EdiText from 'react-editext';
 import { MdColorLens } from 'react-icons/md';
+import { FaTrashAlt } from 'react-icons/fa';
 import { ColorResult, GithubPicker } from 'react-color';
 
 import { useProjectState } from './ProjectContext';
-import { TagType } from './types';
+import { EntryType, TagType } from './types';
 
 interface TagListProps {
   tags: TagType[];
@@ -17,7 +18,7 @@ const TagList = (props: TagListProps) => {
   const [tagToChangeColor, setTagToChangeColor] =
     useState<false | number>(false);
 
-  const [, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   const updateTagColor = (color: ColorResult) => {
     dispatch({
@@ -36,6 +37,20 @@ const TagList = (props: TagListProps) => {
     });
   };
 
+  const deleteTag = (tagName: string) => {
+    const entriesToModify = projectData.entries.filter((e: EntryType) =>
+      e.tags.includes(tagName)
+    ).length;
+
+    const uses =
+      entriesToModify === 0 ? 'not used' : `used in ${entriesToModify} entries`;
+    const confirmation = window.confirm(`Delete tag ${tagName} (${uses})?`);
+
+    if (confirmation) {
+      dispatch({ type: 'DELETE_TAG', title: tagName });
+    }
+  };
+
   return (
     <>
       <h2>Tags</h2>
@@ -44,7 +59,10 @@ const TagList = (props: TagListProps) => {
         {tags.map((tag: TagType, i) => (
           <div
             key={tag.title}
-            style={{ display: 'grid', gridTemplateColumns: '20px 20px 1fr' }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '20px 20px 1fr 20px',
+            }}
           >
             <span
               style={{
@@ -87,6 +105,8 @@ const TagList = (props: TagListProps) => {
                 />
               </div>
             )}
+
+            <FaTrashAlt onClick={() => deleteTag(tag.title)} />
           </div>
         ))}
       </div>
