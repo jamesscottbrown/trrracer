@@ -84,6 +84,7 @@ const TagList = (props: TagListProps) => {
               <MdColorLens
                 onClick={() => setTagToChangeColor(i)}
                 style={{ verticalAlign: 'middle' }}
+                title="Change tag color"
               />
             </span>
 
@@ -112,7 +113,10 @@ const TagList = (props: TagListProps) => {
                 alignItems: 'center',
               }}
             >
-              <FaTrashAlt onClick={() => deleteTag(tag.title)} />
+              <FaTrashAlt
+                onClick={() => deleteTag(tag.title)}
+                title="Delete tag"
+              />
             </span>
           </div>
         ))}
