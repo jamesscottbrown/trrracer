@@ -118,14 +118,17 @@ const TimelinePlot = (props: TimelinePlotProps) => {
     .range([0, 40 * entries.length])
     .domain(extent(dates));
 
-  const positionEntries = repositionPoints(
-    entries.map((e, i) => ({ ...e, yDirect: y(e.date), entryIndex: i })),
-    {
-      oldPositionName: 'yDirect',
-      newPositionName: 'y',
-      minSpacing: 40,
-    }
-  );
+  const positionEntries =
+    entries.length > 0
+      ? repositionPoints(
+          entries.map((e, i) => ({ ...e, yDirect: y(e.date), entryIndex: i })),
+          {
+            oldPositionName: 'yDirect',
+            newPositionName: 'y',
+            minSpacing: 40,
+          }
+        )
+      : [];
 
   return (
     <svg height={40 * dates.length + 100} width={1000}>
