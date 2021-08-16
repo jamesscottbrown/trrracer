@@ -1,5 +1,5 @@
 import path from 'path';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
@@ -8,6 +8,7 @@ import FileUpload from './FileUpload';
 import ViewTypeControl from './ViewTypeControl';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
+import ReadonlyEntry from './ReadonlyEntry';
 
 const { ipcRenderer } = require('electron');
 
@@ -15,6 +16,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
+  const [editable, setEditable] = useState<boolean[]>(
+    Array.from(Array(projectData.entries.length), (_, x) => false)
+  );
 
   console.log(projectData);
 
@@ -48,6 +52,20 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     );
   });
 
+  const makeAllEditable = () => {
+    setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
+  };
+
+  const makeAllNonEditable = () => {
+    setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
+  };
+
+  const makeEditable = (index: number) => {
+    setEditable((oldEditable) =>
+      oldEditable.map((d, i) => (i === index ? true : d))
+    );
+  };
+
   return (
     <div>
       <h1>{projectData.title}</h1>
@@ -58,19 +76,45 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <h2>Entries</h2>
 
+      <div>
+        {!editable.every((t) => t) && (
+          <button onClick={makeAllEditable} type="button">
+            Show all edit controls
+          </button>
+        )}
+        {!editable.every((t) => !t) && (
+          <button onClick={makeAllNonEditable} type="button">
+            Hide all edit controls
+          </button>
+        )}
+      </div>
+
+      <br />
+
       <TagFilter />
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
         <>
-          <Entry
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={i}
-            entryData={entryData}
-            entryIndex={i}
-            openFile={openFile}
-            updateEntryField={updateEntryField}
-            allTags={projectData.tags}
-          />
+          {editable[i] ? (
+            <Entry
+              /* eslint-disable-next-line react/no-array-index-key */
+              key={i}
+              entryData={entryData}
+              entryIndex={i}
+              openFile={openFile}
+              updateEntryField={updateEntryField}
+              allTags={projectData.tags}
+            />
+          ) : (
+            <ReadonlyEntry
+              /* eslint-disable-next-line react/no-array-index-key */
+              key={i}
+              entryData={entryData}
+              openFile={openFile}
+              makeEditable={() => makeEditable(i)}
+            />
+          )}
+
           <hr />
         </>
       ))}
