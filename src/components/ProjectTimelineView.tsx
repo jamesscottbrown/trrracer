@@ -69,6 +69,7 @@ const EntryPlot = (props: EntryPlotProps) => {
               width={squareWidth}
               height={squareWidth}
               fill={getColor(t)}
+              onClick={setEntryAsSelected}
             >
               <title>{t}</title>
             </rect>
