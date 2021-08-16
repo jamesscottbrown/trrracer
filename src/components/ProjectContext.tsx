@@ -162,6 +162,29 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
+    case 'DELETE_FILE': {
+      const destination = path.join(state.folderPath, action.fileName);
+
+      const deleteFile = window.confirm(
+        `Really delete file ${action.fileName}?`
+      );
+
+      if (!deleteFile) {
+        return state;
+      }
+
+      fs.unlinkSync(destination);
+
+      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+        action.entryIndex === i
+          ? { ...d, files: d.files.filter((f) => f.title !== action.fileName) }
+          : d
+      );
+
+      const newProjectData = { ...state.projectData, entries };
+      return saveJSON(newProjectData);
+    }
+
     case 'ADD_ENTRY': {
       const newProjectData = {
         ...state.projectData,
