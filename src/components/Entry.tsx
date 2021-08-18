@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaTrashAlt } from 'react-icons/fa';
+
 import { WithContext as ReactTags } from 'react-tag-input';
 
 import * as Showdown from 'showdown';
@@ -90,6 +91,10 @@ const Entry = (props: EntryPropTypes) => {
     setShowFileUpload(false);
   };
 
+  const deleteFile = (file: File) => {
+    dispatch({ type: 'DELETE_FILE', entryIndex, fileName: file.title });
+  };
+
   const handleChangeTab = (newTab: 'write' | 'preview') => {
     if (newTab === 'preview') {
       updateEntryField(entryIndex, 'description', value);
@@ -134,7 +139,7 @@ const Entry = (props: EntryPropTypes) => {
       <br />
 
       <ReactTags
-        tags={entryData.tags}
+        tags={entryData.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
         delimiters={[KeyCodes.comma, KeyCodes.enter]}
         handleDelete={(i: number) =>
@@ -174,6 +179,11 @@ const Entry = (props: EntryPropTypes) => {
             <FaExternalLinkAlt
               onClick={() => openFile(file.title)}
               title="Open file externally"
+              size="12px"
+            />{' '}
+            <FaTrashAlt
+              onClick={() => deleteFile(file)}
+              title="Delete File"
               size="12px"
             />
           </li>

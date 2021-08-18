@@ -2,7 +2,7 @@
 
 Trrracer is a tool for documenting the visualization design process as a Design Study Trace.
 
-**It is currently a prototype udner active development.**
+**It is currently a prototype under active development.**
 
 It is implemented as a cross-platform desktop application written in [TypeScript](https://www.typescriptlang.org/) using the [Electron](https://www.electronjs.org/) framework and the [React](https://reactjs.org/) library.
 
@@ -17,6 +17,8 @@ Implementing as a desktop application has two main advantages:
 After each push or merge to the `master` branch, a GitHub Action runs to build binaries, an uploads these as assets for a draft release.
 
 You can click on "Assets" on the [Releases page](https://github.com/jamesscottbrown/trrracer/releases), download the appropriate file for your platform (`.exe` for windows, `.dmg` for macOS, `.AppImage` for linux), and double-click to run (if using linux, you will need to make the downloadable file executable first).
+
+(uploading of these assets sometimes fails due to [this issue](https://github.com/electron-userland/electron-builder/issues/4940) )
 
 ## Development
 
