@@ -15,12 +15,17 @@ interface EntryType {
   title: string;
   files: File[];
   date: string;
-  tags: [];
+  tags: string[];
 }
 
 interface TagType {
   title: string;
   color: string;
+}
+
+interface ReactTagType {
+  id: string;
+  text: string;
 }
 
 interface ProjectType {
@@ -37,4 +42,12 @@ interface ProjectViewProps {
   setViewType: (viewType: string) => void;
 }
 
-export { EntryType, File, FileObj, TagType, ProjectType, ProjectViewProps };
+export {
+  EntryType,
+  File,
+  FileObj,
+  TagType,
+  ProjectType,
+  ProjectViewProps,
+  ReactTagType,
+};

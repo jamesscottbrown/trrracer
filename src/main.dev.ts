@@ -11,7 +11,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-import fs from 'fs';
 import path from 'path';
 import { app, Menu, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
@@ -147,9 +146,7 @@ async function createSplashWindow() {
     },
   });
 
-  //  app_window.loadURL(`file://${__dirname}/no-project-open.html`);
-
-  splashWindow.loadFile('../assets/no-project-open.html');
+  splashWindow.loadURL(`file://${__dirname}/index.html`);
 
   const fileManager = new ProjectLoader(splashWindow, openProjectWindow);
 
@@ -201,14 +198,31 @@ async function createSplashWindow() {
   const menuDesign = Menu.buildFromTemplate(menuList);
   Menu.setApplicationMenu(menuDesign);
 
-  // recieve new file data and path throught main and renderer method
-  ipcMain.on('newdata', (_e, arg) => {
-    fs.writeFile(arg.path, arg.file, (err) => {
-      if (err) {
-        throw err;
-      }
-      console.log('data saved');
-    });
+  // Update page UI
+  splashWindow.webContents.on('did-finish-load', () => {
+    if (!splashWindow) {
+      throw new Error('"splashWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      splashWindow.minimize();
+    } else {
+      splashWindow.show();
+      splashWindow.focus();
+    }
+
+    splashWindow.webContents.send('noProjectSelected', allPaths.paths);
+  });
+
+  ipcMain.on('newProject', () => {
+    fileManager.newProjectPicker();
+  });
+
+  ipcMain.on('openProject', (_e, pathToOpen: string) => {
+    if (path) {
+      fileManager.openRecentProject(pathToOpen);
+    } else {
+      fileManager.openProjectPicker();
+    }
   });
 }
 

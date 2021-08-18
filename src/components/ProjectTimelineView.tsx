@@ -11,6 +11,8 @@ import { EntryType, ProjectType, ProjectViewProps, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import ViewTypeControl from './ViewTypeControl';
 import Entry from './Entry';
+import TagList from './TagList';
+import TagFilter from './SetFilterTags';
 
 const { ipcRenderer } = require('electron');
 
@@ -66,9 +68,10 @@ const EntryPlot = (props: EntryPlotProps) => {
               y={entryData.y - squareWidth}
               width={squareWidth}
               height={squareWidth}
-              fill={getColor(t.text)}
+              fill={getColor(t)}
+              onClick={setEntryAsSelected}
             >
-              <title>{t.text}</title>
+              <title>{t}</title>
             </rect>
           );
         })}
@@ -98,13 +101,14 @@ const EntryPlot = (props: EntryPlotProps) => {
 
 interface TimelinePlotProps {
   projectData: ProjectType;
+  filteredEntries: EntryType[];
   setSelectedEntryIndex: (entryIndex: number) => void;
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex } = props;
+  const { projectData, setSelectedEntryIndex, filteredEntries } = props;
 
-  const entries = projectData.entries.map((e) => ({
+  const entries = filteredEntries.map((e) => ({
     ...e,
     date: new Date(e.date),
   }));
@@ -115,14 +119,17 @@ const TimelinePlot = (props: TimelinePlotProps) => {
     .range([0, 40 * entries.length])
     .domain(extent(dates));
 
-  const positionEntries = repositionPoints(
-    entries.map((e, i) => ({ ...e, yDirect: y(e.date), entryIndex: i })),
-    {
-      oldPositionName: 'yDirect',
-      newPositionName: 'y',
-      minSpacing: 40,
-    }
-  );
+  const positionEntries =
+    entries.length > 0
+      ? repositionPoints(
+          entries.map((e, i) => ({ ...e, yDirect: y(e.date), entryIndex: i })),
+          {
+            oldPositionName: 'yDirect',
+            newPositionName: 'y',
+            minSpacing: 40,
+          }
+        )
+      : [];
 
   return (
     <svg height={40 * dates.length + 100} width={1000}>
@@ -149,7 +156,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [, dispatch] = useProjectState();
+  const [{ filterTags }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -165,25 +172,28 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
 
+  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
+    return filterTags.every((requiredTag: string) =>
+      entryData.tags.includes(requiredTag)
+    );
+  });
+
   return (
     <div>
       <h1>{projectData.title}</h1>
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
-      <h2>Tags</h2>
-      <ul style={{ listStyleType: 'none' }}>
-        {projectData.tags.map((tag: TagType) => (
-          <li key={tag.title}>
-            <span style={{ color: tag.color }}>•</span> {tag.title}
-          </li>
-        ))}
-      </ul>
+      <TagList tags={projectData.tags} />
+
+      <h2>Entries</h2>
+      <TagFilter />
 
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
         <div>
           <TimelinePlot
             projectData={projectData}
+            filteredEntries={filteredEntries}
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
         </div>
