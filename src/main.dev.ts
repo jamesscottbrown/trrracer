@@ -19,6 +19,10 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 
 import ProjectLoader from './ProjectLoader';
+import ElectronGoogleOAuth2 from '@getstation/electron-google-oauth2';
+import { GoogleAuth } from './googleAuthSingleton';
+import { authenticate } from './authenticateGoogle';
+
 
 export default class AppUpdater {
   constructor() {
@@ -86,6 +90,9 @@ const openProjectWindow = async (projectPath: string) => {
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
+
+    console.log('did this work?')
+
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -94,9 +101,14 @@ const openProjectWindow = async (projectPath: string) => {
     } else {
       mainWindow.show();
       mainWindow.focus();
+
+      authenticate();
+
     }
 
     mainWindow.webContents.send('projectPath', projectPath);
+
+
   });
 
   mainWindow.on('closed', () => {

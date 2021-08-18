@@ -2,6 +2,7 @@
 
 interface File {
   title: string;
+  format: string
 }
 
 interface FileObj {

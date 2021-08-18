@@ -12,6 +12,7 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
+
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
 
@@ -37,6 +38,7 @@ export default function App() {
       }
     });
   });
+
 
   if (!projectData) {
     return <p>Loading...</p>;

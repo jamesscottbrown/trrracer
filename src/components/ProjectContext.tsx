@@ -7,6 +7,8 @@ import path from 'path';
 import { EntryType, File } from './types';
 import getEmptyProject from '../emptyProject';
 
+import GoogleLoader from '../googleAPI';
+
 export const ProjectContext = createContext();
 
 export function useProjectState() {
@@ -23,7 +25,7 @@ const appStateReducer = (state, action) => {
           console.log(`Error writing file to disk: ${err}`);
         } else {
           // parse JSON string to JSON object
-          console.log(newProjectData);
+         // console.log('new Project data',newProjectData);
         }
       }
     );
@@ -31,7 +33,7 @@ const appStateReducer = (state, action) => {
     return { ...state, projectData: newProjectData };
   };
 
-  console.log('ACTION:', action);
+ // console.log('ACTION:', action);
   switch (action.type) {
     case 'SET_DATA': {
       return { folderPath: action.folderName, projectData: action.projectData };
@@ -50,7 +52,6 @@ const appStateReducer = (state, action) => {
         ];
       } else {
         newTags = state.projectData.tags;
-        // projectData
       }
 
       const newEntries = state.projectData.entries.map(
@@ -72,11 +73,23 @@ const appStateReducer = (state, action) => {
 
       let newFiles = state.projectData.entries[entryIndex].files;
       for (const file of fileList) {
+        // console.log('FILE?', file.path)
         try {
           const destination = path.join(state.folderPath, file.name);
-          copyFileSync(file.path, destination);
-          console.log(`${file.path} was copied to ${destination}`);
-          newFiles = [...newFiles, { title: file.name }];
+          let nameCheck = file.name.split(".");
+        
+          if(nameCheck[nameCheck.length - 1] === 'gdoc'){
+           
+            let goog =  new GoogleLoader(file, destination);
+            goog.initClient();
+
+          }else{
+            ///node.js method is used to synchronously copy a file from the source path to destination path.
+            copyFileSync(file.path, destination);
+            console.log(`${file.path} was copied to ${destination}`);
+            newFiles = [...newFiles, { title: file.name }];
+          }
+         
         } catch (e) {
           console.log('Error', e.stack);
           console.log('Error', e.name);
@@ -98,16 +111,20 @@ const appStateReducer = (state, action) => {
     case 'ADD_FILES': {
       const { fileList } = action;
 
-      console.log('ADD_FILES:', fileList);
+     // console.log('ADD_FILES:', fileList);
+
+     console.log('ADD_FILES is this firing??')
+   
 
       let copiedFiles: File[] = [];
 
       for (const file of fileList) {
+        console.log('file', file.path)
         try {
           const destination = path.join(state.folderPath, file.name);
           copyFileSync(file.path, destination);
           console.log(`${file.path} was copied to ${destination}`);
-          copiedFiles = [...copiedFiles, { title: file.name }];
+          copiedFiles = [...copiedFiles, { title: file.name, format: 'null' }];
         } catch (e) {
           console.log('Error', e.stack);
           console.log('Error', e.name);

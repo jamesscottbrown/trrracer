@@ -6,6 +6,8 @@ import { EntryType, FileObj, ProjectViewProps, TagType } from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import ViewTypeControl from './ViewTypeControl';
+import ElectronGoogleOAuth2 from '@getstation/electron-google-oauth2';
+
 
 const { ipcRenderer } = require('electron');
 
@@ -14,7 +16,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   const [, dispatch] = useProjectState();
 
-  console.log(projectData);
 
   // TODO: add files to json file and save
   console.log('projectData:', projectData);
@@ -38,11 +39,15 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const openFile = (fileName: string) => {
     console.log('Open file:', path.join(folderPath, fileName));
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
+    console.log('aftern ipcRenderer')
   };
 
-  return (
+
+
+  return ( 
     <div>
       <h1>{projectData.title}</h1>
+ 
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 

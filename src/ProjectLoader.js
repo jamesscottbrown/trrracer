@@ -1,8 +1,8 @@
 /* eslint no-console: off */
 
 import path from 'path';
-
 import getEmptyProject from './emptyProject';
+import *  as googleCred from '../assets/google_cred_desktop_app.json';
 
 const os = require('os');
 const fs = require('fs-extra');
@@ -16,6 +16,7 @@ class ProjectLoader {
 
     //
     console.log('User data path:', app.getPath('userData'));
+    console.log('json for google cred', googleCred.installed);
     this.historyPath = path.join(
       app.getPath('userData'),
       'recentlyOpened.json'
