@@ -48,7 +48,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     <div>
       <h1>{projectData.title}</h1>
  
-
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <h2>Tags</h2>

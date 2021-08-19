@@ -111,9 +111,50 @@ async initClient() {
   const token = await readFile('token.json')
   oAuth2Client.setCredentials(JSON.parse(token))
   console.log('init client');
-  console.log('auth Instance', oAuth2Client) 
+  console.log('auth Instance', oAuth2Client)
+  let drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+  drive.files.list({
+    q: "name='Artifact Trrracer Dev'",
+    pageSize: 10,
+    fields: 'nextPageToken, files(id, name)',
+    
+  }).then(t => {
+    
+    console.log('result',t);
+  })
 
 
+}
+
+async createGoogleFile(){
+
+  const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+  const token = await readFile('token.json')
+  oAuth2Client.setCredentials(JSON.parse(token))
+  console.log('init client');
+  console.log('auth Instance', oAuth2Client)
+  let drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+  var parentId = '159mYuPKRRR15EI9m-yWXsGFLt8evWcHP';//some parentId of a folder under which to create the new folder
+  var fileMetadata = {
+    'name' : 'New Folder',
+    'mimeType' : 'application/vnd.google-apps.folder',
+    'parents': [parentId]
+  };
+  drive.files.create({
+    resource: fileMetadata,
+  }).then(function(response) {
+    switch(response.status){
+      case 200:
+        var file = response.result;
+        console.log('Created Folder Id: ', file.id);
+        break;
+      default:
+        console.log('Error creating the folder, '+response);
+        break;
+      }
+  });
 }
 
           /**

@@ -105,7 +105,7 @@ const openProjectWindow = async (projectPath: string) => {
       authenticate();
 
     }
-
+    
     mainWindow.webContents.send('projectPath', projectPath);
 
 
