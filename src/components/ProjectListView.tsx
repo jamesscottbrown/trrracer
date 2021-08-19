@@ -24,6 +24,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   // TODO: add files to json file and save
   console.log('projectData:', projectData);
 
+  console.log('editable', editable);
+
   const saveFiles = (fileList: FileObj[]) => {
     dispatch({ type: 'ADD_FILES', fileList });
   };
@@ -43,7 +45,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const openFile = (fileName: string) => {
     console.log('Open file:', path.join(folderPath, fileName));
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
-    console.log('aftern ipcRenderer')
+    console.log('after ipcRenderer')
   };
 
   const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
@@ -95,6 +97,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       <TagFilter />
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
+        
         <>
           {editable[i] ? (
             <Entry
