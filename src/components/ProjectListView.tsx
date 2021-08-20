@@ -20,14 +20,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     setEditable(Array.from(Array(projectData.entries.length)));
   }, [projectData]);
 
   console.log(projectData);
->>>>>>> eb587fe27591d81835f291b09d07c166b14ac71f
 
   // TODO: add files to json file and save
   console.log('projectData:', projectData);
@@ -80,6 +77,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     <div>
       <h1>{projectData.title}</h1>
  
+
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <TagList tags={projectData.tags} />
