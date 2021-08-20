@@ -1,5 +1,5 @@
 import path from 'path';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
@@ -19,6 +19,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
+
+  useEffect(() => {
+    setEditable(Array.from(Array(projectData.entries.length)));
+  }, [projectData]);
 
   console.log(projectData);
 
