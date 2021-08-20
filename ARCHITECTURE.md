@@ -30,3 +30,15 @@ There are mechanisms for inter-process communication:
 
 The `src/main.dev.ts` file defines the code that will run in the main process; it creates new `BrowserWindows`, and then loads `index.html` into them.
 `webContents.send()` is used to tell the React application the path of the project directory that has been opened.
+
+## State management
+
+Changes to the state that only affect what is displayed (e.g., changing which tags have been used to filter the list of projects) or how (e.g., switching between the list and timeline views) are handled using [state hooks](https://reactjs.org/docs/hooks-state.html) within the lowest possible component.
+
+Changes to state of the project itself (e.g., changing the tags assigned to an entry) is managed centrally within `ProjectContext.js`.
+Use of a [React context](https://reactjs.org/docs/context.html) allows the `dispatch()` function and elements of the state to be directly loaded by any React component, without having to be passed from each component to its children as a prop.
+
+React components handle interactions that affect the state of the project by calling `dispatch()`, passing a message object as an argument.
+
+The `appStateReducer` function in `ProjectContext.js` contains a switch statement that handles this appropriately based on the `type` attribute of the message.
+This updates the state, and writes to the `trrrace.json` file.
