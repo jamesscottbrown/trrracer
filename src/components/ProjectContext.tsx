@@ -16,6 +16,7 @@ export function useProjectState() {
 }
 
 const appStateReducer = (state, action) => {
+  console.log('state', state, 'action', action);
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
@@ -109,89 +110,70 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATE_GDOC_IN_ENTRY': {
-      const { entryIndex, name } = action;
+      const { name, entryIndex } = action;
 
-      console.log("this is firing in GDOC");
+      console.log("this is firing in GDOC NAMEEEEE", name);
 
       let newFiles = state.projectData.entries[entryIndex].files;
-      // for (const file of fileList) {
-      //   // console.log('FILE?', file.path)
-      //   try {
-      //     const destination = path.join(state.folderPath, file.name);
-      //     // let nameCheck = file.name.split(".");
         
-      //     // if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-           
-      //     //   let goog =  new GoogleLoader(file, destination);
-      //     //   goog.initClient();
+      newFiles = [...newFiles, { title: `${name}.gdoc` }];
 
-      //     // }else{
-      //     //   ///node.js method is used to synchronously copy a file from the source path to destination path.
-      //      // copyFileSync(file.path, destination);
-      //       console.log(`${file.path} was copied to ${destination}`);
-      //       newFiles = [...newFiles, { title: file.name }];
-          
-         
-      //   } catch (e) {
-      //     console.log('Error', e.stack);
-      //     console.log('Error', e.name);
-      //     console.log('Error', e.message);
+      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+        entryIndex === i ? { ...d, files: newFiles } : d
+      );
 
-      //     console.log('The file could not be copied');
-      //   }
-      // }
+      const newProjectData = { ...state.projectData, entries };
 
-      // const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-      //   entryIndex === i ? { ...d, files: newFiles } : d
-      // );
-
-      // const newProjectData = { ...state.projectData, entries };
-
-      // return saveJSON(newProjectData);
+      return saveJSON(newProjectData);
     }
 
     case 'ADD_FILES': {
       const { fileList } = action;
 
-     // console.log('ADD_FILES:', fileList);
+     console.log('ADD_FILES is this firing??', fileList)
 
-     console.log('ADD_FILES is this firing??')
+     if(fileList){
+
+          let copiedFiles: File[] = [];
+
+          for (const file of fileList) {
+            console.log('file', file.path)
+            try {
+              const destination = path.join(state.folderPath, file.name);
+              copyFileSync(file.path, destination);
+              console.log(`${file.path} was copied to ${destination}`);
+              copiedFiles = [...copiedFiles, { title: file.name, format: 'null' }];
+            } catch (e) {
+              console.log('Error', e.stack);
+              console.log('Error', e.name);
+              console.log('Error', e.message);
+
+              console.log('The file could not be copied');
+            }
+          }
+
+          const newProjectData = {
+            ...state.projectData,
+            entries: [
+              ...state.projectData.entries,
+              {
+                title: 'New entry',
+                description: '',
+                files: copiedFiles,
+                date: new Date().toISOString(),
+                tags: [],
+              },
+            ],
+          };
+
+          return saveJSON(newProjectData);
+        }
+
+
+     }
    
 
-      let copiedFiles: File[] = [];
 
-      for (const file of fileList) {
-        console.log('file', file.path)
-        try {
-          const destination = path.join(state.folderPath, file.name);
-          copyFileSync(file.path, destination);
-          console.log(`${file.path} was copied to ${destination}`);
-          copiedFiles = [...copiedFiles, { title: file.name, format: 'null' }];
-        } catch (e) {
-          console.log('Error', e.stack);
-          console.log('Error', e.name);
-          console.log('Error', e.message);
-
-          console.log('The file could not be copied');
-        }
-      }
-
-      const newProjectData = {
-        ...state.projectData,
-        entries: [
-          ...state.projectData.entries,
-          {
-            title: 'New entry',
-            description: '',
-            files: copiedFiles,
-            date: new Date().toISOString(),
-            tags: [],
-          },
-        ],
-      };
-
-      return saveJSON(newProjectData);
-    }
 
     case 'ADD_ENTRY': {
       const newProjectData = {

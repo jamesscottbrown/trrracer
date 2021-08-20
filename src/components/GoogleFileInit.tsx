@@ -13,13 +13,21 @@ const GoogFileInit = (props: {entryIndex: number})=> {
   console.log('fiel created!');
   const [, dispatch] = useProjectState();
 
+  const [showFileCreate, setShowFileCreate] = useState(false);
+
   const {entryIndex} = props;
+
+  let fileName = "new google doc";
+
+  function handleChange(event){
+    fileName = event.target.value;
+  }
   
   const saveGoogleFile = () => {
-    console.log('save fiels', entryIndex);
+
+    console.log('save files NAME', fileName);
     
-    //createGoogleFile(entryIndex, 'testing-file-make');
-   createGoogleFile(entryIndex, 'testing-files');
+   createGoogleFile(entryIndex, fileName);
     
   };
 
@@ -31,7 +39,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     console.log('init client');
     console.log('auth Instance', oAuth2Client)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
-  
+    console.log('name in name', name);
     var parentId = '159mYuPKRRR15EI9m-yWXsGFLt8evWcHP';//some parentId of a folder under which to create the new folder
     var fileMetadata = {
       'name' : name,
@@ -45,7 +53,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
         case 200:
           var file = response.result;
           console.log('Created Folder Id: ', response);
-          dispatch({ type: 'CREATE_GDOC_IN_ENTRY', entryIndex })
+          dispatch({ type: 'CREATE_GDOC_IN_ENTRY', name: name, entryIndex })
 
           break;
         default:
@@ -56,11 +64,27 @@ const GoogFileInit = (props: {entryIndex: number})=> {
   }
 
   return(
-    <>
-      <button onClick={()=> saveGoogleFile()} type="button">
-      Create New Google Doc
-      </button>
-    </>
+
+    <div>
+     {showFileCreate ? (
+        <>
+          
+          <button onClick={() => setShowFileCreate(false)} type="button">
+            Cancel
+          </button>
+          <input type="text" onChange={handleChange}/>
+          <button onClick={()=> saveGoogleFile()} type="button">
+          Create
+          </button>
+        </>
+      ) : (
+        <button onClick={()=> setShowFileCreate(true)} type="button">
+        Create New Google Doc
+        </button>
+        
+      )}
+     
+    </div>
 
   )
 
