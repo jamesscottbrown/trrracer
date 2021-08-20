@@ -1,5 +1,5 @@
 import path from 'path';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
@@ -20,6 +20,14 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    setEditable(Array.from(Array(projectData.entries.length)));
+  }, [projectData]);
+
+  console.log(projectData);
+>>>>>>> eb587fe27591d81835f291b09d07c166b14ac71f
 
   // TODO: add files to json file and save
   console.log('projectData:', projectData);
