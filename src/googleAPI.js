@@ -115,8 +115,8 @@ async initClient() {
   let drive = google.drive({version: 'v3', auth: oAuth2Client});
 
   drive.files.list({
-    q: "name='Artifact Trrracer Dev'",
-    pageSize: 10,
+    q: "name='Artifact Trrraces'",
+    pageSize: 100,
     fields: 'nextPageToken, files(id, name)',
     
   }).then(t => {

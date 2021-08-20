@@ -28,8 +28,31 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     console.log('save files NAME', fileName);
     
    createGoogleFile(entryIndex, fileName);
+   setShowFileCreate(false);
     
   };
+
+  async function testGoog(){
+    const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+    const token = await readFile('token.json')
+    oAuth2Client.setCredentials(JSON.parse(token))
+    console.log('init client');
+    console.log('auth Instance', oAuth2Client)
+    let drive = google.drive({version: 'v3', auth: oAuth2Client});
+   
+      var request = drive.request({
+        'path': 'https://www.googleapis.com/upload/drive/v3/files',
+        'method': 'Files:list',
+        'params': {'includeItemsFromAllDrives': 'true'},
+     });
+  
+    request.execute(function(file) {
+      console.log('file from request',file)
+    });
+  // results = drive_service.files().list(, q="parents in '{folder_id}' and trashed = false", fields = "nextPageToken, files(id, name)").execute()
+    
+    
+  }
 
   async function createGoogleFile(entryIndex: number, name : string){
 
@@ -40,7 +63,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     console.log('auth Instance', oAuth2Client)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
     console.log('name in name', name);
-    var parentId = '159mYuPKRRR15EI9m-yWXsGFLt8evWcHP';//some parentId of a folder under which to create the new folder
+    var parentId = '1ORoSWskcw9SCnBGpZd0oHxd08WL7iElE';//some parentId of a folder under which to create the new folder
     var fileMetadata = {
       'name' : name,
       'mimeType' : 'application/vnd.google-apps.document',
@@ -69,7 +92,9 @@ const GoogFileInit = (props: {entryIndex: number})=> {
      {showFileCreate ? (
         <>
           
-          <button onClick={() => setShowFileCreate(false)} type="button">
+          <button onClick={() => {
+            testGoog();
+            setShowFileCreate(false)}} type="button">
             Cancel
           </button>
           <input type="text" onChange={handleChange}/>
