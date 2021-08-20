@@ -11,6 +11,7 @@ export const readFile = (fileName) => new Promise((resolve, reject) => {
 })
 
 export const writeFile = (fileName, content) => new Promise((resolve, reject) => {
+    console.log('write file');
     fs.writeFile(fileName, content, err => {
         if(err) return reject(err)
 

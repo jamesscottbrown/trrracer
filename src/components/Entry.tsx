@@ -13,6 +13,7 @@ import FileUpload from './FileUpload';
 
 import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
+import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;
@@ -87,6 +88,7 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
+    console.log('save fiels', fileList, entryIndex);
     dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
     setShowFileUpload(false);
   };
@@ -213,7 +215,12 @@ const Entry = (props: EntryPropTypes) => {
         <button onClick={() => setShowFileUpload(true)} type="button">
           Add files
         </button>
+        
       )}
+
+     <GoogFileInit
+      entryIndex={entryIndex}
+     />
     </>
   );
 };

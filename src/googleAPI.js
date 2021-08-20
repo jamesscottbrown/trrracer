@@ -111,7 +111,18 @@ async initClient() {
   const token = await readFile('token.json')
   oAuth2Client.setCredentials(JSON.parse(token))
   console.log('init client');
-  console.log('auth Instance', oAuth2Client) 
+  console.log('auth Instance', oAuth2Client)
+  let drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+  drive.files.list({
+    q: "name='Artifact Trrraces'",
+    pageSize: 100,
+    fields: 'nextPageToken, files(id, name)',
+    
+  }).then(t => {
+    
+    console.log('result',t);
+  })
 
 
 }
