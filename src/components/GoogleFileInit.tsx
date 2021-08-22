@@ -6,6 +6,9 @@ const readline = require('readline');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
+import { workerData } from 'worker_threads';
+
+
 
 
 const GoogFileInit = (props: {entryIndex: number})=> {
@@ -37,18 +40,77 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     const token = await readFile('token.json')
     oAuth2Client.setCredentials(JSON.parse(token))
     console.log('init client');
-    console.log('auth Instance', oAuth2Client)
+    console.log('auth Instance', google)
+    console.log('tokemn', oAuth2Client.credentials)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
-   
-      var request = drive.request({
-        'path': 'https://www.googleapis.com/upload/drive/v3/files',
-        'method': 'Files:list',
-        'params': {'includeItemsFromAllDrives': 'true'},
-     });
+
+    drive.files.list({
+      q:"parents in '0AFyqaJXF-KkGUk9PVA' and trashed = false", 
+      fields:"nextPageToken, files(id, name)",
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
+    }).then((folder)=> console.log('folder',folder))
+
+    // let url = `https://www.googleapis.com/drive/v3/about`
+    // var xmlHttp = new XMLHttpRequest();
+    // xmlHttp.onreadystatechange = function() { 
+    //     if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+    //       console.log('this worked', xmlHttp.responseText)
+    //     }else{
+    //       console.log('error')
+    //     }
+    //         //callback(xmlHttp.responseText);
+    // }
+    // xmlHttp.open("GET", url, true); // true for asynchronous 
+    // xmlHttp.setRequestHeader('Authorization', 'Bearer ' + oAuth2Client.credentials.access_token);
+    // xmlHttp.send(null);
+
+            // const boundary='foo_bar_baz'
+        // const delimiter = "\r\n--" + boundary + "\r\n";
+        // const close_delim = "\r\n--" + boundary + "--";
+        // var fileName='note-otti';
+        // var fileData='hi otti';
+        // var contentType='text/plain'
+        // var metadata = {
+        //   'name': fileName,
+        //   'mimeType': contentType
+        // };
+
+        // var multipartRequestBody =
+        //   delimiter +
+        //   'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+        //   JSON.stringify(metadata) +
+        //   delimiter +
+        //   'Content-Type: ' + contentType + '\r\n\r\n' +
+        //   fileData+'\r\n'+
+        //   close_delim;
+
+        //   console.log('multi request body',multipartRequestBody);
+        //   console.log('gapi client', window.gapi.client);
+        //   var request = window.gapi.client.request({
+        //     'path': 'https://www.googleapis.com/upload/drive/v3/files',
+        //     'method': 'POST',
+        //     'params': {'uploadType': 'multipart'},
+        //     'headers': {
+        //       'Content-Type': 'multipart/related; boundary=' + boundary + ''
+        //     },
+        //     'body': multipartRequestBody});
+        // console.log('request', request)
+        // request.execute(function(file) {
+        //   console.log(file)
+        // });
+   // xmlHttp.send(null);
+
+    
+    //   var request = google.request({
+    //     'path': 'https://www.googleapis.com/upload/drive/v3/files',
+    //     'method': 'Files:list',
+    //     'params': {'includeItemsFromAllDrives': 'true'},
+    //  });
   
-    request.execute(function(file) {
-      console.log('file from request',file)
-    });
+    // request.execute(function(file) {
+    //   console.log('file from request testGoog',file)
+    // });
   // results = drive_service.files().list(, q="parents in '{folder_id}' and trashed = false", fields = "nextPageToken, files(id, name)").execute()
     
     
@@ -63,19 +125,28 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     console.log('auth Instance', oAuth2Client)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
     console.log('name in name', name);
-    var parentId = '1ORoSWskcw9SCnBGpZd0oHxd08WL7iElE';//some parentId of a folder under which to create the new folder
+    var parentId = '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg';//some parentId of a folder under which to create the new folder
     var fileMetadata = {
       'name' : name,
       'mimeType' : 'application/vnd.google-apps.document',
-      'parents': [parentId]
+      'parents': [parentId],
+   
     };
     drive.files.create({
       resource: fileMetadata,
+      media: {
+        mimeType: 'application/vnd.google-apps.document',
+       // body: stream
+    },
+      supportsAllDrives: true,
     }).then(function(response) {
       switch(response.status){
         case 200:
           var file = response.result;
-          console.log('Created Folder Id: ', response);
+          console.log('Created File data', response.data.id);
+
+          
+
           dispatch({ type: 'CREATE_GDOC_IN_ENTRY', name: name, entryIndex })
 
           break;
@@ -103,7 +174,9 @@ const GoogFileInit = (props: {entryIndex: number})=> {
           </button>
         </>
       ) : (
-        <button onClick={()=> setShowFileCreate(true)} type="button">
+        <button onClick={()=> {
+          testGoog();
+          setShowFileCreate(true)}} type="button">
         Create New Google Doc
         </button>
         

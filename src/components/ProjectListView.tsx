@@ -24,12 +24,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditable(Array.from(Array(projectData.entries.length)));
   }, [projectData]);
 
-  console.log(projectData);
+ 
 
   // TODO: add files to json file and save
-  console.log('projectData:', projectData);
-
-  console.log('editable', editable);
 
   const saveFiles = (fileList: FileObj[]) => {
     dispatch({ type: 'ADD_FILES', fileList });

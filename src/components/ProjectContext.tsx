@@ -78,7 +78,7 @@ const appStateReducer = (state, action) => {
 
       let newFiles = state.projectData.entries[entryIndex].files;
       for (const file of fileList) {
-        // console.log('FILE?', file.path)
+        
         try {
           const destination = path.join(state.folderPath, file.name);
           let nameCheck = file.name.split(".");
@@ -107,7 +107,7 @@ const appStateReducer = (state, action) => {
               newName = `${base} (${i}).${extension}`;
 
               destination = path.join(state.folderPath, newName);
-              console.log('Trying new name:', newName);
+            
 
               i += 1;
             } while (fs.existsSync(destination));
