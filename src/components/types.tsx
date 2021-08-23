@@ -9,10 +9,16 @@ interface FileObj {
   path: string;
 }
 
+interface URLAttachment {
+  title: string;
+  url: string;
+}
+
 interface EntryType {
   description: string;
   title: string;
   files: File[];
+  urls: URLAttachment[];
   date: string;
   tags: string[];
 }
@@ -45,6 +51,7 @@ export {
   EntryType,
   File,
   FileObj,
+  URLAttachment,
   TagType,
   ProjectType,
   ProjectViewProps,

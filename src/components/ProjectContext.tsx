@@ -123,6 +123,20 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
+    case 'ADD_URL': {
+      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+        action.entryIndex === i
+          ? {
+              ...d,
+              urls: [...d.urls, { url: action.url, title: action.title }],
+            }
+          : d
+      );
+
+      const newProjectData = { ...state.projectData, entries };
+      return saveJSON(newProjectData);
+    }
+
     case 'ADD_FILES': {
       const { fileList } = action;
 

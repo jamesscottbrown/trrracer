@@ -47,6 +47,19 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </li>
         ))}
       </ul>
+
+      {entryData.urls.length > 0 && (
+        <>
+          <h3>URLs</h3>
+          <ul>
+            {entryData.urls.map((url) => (
+              <li key={url.url}>
+                <a href={url.url}>{url.title}</a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </>
   );
 };

@@ -11,8 +11,9 @@ import * as Showdown from 'showdown';
 
 import FileUpload from './FileUpload';
 
-import { File, FileObj, EntryType, TagType } from './types';
+import { EntryType, File, FileObj, TagType } from './types';
 import { useProjectState } from './ProjectContext';
+import URLList from './URLList';
 
 interface EditDateTypes {
   date: string;
@@ -211,6 +212,10 @@ const Entry = (props: EntryPropTypes) => {
           Add files
         </button>
       )}
+
+      <URLList urls={entryData.urls} entryIndex={entryIndex} />
+
+      <></>
     </>
   );
 };

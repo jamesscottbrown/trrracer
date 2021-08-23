@@ -21,7 +21,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
 
   useEffect(() => {
-    setEditable(Array.from(Array(projectData.entries.length)));
+    if (editable.length !== projectData.entries.length) {
+      setEditable(Array.from(Array(projectData.entries.length)));
+    }
   }, [projectData]);
 
   console.log(projectData);
