@@ -143,7 +143,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
       switch(response.status){
         case 200:
           var file = response.result;
-          console.log('Created File data', response.data.id);
+          console.log('Created File data', response, response.data.id);
 
           
 

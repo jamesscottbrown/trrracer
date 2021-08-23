@@ -45,3 +45,14 @@ yarn package
 ## About
 
 The initial scaffolding for this app was based on the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) template, which uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
+
+
+## Instructions for Derya
+There is a trrracer project folder named "Derya Artifact Trrracer" in the shared drive "trrrace". This is where all of the files from the design study that you want traced should live. 
+
+1) Clone the repo, `npm install` the dependencies, and use `yarn start` to start the dev server.
+2) If using a mac, navigate up to top left bar and click on `Electron`. There is a drop down menu there. (Opening a project from the main launch screen does not work yet).
+3) Open Project >> [your google drive] >> shared drives >> trrrace >> Derya Artifact Trrracer
+    - This project has the json file that is the backbone for the artifqct organizatio. I added the files we had in there as sample entries. 
+
+
