@@ -9,6 +9,7 @@ import ViewTypeControl from './ViewTypeControl';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
+import { Button } from '@material-ui/core';
 
 const { ipcRenderer } = require('electron');
 
@@ -83,14 +84,14 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <div>
         {!editable.every((t) => t) && (
-          <button onClick={makeAllEditable} type="button">
+          <Button color="primary" onClick={makeAllEditable} type="button">
             Show all edit controls
-          </button>
+          </Button>
         )}
         {!editable.every((t) => !t) && (
-          <button onClick={makeAllNonEditable} type="button">
+          <Button color="primary" onClick={makeAllNonEditable} type="button">
             Hide all edit controls
-          </button>
+          </Button>
         )}
       </div>
 
@@ -125,9 +126,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
         </>
       ))}
 
-      <button onClick={addEntry} type="button">
+      <Button color="primary" onClick={addEntry} type="button">
         Add entry
-      </button>
+      </Button>
 
       <FileUpload
         saveFiles={saveFiles}

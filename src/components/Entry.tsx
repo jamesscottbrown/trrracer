@@ -14,6 +14,7 @@ import FileUpload from './FileUpload';
 import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
+import { Button } from '@material-ui/core';
 
 interface EditDateTypes {
   date: string;
@@ -169,9 +170,9 @@ const Entry = (props: EntryPropTypes) => {
           />
         </div>
       ) : (
-        <button onClick={() => enableDescription()} type="button">
+        <Button color="primary" onClick={() => enableDescription()} type="button">
           Add description
-        </button>
+        </Button>
       )}
 
       <ul>
@@ -204,14 +205,14 @@ const Entry = (props: EntryPropTypes) => {
               </>
             }
           />
-          <button onClick={() => setShowFileUpload(false)} type="button">
+          <Button color="primary" onClick={() => setShowFileUpload(false)} type="button">
             Cancel
-          </button>
+          </Button>
         </>
       ) : (
-        <button onClick={() => setShowFileUpload(true)} type="button">
+        <Button color="primary" onClick={() => setShowFileUpload(true)} type="button">
           Add files
-        </button>
+        </Button>
         
       )}
 

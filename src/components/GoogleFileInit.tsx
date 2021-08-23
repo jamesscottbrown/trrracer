@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 const {google} = require('googleapis');
-import { EventEmitter } from 'events';
-import fs from 'fs';
-const readline = require('readline');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
-import { workerData } from 'worker_threads';
+import { Button } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 
 
 
@@ -125,22 +123,23 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
      {showFileCreate ? (
         <>
           
-          <button onClick={() => {
+          <Button color="primary" onClick={() => {
             testGoog();
             setShowFileCreate(false)}} type="button">
             Cancel
-          </button>
-          <input type="text" onChange={handleChange}/>
-          <button onClick={()=> saveGoogleFile()} type="button">
+          </Button>
+          <TextField onChange={handleChange}></TextField>
+          {/* <input type="text" onChange={handleChange}/> */}
+          <Button color="primary" onClick={()=> saveGoogleFile()} type="button">
           Create
-          </button>
+          </Button>
         </>
       ) : (
-        <button onClick={()=> {
+        <Button color="primary" onClick={()=> {
           testGoog();
           setShowFileCreate(true)}} type="button">
           {text}
-        </button>
+        </Button>
         
       )}
      
