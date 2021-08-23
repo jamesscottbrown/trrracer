@@ -60,7 +60,8 @@ There is a trrracer project folder named "Derya Artifact Trrracer" in the shared
 
 4. When you select the project, a google auth window should appear in your browser window. Sign in with whatever google account that has our shared drive permissions. I added both emails to the dev oauth permissions, but the API access to the shared folder will not work if it's not that specific email.
 
-5. I wanted to gear this up for you to use google drive. There are 3 ways to add files to entries.
+5. There are 3 ways to add files to entries.
+
    - move a non-google drive file from a local folder with `Add file` button
    - create a google doc or google sheet with the `Create Google Doc` or `Create Google Sheet` button
    - move a google drive file in google drive to the folder and manually add the file name to the trrrace.json file. The file array for each entry looks like this `files: [ { title: "whatever-the-name-is.gdoc" } ]`. If the file is in the project folder, you just add another object with the file name as title parameter and when you refresh the electron app it will appear in the entry.
