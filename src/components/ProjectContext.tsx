@@ -139,14 +139,16 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
-    case 'CREATE_GDOC_IN_ENTRY': {
-      const { name, entryIndex } = action;
+    case 'CREATE_GOOGLE_IN_ENTRY': {
+      const { name, fileType, entryIndex } = action;
+
+      let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
 
       console.log("this is firing in GDOC NAMEEEEE", name);
 
       let newFiles = state.projectData.entries[entryIndex].files;
         
-      newFiles = [...newFiles, { title: `${name}.gdoc` }];
+      newFiles = [...newFiles, { title: `${name}.${extension}` }];
 
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
         entryIndex === i ? { ...d, files: newFiles } : d

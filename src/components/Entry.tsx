@@ -215,9 +215,17 @@ const Entry = (props: EntryPropTypes) => {
         
       )}
 
-     <GoogFileInit
+    <GoogFileInit
+      fileType={'document'}
+      text={"Create Google Doc"}
       entryIndex={entryIndex}
-     />
+    />
+
+    <GoogFileInit
+      fileType={'spreadsheet'}
+      text={"Create Google Sheet"}
+      entryIndex={entryIndex}
+    />
     </>
   );
 };

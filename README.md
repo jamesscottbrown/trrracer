@@ -65,3 +65,5 @@ There is a trrracer project folder named "Derya Artifact Trrracer" in the shared
    - create a google doc or google sheet with the `Create Google Doc` or `Create Google Sheet` button
    - move a google drive file in google drive to the folder and manually add the file name to the trrrace.json file. The file array for each entry looks like this `files: [ { title: "whatever-the-name-is.gdoc" } ]`. If the file is in the project folder, you just add another object with the file name as title parameter and when you refresh the electron app it will appear in the entry.
      (** I need to add functionality to move google drive files in the interface. If you try to add a google drive file within the interface it will throw an error **)
+
+6. I will be adding functionality to the interface as we go. I'll let you know when I update the main branch!

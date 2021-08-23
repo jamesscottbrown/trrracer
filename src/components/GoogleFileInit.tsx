@@ -11,14 +11,14 @@ import { workerData } from 'worker_threads';
 
 
 
-const GoogFileInit = (props: {entryIndex: number})=> {
+const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
   console.log('fiel created!');
   const [, dispatch] = useProjectState();
 
   const [showFileCreate, setShowFileCreate] = useState(false);
 
-  const {entryIndex} = props;
+  const {fileType, text, entryIndex} = props;
 
   let fileName = "new google doc";
 
@@ -30,7 +30,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
 
     console.log('save files NAME', fileName);
     
-   createGoogleFile(entryIndex, fileName);
+   createGoogleFile(fileName);
    setShowFileCreate(false);
     
   };
@@ -50,40 +50,6 @@ const GoogFileInit = (props: {entryIndex: number})=> {
       supportsAllDrives: true,
       includeItemsFromAllDrives: true,
     }).then((folder)=> console.log('folder',folder))
-
-    // let url = `https://www.googleapis.com/drive/v3/about`
-    // var xmlHttp = new XMLHttpRequest();
-    // xmlHttp.onreadystatechange = function() { 
-    //     if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-    //       console.log('this worked', xmlHttp.responseText)
-    //     }else{
-    //       console.log('error')
-    //     }
-    //         //callback(xmlHttp.responseText);
-    // }
-    // xmlHttp.open("GET", url, true); // true for asynchronous 
-    // xmlHttp.setRequestHeader('Authorization', 'Bearer ' + oAuth2Client.credentials.access_token);
-    // xmlHttp.send(null);
-
-            // const boundary='foo_bar_baz'
-        // const delimiter = "\r\n--" + boundary + "\r\n";
-        // const close_delim = "\r\n--" + boundary + "--";
-        // var fileName='note-otti';
-        // var fileData='hi otti';
-        // var contentType='text/plain'
-        // var metadata = {
-        //   'name': fileName,
-        //   'mimeType': contentType
-        // };
-
-        // var multipartRequestBody =
-        //   delimiter +
-        //   'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-        //   JSON.stringify(metadata) +
-        //   delimiter +
-        //   'Content-Type: ' + contentType + '\r\n\r\n' +
-        //   fileData+'\r\n'+
-        //   close_delim;
 
         //   console.log('multi request body',multipartRequestBody);
         //   console.log('gapi client', window.gapi.client);
@@ -116,8 +82,8 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     
   }
 
-  async function createGoogleFile(entryIndex: number, name : string){
-
+  async function createGoogleFile(name : string){
+    console.log('fileType', fileType);
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
     const token = await readFile('token.json')
     oAuth2Client.setCredentials(JSON.parse(token))
@@ -128,16 +94,12 @@ const GoogFileInit = (props: {entryIndex: number})=> {
     var parentId = '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg';//some parentId of a folder under which to create the new folder
     var fileMetadata = {
       'name' : name,
-      'mimeType' : 'application/vnd.google-apps.document',
+      'mimeType' : `application/vnd.google-apps.${fileType}`,
       'parents': [parentId],
    
     };
     drive.files.create({
       resource: fileMetadata,
-      media: {
-        mimeType: 'application/vnd.google-apps.document',
-       // body: stream
-    },
       supportsAllDrives: true,
     }).then(function(response) {
       switch(response.status){
@@ -147,7 +109,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
 
           
 
-          dispatch({ type: 'CREATE_GDOC_IN_ENTRY', name: name, entryIndex })
+          dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, entryIndex })
 
           break;
         default:
@@ -177,7 +139,7 @@ const GoogFileInit = (props: {entryIndex: number})=> {
         <button onClick={()=> {
           testGoog();
           setShowFileCreate(true)}} type="button">
-        Create New Google Doc
+          {text}
         </button>
         
       )}
