@@ -25,7 +25,7 @@ You can click on "Assets" on the [Releases page](https://github.com/jamesscottbr
 To install, clone the repo via git and install dependencies:
 
 ```bash
-git clone https://github.com/jamesscottbrown/trrracer.git
+git clone https://github.com/jrogerthat/trrracer.git
 cd trrracer
 yarn
 ```

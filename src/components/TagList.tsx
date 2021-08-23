@@ -87,7 +87,6 @@ const TagList = (props: TagListProps) => {
                 title="Change tag color"
               />
             </span>
-
             <EdiText
               type="text"
               value={tag.title}
@@ -98,6 +97,16 @@ const TagList = (props: TagListProps) => {
               submitOnEnter
               submitOnUnfocus
             />
+            {/* <EdiText
+              type="text"
+              value={tag.title}
+              onSave={(val) => updateTagName(i, val)}
+              validation={(val) => val.length > 0}
+              validationMessage="Tag name must not be empty"
+              editOnViewClick
+              submitOnEnter
+              submitOnUnfocus
+            /> */}
             {tagToChangeColor === i && (
               <div style={{ marginTop: '10px', marginBottom: '10px' }}>
                 <GithubPicker
