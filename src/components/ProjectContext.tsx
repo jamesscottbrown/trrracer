@@ -84,7 +84,7 @@ const appStateReducer = (state, action) => {
           let nameCheck = file.name.split(".");
         
           if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-           
+            console.log('this is gdoc file')
             let goog =  new GoogleLoader(file, destination);
             goog.initClient();
 

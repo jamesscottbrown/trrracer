@@ -25,16 +25,10 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
   };
 
   return (
-    // <>
-    //   View type:{' '}
-    //   <select onChange={(ev) => setViewType(ev.target.value)} value={viewType}>
-    //     <option id="list">list</option>
-    //     <option id="timeline">timeline</option>
-    //   </select>
-    // </>
+
     <div>
       View Type: 
-    <Button color="primary" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+    <Button color="default" size="large" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
       {viewType}
     </Button>
     <Menu
@@ -45,12 +39,10 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
       onClose={handleClose}
     >
       <MenuItem 
-      value={'list'}
       onClick={()=> {
         setViewType('list')
         handleClose}}>List</MenuItem>
       <MenuItem   
-      value={'timeline'}
       onClick={()=> {
         setViewType('timeline')
         handleClose}}>Timeline</MenuItem>

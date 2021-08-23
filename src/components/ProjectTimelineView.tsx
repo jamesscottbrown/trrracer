@@ -180,9 +180,9 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <h1>{projectData.title}</h1>
+      {/* <h1>{projectData.title}</h1>
 
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
+      <ViewTypeControl viewType={viewType} setViewType={setViewType} /> */}
 
       <TagList tags={projectData.tags} />
 

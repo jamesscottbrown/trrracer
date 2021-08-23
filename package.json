@@ -235,6 +235,7 @@
   "dependencies": {
     "@getstation/electron-google-oauth2": "^2.1.0",
     "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
     "d3-array": "^2.12.1",
     "d3-scale": "^3.3.0",
     "date-fns": "^2.23.0",

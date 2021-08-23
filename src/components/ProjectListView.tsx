@@ -14,7 +14,7 @@ import { Button } from '@material-ui/core';
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
+  const { projectData, folderPath } = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
   const [editable, setEditable] = useState<boolean[]>(
@@ -73,10 +73,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <h1>{projectData.title}</h1>
+      {/* <h1>{projectData.title}</h1>
  
 
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
+      <ViewTypeControl viewType={viewType} setViewType={setViewType} /> */}
 
       <TagList tags={projectData.tags} />
 

@@ -50,7 +50,7 @@ The initial scaffolding for this app was based on the [Electron React Boilerplat
 
 There is a trrracer project folder named "Derya Artifact Trrracer" in the shared drive "trrrace". This is where all of the files from the design study that you want traced should live.
 
-1. Clone the repo, `npm install` the dependencies, and use `yarn start` to start the dev server.
+1. Clone the repo, `yarn install` the dependencies, and use `yarn start` to start the dev server. ** NEED NODE 14 **
 
 2. If using a mac, navigate up to top left bar and click on `Electron`. There is a drop down menu there. (Opening a project from the main launch screen does not work yet).
 
