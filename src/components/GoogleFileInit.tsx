@@ -6,17 +6,12 @@ import { readFile } from '../fileUtil';
 import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 
-
-
-
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
-  console.log('fiel created!');
   const [, dispatch] = useProjectState();
-
   const [showFileCreate, setShowFileCreate] = useState(false);
-
   const {fileType, text, entryIndex} = props;
+
 
   let fileName = "new google doc";
 
@@ -49,34 +44,6 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
       includeItemsFromAllDrives: true,
     }).then((folder)=> console.log('folder',folder))
 
-        //   console.log('multi request body',multipartRequestBody);
-        //   console.log('gapi client', window.gapi.client);
-        //   var request = window.gapi.client.request({
-        //     'path': 'https://www.googleapis.com/upload/drive/v3/files',
-        //     'method': 'POST',
-        //     'params': {'uploadType': 'multipart'},
-        //     'headers': {
-        //       'Content-Type': 'multipart/related; boundary=' + boundary + ''
-        //     },
-        //     'body': multipartRequestBody});
-        // console.log('request', request)
-        // request.execute(function(file) {
-        //   console.log(file)
-        // });
-   // xmlHttp.send(null);
-
-    
-    //   var request = google.request({
-    //     'path': 'https://www.googleapis.com/upload/drive/v3/files',
-    //     'method': 'Files:list',
-    //     'params': {'includeItemsFromAllDrives': 'true'},
-    //  });
-  
-    // request.execute(function(file) {
-    //   console.log('file from request testGoog',file)
-    // });
-  // results = drive_service.files().list(, q="parents in '{folder_id}' and trashed = false", fields = "nextPageToken, files(id, name)").execute()
-    
     
   }
 

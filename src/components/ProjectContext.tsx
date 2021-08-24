@@ -1,5 +1,7 @@
 import * as fs from 'fs';
 import { copyFileSync } from 'fs';
+const {google} = require('googleapis');
+import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
@@ -7,12 +9,84 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 
-import GoogleLoader from '../googleAPI';
+import { copyMoveGoogle } from '../GoogleCopyMove';
+import { readFile } from '../fileUtil';
 
 export const ProjectContext = createContext();
 
 export function useProjectState() {
   return useContext(ProjectContext);
+}
+
+async function copyGoogle(file, entryIndex:number, state){
+
+  const saveJSON = (newProjectData: any) => {
+    fs.writeFileSync(
+      path.join(state.folderPath, 'trrrace.json'),
+      JSON.stringify(newProjectData, null, 4),
+      (err) => {
+        if (err) {
+          console.log(`Error writing file to disk: ${err}`);
+        } else {
+          // parse JSON string to JSON object
+         // console.log('new Project data',newProjectData);
+        }
+      }
+    );
+
+    return { ...state, projectData: newProjectData };
+  };
+
+  const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+            const token = await readFile('token.json')
+            oAuth2Client.setCredentials(JSON.parse(token))
+           
+            let drive = google.drive({version: 'v3', auth: oAuth2Client});
+         
+            let nameF = file.name.split('.');
+            drive.files.list({
+              q:`name="${nameF[0]}" and trashed = false`, 
+              fields:"nextPageToken, files(id, name)",
+              supportsAllDrives: true,
+              includeItemsFromAllDrives: true,
+            }).then((fi)=> {
+              
+                var copyRequest = {  // Modified
+                    name: nameF,
+                    parents: ['1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg']
+                  };
+                  
+                  drive.files.copy(
+                    {  // Modified
+                      fileId: fi.data.files[0].id,
+                      requestBody: copyRequest, // or resource: copyRequest
+                      supportsAllDrives: true,
+                      includeItemsFromAllDrives: true,
+                    },
+                    function(err, response) {
+                      if (err) {
+                        console.log(err);
+                        // res.send("error");
+                        return;
+                      }
+                    
+                      console.log('response', response, state)
+                      let newFiles = state.projectData.entries[entryIndex].files;
+        
+                      newFiles = [...newFiles, { title: `${file.name}` }];
+                
+                      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+                        entryIndex === i ? { ...d, files: newFiles } : d
+                      );
+                
+                      const newProjectData = { ...state.projectData, entries };
+                      console.log('new project', newProjectData);
+                      return saveJSON(newProjectData);
+                      
+                    }
+                  );
+            
+            });
 }
 
 const appStateReducer = (state, action) => {
@@ -78,15 +152,14 @@ const appStateReducer = (state, action) => {
 
       let newFiles = state.projectData.entries[entryIndex].files;
       for (const file of fileList) {
-        
+        console.log('file in fileList', file);
         try {
           const destination = path.join(state.folderPath, file.name);
           let nameCheck = file.name.split(".");
         
           if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-            console.log('this is gdoc file')
-            let goog =  new GoogleLoader(file, destination);
-            goog.initClient();
+        
+            copyGoogle(file, entryIndex, state);
 
           }else{
 //NEED TO INTEGRATE THIS MORE
