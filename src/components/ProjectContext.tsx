@@ -44,6 +44,7 @@ async function copyGoogle(file, entryIndex:number, state){
             let drive = google.drive({version: 'v3', auth: oAuth2Client});
          
             let nameF = file.name.split('.');
+
             drive.files.list({
               q:`name="${nameF[0]}" and trashed = false`, 
               fields:"nextPageToken, files(id, name)",
@@ -158,8 +159,27 @@ const appStateReducer = (state, action) => {
           let nameCheck = file.name.split(".");
         
           if(nameCheck[nameCheck.length - 1] === 'gdoc'){
+            let test = state.projectData.entries.flatMap(m=> m.files.map(fil => fil.title));
+
+            console.log('google file!', file.name, test.indexOf(file.name), test)
+
+            if(test.indexOf(file.name) === -1){
+                copyGoogle(file, entryIndex, state);
+            }else{
+              console.log('already hear');
+              let newFiles = state.projectData.entries[entryIndex].files;
         
-            copyGoogle(file, entryIndex, state);
+              newFiles = [...newFiles, { title: `${file.name}` }];
+        
+              const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+                entryIndex === i ? { ...d, files: newFiles } : d
+              );
+        
+              const newProjectData = { ...state.projectData, entries };
+              console.log('new project same doc', newProjectData);
+              return saveJSON(newProjectData);
+            }
+           
 
           }else{
 //NEED TO INTEGRATE THIS MORE

@@ -6,7 +6,7 @@ import { useProjectState } from './components/ProjectContext';
 
 
 export const copyMoveGoogle = async (file, callback) => {
-    const [, dispatch] = useProjectState();
+   // const [, dispatch] = useProjectState();
 
     console.log('file in copy Move Google',file);
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
