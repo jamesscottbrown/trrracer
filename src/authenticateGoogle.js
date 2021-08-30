@@ -27,7 +27,7 @@ export async function authenticate() {
     } catch (e) {
         console.log('before?')
         const electronOAuth = new ElectronGoogleOAuth2(client_id, client_secret, SCOPES);
-        console.log('electron auth',electronOAuth)
+        console.log('electron auth', electronOAuth)
         const token = await electronOAuth.openAuthWindowAndGetTokens()
         console.log('need to write file', token)
         await writeFile(TOKEN_PATH, JSON.stringify(token))

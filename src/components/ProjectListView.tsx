@@ -5,11 +5,11 @@ import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
-import ViewTypeControl from './ViewTypeControl';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
 import { Button } from '@material-ui/core';
+import ConceptNav from './concepts';
 
 const { ipcRenderer } = require('electron');
 
@@ -73,10 +73,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      {/* <h1>{projectData.title}</h1>
- 
-
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} /> */}
+      <ConceptNav></ConceptNav>
 
       <TagList tags={projectData.tags} />
 

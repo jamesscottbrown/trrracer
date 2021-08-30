@@ -15,8 +15,6 @@ interface ProjectProps {
 const Project = (ProjectPropValues: ProjectProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-
-
   const [viewType, setViewType] = useState<string>('list');
 
   if (viewType === 'list') {

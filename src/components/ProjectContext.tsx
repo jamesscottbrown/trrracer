@@ -18,24 +18,24 @@ export function useProjectState() {
   return useContext(ProjectContext);
 }
 
-async function copyGoogle(file, entryIndex:number, state){
-
-  const saveJSON = (newProjectData: any) => {
-    fs.writeFileSync(
-      path.join(state.folderPath, 'trrrace.json'),
-      JSON.stringify(newProjectData, null, 4),
-      (err) => {
-        if (err) {
-          console.log(`Error writing file to disk: ${err}`);
-        } else {
-          // parse JSON string to JSON object
-         // console.log('new Project data',newProjectData);
-        }
+const saveJSON = (newProjectData: any, state: any) => {
+  fs.writeFileSync(
+    path.join(state.folderPath, 'trrrace.json'),
+    JSON.stringify(newProjectData, null, 4),
+    (err) => {
+      if (err) {
+        console.log(`Error writing file to disk: ${err}`);
+      } else {
+        // parse JSON string to JSON object
+       // console.log('new Project data',newProjectData);
       }
-    );
+    }
+  );
 
-    return { ...state, projectData: newProjectData };
-  };
+  return { ...state, projectData: newProjectData };
+};
+
+async function copyGoogle(file:any, entryIndex:number, state:any){
 
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
             const token = await readFile('token.json')
@@ -92,22 +92,6 @@ async function copyGoogle(file, entryIndex:number, state){
 
 const appStateReducer = (state, action) => {
   console.log('state', state, 'action', action);
-  const saveJSON = (newProjectData: any) => {
-    fs.writeFileSync(
-      path.join(state.folderPath, 'trrrace.json'),
-      JSON.stringify(newProjectData, null, 4),
-      (err) => {
-        if (err) {
-          console.log(`Error writing file to disk: ${err}`);
-        } else {
-          // parse JSON string to JSON object
-         // console.log('new Project data',newProjectData);
-        }
-      }
-    );
-
-    return { ...state, projectData: newProjectData };
-  };
 
  // console.log('ACTION:', action);
   switch (action.type) {
@@ -145,7 +129,7 @@ const appStateReducer = (state, action) => {
         entries: newEntries,
       };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'ADD_FILES_TO_ENTRY': {
@@ -177,7 +161,7 @@ const appStateReducer = (state, action) => {
         
               const newProjectData = { ...state.projectData, entries };
               console.log('new project same doc', newProjectData);
-              return saveJSON(newProjectData);
+              return saveJSON(newProjectData, state);
             }
            
 
@@ -229,7 +213,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, entries };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'CREATE_GOOGLE_IN_ENTRY': {
@@ -249,7 +233,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, entries };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'ADD_FILES': {
@@ -291,7 +275,7 @@ const appStateReducer = (state, action) => {
             ],
           };
 
-          return saveJSON(newProjectData);
+          return saveJSON(newProjectData, state);
         }
 
 
@@ -320,7 +304,7 @@ const appStateReducer = (state, action) => {
       );
 
       const newProjectData = { ...state.projectData, entries };
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'ADD_ENTRY': {
@@ -338,7 +322,7 @@ const appStateReducer = (state, action) => {
         ],
       };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'UPDATE_ENTRY_FIELD': {
@@ -350,7 +334,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, entries };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'UPDATE_TAG_COLOR': {
@@ -360,7 +344,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, tags };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
     case 'UPDATE_TAG_NAME': {
       const tags = state.projectData.tags.map((tag: TagType, i: number) =>
@@ -376,7 +360,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, tags, entries };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'DELETE_TAG': {
@@ -391,7 +375,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, tags, entries };
 
-      return saveJSON(newProjectData);
+      return saveJSON(newProjectData, state);
     }
 
     case 'UPDATE_FILTER_TAGS': {

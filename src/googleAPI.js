@@ -66,7 +66,7 @@ listTaskLists(auth) {
  * @param {getEventsCallback} callback The callback for the authorized client.
  */
 getNewToken(oAuth2Client, callback) {
-   console.log('GRET NEW TOKEN')
+   console.log('GET NEW TOKEN')
    emitter.setMaxListeners(20);
 
   const authUrl = oAuth2Client.generateAuthUrl({
