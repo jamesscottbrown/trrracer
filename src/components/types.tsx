@@ -28,11 +28,22 @@ interface ReactTagType {
   text: string;
 }
 
+interface ConceptType {
+  name: string;
+  actions : ConceptActionType[];
+}
+
+interface ConceptActionType {
+  action:string;
+  when: string;
+}
+
 interface ProjectType {
   title: string;
   description: string;
   tags: TagType[];
   entries: EntryType[];
+  concepts : ConceptType[];
 }
 
 interface ProjectViewProps {

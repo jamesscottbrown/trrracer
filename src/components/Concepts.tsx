@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useReducer } from 'react';
+import { ProjectViewProps } from './types';
 
-const ConceptNav = () => {
+const ConceptNav = (ProjectPropValues: ProjectViewProps) => {
 
+    const {projectData} = ProjectPropValues;
 
+console.log('projectData in concepts', projectData)
 return(
     <div id="concepts">
-        THIS IS A TEST
+        {projectData.concepts[0]}
     </div>
 )
 }
