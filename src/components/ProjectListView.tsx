@@ -73,7 +73,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <ConceptNav projectData={projectData}></ConceptNav>
+      <ConceptNav concepts={projectData.concepts}/>
 
       <TagList tags={projectData.tags} />
 

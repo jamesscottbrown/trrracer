@@ -61,4 +61,5 @@ export {
   ProjectType,
   ProjectViewProps,
   ReactTagType,
+  ConceptType,
 };

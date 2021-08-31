@@ -15,6 +15,8 @@ interface TagListProps {
 const TagList = (props: TagListProps) => {
   const { tags } = props;
 
+  console.log('tags',tags);
+
   const [tagToChangeColor, setTagToChangeColor] =
     useState<false | number>(false);
 
