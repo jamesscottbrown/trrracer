@@ -9,6 +9,7 @@ import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
 import { Button } from '@material-ui/core';
+
 import ConceptNav from './concepts';
 
 const { ipcRenderer } = require('electron');

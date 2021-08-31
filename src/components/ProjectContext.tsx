@@ -5,11 +5,8 @@ import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
-
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
-
-import { copyMoveGoogle } from '../GoogleCopyMove';
 import { readFile } from '../fileUtil';
 
 export const ProjectContext = createContext();
@@ -102,6 +99,51 @@ const appStateReducer = (state, action) => {
         filterTags: [],
       };
     }
+
+    case 'CREATE_CONCEPT':{
+    
+     // const { title } = action;
+      console.log('create concept test', action.title, state.projectData.concepts);
+
+      const newConcepts  = [
+        ...state.projectData.concepts,
+        { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
+      ];
+
+      const newProjectData = {
+        ...state.projectData,
+        concepts: newConcepts,
+        // entries: newEntries,
+      };
+
+      return saveJSON(newProjectData, state);
+
+    }
+
+    case 'DELETE_CONCEPT':{
+    
+      
+       console.log('DELETE concept test', action.title, state.projectData.concepts);
+ 
+       const newConcepts  = state.projectData.concepts.map(m => {
+         console.log("M NAME AND ACTION", m.name, action.title.name);
+           if(m.name === action.title.name){
+             console.log('made it')
+             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
+           }
+           return m;
+         });
+
+         console.log('NEW NEW', newConcepts);
+        
+       const newProjectData = {
+         ...state.projectData,
+         concepts: newConcepts,
+       };
+ 
+       return saveJSON(newProjectData, state);
+ 
+     }
 
     case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
