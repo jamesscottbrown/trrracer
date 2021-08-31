@@ -16,13 +16,6 @@ const ConceptNav = (props:ConceptProps) => {
 
     const [showForm, setShowForm] = useState(false);
 
-    // let notDeletedCon = concepts.filter(con=> {
-    //     let actionlist = con.actions.map(m=> m.action);
-    //     return actionlist.indexOf('deleted') === -1;
-    // });
-
-    // console.log('NOT DELETED!!', notDeletedCon);
-
     let fileName = "New Concept";
 
     function handleChange(event){
@@ -70,7 +63,7 @@ const ConceptNav = (props:ConceptProps) => {
                     key={con.name}
                     style={{
                     display: 'grid',
-                    gridTemplateColumns: '100px 100px 100px',
+                    gridTemplateColumns: '200px 100px 100px',
                     }}
                     >
                         <h3>{con.name}</h3>
