@@ -22,7 +22,7 @@ export default function App() {
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
   ipcRenderer.on('projectPath', (_event, folderName) => {
-    console.log('Received project path:', folderName);
+   // console.log('Received project path:', folderName);
 
     setPath(folderName);
 
@@ -37,7 +37,7 @@ export default function App() {
           folderName,
           projectData: JSON.parse(data),
         });
-        console.log(data);
+        //console.log(data);
       }
     });
   });

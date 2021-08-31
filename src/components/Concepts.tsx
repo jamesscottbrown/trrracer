@@ -16,6 +16,13 @@ const ConceptNav = (props:ConceptProps) => {
 
     const [showForm, setShowForm] = useState(false);
 
+    // let notDeletedCon = concepts.filter(con=> {
+    //     let actionlist = con.actions.map(m=> m.action);
+    //     return actionlist.indexOf('deleted') === -1;
+    // });
+
+    // console.log('NOT DELETED!!', notDeletedCon);
+
     let fileName = "New Concept";
 
     function handleChange(event){
@@ -42,7 +49,10 @@ const ConceptNav = (props:ConceptProps) => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</Button>
-            <TextField onChange={handleChange}></TextField><Button onClick={()=> createConcept()}>Add</Button>
+            <TextField onChange={handleChange}></TextField><Button onClick={()=> {
+                createConcept()
+                setShowForm(false)
+                }}>Add</Button>
             </div>
              :
             <Button
@@ -52,7 +62,10 @@ const ConceptNav = (props:ConceptProps) => {
             >Add New Concept</Button>
         }
             
-            {concepts ? concepts.map((con: ConceptType) => (
+            {concepts ? concepts.filter(f=>{
+                let actionlist = f.actions.map(m=> m.action);
+                return actionlist.indexOf('deleted') === -1;
+            }).map((con: ConceptType) => (
                 <div
                     key={con.name}
                     style={{
