@@ -367,6 +367,24 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData, state);
     }
 
+    case 'ADD_URL': {
+      console.log('LOG URL');
+
+      let newFiles = state.projectData.entries[action.entryIndex].files;
+        
+      newFiles = [...newFiles, { title: action.url }];
+
+      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+      action.entryIndex === i ? { ...d, files: newFiles } : d
+      );
+
+      const newProjectData = { ...state.projectData, entries };
+
+      return saveJSON(newProjectData, state);
+
+
+    }
+
     case 'UPDATE_ENTRY_FIELD': {
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
         action.entryIndex === i

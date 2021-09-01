@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
-import ReactMde from 'react-mde';
+import ReactMde, { TextArea } from 'react-mde';
 import { FaExternalLinkAlt, FaTrashAlt } from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
@@ -14,7 +14,7 @@ import FileUpload from './FileUpload';
 import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 
 interface EditDateTypes {
   date: string;
@@ -88,8 +88,9 @@ const Entry = (props: EntryPropTypes) => {
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
+  const [showURL, setShowURL] = useState(false);
+
   const saveFiles = (fileList: FileObj[]) => {
-    console.log('save fiels', fileList, entryIndex);
     dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
     setShowFileUpload(false);
   };
@@ -121,6 +122,17 @@ const Entry = (props: EntryPropTypes) => {
     comma: 188,
     enter: 13,
   };
+
+  let url = ''
+
+  let handleChange = (event) =>{
+    url = event.target.value;
+  }
+
+  const addURL = () =>{
+    console.log('TEST THIS OUT');
+    dispatch({ type: 'ADD_URL', url, entryIndex })
+  }
 
   return (
     <>
@@ -227,6 +239,21 @@ const Entry = (props: EntryPropTypes) => {
       text={"Create Google Sheet"}
       entryIndex={entryIndex}
     />
+    {showURL ?
+    <div>
+      <Button color="primary" onClick={()=>{ 
+        setShowURL(false)
+      }}>Cancel</Button><TextField onChange={handleChange}></TextField>
+      <Button onClick={()=> {
+        setShowURL(false)
+        addURL()
+      }}>Add</Button>
+    </div>
+    :
+    <Button color="primary" onClick={()=>{
+      setShowURL(true)
+    }}>Add URL</Button>
+    } 
     </>
   );
 };
