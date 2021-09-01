@@ -93,14 +93,6 @@ const TagList = (props: TagListProps) => {
               submitOnEnter
               submitOnUnfocus
             />
-            {tagToChangeColor === i && (
-              <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <GithubPicker
-                  color={tags[tagToChangeColor].color}
-                  onChangeComplete={(color) => updateTagColor(color)}
-                />
-              </div>
-            )}
 
             <span
               style={{
@@ -113,6 +105,21 @@ const TagList = (props: TagListProps) => {
                 title="Delete tag"
               />
             </span>
+
+            {tagToChangeColor === i && (
+              <>
+                {' '}
+                <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+                  <GithubPicker
+                    color={tags[tagToChangeColor].color}
+                    onChangeComplete={(color) => updateTagColor(color)}
+                  />
+                </div>
+                <div />
+                <div />
+                <div />
+              </>
+            )}
           </Grid>
         ))}
       </div>
