@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormControl, FormLabel, Select } from '@chakra-ui/react';
 
 interface ViewTypeControlProps {
   viewType: string;
@@ -9,11 +10,17 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
   const { viewType, setViewType } = props;
   return (
     <>
-      View type:{' '}
-      <select onChange={(ev) => setViewType(ev.target.value)} value={viewType}>
-        <option id="list">list</option>
-        <option id="timeline">timeline</option>
-      </select>
+      <FormControl>
+        <FormLabel> View type: </FormLabel>
+        <Select
+          onChange={(ev) => setViewType(ev.target.value)}
+          value={viewType}
+          width="max-content"
+        >
+          <option id="list">list</option>
+          <option id="timeline">timeline</option>
+        </Select>
+      </FormControl>
     </>
   );
 };

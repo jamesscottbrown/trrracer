@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Grid, Heading } from '@chakra-ui/react';
 
 import EdiText from 'react-editext';
 import { MdColorLens } from 'react-icons/md';
@@ -53,17 +54,11 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-      <h2>Tags</h2>
+      <Heading as="h2">Tags</Heading>
 
       <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
-          <div
-            key={tag.title}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '20px 20px 1fr 20px',
-            }}
-          >
+          <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
             <span
               style={{
                 color: tag.color,
@@ -118,7 +113,7 @@ const TagList = (props: TagListProps) => {
                 title="Delete tag"
               />
             </span>
-          </div>
+          </Grid>
         ))}
       </div>
     </>
