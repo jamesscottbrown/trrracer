@@ -7,6 +7,7 @@ import { ColorResult, GithubPicker } from 'react-color';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, TagType } from './types';
+import { Button } from '@material-ui/core';
 
 interface TagListProps {
   tags: TagType[];
@@ -21,6 +22,9 @@ const TagList = (props: TagListProps) => {
     useState<false | number>(false);
 
   const [{ projectData }, dispatch] = useProjectState();
+
+  const [showTags, setShowTags] = useState(false);
+  let tagButtonValue = "Show Tags";
 
   const updateTagColor = (color: ColorResult) => {
     dispatch({
@@ -55,8 +59,17 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-      <h2>Tags</h2>
+      <h2>Tags</h2><Button onClick={()=>{
+        if(showTags){ 
+          tagButtonValue = 'Show Tags';
+          setShowTags(false);
+        }else{ 
+          setShowTags(true);
+          tagButtonValue = 'Hide Tags';
+        };
+      }}>{tagButtonValue}</Button>
 
+{ showTags ?
       <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
           <div
@@ -132,6 +145,8 @@ const TagList = (props: TagListProps) => {
           </div>
         ))}
       </div>
+      : <div></div>
+}
     </>
   );
 };
