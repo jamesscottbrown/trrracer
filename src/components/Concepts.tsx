@@ -37,8 +37,7 @@ const ConceptNav = (props:ConceptProps) => {
             <h2>Concepts</h2>
             {showForm ? 
             <div>
-            <Button
-            onClick={() => {
+            <Button color="primary" onClick={() => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</Button>
@@ -48,8 +47,7 @@ const ConceptNav = (props:ConceptProps) => {
                 }}>Add</Button>
             </div>
              :
-            <Button
-            onClick={() => {
+            <Button color="primary" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
             >Add New Concept</Button>

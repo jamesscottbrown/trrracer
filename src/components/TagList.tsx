@@ -59,7 +59,7 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-      <h2>Tags</h2><Button onClick={()=>{
+      <h2>Tags</h2><Button color="primary" onClick={()=>{
         if(showTags){ 
           tagButtonValue = 'Show Tags';
           setShowTags(false);

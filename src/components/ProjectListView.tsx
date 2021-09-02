@@ -78,7 +78,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <TagList tags={projectData.tags} />
 
-      <h2>Entries</h2>
+      <h2>Activities</h2>
 
       <div>
         {!editable.every((t) => t) && (
