@@ -192,7 +192,9 @@ const Entry = (props: EntryPropTypes) => {
           <li key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
-              onClick={() => openFile(file.title)}
+              onClick={() => {
+                console.log("FILEZZ", file, file.title);
+                openFile(file.title)}}
               title="Open file externally"
               size="12px"
             />{' '}

@@ -122,7 +122,6 @@ const appStateReducer = (state, action) => {
 
     case 'DELETE_CONCEPT':{
     
-      
        console.log('DELETE concept test', action.title, state.projectData.concepts);
  
        const newConcepts  = state.projectData.concepts.map(m => {
@@ -235,7 +234,7 @@ const appStateReducer = (state, action) => {
           if (saveFile) {
             copyFileSync(file.path, destination);
             console.log(`${file.path} was copied to ${destination}`);
-            newFiles = [...newFiles, { title: newName }];
+            newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1] }];
           }
 
         }
@@ -270,7 +269,7 @@ const appStateReducer = (state, action) => {
       newFiles = [...newFiles, { title: `${name}.${extension}` }];
 
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-        entryIndex === i ? { ...d, files: newFiles } : d
+        entryIndex === i ? { ...d, files: newFiles, fileType: extension } : d
       );
 
       const newProjectData = { ...state.projectData, entries };
@@ -323,9 +322,6 @@ const appStateReducer = (state, action) => {
 
      }
    
-
-
-
     case 'DELETE_FILE': {
       const destination = path.join(state.folderPath, action.fileName);
 
@@ -372,7 +368,7 @@ const appStateReducer = (state, action) => {
 
       let newFiles = state.projectData.entries[action.entryIndex].files;
         
-      newFiles = [...newFiles, { title: action.url }];
+      newFiles = [...newFiles, { title: action.url, fileType:"url"}];
 
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
       action.entryIndex === i ? { ...d, files: newFiles } : d
