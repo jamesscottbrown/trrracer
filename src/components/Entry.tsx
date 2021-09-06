@@ -15,6 +15,7 @@ import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 import { Button, TextField } from '@material-ui/core';
+import { testNat } from '../naturalTest';
 
 interface EditDateTypes {
   date: string;
@@ -131,7 +132,8 @@ const Entry = (props: EntryPropTypes) => {
 
   const addURL = () =>{
     console.log('TEST THIS OUT');
-    dispatch({ type: 'ADD_URL', url, entryIndex })
+    testNat();
+    //dispatch({ type: 'ADD_URL', url, entryIndex })
   }
 
   return (

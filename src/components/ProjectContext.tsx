@@ -8,6 +8,7 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
+import { testNat } from '../naturalTest';
 
 export const ProjectContext = createContext();
 
@@ -232,9 +233,23 @@ const appStateReducer = (state, action) => {
           }
 
           if (saveFile) {
+          
             copyFileSync(file.path, destination);
             console.log(`${file.path} was copied to ${destination}`);
+            if(nameCheck[nameCheck.length - 1] === 'txt'){
+              console.log("THIS IS A TEXT FILE", destination);
+
+              let test = fs.readFileSync(destination,{ encoding: 'utf8' });
+
+              console.log('TESTTTT',test)
+
+              testNat(test, state.projectData.concepts);
+
+
+            }
+
             newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1] }];
+
           }
 
         }
