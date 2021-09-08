@@ -107,16 +107,20 @@ const appStateReducer = (state, action) => {
       console.log('create concept test', action.title, state.projectData.concepts);
 
       console.log('tagging concepts in text', state.projectData.entries);
+      
 
       let newEntries = [...state.projectData.entries].map(en => {
        
-        let newF = en.files.map(f => {
-          console.log('FIES', f);
-          return f
+        en.files = en.files.map(f => {
+          if(f.fileType === 'txt'){
+            let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
+            f.conceptList = testNat(text, state.projectData.concepts);
+          }
+          return f;
         });
+        
+        return en;
       });
-
-      
 
       const newConcepts  = [
         ...state.projectData.concepts,
@@ -126,7 +130,7 @@ const appStateReducer = (state, action) => {
       const newProjectData = {
         ...state.projectData,
         concepts: newConcepts,
-        // entries: newEntries,
+        entries: newEntries
       };
 
       return saveJSON(newProjectData, state);
