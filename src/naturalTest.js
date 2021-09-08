@@ -4,7 +4,7 @@ import *  as googleCred from '../assets/google_cred_desktop_app.json';
 const {google} = require('googleapis');
 const natural = require('natural');
 
-export async function testNat(file, concepts){
+export function testNat(file, concepts){
 
     
     // const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
@@ -31,11 +31,13 @@ export async function testNat(file, concepts){
     var tokenizer = new natural.WordTokenizer();
     let tokens = tokenizer.tokenize(file);
     tokens.map(t => trie.addString(t));
-    
-    let checkerArray = concepts.map(m=> {
+    console.log('CONCEPTSSS', concepts);
+    return concepts.map(m=> {
         return {'concept': m.name, 'contains': trie.contains(m.name)};
     });
-    console.log('DOES IT CONTAIN THIS', checkerArray);
+   // console.log('DOES IT CONTAIN THIS', checkerArray);
+
+    //return checkerArray;
     
     // Or add many strings
     //trie.addStrings(["string1", "string2", "string3"]);

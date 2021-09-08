@@ -106,6 +106,18 @@ const appStateReducer = (state, action) => {
      // const { title } = action;
       console.log('create concept test', action.title, state.projectData.concepts);
 
+      console.log('tagging concepts in text', state.projectData.entries);
+
+      let newEntries = [...state.projectData.entries].map(en => {
+       
+        let newF = en.files.map(f => {
+          console.log('FIES', f);
+          return f
+        });
+      });
+
+      
+
       const newConcepts  = [
         ...state.projectData.concepts,
         { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
@@ -237,18 +249,20 @@ const appStateReducer = (state, action) => {
             copyFileSync(file.path, destination);
             console.log(`${file.path} was copied to ${destination}`);
             if(nameCheck[nameCheck.length - 1] === 'txt'){
-              console.log("THIS IS A TEXT FILE", destination);
 
               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
 
-              console.log('TESTTTT',test)
+              let conceptList = testNat(test, state.projectData.concepts);
 
-              testNat(test, state.projectData.concepts);
+              console.log('conceptList in context', conceptList);
 
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], conceptList: conceptList}];
+            }else{
 
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1] }];
             }
 
-            newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1] }];
+            
 
           }
 
