@@ -119,7 +119,7 @@ const appStateReducer = (state, action) => {
             f.conceptList = testNat(text, state.projectData.concepts);
           }else if(f.fileType === 'gdoc'){
             console.log('F IN GDOC', f);
-            googleConceptSearch(f.fileID, state.projectData.concepts);
+           // googleConceptSearch(f.fileID, state.projectData.concepts);
           }
           return f;
         });
@@ -213,7 +213,7 @@ const appStateReducer = (state, action) => {
             if(test.indexOf(file.name) === -1){
                 copyGoogle(file, entryIndex, state);
             }else{
-              console.log('already hear');
+              console.log('already herr');
               let newFiles = state.projectData.entries[entryIndex].files;
         
               newFiles = [...newFiles, { title: `${file.name}` }];
