@@ -2,7 +2,8 @@
 
 interface File {
   title: string;
-  format: string
+  format: string;
+  id: string
 }
 
 interface FileObj {

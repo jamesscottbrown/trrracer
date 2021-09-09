@@ -70,11 +70,11 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
       switch(response.status){
         case 200:
           var file = response.result;
-          console.log('Created File data', response, response.data.id);
+          console.log('Created File data google', response, response.data.id);
 
           
 
-          dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, entryIndex })
+          dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
 
           break;
         default:

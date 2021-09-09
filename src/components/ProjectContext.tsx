@@ -8,7 +8,7 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import { testNat } from '../naturalTest';
+import { googleConceptSearch, testNat } from '../naturalTest';
 
 export const ProjectContext = createContext();
 
@@ -29,6 +29,8 @@ const saveJSON = (newProjectData: any, state: any) => {
       }
     }
   );
+
+  console.log("IN SAVING JSON", state, newProjectData)
 
   return { ...state, projectData: newProjectData };
 };
@@ -80,7 +82,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
                 
                       const newProjectData = { ...state.projectData, entries };
                       console.log('new project', newProjectData);
-                      return saveJSON(newProjectData);
+                      return saveJSON(newProjectData, state);
                       
                     }
                   );
@@ -115,6 +117,9 @@ const appStateReducer = (state, action) => {
           if(f.fileType === 'txt'){
             let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
             f.conceptList = testNat(text, state.projectData.concepts);
+          }else if(f.fileType === 'gdoc'){
+            console.log('F IN GDOC', f);
+            googleConceptSearch(f.fileID, state.projectData.concepts);
           }
           return f;
         });
@@ -291,21 +296,26 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATE_GOOGLE_IN_ENTRY': {
-      const { name, fileType, entryIndex } = action;
+      const { name, fileType, fileId, entryIndex } = action;
 
       let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
 
-      console.log("this is firing in GDOC NAMEEEEE", name);
+      console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
 
       let newFiles = state.projectData.entries[entryIndex].files;
+
+      let newFile = {title: `${name}.${extension}`, fileType: extension, fileId: fileId}
         
-      newFiles = [...newFiles, { title: `${name}.${extension}` }];
+      //newFiles = [...newFiles, { title: `${name}.${extension}`, fileType: extension, fileId: fileId }];
+      newFiles = [...newFiles, newFile];
 
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-        entryIndex === i ? { ...d, files: newFiles, fileType: extension } : d
+        entryIndex === i ? { ...d, files: newFiles } : d
       );
 
       const newProjectData = { ...state.projectData, entries };
+
+      console.log('ENTRIES', entries)
 
       return saveJSON(newProjectData, state);
     }
@@ -325,7 +335,7 @@ const appStateReducer = (state, action) => {
               const destination = path.join(state.folderPath, file.name);
               copyFileSync(file.path, destination);
               console.log(`${file.path} was copied to ${destination}`);
-              copiedFiles = [...copiedFiles, { title: file.name, format: 'null' }];
+              copiedFiles = [...copiedFiles, { title: file.name, format: 'null', id: "" }];
             } catch (e) {
               console.log('Error', e.stack);
               console.log('Error', e.name);
