@@ -9,6 +9,7 @@ import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
 import { googleConceptSearch, testNat } from '../naturalTest';
+import { ControlCameraOutlined } from '@material-ui/icons';
 
 export const ProjectContext = createContext();
 
@@ -115,6 +116,7 @@ const appStateReducer = (state, action) => {
        
         en.files = en.files.map(f => {
           if(f.fileType === 'txt'){
+            console.log('URL FIRING AS TEXT IN CONCEPT?', f);
             let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
             f.conceptList = testNat(text, state.projectData.concepts);
           }else if(f.fileType === 'gdoc'){
@@ -262,7 +264,7 @@ const appStateReducer = (state, action) => {
             if(nameCheck[nameCheck.length - 1] === 'txt'){
 
               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
-
+              console.log('URL FIRING AS TEXT IN SAVE FILE', nameCheck);
               let conceptList = testNat(test, state.projectData.concepts);
 
               console.log('conceptList in context', conceptList);

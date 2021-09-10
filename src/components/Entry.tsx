@@ -132,8 +132,8 @@ const Entry = (props: EntryPropTypes) => {
 
   const addURL = () =>{
     console.log('TEST THIS OUT');
-    testNat();
-    //dispatch({ type: 'ADD_URL', url, entryIndex })
+    //testNat();
+    dispatch({ type: 'ADD_URL', url, entryIndex })
   }
 
   return (
