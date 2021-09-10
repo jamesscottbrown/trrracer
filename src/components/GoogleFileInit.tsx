@@ -48,14 +48,13 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   }
 
   async function createGoogleFile(name : string){
-    console.log('fileType', fileType);
+  
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
     const token = await readFile('token.json')
     oAuth2Client.setCredentials(JSON.parse(token))
-    console.log('init client');
-    console.log('auth Instance', oAuth2Client)
+    
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
-    console.log('name in name', name);
+  
     var parentId = '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg';//some parentId of a folder under which to create the new folder
     var fileMetadata = {
       'name' : name,

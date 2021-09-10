@@ -73,8 +73,9 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
                     
                       console.log('response', response, state)
                       let newFiles = state.projectData.entries[entryIndex].files;
+                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], fileId: response.data.id }
         
-                      newFiles = [...newFiles, { title: `${file.name}` }];
+                      newFiles = [...newFiles, newFile];
                 
                       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
                         entryIndex === i ? { ...d, files: newFiles } : d
@@ -91,7 +92,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
 }
 
 const appStateReducer = (state, action) => {
-  console.log('state', state, 'action', action);
+  console.log("WATCH THIS HERE",'state', state, 'action', action);
 
  // console.log('ACTION:', action);
   switch (action.type) {
@@ -110,7 +111,6 @@ const appStateReducer = (state, action) => {
 
       console.log('tagging concepts in text', state.projectData.entries);
       
-
       let newEntries = [...state.projectData.entries].map(en => {
        
         en.files = en.files.map(f => {
@@ -215,8 +215,10 @@ const appStateReducer = (state, action) => {
             }else{
               console.log('already herr');
               let newFiles = state.projectData.entries[entryIndex].files;
+
+              let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1] };
         
-              newFiles = [...newFiles, { title: `${file.name}` }];
+              newFiles = [...newFiles, newFile];
         
               const entries = state.projectData.entries.map((d: EntryType, i: number) =>
                 entryIndex === i ? { ...d, files: newFiles } : d
