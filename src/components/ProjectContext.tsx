@@ -36,6 +36,65 @@ const saveJSON = (newProjectData: any, state: any) => {
   return { ...state, projectData: newProjectData };
 };
 
+export async function getGoogleIds(projectData, state){
+
+  console.log('projectData in get google ids', projectData.entries);
+  const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+            const token = await readFile('token.json')
+            oAuth2Client.setCredentials(JSON.parse(token))
+           
+            let drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+            drive.files.list({
+              q:`"1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg" in parents and trashed = false`, 
+              fields:"nextPageToken, files(id, name)",
+              supportsAllDrives: true,
+              includeItemsFromAllDrives: true,
+
+            }).then((fi)=> {
+
+              console.log("FILES", fi);
+              let newProjEntries = projectData.entries.map(( e: EntryType )=>{
+               
+                e.files = e.files.map(f => {
+                 
+                  let nameCheck = f.title.split('.');
+                  
+                  if(nameCheck[nameCheck.length - 1] === 'gdoc'){
+
+                    // console.log('nameCheck in google doc', f.title, fi.data.files);
+
+                    let id = fi.data.files.filter(m=> {
+                      return `${m.name}.gdoc` === f.title});
+                  
+
+                    if(id.length != 0){
+                      f.fileType = 'gdoc';
+                      f.fileId = id[0].id;
+                    }
+                  }
+
+                  return f;
+
+                });
+
+                return e;
+
+              });
+
+             
+
+              let newProj = {...projectData, 'entries': newProjEntries}
+
+              console.log('NEW NEW proj while whrtie', newProj);
+              
+              return saveJSON(newProj, state);
+              
+            
+            });
+
+}
+
 async function copyGoogle(file:any, entryIndex:number, state:any){
 
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
@@ -51,6 +110,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
               fields:"nextPageToken, files(id, name)",
               supportsAllDrives: true,
               includeItemsFromAllDrives: true,
+
             }).then((fi)=> {
               
                 var copyRequest = {  // Modified
@@ -95,9 +155,12 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
 const appStateReducer = (state, action) => {
   console.log("WATCH THIS HERE",'state', state, 'action', action);
 
- // console.log('ACTION:', action);
   switch (action.type) {
     case 'SET_DATA': {
+
+      // console.log('set data on reload??', action.projectData);
+      // getGoogleIds(action.projectData, state);
+
       return {
         folderPath: action.folderName,
         projectData: action.projectData,
@@ -108,19 +171,17 @@ const appStateReducer = (state, action) => {
     case 'CREATE_CONCEPT':{
     
      // const { title } = action;
-      console.log('create concept test', action.title, state.projectData.concepts);
-
-      console.log('tagging concepts in text', state.projectData.entries);
+   
       
       let newEntries = [...state.projectData.entries].map(en => {
        
         en.files = en.files.map(f => {
           if(f.fileType === 'txt'){
-            console.log('URL FIRING AS TEXT IN CONCEPT?', f);
+        
             let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
             f.conceptList = testNat(text, state.projectData.concepts);
           }else if(f.fileType === 'gdoc'){
-            console.log('F IN GDOC', f);
+           
            // googleConceptSearch(f.fileID, state.projectData.concepts);
           }
           return f;
@@ -146,18 +207,18 @@ const appStateReducer = (state, action) => {
 
     case 'DELETE_CONCEPT':{
     
-       console.log('DELETE concept test', action.title, state.projectData.concepts);
+     
  
        const newConcepts  = state.projectData.concepts.map(m => {
-         console.log("M NAME AND ACTION", m.name, action.title.name);
+        
            if(m.name === action.title.name){
-             console.log('made it')
+          
              m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
            }
            return m;
          });
 
-         console.log('NEW NEW', newConcepts);
+        
         
        const newProjectData = {
          ...state.projectData,
@@ -499,6 +560,7 @@ const initialState = {
 };
 
 export function ProjectStateProvider({ children }) {
+
   const reducer = useReducer(appStateReducer, initialState);
 
   return (
