@@ -159,7 +159,7 @@ const appStateReducer = (state, action) => {
     case 'SET_DATA': {
 
       // console.log('set data on reload??', action.projectData);
-      // getGoogleIds(action.projectData, state);
+      getGoogleIds(action.projectData, state);
 
       return {
         folderPath: action.folderName,
@@ -169,26 +169,25 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATE_CONCEPT':{
-    
-     // const { title } = action;
-   
       
+      console.log('ON CREATE CONCEPT', state.projectData.entries);
       let newEntries = [...state.projectData.entries].map(en => {
        
         en.files = en.files.map(f => {
           if(f.fileType === 'txt'){
-        
             let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
             f.conceptList = testNat(text, state.projectData.concepts);
           }else if(f.fileType === 'gdoc'){
-           
-           // googleConceptSearch(f.fileID, state.projectData.concepts);
+            googleConceptSearch(f, state.projectData.concepts).then(t => {
+              f.conceptList = t;
+            });
           }
           return f;
         });
-        
         return en;
       });
+
+      console.log('NEW ENTRIES LALALALA',newEntries)
 
       const newConcepts  = [
         ...state.projectData.concepts,

@@ -46,6 +46,10 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
       onClick={()=> {
         setViewType('timeline')
         handleClose}}>Timeline</MenuItem>
+         <MenuItem   
+      onClick={()=> {
+        setViewType('bin')
+        handleClose}}>Bin by Concept</MenuItem>
     </Menu>
     </div>
 

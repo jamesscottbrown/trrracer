@@ -53,6 +53,24 @@ const Project = (ProjectPropValues: ProjectProps) => {
     );
   }
 
+  if (viewType === 'bin') {
+    return (
+      <div>
+      <TopBar  
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}/>
+      <ProjectTimelineView
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}
+      />
+      </div>
+    );
+  }
+
   return null;
 };
 
