@@ -11,6 +11,7 @@ import ReadonlyEntry from './ReadonlyEntry';
 import { Button } from '@material-ui/core';
 
 import ConceptNav from './concepts';
+import EdgeControl from './Edges';
 
 const { ipcRenderer } = require('electron');
 
@@ -75,6 +76,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   return (
     <div>
       <ConceptNav concepts={projectData.concepts}/>
+      <EdgeControl edges={projectData.edges}/>
 
       <TagList tags={projectData.tags} />
 

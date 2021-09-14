@@ -228,7 +228,49 @@ const appStateReducer = (state, action) => {
  
      }
 
-    case 'ADD_TAG_TO_ENTRY': {
+    case 'CREATE_EDGE':{
+  
+      const newEdges  = [
+        ...state.projectData.edges,
+        { to: action.to, from: action.from, description: action.description, key: action.key, actions: [ {action: 'created', when: new Date().toISOString() }] },
+      ];
+
+      const newProjectData = {
+        ...state.projectData,
+        edges: newEdges,
+      };
+
+      console.log('newProjectData', newProjectData);
+
+      return saveJSON(newProjectData, state);
+
+    }
+
+    case 'DELETE_EDGE':{
+    
+     
+ 
+      const newEdges  = state.projectData.edges.map(m => {
+          console.log('MMM', m.key, action.key)
+          if(m.key === action.key){
+         
+            m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
+          }
+          return m;
+        });
+
+       
+       
+      const newProjectData = {
+        ...state.projectData,
+        edges: newEdges,
+      };
+
+      return saveJSON(newProjectData, state);
+
+    }
+
+  case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
 
       const existingTags = state.projectData.tags.map((k) => k.title);
@@ -257,7 +299,7 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData, state);
     }
 
-    case 'ADD_FILES_TO_ENTRY': {
+  case 'ADD_FILES_TO_ENTRY': {
       const { fileList, entryIndex } = action;
 
       let newFiles = state.projectData.entries[entryIndex].files;

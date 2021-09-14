@@ -29,6 +29,14 @@ interface ReactTagType {
   text: string;
 }
 
+interface EdgeType {
+  to: string;
+  from: string;
+  description: string;
+  actions: ConceptActionType[];
+  key: string;
+}
+
 interface ConceptType {
   name: string;
   actions : ConceptActionType[];
@@ -45,6 +53,7 @@ interface ProjectType {
   tags: TagType[];
   entries: EntryType[];
   concepts : ConceptType[];
+  edges : EdgeType[];
 }
 
 interface ProjectViewProps {
@@ -63,4 +72,5 @@ export {
   ProjectViewProps,
   ReactTagType,
   ConceptType,
+  EdgeType
 };
