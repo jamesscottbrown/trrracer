@@ -17,6 +17,15 @@ const { ipcRenderer } = require('electron');
 const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
+  console.log('projectdata in bin view', projectData);
+
+  projectData.concepts.map(con => {
+   
+    projectData.entries.filter(en => {
+      console.log('en', en, 'con', con);
+    })
+  });
+
   const [{ filterTags }, dispatch] = useProjectState();
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -25,8 +34,6 @@ const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
   useEffect(() => {
     setEditable(Array.from(Array(projectData.entries.length)));
   }, [projectData]);
-
- 
 
   // TODO: add files to json file and save
 
@@ -49,7 +56,7 @@ const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
   const openFile = (fileName: string) => {
     console.log('Open file:', path.join(folderPath, fileName));
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
-    console.log('after ipcRenderer')
+    console.log('after ipcRenderer');
   };
 
   const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
@@ -98,7 +105,6 @@ const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
       <TagFilter />
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
-        
         <>
           {editable[i] ? (
             <Entry

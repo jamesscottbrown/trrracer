@@ -11,7 +11,6 @@ interface ViewTypeControlProps {
 const ViewTypeControl = (props: ViewTypeControlProps) => {
 
   const { viewType, setViewType } = props;
-  
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 

@@ -6,6 +6,7 @@ import { ProjectType } from './types';
 import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
 import TopBar from './TopBar';
+import ProjectBinView from './ProjectBinView';
 
 interface ProjectProps {
   projectData: ProjectType;
@@ -61,7 +62,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         folderPath={folderPath}
         viewType={viewType}
         setViewType={setViewType}/>
-      <ProjectTimelineView
+      <ProjectBinView
         projectData={projectData}
         folderPath={folderPath}
         viewType={viewType}
