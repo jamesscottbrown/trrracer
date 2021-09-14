@@ -2,6 +2,11 @@
 logs
 *.log
 
+#google
+assets/google_cred_desktop_app.json
+assets/google_cred_json_web.json
+token.json
+
 # Runtime data
 pids
 *.pid
@@ -53,6 +58,3 @@ npm-debug.log.*
 # local example project
 example/*
 
-google_cred_desktop_app.json
-google_cred_json_web.json
-token.json
