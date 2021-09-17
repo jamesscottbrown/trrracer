@@ -19,12 +19,21 @@ export function testNat(file, concepts){
 
     var Trie = natural.Trie;
 
-    var trie = new Trie();
+    var trie = new Trie(false);
     
     // Add one string at a time
     var tokenizer = new natural.WordTokenizer();
     let tokens = tokenizer.tokenize(file);
-    tokens.map(t => trie.addString(t));
+    //tokens.map(t => trie.addString(t));
+    trie.addStrings(tokens);
+
+    var NGrams = natural.NGrams;
+    let grams = NGrams.bigrams(file);
+    // grams.map(g => {
+    //    // console.log(`${g[0]} ${g[1]}`)
+    //     trie.addString(`${g[0]} ${g[1]}`)});
+
+    // console.log('GRAMS', grams);
     console.log('CONCEPTSSS', concepts);
     let toCheck = concepts.filter(f=> {
         let test = f.actions.filter(a=> a.action === 'deleted');
@@ -34,7 +43,16 @@ export function testNat(file, concepts){
     console.log('NEW CONCEPTS', toCheck);
 
     return toCheck.map(m=> {
-        return {'concept': m.name, 'contains': trie.contains(m.name)};
+        console.log(m);
+       let letters = m.name.split(' ');
+        console.log(letters);
+
+        let contains = letters.map(l => {
+            return {token: l, bool: trie.contains(l)}})
+        return {
+            'concept': m.name, 
+            'contains': contains//trie.contains(m.name)
+        };
     });
 
 }

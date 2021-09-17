@@ -15,8 +15,11 @@ const ConceptNav = (props:ConceptProps) => {
     const [{ projectData }, dispatch] = useProjectState(); 
 
     const [showForm, setShowForm] = useState(false);
+    const [showMerge, setShowMerge] = useState(false);
 
     let fileName = "New Concept";
+    let mergeName = "";
+    let toName = "";
 
     function handleChange(event){
       fileName = event.target.value;
@@ -29,6 +32,10 @@ const ConceptNav = (props:ConceptProps) => {
     const createConcept = ()=>{
         console.log('TEST THIS OUT');
         dispatch({ type: 'CREATE_CONCEPT', title: fileName })
+    }
+
+    const mergeConceptInto = ()=>{
+        dispatch({ type: 'MERGE_CONCEPT', mergeName: mergeName, toName: toName })
     }
 
     return(
@@ -51,7 +58,7 @@ const ConceptNav = (props:ConceptProps) => {
                 setShowForm(true)
                 addConceptForm()}}
             >Add New Concept</Button>
-        }
+            }
             
             {concepts ? concepts.filter(f=>{
                 let actionlist = f.actions.map(m=> m.action);
@@ -67,6 +74,25 @@ const ConceptNav = (props:ConceptProps) => {
                         <h3>{con.name}</h3>
                         {/* <Button>Merge</Button> */}
                         <Button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</Button>
+
+            {showMerge ? 
+            <div>
+            <Button color="primary" onClick={() => {
+                setShowMerge(false)
+                addConceptForm()}}
+            >Cancel</Button>
+            <TextField onChange={handleChange}></TextField>
+            <Button onClick={()=> {
+                createConcept()
+                setShowMerge(false)
+                }}>Add</Button>
+            </div>
+             :
+            <Button color="primary" onClick={() => {
+                setShowMerge(true)
+                addConceptForm()}}
+            >Merge Into</Button>
+            }
                     </div>
             )) : <div>no concepts</div>}
         </div>
