@@ -19,6 +19,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
+  
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );

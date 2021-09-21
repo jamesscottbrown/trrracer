@@ -55,5 +55,5 @@ export default function App() {
     return <p>Loading...</p>;
   }
 
-  return <Project projectData={projectData} folderPath={folderPath} />;
+  return  <Project projectData={projectData} folderPath={folderPath} />;
 }

@@ -1,9 +1,9 @@
 import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProjectState } from './ProjectContext';
 import { ConceptType, ProjectType, ProjectViewProps} from './types';
+import Merger from './MergeConceptForm';
 
 interface ConceptProps {
     concepts: ConceptType[];
@@ -15,7 +15,11 @@ const ConceptNav = (props:ConceptProps) => {
     const [{ projectData }, dispatch] = useProjectState(); 
 
     const [showForm, setShowForm] = useState(false);
-    const [showMerge, setShowMerge] = useState(false);
+   
+    let conceptList = concepts ? concepts.filter(f=>{
+        let actionlist = f.actions.map(m=> m.action);
+        return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
+    }) : [];
 
     let fileName = "New Concept";
     let mergeName = "";
@@ -34,10 +38,6 @@ const ConceptNav = (props:ConceptProps) => {
         dispatch({ type: 'CREATE_CONCEPT', title: fileName })
     }
 
-    const mergeConceptInto = ()=>{
-        dispatch({ type: 'MERGE_CONCEPT', mergeName: mergeName, toName: toName })
-    }
-
     return(
         <>
         <div>
@@ -48,9 +48,10 @@ const ConceptNav = (props:ConceptProps) => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</Button>
-            <TextField onChange={handleChange}></TextField><Button onClick={()=> {
-                createConcept()
-                setShowForm(false)
+            <TextField onChange={handleChange}>
+                </TextField><Button onClick={()=> {
+                    createConcept()
+                    setShowForm(false)
                 }}>Add</Button>
             </div>
              :
@@ -62,8 +63,8 @@ const ConceptNav = (props:ConceptProps) => {
             
             {concepts ? concepts.filter(f=>{
                 let actionlist = f.actions.map(m=> m.action);
-                return actionlist.indexOf('deleted') === -1;
-            }).map((con: ConceptType) => (
+                return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
+            }).map((con: ConceptType, i) => (
                 <div
                     key={con.name}
                     style={{
@@ -71,29 +72,12 @@ const ConceptNav = (props:ConceptProps) => {
                     gridTemplateColumns: '200px 100px 100px',
                     }}
                     >
-                        <h3>{con.name}</h3>
-                        {/* <Button>Merge</Button> */}
-                        <Button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</Button>
-
-            {showMerge ? 
-            <div>
-            <Button color="primary" onClick={() => {
-                setShowMerge(false)
-                addConceptForm()}}
-            >Cancel</Button>
-            <TextField onChange={handleChange}></TextField>
-            <Button onClick={()=> {
-                createConcept()
-                setShowMerge(false)
-                }}>Add</Button>
-            </div>
-             :
-            <Button color="primary" onClick={() => {
-                setShowMerge(true)
-                addConceptForm()}}
-            >Merge Into</Button>
-            }
-                    </div>
+                    <h3>{con.name}</h3>
+                    {/* <Button>Merge</Button> */}
+                    <Button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</Button>
+                    <Merger conceptList={conceptList} concept={con} index={i} ></Merger>
+                    
+                </div>
             )) : <div>no concepts</div>}
         </div>
         </>

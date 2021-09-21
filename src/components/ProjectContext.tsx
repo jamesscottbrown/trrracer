@@ -206,8 +206,6 @@ const appStateReducer = (state, action) => {
 
     case 'DELETE_CONCEPT':{
     
-     
- 
        const newConcepts  = state.projectData.concepts.map(m => {
         
            if(m.name === action.title.name){
@@ -226,6 +224,31 @@ const appStateReducer = (state, action) => {
  
        return saveJSON(newProjectData, state);
  
+     }
+
+     case 'MERGE_CONCEPT':{
+       
+
+       const newConcepts  = state.projectData.concepts.map(m => {
+        
+        if(m.name === action.fromName){
+
+          m.actions = [...m.actions, { action:'merged', with: action.mergeName, when: new Date().toISOString() }]
+        }
+        return m;
+      });
+      
+
+       const newProjectData = {
+        ...state.projectData,
+        concepts: newConcepts
+      };
+
+      //console.log('IN MERGE', newProjectData);
+
+      return saveJSON(newProjectData, state);
+
+      
      }
 
     case 'CREATE_EDGE':{
@@ -248,8 +271,6 @@ const appStateReducer = (state, action) => {
 
     case 'DELETE_EDGE':{
     
-     
- 
       const newEdges  = state.projectData.edges.map(m => {
           console.log('MMM', m.key, action.key)
           if(m.key === action.key){
