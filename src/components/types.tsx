@@ -3,7 +3,8 @@
 interface File {
   title: string;
   fileType: string;
-  fileId: string
+  fileId: string;
+  meta: string;
 }
 
 interface FileObj {

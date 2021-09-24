@@ -36,6 +36,37 @@ const saveJSON = (newProjectData: any, state: any) => {
   return { ...state, projectData: newProjectData };
 };
 
+export async function addMetaDescrip(projectData, state){
+
+
+  let newProjEntries = projectData.entries.map(( e: EntryType )=>{
+   
+    e.files = e.files.map(f => {
+     
+     if(!f.meta){
+       f.meta = "null";
+     }
+
+      return f;
+
+    });
+
+    return e;
+
+  });
+
+ 
+
+  let newProj = {...projectData, 'entries': newProjEntries}
+
+  console.log('NEW NEW proj while whrtie', newProj);
+  
+  return saveJSON(newProj, state);
+  
+
+//});
+
+}
 export async function getGoogleIds(projectData, state){
 
   console.log('projectData in get google ids', projectData.entries);
@@ -95,7 +126,7 @@ export async function getGoogleIds(projectData, state){
 
 }
 
-async function copyGoogle(file:any, entryIndex:number, state:any){
+async function copyGoogle(file:any, entryIndex:number, state:any, metaText:string){
 
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
             const token = await readFile('token.json')
@@ -134,7 +165,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
                     
                       console.log('response', response, state)
                       let newFiles = state.projectData.entries[entryIndex].files;
-                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], fileId: response.data.id }
+                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], meta: metaText, fileId: response.data.id }
         
                       newFiles = [...newFiles, newFile];
                 
@@ -154,12 +185,13 @@ async function copyGoogle(file:any, entryIndex:number, state:any){
 
 const appStateReducer = (state, action) => {
   console.log("WATCH THIS HERE",'state', state, 'action', action);
-
+  
   switch (action.type) {
     case 'SET_DATA': {
 
       // console.log('set data on reload??', action.projectData);
-      getGoogleIds(action.projectData, state);
+     // getGoogleIds(action.projectData, state);
+      addMetaDescrip(action.projectData, state)
 
       return {
         folderPath: action.folderName,
@@ -336,12 +368,12 @@ const appStateReducer = (state, action) => {
             console.log('google file!', file.name, test.indexOf(file.name), test)
 
             if(test.indexOf(file.name) === -1){
-                copyGoogle(file, entryIndex, state);
+                copyGoogle(file, entryIndex, state, "null");
             }else{
               console.log('already herr');
               let newFiles = state.projectData.entries[entryIndex].files;
 
-              let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1] };
+              let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], meta: "null" };
         
               newFiles = [...newFiles, newFile];
         
@@ -390,12 +422,12 @@ const appStateReducer = (state, action) => {
               console.log('URL FIRING AS TEXT IN SAVE FILE', nameCheck);
               let conceptList = testNat(test, state.projectData.concepts);
 
-              console.log('conceptList in context', conceptList);
+              
 
-              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], conceptList: conceptList}];
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], meta: "null", conceptList: conceptList}];
             }else{
 
-              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1] }];
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], meta: "null", }];
             }
 
             
@@ -561,6 +593,30 @@ const appStateReducer = (state, action) => {
       const newProjectData = { ...state.projectData, entries };
 
       return saveJSON(newProjectData, state);
+    }
+
+    case 'FILE_META': {
+
+      console.log('is this reaching??')
+
+      const entries = state.projectData.entries.map((d: EntryType, i: number) => {
+   
+        if(action.entryIndex === i){
+          d.files.map((f, j)=> {
+            if(j === action.indexFile){
+              f.meta = action.metaForm;
+            }
+            return f;
+          })
+        }
+        return d;
+      });
+
+     
+      const newProjectData = { ...state.projectData, entries };
+
+      return saveJSON(newProjectData, state);
+
     }
 
     case 'UPDATE_TAG_COLOR': {

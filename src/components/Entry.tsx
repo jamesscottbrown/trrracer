@@ -14,7 +14,9 @@ import FileUpload from './FileUpload';
 import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
-import { Button, TextField } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import { testNat } from '../naturalTest';
 
 interface EditDateTypes {
@@ -136,6 +138,20 @@ const Entry = (props: EntryPropTypes) => {
     dispatch({ type: 'ADD_URL', url, entryIndex })
   }
 
+
+
+  let metaForm = "";
+
+  const handleMetaChange = (event)=> {
+    metaForm = event.target.value;
+  
+  }
+
+  const updateMeta = (file, indexFile) => {
+   // console.log('update meta', file, index, metaForm);
+    dispatch({type: 'FILE_META', entryIndex, indexFile, metaForm});
+  }
+
   return (
     <>
       <h3>
@@ -190,9 +206,10 @@ const Entry = (props: EntryPropTypes) => {
       )}
 
       <ul>
-        {entryData.files.map((file: File) => (
+        {entryData.files.map((file: File, j:Number) => (
+          
           <li key={file.title}>
-            {file.title}{' '}
+            {file.title}{'    '}
             <FaExternalLinkAlt
               onClick={() => {
                 console.log("FILEZZ", file, file.title);
@@ -205,6 +222,10 @@ const Entry = (props: EntryPropTypes) => {
               title="Delete File"
               size="12px"
             />
+            <ul>
+               <li> <TextField defaultValue={file.meta} onChange={handleMetaChange}/> <Button onClick={()=> updateMeta(file, j)}>Update Meta</Button></li> 
+            </ul>
+            
           </li>
         ))}
       </ul>
