@@ -251,6 +251,7 @@
     "googleapis": "^39.2.0",
     "history": "^5.0.0",
     "natural": "^5.1.0",
+    "node-wordnet": "^0.1.12",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-datepicker": "^3.8.0",
@@ -266,7 +267,9 @@
     "regenerator-runtime": "^0.13.5",
     "respacer": "^1.1.0",
     "showdown": "^1.9.1",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "stopword": "^1.0.11",
+    "wndb-with-exceptions": "^3.0.2"
   },
   "devEngines": {
     "node": ">=10.x",

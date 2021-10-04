@@ -8,7 +8,7 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import { googleConceptSearch, testNat } from '../naturalTest';
+import { googleConceptSearch, testNat, testWordNet } from '../naturalTest';
 import { ControlCameraOutlined } from '@material-ui/icons';
 
 export const ProjectContext = createContext();
@@ -31,7 +31,7 @@ const saveJSON = (newProjectData: any, state: any) => {
     }
   );
 
-  console.log("IN SAVING JSON", state, newProjectData)
+ // console.log("IN SAVING JSON", state, newProjectData)
 
   return { ...state, projectData: newProjectData };
 };
@@ -184,14 +184,22 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
 }
 
 const appStateReducer = (state, action) => {
-  console.log("WATCH THIS HERE",'state', state, 'action', action);
+  //console.log("WATCH THIS HERE",'state', state, 'action', action);
   
   switch (action.type) {
     case 'SET_DATA': {
 
-      // console.log('set data on reload??', action.projectData);
+ 
      // getGoogleIds(action.projectData, state);
-      addMetaDescrip(action.projectData, state)
+
+      
+      
+      addMetaDescrip(action.projectData, state);
+
+      action.projectData.entries = testWordNet(action.projectData, action.projectData.title);
+
+     
+      console.log('testing this maddness',action, state);
 
       return {
         folderPath: action.folderName,
@@ -202,7 +210,7 @@ const appStateReducer = (state, action) => {
 
     case 'CREATE_CONCEPT':{
       
-      console.log('ON CREATE CONCEPT', state.projectData.entries);
+
       let newEntries = [...state.projectData.entries].map(en => {
        
         en.files = en.files.map(f => {
@@ -220,6 +228,7 @@ const appStateReducer = (state, action) => {
       });
 
       console.log('NEW ENTRIES LALALALA',newEntries)
+     // testWordNet(state.projectData, state);
 
       const newConcepts  = [
         ...state.projectData.concepts,
@@ -260,7 +269,6 @@ const appStateReducer = (state, action) => {
 
      case 'MERGE_CONCEPT':{
        
-
        const newConcepts  = state.projectData.concepts.map(m => {
         
         if(m.name === action.fromName){
