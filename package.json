@@ -251,7 +251,6 @@
     "googleapis": "^39.2.0",
     "history": "^5.0.0",
     "natural": "^5.1.0",
-    "node-wordnet": "^0.1.12",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-datepicker": "^3.8.0",

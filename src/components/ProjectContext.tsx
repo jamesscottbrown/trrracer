@@ -8,8 +8,10 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import { getFrequentWords, googleConceptSearch, testNat, testWordNet } from '../naturalTest';
+import { getFrequentWords, googleConceptSearch, googleFileFrequentWords, txtConceptLink } from '../naturalTest';
 import { ControlCameraOutlined } from '@material-ui/icons';
+const natural = require('natural');
+const sw = require('stopword');
 
 export const ProjectContext = createContext();
 
@@ -17,9 +19,11 @@ export function useProjectState() {
   return useContext(ProjectContext);
 }
 
-const saveJSON = (newProjectData: any, state: any) => {
+export const saveJSON = (newProjectData: any, state: any) => {
+  console.log('IN SAVE JSON',state.folderPath, newProjectData)
+  let pathString = state.folderPath === null ? newProjectData.title : state.folderPath;
   fs.writeFileSync(
-    path.join(state.folderPath, 'trrrace.json'),
+    path.join(pathString, 'trrrace.json'),
     JSON.stringify(newProjectData, null, 4),
     (err) => {
       if (err) {
@@ -194,10 +198,9 @@ const appStateReducer = (state, action) => {
       //addMetaDescrip(action.projectData, state);
 
      // action.projectData.entries = //getFrequentWords(action.projectData, action.projectData.title);
-      testWordNet(action.projectData, action.projectData.title);
+      //testWordNet(action.projectData, action.projectData.title);
 
-      let test = getFrequentWords(action.projectData, action.projectData.title);
-      console.log("TEST BEFORE I DESTROY", test);
+    getFrequentWords(action.projectData, action.projectData.title, state);
 
       return {
         folderPath: action.folderName,
@@ -213,11 +216,12 @@ const appStateReducer = (state, action) => {
         en.files = en.files.map(f => {
           if(f.fileType === 'txt'){
             let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
-            f.conceptList = testNat(text, state.projectData.concepts);
+            f.conceptList = txtConceptLink(text, state.projectData.concepts);
           }else if(f.fileType === 'gdoc'){
             googleConceptSearch(f, state.projectData.concepts).then(t => {
               f.conceptList = t;
             });
+            //googleFileFrequentWords(file, )
           }
           return f;
         });
@@ -425,7 +429,7 @@ const appStateReducer = (state, action) => {
 
               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
               console.log('URL FIRING AS TEXT IN SAVE FILE', nameCheck);
-              let conceptList = testNat(test, state.projectData.concepts);
+              let conceptList = txtConceptLink(test, state.projectData.concepts);
 
               
 

@@ -1,20 +1,20 @@
 import { readFile } from './fileUtil';
 import *  as googleCred from '../assets/google_cred_desktop_app.json';
 import * as fs from 'fs';
-const {WordNet} = require('node-wordnet');
+import { saveJSON } from './components/ProjectContext';
+
+//const {WordNet} = require('node-wordnet');
 const {google} = require('googleapis');
 const natural = require('natural');
 const sw = require('stopword');
 
 
 
-export function testNat(file, concepts){
+export function txtConceptLink(file, concepts){
 
     var Trie = natural.Trie;
     var trie = new Trie(false);
 
-    
-    
     // Add one string at a time
     var tokenizer = new natural.WordTokenizer();
     let tokens = tokenizer.tokenize(file);
@@ -128,17 +128,12 @@ export async function googleFileFrequentWords(file, ind, tokenizer, tfidf){
      
         let googTest = await gDoc.documents.get({documentId: fileId});
 
-        //console.log('goog',googTest)
         let paragraphs =  googTest.data.body.content.flatMap(con => con.paragraph ? con.paragraph.elements : []).map(pa => pa.textRun ? pa.textRun.content : "").join(' ');
-
-        //console.log('PARAGRAPHS', paragraphs);
 
         let text = tokenizer.tokenize(paragraphs);
 
-        const newT = sw.removeStopwords(text);//.filter(f => f.upperCase() != 'PRE');
+        const newT = sw.removeStopwords(text);
 
-        //console.log('NEWT', newT);
-       
         let newNEW = newT.map((t, j)=> natural.PorterStemmer.stem(t));
 
         //console.log(newNEW);
@@ -152,61 +147,56 @@ export async function googleFileFrequentWords(file, ind, tokenizer, tfidf){
 
         //YOU ARE SEARCHING for stemmed words
         file.tfidfID = ind;
-        file.tfidfTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
+
+        return tfidf.listTerms(ind).slice(0, 20).map(stem=> {
             stem.words = trie.keysWithPrefix(stem.term);
             return stem;
         });
 
-        console.log('file.tfidf top!!',file.tfidfTop);
-
-        return await file;
-
 
     }else{
-        return await file;
+        return [];
     }
 
-    
 }
 
-
-export function getFrequentWords(projectData, state){
+export function getFrequentWords(projectData, title, state){
 
     var TfIdf = natural.TfIdf;
     var tfidf = new TfIdf();
     let ind = 0;
-
+  
     var tokenizer = new natural.WordTokenizer();
-
-    return projectData.entries.map(en => {
-
+  
+    let newEntries = projectData.entries.map(en => {
+  
         en.files = en.files.map(fi => {
            
            if(fi.fileType === 'txt' || fi.fileType === 'rtf'){
-
-            let text = tokenizer.tokenize(fs.readFileSync(`${state}/${fi.title}`,{ encoding: 'utf8' }));
+  
+            let text = tokenizer.tokenize(fs.readFileSync(`${title}/${fi.title}`,{ encoding: 'utf8' }));
             const newT = sw.removeStopwords(text);
            
             let newNEW = newT.map((t, j)=> natural.PorterStemmer.stem(t)).filter(f => f.length > 2);
-
+  
             tfidf.addDocument(newNEW);
-
+  
             var Trie = natural.Trie;
             var trie = new Trie(false);
-
+  
             trie.addStrings(newT);
-
+  
             //YOU ARE SEARCHING for stemmed words
             fi.tfidfID = ind;
             fi.tfidfTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
                 stem.words = trie.keysWithPrefix(stem.term);
                 return stem;
             });
-
+  
             ind = ind + 1;
            }else if(fi.fileType === 'gdoc'){
                 googleFileFrequentWords(fi, ind, tokenizer, tfidf).then(pro => {
-                    fi = pro;
+                    fi.tfidf = pro;
                 });
             }
            
@@ -214,25 +204,10 @@ export function getFrequentWords(projectData, state){
         });
         return en;
     });
-
-
-}
-
-export function testWordNet(projectData, state){
-    //console.log('wordnet test firing??');
-
-    var wordnet = new natural.WordNet();
-
-    projectData.concepts.map(en=> {
-       // console.log('en', en.name);
-        wordnet.lookup(en.name, function(results){
-            console.log('resultssss',results);
-        });
-    })
-
-    
-
-   
   
-}
-
+    let newProj = {...projectData, 'entries': newEntries}
+  
+    console.log('NEW NEW proj in frequent words', newProj);
+    
+    return saveJSON(newProj, state);
+  }
