@@ -189,10 +189,6 @@ export function getFrequentWords(projectData, state){
            
             let newNEW = newT.map((t, j)=> natural.PorterStemmer.stem(t)).filter(f => f.length > 2);
 
-            // let newNEW = newT.map((t, j)=> {
-            //     let low = t.toLowerCase();
-            //     return low}).filter(f => f.length > 2);
-
             tfidf.addDocument(newNEW);
 
             var Trie = natural.Trie;
@@ -227,7 +223,14 @@ export function testWordNet(projectData, state){
 
     var wordnet = new natural.WordNet();
 
-    console.log('WORDNET', projectData.entries)
+    projectData.concepts.map(en=> {
+       // console.log('en', en.name);
+        wordnet.lookup(en.name, function(results){
+            console.log('resultssss',results);
+        });
+    })
+
+    
 
    
   

@@ -36,8 +36,7 @@ const saveJSON = (newProjectData: any, state: any) => {
   return { ...state, projectData: newProjectData };
 };
 
-export async function addMetaDescrip(projectData, state){
-
+export function addMetaDescrip(projectData, state){
 
   let newProjEntries = projectData.entries.map(( e: EntryType )=>{
    
@@ -61,7 +60,7 @@ export async function addMetaDescrip(projectData, state){
 
   console.log('NEW NEW proj while whrtie', newProj);
   
-  //return ""//saveJSON(newProj, state);
+  return saveJSON(newProj, state);
   
 
 //});
@@ -119,7 +118,7 @@ export async function getGoogleIds(projectData, state){
 
               console.log('NEW NEW proj while whrtie', newProj);
               
-             // return saveJSON(newProj, state);
+              return saveJSON(newProj, state);
               
             
             });
@@ -175,7 +174,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
                 
                       const newProjectData = { ...state.projectData, entries };
                       console.log('new project', newProjectData);
-                     // return saveJSON(newProjectData, state);
+                      return saveJSON(newProjectData, state);
                       
                     }
                   );
@@ -200,7 +199,7 @@ const appStateReducer = (state, action) => {
      // console.log('testing this maddness',action, state);
 
       let test = getFrequentWords(action.projectData, action.projectData.title);
-     // console.log("TEST BEFORE I DESTROY", test);
+      console.log("TEST BEFORE I DESTROY", test);
 
       return {
         folderPath: action.folderName,
@@ -211,7 +210,6 @@ const appStateReducer = (state, action) => {
 
     case 'CREATE_CONCEPT':{
       
-
       let newEntries = [...state.projectData.entries].map(en => {
        
         en.files = en.files.map(f => {
@@ -242,7 +240,7 @@ const appStateReducer = (state, action) => {
         entries: newEntries
       };
 
-     // return saveJSON(newProjectData, state);
+      return saveJSON(newProjectData, state);
 
     }
 
