@@ -18,8 +18,6 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 
 import ProjectLoader from './ProjectLoader';
-import ElectronGoogleOAuth2 from '@getstation/electron-google-oauth2';
-import { GoogleAuth } from './googleAuthSingleton';
 import { authenticate } from './authenticateGoogle';
 
 
