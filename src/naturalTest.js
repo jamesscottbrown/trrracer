@@ -52,7 +52,7 @@ export async function googleConceptSearch(file, concepts){
     let fileId = file.fileId;
 
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    const token =  readFile('token.json')
+    const token = readFile('token.json')
     oAuth2Client.setCredentials(JSON.parse(token))
 
     let gDoc = google.docs({version: 'v1', auth: oAuth2Client});
@@ -114,8 +114,63 @@ export async function googleConceptSearch(file, concepts){
     
 }
 
-export function testWordNet(projectData, state){
-    //console.log('wordnet test firing??');
+export async function googleFileFrequentWords(file, ind, tokenizer, tfidf){
+
+    let fileId = file.fileId;
+
+    const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
+    oAuth2Client.setCredentials(JSON.parse(token))
+
+    let gDoc = google.docs({version: 'v1', auth: oAuth2Client});
+  
+    if(file.fileId){
+     
+        let googTest = await gDoc.documents.get({documentId: fileId});
+
+        //console.log('goog',googTest)
+        let paragraphs =  googTest.data.body.content.flatMap(con => con.paragraph ? con.paragraph.elements : []).map(pa => pa.textRun ? pa.textRun.content : "").join(' ');
+
+        //console.log('PARAGRAPHS', paragraphs);
+
+        let text = tokenizer.tokenize(paragraphs);
+
+        const newT = sw.removeStopwords(text);//.filter(f => f.upperCase() != 'PRE');
+
+        //console.log('NEWT', newT);
+       
+        let newNEW = newT.map((t, j)=> natural.PorterStemmer.stem(t));
+
+        //console.log(newNEW);
+
+        tfidf.addDocument(newNEW);
+
+        var Trie = natural.Trie;
+        var trie = new Trie(false);
+
+        trie.addStrings(newT);
+
+        //YOU ARE SEARCHING for stemmed words
+        file.tldrID = ind;
+        file.tldrTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
+            stem.words = trie.keysWithPrefix(stem.term);
+            return stem;
+        });
+
+        console.log('file.tldr top!!',file.tldrTop);
+
+        return await file;
+
+
+    }else{
+        return await file;
+    }
+
+    
+}
+
+
+export function getFrequentWords(projectData, state){
 
     var TfIdf = natural.TfIdf;
     var tfidf = new TfIdf();
@@ -126,8 +181,9 @@ export function testWordNet(projectData, state){
     return projectData.entries.map(en => {
 
         en.files = en.files.map(fi => {
-            
+           
            if(fi.fileType === 'txt' || fi.fileType === 'rtf'){
+
             let text = tokenizer.tokenize(fs.readFileSync(`${state}/${fi.title}`,{ encoding: 'utf8' }));
             const newT = sw.removeStopwords(text);
            
@@ -144,32 +200,36 @@ export function testWordNet(projectData, state){
 
             trie.addStrings(newT);
 
-
             //YOU ARE SEARCHING for stemmed words
             fi.tldrID = ind;
             fi.tldrTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
-                //console.log('TERM',stem)
                 stem.words = trie.keysWithPrefix(stem.term);
                 return stem;
             });
 
-           
-            // newNEW.map(stem => {
-            //     console.log('test stem in find prefix', stem, trie.keysWithPrefix(stem));
-            // });
-
-
             ind = ind + 1;
-
-          
            }else if(fi.fileType === 'gdoc'){
-         
-        }
+                googleFileFrequentWords(fi, ind, tokenizer, tfidf).then(pro => {
+                    fi = pro;
+                });
+            }
            
             return fi;
         });
         return en;
     });
+
+
+}
+
+export function testWordNet(projectData, state){
+    //console.log('wordnet test firing??');
+
+    var wordnet = new natural.WordNet();
+
+    console.log('WORDNET', projectData.entries)
+
+   
   
 }
 

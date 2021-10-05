@@ -8,7 +8,7 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import { googleConceptSearch, testNat, testWordNet } from '../naturalTest';
+import { getFrequentWords, googleConceptSearch, testNat, testWordNet } from '../naturalTest';
 import { ControlCameraOutlined } from '@material-ui/icons';
 
 export const ProjectContext = createContext();
@@ -61,7 +61,7 @@ export async function addMetaDescrip(projectData, state){
 
   console.log('NEW NEW proj while whrtie', newProj);
   
-  return saveJSON(newProj, state);
+  //return ""//saveJSON(newProj, state);
   
 
 //});
@@ -71,7 +71,7 @@ export async function getGoogleIds(projectData, state){
 
   console.log('projectData in get google ids', projectData.entries);
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-            const token = await readFile('token.json')
+            const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
             oAuth2Client.setCredentials(JSON.parse(token))
            
             let drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -119,7 +119,7 @@ export async function getGoogleIds(projectData, state){
 
               console.log('NEW NEW proj while whrtie', newProj);
               
-              return saveJSON(newProj, state);
+             // return saveJSON(newProj, state);
               
             
             });
@@ -129,7 +129,7 @@ export async function getGoogleIds(projectData, state){
 async function copyGoogle(file:any, entryIndex:number, state:any, metaText:string){
 
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-            const token = await readFile('token.json')
+            const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
             oAuth2Client.setCredentials(JSON.parse(token))
            
             let drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -175,7 +175,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
                 
                       const newProjectData = { ...state.projectData, entries };
                       console.log('new project', newProjectData);
-                      return saveJSON(newProjectData, state);
+                     // return saveJSON(newProjectData, state);
                       
                     }
                   );
@@ -191,15 +191,16 @@ const appStateReducer = (state, action) => {
 
  
      // getGoogleIds(action.projectData, state);
-
       
-      
-      addMetaDescrip(action.projectData, state);
+      //addMetaDescrip(action.projectData, state);
 
-      action.projectData.entries = testWordNet(action.projectData, action.projectData.title);
-
+     // action.projectData.entries = //getFrequentWords(action.projectData, action.projectData.title);
+      testWordNet(action.projectData, action.projectData.title);
      
-      console.log('testing this maddness',action, state);
+     // console.log('testing this maddness',action, state);
+
+      let test = getFrequentWords(action.projectData, action.projectData.title);
+     // console.log("TEST BEFORE I DESTROY", test);
 
       return {
         folderPath: action.folderName,
@@ -241,7 +242,7 @@ const appStateReducer = (state, action) => {
         entries: newEntries
       };
 
-      return saveJSON(newProjectData, state);
+     // return saveJSON(newProjectData, state);
 
     }
 
