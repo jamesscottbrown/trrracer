@@ -2,6 +2,10 @@
 logs
 *.log
 
+#flask stuff 
+nlp-python/__pycache__
+nlp-python/venv
+
 #google
 assets/google_cred_desktop_app.json
 assets/google_cred_json_web.json
