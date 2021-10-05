@@ -195,8 +195,6 @@ const appStateReducer = (state, action) => {
 
      // action.projectData.entries = //getFrequentWords(action.projectData, action.projectData.title);
       testWordNet(action.projectData, action.projectData.title);
-     
-     // console.log('testing this maddness',action, state);
 
       let test = getFrequentWords(action.projectData, action.projectData.title);
       console.log("TEST BEFORE I DESTROY", test);

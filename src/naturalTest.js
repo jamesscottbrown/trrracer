@@ -151,13 +151,13 @@ export async function googleFileFrequentWords(file, ind, tokenizer, tfidf){
         trie.addStrings(newT);
 
         //YOU ARE SEARCHING for stemmed words
-        file.tldrID = ind;
-        file.tldrTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
+        file.tfidfID = ind;
+        file.tfidfTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
             stem.words = trie.keysWithPrefix(stem.term);
             return stem;
         });
 
-        console.log('file.tldr top!!',file.tldrTop);
+        console.log('file.tfidf top!!',file.tfidfTop);
 
         return await file;
 
@@ -197,8 +197,8 @@ export function getFrequentWords(projectData, state){
             trie.addStrings(newT);
 
             //YOU ARE SEARCHING for stemmed words
-            fi.tldrID = ind;
-            fi.tldrTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
+            fi.tfidfID = ind;
+            fi.tfidfTop = tfidf.listTerms(ind).slice(0, 20).map(stem=> {
                 stem.words = trie.keysWithPrefix(stem.term);
                 return stem;
             });
