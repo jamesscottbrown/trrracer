@@ -10,6 +10,7 @@ nlp-python/venv
 assets/google_cred_desktop_app.json
 assets/google_cred_json_web.json
 token.json
+token-py.json
 
 # Runtime data
 pids
