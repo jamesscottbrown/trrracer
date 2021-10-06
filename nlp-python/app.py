@@ -36,10 +36,10 @@ def index():
                     f["fileType"] = "pdf"
 
     
-    write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrracePYTHON.json'
+    write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrrace.json'
 
-    with open(write_path, 'w') as outfile:
-        json.dump(d_b_json, outfile)
+    # with open(write_path, 'w') as outfile:
+    #     json.dump(d_b_json, outfile)
             
 
         

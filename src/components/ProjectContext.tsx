@@ -200,7 +200,7 @@ const appStateReducer = (state, action) => {
      // action.projectData.entries = //getFrequentWords(action.projectData, action.projectData.title);
       //testWordNet(action.projectData, action.projectData.title);
 
-    getFrequentWords(action.projectData, action.projectData.title, state);
+    //getFrequentWords(action.projectData, action.projectData.title, state);
 
       return {
         folderPath: action.folderName,
