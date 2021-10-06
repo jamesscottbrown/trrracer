@@ -2,13 +2,12 @@ from flask import Flask
 import os
 import sys
 import json
-from google_auth_oauthlib.flow import InstalledAppFlow
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
+from nlp_work import get_tokens
+
 
 app = Flask(__name__)
 
-def filter_txt(file):
-    return [f for f in file if "txt" in f]
 
 @app.route("/")
 def index():
@@ -18,39 +17,43 @@ def index():
     gdoc_service = goog_doc_start(cred)
 
      # Retrieve the documents contents from the Docs service.
-    get_doc_text_by_id(gdoc_service, '1rl5X_PwEdSkXXzo-afV1B-Ig86ZDJJcXmyKyFp5h8WY')
-
-   
-
-    files = os.listdir(document_path)
-    txt_files = filter_txt(files)
+    #text = get_doc_text_by_id(gdoc_service, '1rl5X_PwEdSkXXzo-afV1B-Ig86ZDJJcXmyKyFp5h8WY'
 
     data_backbone = open(document_path + "trrrace.json", 'r')
-    d_b_json = json.loads(data_backbone.read())
-
-    # for t in txt_files:
-    #     f = open(document_path + t, 'r')
-    #     print(f.read())
-
-    for en in d_b_json["entries"]:
-        # print(en["title"])
-        for f in en["files"]:
-            # print(f["title"])
-            if "fileType" not in f:
-                print(f["title"])
-                if "txt" in f["title"]:
-                    f["fileType"] = "txt"
-                elif "gdoc" in f["title"]:
-                    f["fileType"] = "gdoc"
-                elif "pdf" in f["title"]:
-                    f["fileType"] = "pdf"
-
-    
-    write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrrace.json'
-
-    with open(write_path, 'w') as outfile:
-        json.dump(d_b_json, outfile)
-            
-
+    d_b_json = json.load(data_backbone)
+    data_backbone.close()
         
-    return str(d_b_json["entries"])
+    for en in d_b_json["entries"]:
+        
+        for f in en["files"]:
+            if f["fileType"] == "gdoc" and "fileId" in f:
+                text = get_doc_text_by_id(gdoc_service, f["fileId"])
+                tok = get_tokens(text)
+                    # print(tok)
+                f["freq_terms"] = tok
+                
+            elif f["fileType"] == "txt":
+                text = open(document_path + f["title"], 'r')
+                tok = get_tokens(text)
+                f["freq_terms"] = tok
+
+        # write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrraceTESTRUN.json'
+
+    # testJson = d_b_json
+    # with open(write_path, 'w') as outfile:
+    #     json.dump(d_b_json, outfile)
+    # outfile = open(write_path, 'w')
+    # json.dump(testJson, outfile)
+    
+    
+    return str(d_b_json)
+    # return text
+
+                # for f in en["files"]:
+            #     if "fileType" not in f:
+            #         if "txt" in f["title"]:
+            #             f["fileType"] = "txt"
+            #         elif "gdoc" in f["title"]:
+            #             f["fileType"] = "gdoc"
+            #         elif "pdf" in f["title"]:
+            #             f["fileType"] = "pdf"

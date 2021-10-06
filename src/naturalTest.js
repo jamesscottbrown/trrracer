@@ -3,12 +3,9 @@ import *  as googleCred from '../assets/google_cred_desktop_app.json';
 import * as fs from 'fs';
 import { saveJSON } from './components/ProjectContext';
 
-//const {WordNet} = require('node-wordnet');
 const {google} = require('googleapis');
 const natural = require('natural');
 const sw = require('stopword');
-
-
 
 export function txtConceptLink(file, concepts){
 

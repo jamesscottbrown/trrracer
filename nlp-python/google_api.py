@@ -83,4 +83,6 @@ def read_strucutural_elements(elements):
 def get_doc_text_by_id(docs_service, id):
     doc = docs_service.documents().get(documentId=id).execute()
     doc_content = doc.get('body').get('content')
-    print(read_strucutural_elements(doc_content))
+    # print(read_strucutural_elements(doc_content))
+
+    return read_strucutural_elements(doc_content)
