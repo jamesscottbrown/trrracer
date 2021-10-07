@@ -4,6 +4,28 @@ from collections import Counter
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
 nlpS = spacy.load("en_core_web_sm")
 
+def term_freq_for_entry(json_data, gdoc_service, document_path):
+
+    for en in json_data["entries"]:
+
+        blob = ""
+        for f in en["files"]:
+            if f["fileType"] == "gdoc" and "fileId" in f:
+                text = get_doc_text_by_id(gdoc_service, f["fileId"])
+                blob = blob + text
+            
+            elif f["fileType"] == "txt":
+                text = open(document_path + f["title"], 'r')
+                blob = blob + text.read()
+                text.close()
+
+        tok = get_tokens(blob)
+        freq = get_top_words(tok)
+        en["freq_words"] = freq
+
+    return json_data
+
+
 def get_tokens(text):
     doc = nlpS(text)
     words = [token.lemma_ for token in doc if token.is_stop != True and token.is_punct != True and "\n" not in token.text]

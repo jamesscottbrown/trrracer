@@ -8,10 +8,7 @@ import path from 'path';
 import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import { getFrequentWords, googleConceptSearch, googleFileFrequentWords, txtConceptLink } from '../naturalTest';
-import { ControlCameraOutlined } from '@material-ui/icons';
-const natural = require('natural');
-const sw = require('stopword');
+
 
 export const ProjectContext = createContext();
 
@@ -46,8 +43,8 @@ export function addMetaDescrip(projectData, state){
    
     e.files = e.files.map(f => {
      
-     if(!f.meta){
-       f.meta = "null";
+     if(!f.context){
+       f.context = "null";
      }
 
       return f;
@@ -168,7 +165,7 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
                     
                       console.log('response', response, state)
                       let newFiles = state.projectData.entries[entryIndex].files;
-                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], meta: metaText, fileId: response.data.id }
+                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: metaText, fileId: response.data.id }
         
                       newFiles = [...newFiles, newFile];
                 
@@ -197,10 +194,7 @@ const appStateReducer = (state, action) => {
       
       //addMetaDescrip(action.projectData, state);
 
-     // action.projectData.entries = //getFrequentWords(action.projectData, action.projectData.title);
-      //testWordNet(action.projectData, action.projectData.title);
-
-    //getFrequentWords(action.projectData, action.projectData.title, state);
+      console.log(action.projectData)
 
       return {
         folderPath: action.folderName,
@@ -211,26 +205,6 @@ const appStateReducer = (state, action) => {
 
     case 'CREATE_CONCEPT':{
       
-      let newEntries = [...state.projectData.entries].map(en => {
-       
-        en.files = en.files.map(f => {
-          if(f.fileType === 'txt'){
-            let text = fs.readFileSync(`${state.folderPath}/${f.title}`,{ encoding: 'utf8' });
-            f.conceptList = txtConceptLink(text, state.projectData.concepts);
-          }else if(f.fileType === 'gdoc'){
-            googleConceptSearch(f, state.projectData.concepts).then(t => {
-              f.conceptList = t;
-            });
-            //googleFileFrequentWords(file, )
-          }
-          return f;
-        });
-        return en;
-      });
-
-      console.log('NEW ENTRIES LALALALA',newEntries)
-     // testWordNet(state.projectData, state);
-
       const newConcepts  = [
         ...state.projectData.concepts,
         { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
@@ -238,8 +212,7 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = {
         ...state.projectData,
-        concepts: newConcepts,
-        entries: newEntries
+        concepts: newConcepts
       };
 
       return saveJSON(newProjectData, state);
@@ -261,7 +234,7 @@ const appStateReducer = (state, action) => {
         
        const newProjectData = {
          ...state.projectData,
-         concepts: newConcepts,
+         concepts: newConcepts
        };
  
        return saveJSON(newProjectData, state);
@@ -382,7 +355,7 @@ const appStateReducer = (state, action) => {
               console.log('already herr');
               let newFiles = state.projectData.entries[entryIndex].files;
 
-              let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], meta: "null" };
+              let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
         
               newFiles = [...newFiles, newFile];
         
@@ -428,15 +401,11 @@ const appStateReducer = (state, action) => {
             if(nameCheck[nameCheck.length - 1] === 'txt'){
 
               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
-              console.log('URL FIRING AS TEXT IN SAVE FILE', nameCheck);
-              let conceptList = txtConceptLink(test, state.projectData.concepts);
 
-              
-
-              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], meta: "null", conceptList: conceptList}];
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
             }else{
 
-              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], meta: "null", }];
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
             }
 
             
@@ -613,7 +582,7 @@ const appStateReducer = (state, action) => {
         if(action.entryIndex === i){
           d.files.map((f, j)=> {
             if(j === action.indexFile){
-              f.meta = action.metaForm;
+              f.context = action.metaForm;
             }
             return f;
           })

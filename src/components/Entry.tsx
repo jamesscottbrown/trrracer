@@ -223,7 +223,7 @@ const Entry = (props: EntryPropTypes) => {
               size="12px"
             />
             <ul>
-               <li> <TextField defaultValue={file.meta} onChange={handleMetaChange}/> <Button onClick={()=> updateMeta(file, j)}>Update Meta</Button></li> 
+               <li> <TextField defaultValue={file.meta} onChange={handleMetaChange}/> <Button onClick={()=> updateMeta(file, j)}>Update Context</Button></li> 
             </ul>
             
           </li>
