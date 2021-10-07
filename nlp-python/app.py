@@ -3,7 +3,7 @@ import os
 import sys
 import json
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
-from nlp_work import get_tokens
+from nlp_work import get_tokens, get_top_words
 
 
 app = Flask(__name__)
@@ -29,23 +29,24 @@ def index():
             if f["fileType"] == "gdoc" and "fileId" in f:
                 text = get_doc_text_by_id(gdoc_service, f["fileId"])
                 tok = get_tokens(text)
-                f["freq_words"] = tok
+                freq = get_top_words(tok)
+                f["freq_words"] = freq
                 
             elif f["fileType"] == "txt":
                 text = open(document_path + f["title"], 'r')
                 blob = text.read()
                 tok = get_tokens(blob)
                 text.close()
-                
-                f["freq_words"] = tok
+                freq = get_top_words(tok)
+                f["freq_words"] = freq
 
     write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrrace.json'
 
     # testJson = d_b_json
     # with open(write_path, 'w') as outfile:
     #     json.dump(d_b_json, outfile)
-    outfile = open(write_path, 'w')
-    json.dump(d_b_json, outfile)
+    # outfile = open(write_path, 'w')
+    # json.dump(d_b_json, outfile)
     
     
     return str(d_b_json)
