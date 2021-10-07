@@ -1,8 +1,36 @@
 import spacy 
 import nltk
+from nltk import word_tokenize
 from collections import Counter
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
 nlpS = spacy.load("en_core_web_sm")
+
+def make_blob_for_entry(entries, gdoc_service, document_path):
+    entry_blobs = []
+    entry_index = 0
+    for en in entries:
+
+        blob = {}
+        blob["title"] = en["title"]
+        blob["index"] = entry_index
+        entry_index  += 1
+        blob["blob"] = ""
+
+        for f in en["files"]:
+            if f["fileType"] == "gdoc" and "fileId" in f:
+                text = get_doc_text_by_id(gdoc_service, f["fileId"])
+                blob["blob"] = blob["blob"] + text
+            
+            elif f["fileType"] == "txt":
+                file_t = open(document_path + f["title"],'r')
+                filelines = list(file_t)
+                file_t.close()
+                for f in filelines:
+                    blob["blob"] = blob["blob"] + f
+        # print(blob)
+        entry_blobs.append(blob)
+
+    return entry_blobs
 
 def term_freq_for_entry(json_data, gdoc_service, document_path):
 
@@ -15,13 +43,22 @@ def term_freq_for_entry(json_data, gdoc_service, document_path):
                 blob = blob + text
             
             elif f["fileType"] == "txt":
-                text = open(document_path + f["title"], 'r')
-                blob = blob + text.read()
-                text.close()
+                file_t = open(document_path + f["title"],'r')
+                filelines = list(file_t)
+                file_t.close()
+                for f in filelines:
+                    blob = blob + f
+                # with open(document_path + f["title"]) as text:
+                #     lines = text.readLines()
+                #     blob = blob + lines
 
         tok = get_tokens(blob)
         freq = get_top_words(tok)
-        en["freq_words"] = freq
+        # print(freq)
+        if len(freq) < 1:
+            print(blob)
+
+        en["entry_freq_words"] = freq
 
     return json_data
 
@@ -73,4 +110,14 @@ def concordance(word, text):
     text_tokens = nltk.Text(tokens)
     return text_tokens.concordance(word)
 
-
+def get_concordance_for_concepts(concepts, blob):
+    # con_wrap_array = []
+    # print(blob)
+    for con in concepts:
+        con_wrap = {}
+        con_wrap["concept"] = con["name"]
+        con_wrap["concordance_by_entry"] = []
+        for b in blob:
+            print('blob', b)
+            test = concordance(con["name"], b["blob"])
+            print(test)
