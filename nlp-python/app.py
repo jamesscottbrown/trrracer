@@ -3,7 +3,7 @@ import os
 import sys
 import json
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
-from nlp_work import get_tokens, get_top_words
+from nlp_work import get_frequent_words_all_files
 
 
 app = Flask(__name__)
@@ -16,30 +16,14 @@ def index():
     cred = goog_auth()
     gdoc_service = goog_doc_start(cred)
 
-     # Retrieve the documents contents from the Docs service.
-    #text = get_doc_text_by_id(gdoc_service, '1rl5X_PwEdSkXXzo-afV1B-Ig86ZDJJcXmyKyFp5h8WY'
-
     data_backbone = open(document_path + "trrrace.json", 'r')
     d_b_json = json.load(data_backbone)
-    data_backbone.close()
-        
-    for en in d_b_json["entries"]:
-        
-        for f in en["files"]:
-            if f["fileType"] == "gdoc" and "fileId" in f:
-                text = get_doc_text_by_id(gdoc_service, f["fileId"])
-                tok = get_tokens(text)
-                freq = get_top_words(tok)
-                f["freq_words"] = freq
-                
-            elif f["fileType"] == "txt":
-                text = open(document_path + f["title"], 'r')
-                blob = text.read()
-                tok = get_tokens(blob)
-                text.close()
-                freq = get_top_words(tok)
-                f["freq_words"] = freq
+   
+    json_with_freq_w = get_frequent_words_all_files(d_b_json, gdoc_service, document_path)
 
+    for con in d_b_json["concepts"]:
+        print('conceptssss',con)
+        
     write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/trrrace.json'
 
     # testJson = d_b_json
@@ -48,8 +32,7 @@ def index():
     # outfile = open(write_path, 'w')
     # json.dump(d_b_json, outfile)
     
-    
-    return str(d_b_json)
+    return str(json_with_freq_w)
     # return text
 
                 # for f in en["files"]:

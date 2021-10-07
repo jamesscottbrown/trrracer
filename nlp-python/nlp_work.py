@@ -1,6 +1,7 @@
 import spacy 
 import nltk
 from collections import Counter
+from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
 nlpS = spacy.load("en_core_web_sm")
 
 def get_tokens(text):
@@ -20,6 +21,28 @@ def get_top_words(words):
         holder.append(data)
        
     return holder
+
+def get_frequent_words_all_files(json, gdoc_service, document_path):
+    
+    for en in json["entries"]:
+        
+        for f in en["files"]:
+            if f["fileType"] == "gdoc" and "fileId" in f:
+                text = get_doc_text_by_id(gdoc_service, f["fileId"])
+                tok = get_tokens(text)
+                freq = get_top_words(tok)
+                
+                f["freq_words"] = freq
+                
+            elif f["fileType"] == "txt":
+                text = open(document_path + f["title"], 'r')
+                blob = text.read()
+                tok = get_tokens(blob)
+                text.close()
+                freq = get_top_words(tok)
+                f["freq_words"] = freq
+
+    return json
 
 def concordance(word, text):
     tokens = nltk.word_tokenize(text)
