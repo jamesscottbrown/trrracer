@@ -68,3 +68,10 @@ There is a trrracer project folder named "Derya Artifact Trrracer" in the shared
      (** I need to add functionality to move google drive files in the interface. If you try to add a google drive file within the interface it will throw an error **)
 
 6. I will be adding functionality to the interface as we go. I'll let you know when I update the main branch!
+
+** Flask **
+`pip install`
+`FLASK_ENV=development flask run`
+
+You might need to use this:
+`python3 -m spacy download en` 

@@ -3,8 +3,8 @@ import os
 import sys
 import json
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
-from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts
-
+from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda
+from doc_clean import clean
 
 app = Flask(__name__)
 
@@ -60,19 +60,33 @@ def index():
     # blob["entry_blobs"] = make_blob_for_entry(d_b_json["entries"], gdoc_service, document_path)
     blob_f = open(document_path + "blobs.json", 'r')
     blob = json.load(blob_f)
+
+    # collocation_array = []
+    # for b in blob["entry_blobs"]:
+    #     coco = {}
+    #     coco["entry_title"] = b["title"]
+    #     coco["collocations"] = collocations_maker(b)
+    #     collocation_array.append(coco)
+
+
+    ldamodel = run_lda(blob["entry_blobs"])
+
+
     # print(blob)
-    get_concordance_for_concepts(new_json["concepts"], blob["entry_blobs"])
+    # conco = get_concordance_for_concepts(new_json["concepts"], blob["entry_blobs"])
 
     # for con in d_b_json["concepts"]:
     #  print('conceptssss',con.name)
+    # print(len(collocation_array), len(d_b_json["entries"]))
         
-        
-    write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/blobs.json'
+    write_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/lda_run.json'
 
     # outfile = open(write_path, 'w')
-    # json.dump(blob, outfile)
-    
-    return str(blob["entry_blobs"])
+    # json.dump(ldamodel.print_topics(), outfile)
+    # doc_clean = [clean(doc["blob"]).split() for doc in blob["entry_blobs"]]
+    #ldamodel.print_topics(num_topics=5, num_words=3)
+    # return str(ldamodel.print_topics())
+    return str(ldamodel.print_topics())
     # return text
 
                 # for f in en["files"]:

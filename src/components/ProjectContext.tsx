@@ -9,6 +9,8 @@ import { EntryType, File, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
 
+// import * as collo from '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json'
+
 
 export const ProjectContext = createContext();
 
@@ -189,12 +191,20 @@ const appStateReducer = (state, action) => {
   switch (action.type) {
     case 'SET_DATA': {
 
- 
+      let colloFile = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json', {encoding: 'utf-8'})
      // getGoogleIds(action.projectData, state);
-      
+      let collo = JSON.parse(colloFile);
       //addMetaDescrip(action.projectData, state);
 
-      console.log(action.projectData)
+      
+    
+
+      let newEntries = action.projectData.entries.map((e, i)=> {
+        e.collo = collo[i];
+        return e;
+      });
+
+      console.log(newEntries);
 
       return {
         folderPath: action.folderName,
