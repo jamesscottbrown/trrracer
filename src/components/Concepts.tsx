@@ -1,4 +1,3 @@
-import TextField from '@material-ui/core/TextField';
 import React, { useState, useEffect } from 'react';
 import { useProjectState } from './ProjectContext';
 import { ConceptType, ProjectType, ProjectViewProps} from './types';
@@ -47,8 +46,14 @@ const ConceptNav = (props:ConceptProps) => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</button>
-            <TextField onChange={handleChange}>
-                </TextField><button onClick={()=> {
+            {/* <TextField onChange={handleChange}>
+                </TextField> */}
+                <form>
+                <label>
+                    <input type="text" onChange={handleChange}/>
+                </label>
+                </form>
+                <button onClick={()=> {
                     createConcept()
                     setShowForm(false)
                 }}>Add</button>

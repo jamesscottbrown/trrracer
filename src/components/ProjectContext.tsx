@@ -196,15 +196,27 @@ const appStateReducer = (state, action) => {
       let collo = JSON.parse(colloFile);
       //addMetaDescrip(action.projectData, state);
 
-      
-    
-
       let newEntries = action.projectData.entries.map((e, i)=> {
         e.collo = collo[i];
         return e;
       });
 
       console.log(newEntries);
+      let conFile = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/concept_concordance.json', {encoding: 'utf-8'})
+      let conCord = JSON.parse(conFile)
+
+      console.log(conCord)
+
+
+
+      let newConcepts = action.projectData.concepts.map((e, i)=> {
+        console.log(e);
+        e.concordance = conCord.filter(c => c.concept === e.name)[0]
+        return e;
+      });
+
+      console.log(action.projectData, newConcepts);
+      
 
       return {
         folderPath: action.folderName,
