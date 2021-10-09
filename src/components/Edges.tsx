@@ -1,4 +1,3 @@
-import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
 import { useState } from 'react';
@@ -45,21 +44,32 @@ const EdgeControl = (props:EdgeProps) => {
             <h2>Associations Between Concepts</h2>
             {showForm ? 
             <div>
-            <Button color="primary" onClick={() => {
+            <button color="primary" onClick={() => {
                 setShowForm(false)}}
-            >Cancel</Button>
-            To: <TextField onChange={handleChangeTo}></TextField>
+            >Cancel</button>
+             <form>
+            <label>To:
+                <input onChange={handleChangeTo} type="text" />
+            </label>
+            <label>From:
+                <input onChange={handleChangeFrom} type="text" />
+            </label>
+            <label>What:
+                <input onChange={handleChangeDescription} type="text" />
+            </label>
+            </form>
+            {/* To: <TextField onChange={handleChangeTo}></TextField>
             From: <TextField onChange={handleChangeFrom}></TextField>
-            What: <TextField onChange={handleChangeDescription}></TextField>
-            <Button onClick={()=> {
+            What: <TextField onChange={handleChangeDescription}></TextField> */}
+            <button onClick={()=> {
                 createEdge()
                 setShowForm(false)
-                }}>Add</Button>
+                }}>Add</button>
             </div>
              :
-            <Button color="primary" onClick={() => {
+            <button color="primary" onClick={() => {
                 setShowForm(true)}}
-            >Add New Edge</Button>
+            >Add New Edge</button>
             }
             
             {edges ? edges.filter(f=>{
@@ -75,8 +85,8 @@ const EdgeControl = (props:EdgeProps) => {
                     >
                         <h3>{`${con.from} --> ${con.to}`}</h3>
                         <h5>{con.description}</h5>
-                        {/* <Button>Merge</Button> */}
-                        <Button onClick={()=> dispatch({ type: 'DELETE_EDGE', key: con.key })}>Delete</Button>
+                        {/* <button>Merge</button> */}
+                        <button onClick={()=> dispatch({ type: 'DELETE_EDGE', key: con.key })}>Delete</button>
                     </div>
             )) : <div>no concepts</div>}
         </div>

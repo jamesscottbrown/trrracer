@@ -1,8 +1,8 @@
-import { Button } from '@mui/material'//'@material-ui/core';
+// { Button } from '@mui/material'//'@material-ui/core';
 import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import Menu from '@material-ui/core'//'@mui/material/Menu';
+import MenuItem from '@material-ui/core'//'@mui/material/MenuItem';
 import { ConceptType } from './types';
 
 const Merger = (props: any) => {
@@ -52,23 +52,23 @@ const Merger = (props: any) => {
         <>
           { showMerge ? 
                 <div>
-                <Button color="primary" onClick={() => {
+                <button onClick={() => {
                     setShowMerge(false)
                     handleChange(null)
                     // addConceptForm()
                 }
                 }
-                >Cancel</Button>
+                >Cancel</button>
                 <div>
-                <Button
-                    id="basic-button"
+                <button
+                    // id="basic-button"
                     aria-controls="basic-menu"
                     aria-haspopup="true"
                     aria-expanded={open ? 'true' : undefined}
                     onClick={handleClick}
                 >
                     {buttonText}
-                </Button>
+                </button>
                 <Menu
                     id="basic-menu"
                     anchorEl={anchorEl}
@@ -88,19 +88,19 @@ const Merger = (props: any) => {
                 </Menu>
                 </div>
                 
-                <Button onClick={()=> {
+                <button onClick={()=> {
                   //  setShowMerge(false)
                     mergeConceptInto(concept);
-                    }}>Add</Button>
+                    }}>Add</button>
                 </div>
                 :
                
-                    <Button 
-                    color="primary" 
+                    <button 
+                //    '@material-ui/core'
                     onClick={() => {
                         setShowMerge(true);
                     }}
-                    >Merge Into</Button>
+                    >Merge Into</button>
                 }
         </>
     )

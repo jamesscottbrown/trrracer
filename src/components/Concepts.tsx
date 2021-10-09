@@ -1,4 +1,3 @@
-import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import React, { useState, useEffect } from 'react';
 import { useProjectState } from './ProjectContext';
@@ -44,21 +43,21 @@ const ConceptNav = (props:ConceptProps) => {
             <h2>Concepts</h2>
             {showForm ? 
             <div>
-            <Button color="primary" onClick={() => {
+            <button onClick={() => {
                 setShowForm(false)
                 addConceptForm()}}
-            >Cancel</Button>
+            >Cancel</button>
             <TextField onChange={handleChange}>
-                </TextField><Button onClick={()=> {
+                </TextField><button onClick={()=> {
                     createConcept()
                     setShowForm(false)
-                }}>Add</Button>
+                }}>Add</button>
             </div>
              :
-            <Button color="primary" onClick={() => {
+            <button color="primary" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
-            >Add New Concept</Button>
+            >Add New Concept</button>
             }
             
             {concepts ? concepts.filter(f=>{
@@ -73,8 +72,8 @@ const ConceptNav = (props:ConceptProps) => {
                     }}
                     >
                     <h3>{con.name}</h3>
-                    {/* <Button>Merge</Button> */}
-                    <Button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</Button>
+                    {/* <button>Merge</button> */}
+                    <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
                     <Merger conceptList={conceptList} concept={con} index={i} ></Merger>
                     
                 </div>
