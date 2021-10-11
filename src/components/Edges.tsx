@@ -57,9 +57,6 @@ const EdgeControl = (props:EdgeProps) => {
                 <input onChange={handleChangeDescription} type="text" />
             </label>
             </form>
-            {/* To: <TextField onChange={handleChangeTo}></TextField>
-            From: <TextField onChange={handleChangeFrom}></TextField>
-            What: <TextField onChange={handleChangeDescription}></TextField> */}
             <button onClick={()=> {
                 createEdge()
                 setShowForm(false)

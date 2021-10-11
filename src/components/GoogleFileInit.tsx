@@ -93,7 +93,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
             setShowFileCreate(false)}} type="button">
             Cancel
           </button>
-          {/* <TextField onChange={handleChange}></TextField> */}
+       
           <form>
             <label>
                 <input onChange={handleChange} type="text" />

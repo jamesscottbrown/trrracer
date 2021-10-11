@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Heading, ListItem, UnorderedList } from '@chakra-ui/react';
 
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde, { TextArea } from 'react-mde';
-import { FaExternalLinkAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
@@ -136,13 +137,10 @@ const Entry = (props: EntryPropTypes) => {
     dispatch({ type: 'ADD_URL', url, entryIndex })
   }
 
-
-
   let metaForm = "";
 
   const handleMetaChange = (event)=> {
-    metaForm = event.target.value;
-  
+    metaForm = event.target.value
   }
 
   const updateMeta = (file, indexFile) => {
@@ -152,7 +150,8 @@ const Entry = (props: EntryPropTypes) => {
 
   return (
     <>
-      <h3>
+      <br />
+      <Heading as='h3'>
         <EdiText
           type="text"
           value={entryData.title}
@@ -160,7 +159,7 @@ const Entry = (props: EntryPropTypes) => {
           editOnViewClick
           submitOnUnfocus
         />
-      </h3>
+      </Heading>
 
       <EditDate
         date={entryData.date}
@@ -198,15 +197,15 @@ const Entry = (props: EntryPropTypes) => {
           />
         </div>
       ) : (
-        <button color="primary" onClick={() => enableDescription()} type="button">
-          Add description
-        </button>
+        <Button onClick={() => enableDescription()} type="button">
+          <FaPlus /> Add description
+        </Button>
       )}
 
-      <ul>
+      <UnorderedList>
         {entryData.files.map((file: File, j:Number) => (
           
-          <li key={file.title}>
+          <ListItem key={`${file.title}-${j}`}>
             {file.title}{'    '}
             <FaExternalLinkAlt
               onClick={() => {
@@ -220,22 +219,22 @@ const Entry = (props: EntryPropTypes) => {
               title="Delete File"
               size="12px"
             />
-            <ul>
-               <li> 
-                 {/* <TextField defaultValue={file.meta} onChange={handleMetaChange}/>  */}
+            <UnorderedList>
+               <ListItem> 
+                 
                   <form>
                   <label>Context:
                       <input defaultValue={file.meta} onChange={handleMetaChange} type="text" />
                   </label>
-                  <button onClick={()=> updateMeta(file, j)}>Update Context</button>
+                  <Button onClick={()=> updateMeta(file, j)}>Update Context</Button>
                   </form>
                
-               </li> 
-            </ul>
+               </ListItem> 
+            </UnorderedList>
             
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </UnorderedList>
 
       {showFileUpload ? (
         <>
@@ -249,14 +248,14 @@ const Entry = (props: EntryPropTypes) => {
               </>
             }
           />
-          <button color="primary" onClick={() => setShowFileUpload(false)} type="button">
+          <Button onClick={() => setShowFileUpload(false)} type="button">
             Cancel
-          </button>
+          </Button>
         </>
       ) : (
-        <button color="primary" onClick={() => setShowFileUpload(true)} type="button">
-          Add files
-        </button>
+        <Button onClick={() => setShowFileUpload(true)} type="button">
+          <FaPlus /> Add files
+        </Button>
         
       )}
 
@@ -273,24 +272,24 @@ const Entry = (props: EntryPropTypes) => {
     />
     {showURL ?
     <div>
-      <button color="primary" onClick={()=>{ 
+      <Button color="primary" onClick={()=>{ 
         setShowURL(false)
-      }}>Cancel</button>
-      {/* <TextField onChange={handleChange}></TextField> */}
+      }}>Cancel</Button>
+   
       <form>
         <label>
             <input onChange={handleChange} type="text" />
         </label>
-      <button onClick={()=> {
+      <Button onClick={()=> {
         setShowURL(false)
         addURL()
-      }}>Add</button>
+      }}>Add</Button>
       </form>
     </div>
     :
-    <button color="primary" onClick={()=>{
+    <Button color="primary" onClick={()=>{
       setShowURL(true)
-    }}>Add URL</button>
+    }}>Add URL</Button>
     } 
     </>
   );

@@ -1,7 +1,5 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import { FormControl, FormLabel, Select } from '@chakra-ui/react';
 
 interface ViewTypeControlProps {
   viewType: string;
@@ -25,32 +23,46 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
 
   return (
 
-    <div>
-      View Type: 
-    <Button color="default" size="large" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-      {viewType}
-    </Button>
-    <Menu
-      id="simple-menu"
-      anchorEl={anchorEl}
-      keepMounted
-      open={Boolean(anchorEl)}
-      onClose={handleClose}
-    >
-      <MenuItem 
-      onClick={()=> {
-        setViewType('list')
-        handleClose}}>List</MenuItem>
-      <MenuItem   
-      onClick={()=> {
-        setViewType('timeline')
-        handleClose}}>Timeline</MenuItem>
-         <MenuItem   
-      onClick={()=> {
-        setViewType('bin')
-        handleClose}}>Bin by Concept</MenuItem>
-    </Menu>
-    </div>
+    // <div>
+    //   View Type: 
+    // <button color="default" size="large" aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+    //   {viewType}
+    // </button>
+    // {/* <Menu
+    //   id="simple-menu"
+    //   anchorEl={anchorEl}
+    //   keepMounted
+    //   open={Boolean(anchorEl)}
+    //   onClose={handleClose}
+    // >
+    //   <MenuItem 
+    //   onClick={()=> {
+    //     setViewType('list')
+    //     handleClose}}>List</MenuItem>
+    //   <MenuItem   
+    //   onClick={()=> {
+    //     setViewType('timeline')
+    //     handleClose}}>Timeline</MenuItem>
+    //      <MenuItem   
+    //   onClick={()=> {
+    //     setViewType('bin')
+    //     handleClose}}>Bin by Concept</MenuItem>
+    // </Menu> */}
+    // </div>
+
+    <>
+    <FormControl>
+      <FormLabel> View type: </FormLabel>
+      <Select
+        onChange={(ev) => setViewType(ev.target.value)}
+        value={viewType}
+        width="max-content"
+      >
+        <option id="list">list</option>
+        <option id="timeline">timeline</option>
+      </Select>
+    </FormControl>
+    </>
 
   );
 };

@@ -1,6 +1,8 @@
 /* eslint no-console: off */
+////
 
 import React, { useState } from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
 
 import fs from 'fs';
 import path from 'path';
@@ -13,6 +15,18 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
+const migrateTrrraceFormat = (projectData) => {
+  // - add url array if not already present
+  // - convert tags list on entry from object to string
+  return {
+    ...projectData,
+    entries: projectData.entries.map((e) => ({
+      ...e,
+      urls: e.urls ? e.urls : [],
+      tags: e.tags.map((t) => (typeof t === 'string' ? t : t.text)),
+    })),
+  };
+};
 
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
@@ -35,7 +49,7 @@ export default function App() {
         dispatch({
           type: 'SET_DATA',
           folderName,
-          projectData: JSON.parse(data),
+          projectData: migrateTrrraceFormat(JSON.parse(data)),
         });
         //console.log(data);
       }
@@ -48,12 +62,24 @@ export default function App() {
   });
 
   if (noProjectSelected) {
-    return <Splash recentPaths={recentPaths} />;
+    return (
+      <ChakraProvider>
+        <Splash recentPaths={recentPaths} />
+      </ChakraProvider>
+    );
   }
 
   if (!projectData) {
-    return <p>Loading...</p>;
+    return (
+      <ChakraProvider>
+        <p>Loading...</p>
+      </ChakraProvider>
+    );
   }
 
-  return  <Project projectData={projectData} folderPath={folderPath} />;
+  return (
+    <ChakraProvider>
+      <Project projectData={projectData} folderPath={folderPath} />
+    </ChakraProvider>
+  );
 }

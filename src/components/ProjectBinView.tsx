@@ -8,7 +8,7 @@ import FileUpload from './FileUpload';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
-import { Button } from '@material-ui/core';
+
 
 import ConceptNav from './concepts';
 
@@ -89,14 +89,14 @@ const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
 
       <div>
         {!editable.every((t) => t) && (
-          <Button color="primary" onClick={makeAllEditable} type="button">
+          <button color="primary" onClick={makeAllEditable} type="button">
             Show all edit controls
-          </Button>
+          </button>
         )}
         {!editable.every((t) => !t) && (
-          <Button color="primary" onClick={makeAllNonEditable} type="button">
+          <button color="primary" onClick={makeAllNonEditable} type="button">
             Hide all edit controls
-          </Button>
+          </button>
         )}
       </div>
 
@@ -130,9 +130,9 @@ const ProjectBinView = (ProjectPropValues: ProjectViewProps) => {
         </>
       ))}
 
-      <Button color="primary" onClick={addEntry} type="button">
+      <button color="primary" onClick={addEntry} type="button">
         Add entry
-      </Button>
+      </button>
 
       <FileUpload
         saveFiles={saveFiles}

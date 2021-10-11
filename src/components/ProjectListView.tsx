@@ -1,5 +1,7 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
+import { Button, ButtonGroup, Divider, Heading } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
@@ -8,7 +10,7 @@ import FileUpload from './FileUpload';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
-import { Button } from '@material-ui/core';
+
 
 import ConceptNav from './concepts';
 import EdgeControl from './Edges';
@@ -81,27 +83,30 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <TagList tags={projectData.tags} />
 
-      <h2>Activities</h2>
+      <Heading as="h2">Activities</Heading>
 
-      <div>
+
+
+      <ButtonGroup>
         {!editable.every((t) => t) && (
-          <Button color="primary" onClick={makeAllEditable} type="button">
+          <Button onClick={makeAllEditable} type="button">
+            <FaEye />
             Show all edit controls
           </Button>
         )}
         {!editable.every((t) => !t) && (
-          <Button color="primary" onClick={makeAllNonEditable} type="button">
-            Hide all edit controls
+          <Button onClick={makeAllNonEditable} type="button">
+            <FaEyeSlash /> Hide all edit controls
           </Button>
         )}
-      </div>
+      </ButtonGroup>
+
 
       <br />
 
       <TagFilter />
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
-        
         <>
           {editable[i] ? (
             <Entry
@@ -123,25 +128,25 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
             />
           )}
 
-          <hr />
+          <Divider marginTop="1em" marginBottom="1em" />
         </>
-      ))}
-
-      <Button color="primary" onClick={addEntry} type="button">
-        Add entry
+      ))}      
+      
+      <Button onClick={addEntry} type="button">
+        <FaPlus /> Add entry
       </Button>
 
-      <FileUpload
-        saveFiles={saveFiles}
-        containerStyle={{}}
-        msg={
-          <>
-            Drag and drop some files here, or <b>click to select files</b>,
-            create a new entry.
-          </>
-        }
-      />
-    </div>
+    <FileUpload
+      saveFiles={saveFiles}
+      containerStyle={{}}
+      msg={
+        <>
+          Drag and drop some files here, or <b>click to select files</b>,
+          create a new entry.
+        </>
+      }
+    />
+  </div>
   );
 };
 

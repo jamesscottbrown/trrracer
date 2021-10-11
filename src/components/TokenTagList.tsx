@@ -7,7 +7,6 @@ import { ColorResult, GithubPicker } from 'react-color';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, TagType } from './types';
-import { Button } from '@material-ui/core';
 
 interface TagListProps {
   tags: TagType[];

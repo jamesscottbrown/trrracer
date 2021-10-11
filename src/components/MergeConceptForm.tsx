@@ -1,8 +1,7 @@
 // { Button } from '@mui/material'//'@material-ui/core';
 import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
-import Menu from '@material-ui/core'//'@mui/material/Menu';
-import MenuItem from '@material-ui/core'//'@mui/material/MenuItem';
+
 import { ConceptType } from './types';
 
 const Merger = (props: any) => {
@@ -69,7 +68,7 @@ const Merger = (props: any) => {
                 >
                     {buttonText}
                 </button>
-                <Menu
+                {/* <Menu
                     id="basic-menu"
                     anchorEl={anchorEl}
                     open={open}
@@ -85,7 +84,7 @@ const Merger = (props: any) => {
                             }}>{c.name}</MenuItem>
                    ))
                     }
-                </Menu>
+                </Menu> */}
                 </div>
                 
                 <button onClick={()=> {

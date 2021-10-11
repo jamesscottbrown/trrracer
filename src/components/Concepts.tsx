@@ -46,8 +46,6 @@ const ConceptNav = (props:ConceptProps) => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</button>
-            {/* <TextField onChange={handleChange}>
-                </TextField> */}
                 <form>
                 <label>
                     <input type="text" onChange={handleChange}/>
