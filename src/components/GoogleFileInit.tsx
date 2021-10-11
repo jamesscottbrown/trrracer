@@ -3,8 +3,7 @@ const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
-import { Button } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
+
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
@@ -89,23 +88,28 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
      {showFileCreate ? (
         <>
           
-          <Button color="primary" onClick={() => {
+          <button color="primary" onClick={() => {
             testGoog();
             setShowFileCreate(false)}} type="button">
             Cancel
-          </Button>
-          <TextField onChange={handleChange}></TextField>
+          </button>
+          {/* <TextField onChange={handleChange}></TextField> */}
+          <form>
+            <label>
+                <input onChange={handleChange} type="text" />
+            </label>
+            </form>
           {/* <input type="text" onChange={handleChange}/> */}
-          <Button color="primary" onClick={()=> saveGoogleFile()} type="button">
+          <button color="primary" onClick={()=> saveGoogleFile()} type="button">
           Create
-          </Button>
+          </button>
         </>
       ) : (
-        <Button color="primary" onClick={()=> {
+        <button color="primary" onClick={()=> {
           testGoog();
           setShowFileCreate(true)}} type="button">
           {text}
-        </Button>
+        </button>
         
       )}
      

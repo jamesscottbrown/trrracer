@@ -14,10 +14,8 @@ import FileUpload from './FileUpload';
 import { File, FileObj, EntryType, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
-import { Button } from '@material-ui/core';
-import Box from '@mui/material/Box';
-import TextField from '@material-ui/core'//'@mui/material/TextField';
-import { testNat } from '../naturalTest';
+
+
 
 interface EditDateTypes {
   date: string;
@@ -200,9 +198,9 @@ const Entry = (props: EntryPropTypes) => {
           />
         </div>
       ) : (
-        <Button color="primary" onClick={() => enableDescription()} type="button">
+        <button color="primary" onClick={() => enableDescription()} type="button">
           Add description
-        </Button>
+        </button>
       )}
 
       <ul>
@@ -223,7 +221,16 @@ const Entry = (props: EntryPropTypes) => {
               size="12px"
             />
             <ul>
-               <li> <TextField defaultValue={file.meta} onChange={handleMetaChange}/> <Button onClick={()=> updateMeta(file, j)}>Update Context</Button></li> 
+               <li> 
+                 {/* <TextField defaultValue={file.meta} onChange={handleMetaChange}/>  */}
+                  <form>
+                  <label>Context:
+                      <input defaultValue={file.meta} onChange={handleMetaChange} type="text" />
+                  </label>
+                  <button onClick={()=> updateMeta(file, j)}>Update Context</button>
+                  </form>
+               
+               </li> 
             </ul>
             
           </li>
@@ -242,14 +249,14 @@ const Entry = (props: EntryPropTypes) => {
               </>
             }
           />
-          <Button color="primary" onClick={() => setShowFileUpload(false)} type="button">
+          <button color="primary" onClick={() => setShowFileUpload(false)} type="button">
             Cancel
-          </Button>
+          </button>
         </>
       ) : (
-        <Button color="primary" onClick={() => setShowFileUpload(true)} type="button">
+        <button color="primary" onClick={() => setShowFileUpload(true)} type="button">
           Add files
-        </Button>
+        </button>
         
       )}
 
@@ -266,18 +273,24 @@ const Entry = (props: EntryPropTypes) => {
     />
     {showURL ?
     <div>
-      <Button color="primary" onClick={()=>{ 
+      <button color="primary" onClick={()=>{ 
         setShowURL(false)
-      }}>Cancel</Button><TextField onChange={handleChange}></TextField>
-      <Button onClick={()=> {
+      }}>Cancel</button>
+      {/* <TextField onChange={handleChange}></TextField> */}
+      <form>
+        <label>
+            <input onChange={handleChange} type="text" />
+        </label>
+      <button onClick={()=> {
         setShowURL(false)
         addURL()
-      }}>Add</Button>
+      }}>Add</button>
+      </form>
     </div>
     :
-    <Button color="primary" onClick={()=>{
+    <button color="primary" onClick={()=>{
       setShowURL(true)
-    }}>Add URL</Button>
+    }}>Add URL</button>
     } 
     </>
   );
