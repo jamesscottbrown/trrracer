@@ -3,6 +3,19 @@ import { useProjectState } from './ProjectContext';
 import { ConceptType, ProjectType, ProjectViewProps} from './types';
 import Merger from './MergeConceptForm';
 
+import {
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Input
+  } from "@chakra-ui/react"
+
+  import {Button, Heading} from "@chakra-ui/react"
+
+  import ChevronDownIcon from "@chakra-ui/icon"
+
+
 interface ConceptProps {
     concepts: ConceptType[];
 }
@@ -39,28 +52,31 @@ const ConceptNav = (props:ConceptProps) => {
     return(
         <>
         <div>
-            <h2>Concepts</h2>
+            <Heading as="h3">Concepts</Heading>
             {showForm ? 
             <div>
-            <button onClick={() => {
+       
+                <form>
+                <Button onClick={() => {
                 setShowForm(false)
                 addConceptForm()}}
-            >Cancel</button>
-                <form>
+            >Cancel</Button>
                 <label>
-                    <input type="text" onChange={handleChange}/>
-                </label>
-                </form>
-                <button onClick={()=> {
+                    {/* <input type="text" onChange={handleChange}/> */}
+                    <Input id="name" placeholder="Concept Name" onChange={handleChange}/>
+                    <Button onClick={()=> {
                     createConcept()
                     setShowForm(false)
-                }}>Add</button>
+                }}>Add</Button>
+                </label>
+                </form>
+                
             </div>
              :
-            <button color="primary" onClick={() => {
+            <Button color="primary" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
-            >Add New Concept</button>
+            >Add New Concept</Button>
             }
             
             {concepts ? concepts.filter(f=>{
@@ -69,17 +85,35 @@ const ConceptNav = (props:ConceptProps) => {
             }).map((con: ConceptType, i) => (
                 <div
                     key={con.name}
-                    style={{
-                    display: 'grid',
-                    gridTemplateColumns: '200px 100px 100px',
-                    }}
                     >
-                    <h3>{con.name}</h3>
+                    {/* <h3>{con.name}</h3>
                     {/* <button>Merge</button> */}
-                    <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
-                    <Merger conceptList={conceptList} concept={con} index={i} ></Merger>
+                    {/* <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
+                    <Merger conceptList={conceptList} concept={con} index={i} ></Merger> */} 
                     
+                    <Menu>
+                    <MenuButton    
+                    px={4}
+                    py={2}
+                    transition="all 0.2s"
+                    borderRadius="md"
+                    borderWidth="1px"
+                    bg="gray.200"
+                    margin="3px"
+                    _hover={{ bg: "gray.300" }}
+                    _expanded={{ bg: "blue.400" }}
+                    _focus={{ boxShadow: "outline" }}
+                    >{con.name}</MenuButton>
+                    <MenuList>
+                        <MenuItem><Merger conceptList={conceptList} concept={con} index={i} ></Merger></MenuItem>
+                        <MenuItem onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</MenuItem>
+                    </MenuList>
+                    </Menu>
+
+
                 </div>
+
+       
             )) : <div>no concepts</div>}
         </div>
         </>
