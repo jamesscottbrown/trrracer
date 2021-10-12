@@ -8,7 +8,11 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Input
+    Input,
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
+    FormHelperText,
   } from "@chakra-ui/react"
 
   import {Button, Heading} from "@chakra-ui/react"
@@ -26,19 +30,16 @@ const ConceptNav = (props:ConceptProps) => {
     const [{ projectData }, dispatch] = useProjectState(); 
 
     const [showForm, setShowForm] = useState(false);
+
+    const [value, setValue] = React.useState("New Concept")
+    const handleChange = (event) => setValue(event.target.value)
    
     let conceptList = concepts ? concepts.filter(f=>{
         let actionlist = f.actions.map(m=> m.action);
         return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
     }) : [];
 
-    let fileName = "New Concept";
-    let mergeName = "";
-    let toName = "";
 
-    function handleChange(event){
-      fileName = event.target.value;
-    }
 
     const addConceptForm = ()=>{
         console.log("TESTING");
@@ -46,7 +47,7 @@ const ConceptNav = (props:ConceptProps) => {
 
     const createConcept = ()=>{
         console.log('TEST THIS OUT');
-        dispatch({ type: 'CREATE_CONCEPT', title: fileName })
+        dispatch({ type: 'CREATE_CONCEPT', title: value })
     }
 
     return(
@@ -62,8 +63,7 @@ const ConceptNav = (props:ConceptProps) => {
                 addConceptForm()}}
             >Cancel</Button>
                 <label>
-                    {/* <input type="text" onChange={handleChange}/> */}
-                    <Input id="name" placeholder="Concept Name" onChange={handleChange}/>
+                    <Input value={value} placeholder={value} onChange={handleChange}/>
                     <Button onClick={()=> {
                     createConcept()
                     setShowForm(false)
@@ -73,7 +73,7 @@ const ConceptNav = (props:ConceptProps) => {
                 
             </div>
              :
-            <Button color="primary" onClick={() => {
+            <Button bg="blue.400" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
             >Add New Concept</Button>
@@ -93,19 +93,19 @@ const ConceptNav = (props:ConceptProps) => {
                     
                     <Menu>
                     <MenuButton    
-                    px={4}
-                    py={2}
-                    transition="all 0.2s"
-                    borderRadius="md"
-                    borderWidth="1px"
-                    bg="gray.200"
-                    margin="3px"
-                    _hover={{ bg: "gray.300" }}
-                    _expanded={{ bg: "blue.400" }}
-                    _focus={{ boxShadow: "outline" }}
-                    >{con.name}</MenuButton>
+                        px={4}
+                        py={2}
+                        transition="all 0.2s"
+                        borderRadius="md"
+                        borderWidth="1px"
+                        bg="gray.100"
+                        margin="3px"
+                        _hover={{ bg: "gray.300" }}
+                        _expanded={{ bg: "blue.400" }}
+                        _focus={{ boxShadow: "outline" }}
+                        >{con.name}</MenuButton>
                     <MenuList>
-                        <MenuItem><Merger conceptList={conceptList} concept={con} index={i} ></Merger></MenuItem>
+                        {/* <MenuItem><Merger conceptList={conceptList} concept={con} index={i} ></Merger></MenuItem> */}
                         <MenuItem onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</MenuItem>
                     </MenuList>
                     </Menu>
