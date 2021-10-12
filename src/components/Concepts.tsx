@@ -56,15 +56,14 @@ const ConceptNav = (props:ConceptProps) => {
             <Heading as="h3">Concepts</Heading>
             {showForm ? 
             <div>
-       
                 <form>
-                <Button onClick={() => {
+                <Button bg="red.200" onClick={() => {
                 setShowForm(false)
                 addConceptForm()}}
             >Cancel</Button>
                 <label>
                     <Input value={value} placeholder={value} onChange={handleChange}/>
-                    <Button onClick={()=> {
+                    <Button bg="green.200" onClick={()=> {
                     createConcept()
                     setShowForm(false)
                 }}>Add</Button>
@@ -73,7 +72,7 @@ const ConceptNav = (props:ConceptProps) => {
                 
             </div>
              :
-            <Button bg="blue.400" onClick={() => {
+            <Button bg="blue.200" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
             >Add New Concept</Button>

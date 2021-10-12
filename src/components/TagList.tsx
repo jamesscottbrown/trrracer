@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Grid, Heading, Button } from '@chakra-ui/react';
 
 import EdiText from 'react-editext';
 import { MdColorLens } from 'react-icons/md';
@@ -57,7 +58,8 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-      <h2>Tags</h2><button color="primary" onClick={()=>{
+        <Heading as="h2">Tags</Heading>
+        <Button onClick={()=>{
         if(showTags){ 
           tagButtonValue = 'Show Tags';
           setShowTags(false);
@@ -65,82 +67,74 @@ const TagList = (props: TagListProps) => {
           setShowTags(true);
           tagButtonValue = 'Hide Tags';
         };
-      }}>{tagButtonValue}</button>
+      }}>{tagButtonValue}</Button>
 
 { showTags ?
       <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
-          <div
-            key={tag.title}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '20px 20px 1fr 20px',
-            }}
-          >
+          <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
             <span
               style={{
-                color: tag.color,
-                cursor: 'default',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              ■
-            </span>
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              {' '}
-              <MdColorLens
-                onClick={() => setTagToChangeColor(i)}
-                style={{ verticalAlign: 'middle' }}
-                title="Change tag color"
-              />
-            </span>
-            <EdiText
-              type="text"
-              value={tag.title}
-              onSave={(val) => updateTagName(i, val)}
-              validation={(val) => val.length > 0}
-              validationMessage="Tag name must not be empty"
-              editOnViewClick
-              submitOnEnter
-              submitOnUnfocus
-            />
-            {/* <EdiText
-              type="text"
-              value={tag.title}
-              onSave={(val) => updateTagName(i, val)}
-              validation={(val) => val.length > 0}
-              validationMessage="Tag name must not be empty"
-              editOnViewClick
-              submitOnEnter
-              submitOnUnfocus
-            /> */}
-            {tagToChangeColor === i && (
-              <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-                <GithubPicker
-                  color={tags[tagToChangeColor].color}
-                  onChangeComplete={(color) => updateTagColor(color)}
-                />
-              </div>
-            )}
-
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <FaTrashAlt
-                onClick={() => deleteTag(tag.title)}
-                title="Delete tag"
-              />
-            </span>
-          </div>
+                      color: tag.color,
+                      cursor: 'default',
+                      display: 'flex',
+                      alignItems: 'center',
+                      }}
+                    >
+                      ■
+                    </span>
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {' '}
+                      <MdColorLens
+                        onClick={() => setTagToChangeColor(i)}
+                        style={{ verticalAlign: 'middle' }}
+                        title="Change tag color"
+                      />
+                    </span>
+        
+                    <EdiText
+                      type="text"
+                      value={tag.title}
+                      onSave={(val) => updateTagName(i, val)}
+                      validation={(val) => val.length > 0}
+                      validationMessage="Tag name must not be empty"
+                      editOnViewClick
+                      submitOnEnter
+                      submitOnUnfocus
+                    />
+        
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <FaTrashAlt
+                        onClick={() => deleteTag(tag.title)}
+                        title="Delete tag"
+                      />
+                    </span>
+        
+                    {tagToChangeColor === i && (
+                      <>
+                        {' '}
+                        <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+                          <GithubPicker
+                            color={tags[tagToChangeColor].color}
+                            onChangeComplete={(color) => updateTagColor(color)}
+                          />
+                        </div>
+                        <div />
+                        <div />
+                        <div />
+                      </>
+                    )}
+                  </Grid>
         ))}
       </div>
       : <div></div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useProjectState } from './ProjectContext';
 import { EdgeType } from './types';
+import { Grid, Heading, Button } from '@chakra-ui/react';
 
 const generateUniqueId = require('generate-unique-id');
 
@@ -43,9 +44,9 @@ const EdgeControl = (props:EdgeProps) => {
             <h2>Associations Between Concepts</h2>
             {showForm ? 
             <div>
-            <button color="primary" onClick={() => {
+            <Button onClick={() => {
                 setShowForm(false)}}
-            >Cancel</button>
+            >Cancel</Button>
              <form>
             <label>To:
                 <input onChange={handleChangeTo} type="text" />
@@ -57,15 +58,15 @@ const EdgeControl = (props:EdgeProps) => {
                 <input onChange={handleChangeDescription} type="text" />
             </label>
             </form>
-            <button onClick={()=> {
+            <Button onClick={()=> {
                 createEdge()
                 setShowForm(false)
-                }}>Add</button>
+                }}>Add</Button>
             </div>
              :
-            <button color="primary" onClick={() => {
+            <Button onClick={() => {
                 setShowForm(true)}}
-            >Add New Edge</button>
+            >Add New Edge</Button>
             }
             
             {edges ? edges.filter(f=>{
@@ -81,8 +82,8 @@ const EdgeControl = (props:EdgeProps) => {
                     >
                         <h3>{`${con.from} --> ${con.to}`}</h3>
                         <h5>{con.description}</h5>
-                        {/* <button>Merge</button> */}
-                        <button onClick={()=> dispatch({ type: 'DELETE_EDGE', key: con.key })}>Delete</button>
+                        {/* <Button>Merge</Button> */}
+                        <Button onClick={()=> dispatch({ type: 'DELETE_EDGE', key: con.key })}>Delete</Button>
                     </div>
             )) : <div>no concepts</div>}
         </div>
