@@ -2,16 +2,6 @@ import React, { useState } from 'react';
 import {
   Box,
   Flex,
-  Text,
-  IconButton,
-  Button,
-  Stack,
-  Collapse,
-  Icon,
-  Link,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   useColorModeValue,
   Heading,
   Spacer,
@@ -54,17 +44,6 @@ return (
      <div style={{float:"right"}}><ViewTypeControl viewType={viewType} setViewType={setViewType} /></div>
     </Flex>
 </Box>
-  // <AppBar position="static">
-  //     {/* <Toolbar className={classes.root}>
-
-  //       <Typography variant="h6" className={classes.h6}>
-  //           {splitTitle(projectData.title)}
-  //       </Typography>
-
-  //       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
-     
-  //     </Toolbar> */}
-  //   </AppBar> 
 )
 
 }

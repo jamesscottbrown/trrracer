@@ -196,31 +196,34 @@ const appStateReducer = (state, action) => {
       let collo = JSON.parse(colloFile);
       //addMetaDescrip(action.projectData, state);
 
+      let topicF = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/lda_run.json', {encoding: 'utf-8'})
+      let topics = JSON.parse(topicF);
+
       let newEntries = action.projectData.entries.map((e, i)=> {
         e.collo = collo[i];
         return e;
       });
 
-      console.log(newEntries);
       let conFile = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/concept_concordance.json', {encoding: 'utf-8'})
       let conCord = JSON.parse(conFile)
 
-      console.log(conCord)
-
-
-
       let newConcepts = action.projectData.concepts.map((e, i)=> {
-        console.log(e);
         e.concordance = conCord.filter(c => c.concept === e.name)[0]
         return e;
       });
 
-      console.log(action.projectData, newConcepts);
-      
+      const newProjectData = {
+        ...action.projectData,
+        concepts: newConcepts,
+        entries: newEntries,
+        topics: topics
+      };
 
+      console.log('newProject data', newProjectData);
+      
       return {
         folderPath: action.folderName,
-        projectData: action.projectData,
+        projectData: newProjectData,
         filterTags: [],
       };
     }
@@ -252,8 +255,6 @@ const appStateReducer = (state, action) => {
            return m;
          });
 
-        
-        
        const newProjectData = {
          ...state.projectData,
          concepts: newConcepts
@@ -274,13 +275,10 @@ const appStateReducer = (state, action) => {
         return m;
       });
       
-
        const newProjectData = {
         ...state.projectData,
         concepts: newConcepts
       };
-
-      //console.log('IN MERGE', newProjectData);
 
       return saveJSON(newProjectData, state);
 
@@ -298,8 +296,6 @@ const appStateReducer = (state, action) => {
         ...state.projectData,
         edges: newEdges,
       };
-
-      console.log('newProjectData', newProjectData);
 
       return saveJSON(newProjectData, state);
 

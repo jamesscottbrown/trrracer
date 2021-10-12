@@ -55,6 +55,7 @@ interface ProjectType {
   entries: EntryType[];
   concepts : ConceptType[];
   edges : EdgeType[];
+  topics: [];
 }
 
 interface ProjectViewProps {

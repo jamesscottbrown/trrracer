@@ -88,7 +88,7 @@ const ConceptNav = (props:ConceptProps) => {
                 //     {/* <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
                 //     <Merger conceptList={conceptList} concept={con} index={i} ></Merger> */} 
                     
-                    <Menu>
+                    <Menu key={con.name}>
                     <MenuButton    
                         px={4}
                         py={2}
