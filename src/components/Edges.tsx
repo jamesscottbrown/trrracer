@@ -46,7 +46,7 @@ const EdgeControl = (props:EdgeProps) => {
         {showEdges ? 
         
         <div>
-        <Heading as="h5" >Associations Between Concepts<FaEyeSlash onClick={()=>{
+        <Heading as="h5" size="lg">Associations Between Concepts<FaEyeSlash onClick={()=>{
           if(showEdges){ 
             setShowEdges(false);
           }else{ 

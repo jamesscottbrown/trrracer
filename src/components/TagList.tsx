@@ -62,7 +62,7 @@ const TagList = (props: TagListProps) => {
 
 { showTags ?
   <div>
-        <Heading as="h5">Tags <FaEyeSlash onClick={()=>{
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
           if(showTags){ 
             setShowTags(false);
           }else{ 

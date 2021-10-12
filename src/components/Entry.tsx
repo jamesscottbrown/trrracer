@@ -149,7 +149,7 @@ const Entry = (props: EntryPropTypes) => {
   }
 
   return (
-    <>
+    <div style={{margin:"auto"}}>
       <br />
       <Heading as='h3'>
         <EdiText
@@ -291,7 +291,7 @@ const Entry = (props: EntryPropTypes) => {
       setShowURL(true)
     }}>Add URL</Button>
     } 
-    </>
+    </div>
   );
 };
 

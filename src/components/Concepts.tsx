@@ -51,7 +51,7 @@ const ConceptNav = (props:ConceptProps) => {
     return(
         <>
         <div>
-            <Heading as="h5">Concepts</Heading>
+            <Heading as="h5" size="lg">Concepts</Heading>
             {showForm ? 
             <div>
                 <form>

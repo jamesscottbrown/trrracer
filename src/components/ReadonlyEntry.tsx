@@ -19,7 +19,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
   return (
-    <>
+    <div style={{margin:"auto", padding:"10px"}}>
       <Heading as="h2">
         {entryData.title}{' '}
         <EditIcon
@@ -28,11 +28,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         />
       </Heading>
       <p
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          width: 'max-content',
-        }}
+        // style={{
+        //   marginLeft: 'auto',
+        //   marginRight: 'auto',
+        //   width: 'max-content',
+        // }}
       >
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
       </p>
@@ -52,6 +52,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               onClick={() => openFile(file.title)}
               title="Open file externally"
               size="12px"
+              style={{display:"inline"}}
             />{' '}
           </ListItem>
         ))}
@@ -69,7 +70,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </UnorderedList>
         </>
       )} */}
-    </>
+    </div>
   );
 };
 

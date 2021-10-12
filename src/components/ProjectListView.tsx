@@ -10,8 +10,6 @@ import FileUpload from './FileUpload';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
-
-
 import ConceptNav from './concepts';
 import EdgeControl from './Edges';
 
@@ -31,7 +29,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   }, [projectData]);
 
  
-
   // TODO: add files to json file and save
 
   const saveFiles = (fileList: FileObj[]) => {
@@ -77,17 +74,22 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   };
 
   return (
-    <div>
+    <div style={{padding:'10px'}}>
       <ConceptNav concepts={projectData.concepts}/>
+      <br />
+      <Divider />
       <EdgeControl edges={projectData.edges}/>
-
+      <br />
+      <Divider />
       <TagList tags={projectData.tags} />
-
+      <br />
+      <Divider />
       <Heading as="h2">Activities</Heading>
+    <br/>
 
 
 
-      <ButtonGroup>
+      <ButtonGroup style={{display:"inline"}}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
             <FaEye />
@@ -103,8 +105,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
 
       <br />
+      <br />
 
       <TagFilter />
+
+      <br/>
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
         <>
