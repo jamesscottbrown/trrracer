@@ -15,6 +15,17 @@ const Topics = (props:any) => {
         return vals;
     }
 
+    const getColor = (val) => {
+        console.log(+val > .04)
+        if(+val > .04){
+            return 'gray.500';
+        }else if(+val <= .04 && +val > .01){
+            return 'gray.300';
+        }else{
+            return 'gray.100';
+        }
+    }
+
     return(
         <div>
             <Heading as="h5">Topics</Heading>
@@ -22,7 +33,7 @@ const Topics = (props:any) => {
                 <div key={`top-${top[0]}`} style={{padding:"10px"}}>
                     <Heading as="h6" size="md">Topic {top[0]+1}</Heading>
                     {splitTops(top[1]).map(t=>(
-                        <Badge style={{margin:"5px"}}>{t[1]}</Badge>
+                        <Badge style={{margin:"5px"}} bg={getColor(t[0])}>{t[1]}</Badge>
                     ))
                     }</div>
             ))}
