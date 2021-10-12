@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Heading, Button } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import EdiText from 'react-editext';
 import { MdColorLens } from 'react-icons/md';
@@ -23,7 +24,7 @@ const TagList = (props: TagListProps) => {
   const [{ projectData }, dispatch] = useProjectState();
 
   const [showTags, setShowTags] = useState(false);
-  let tagButtonValue = "Show Tags";
+
 
   const updateTagColor = (color: ColorResult) => {
     dispatch({
@@ -58,18 +59,16 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-        <Heading as="h2">Tags</Heading>
-        <Button onClick={()=>{
-        if(showTags){ 
-          tagButtonValue = 'Show Tags';
-          setShowTags(false);
-        }else{ 
-          setShowTags(true);
-          tagButtonValue = 'Hide Tags';
-        };
-      }}>{tagButtonValue}</Button>
 
 { showTags ?
+  <div>
+        <Heading as="h5">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
       <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
           <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
@@ -137,7 +136,14 @@ const TagList = (props: TagListProps) => {
                   </Grid>
         ))}
       </div>
-      : <div></div>
+      </div>
+      : <div><Heading as="h5">Tags <FaEye onClick={()=>{
+        if(showTags){ 
+          setShowTags(false);
+        }else{ 
+          setShowTags(true);
+        };
+      }} style={{display:"inline"}}/></Heading></div>
 }
     </>
   );

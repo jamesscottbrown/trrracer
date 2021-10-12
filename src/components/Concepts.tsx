@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProjectState } from './ProjectContext';
 import { ConceptType, ProjectType, ProjectViewProps} from './types';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import Merger from './MergeConceptForm';
 
 import {
@@ -9,13 +10,9 @@ import {
     MenuList,
     MenuItem,
     Input,
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-    FormHelperText,
+    Button, 
+    Heading
   } from "@chakra-ui/react"
-
-  import {Button, Heading} from "@chakra-ui/react"
 
   import ChevronDownIcon from "@chakra-ui/icon"
 
@@ -30,6 +27,7 @@ const ConceptNav = (props:ConceptProps) => {
     const [{ projectData }, dispatch] = useProjectState(); 
 
     const [showForm, setShowForm] = useState(false);
+    const [showConcepts, setShowConcepts] = useState(false);
 
     const [value, setValue] = React.useState("New Concept")
     const handleChange = (event) => setValue(event.target.value)
@@ -53,7 +51,7 @@ const ConceptNav = (props:ConceptProps) => {
     return(
         <>
         <div>
-            <Heading as="h3">Concepts</Heading>
+            <Heading as="h5">Concepts</Heading>
             {showForm ? 
             <div>
                 <form>
@@ -75,20 +73,20 @@ const ConceptNav = (props:ConceptProps) => {
             <Button bg="blue.200" onClick={() => {
                 setShowForm(true)
                 addConceptForm()}}
-            >Add New Concept</Button>
+            >Add New Concept  <FaPlus /></Button>
             }
             
             {concepts ? concepts.filter(f=>{
                 let actionlist = f.actions.map(m=> m.action);
                 return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
             }).map((con: ConceptType, i) => (
-                <div
-                    key={con.name}
-                    >
-                    {/* <h3>{con.name}</h3>
-                    {/* <button>Merge</button> */}
-                    {/* <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
-                    <Merger conceptList={conceptList} concept={con} index={i} ></Merger> */} 
+                // <div
+                //     key={con.name}
+                //     >
+                //     {/* <h3>{con.name}</h3>
+                //     {/* <button>Merge</button> */}
+                //     {/* <button onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</button>
+                //     <Merger conceptList={conceptList} concept={con} index={i} ></Merger> */} 
                     
                     <Menu>
                     <MenuButton    
@@ -110,9 +108,7 @@ const ConceptNav = (props:ConceptProps) => {
                     </Menu>
 
 
-                </div>
-
-       
+                // </div>
             )) : <div>no concepts</div>}
         </div>
         </>
