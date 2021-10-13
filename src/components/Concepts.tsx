@@ -103,6 +103,7 @@ const ConceptNav = (props:ConceptProps) => {
                         >{con.name}</MenuButton>
                     <MenuList>
                         {/* <MenuItem><Merger conceptList={conceptList} concept={con} index={i} ></Merger></MenuItem> */}
+                        <MenuItem>Search in Files</MenuItem>
                         <MenuItem onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</MenuItem>
                     </MenuList>
                     </Menu>

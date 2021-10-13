@@ -9,6 +9,10 @@ from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
 nlpS = spacy.load("en_core_web_sm")
 
 from nltk.corpus import webtext
+
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
   
 # use to find bigrams, which are pairs of words
 
@@ -16,9 +20,6 @@ from nltk.metrics import BigramAssocMeasures
 
 from doc_clean import LEMMA, STOP, clean
 
-
-# import nltk
-# import ssl
 
 # try:
 #     _create_unverified_https_context = ssl._create_unverified_context
@@ -28,6 +29,17 @@ from doc_clean import LEMMA, STOP, clean
 #     ssl._create_default_https_context = _create_unverified_https_context
 
 # nltk.download()
+def fix_missing_file_type(entries):
+    for en in entries:
+        for f in en["files"]:
+            if "fileType" not in f:
+                if "txt" in f["title"]:
+                    f["fileType"] = "txt"
+                elif "gdoc" in f["title"]:
+                    f["fileType"] = "gdoc"
+                elif "pdf" in f["title"]:
+                    f["fileType"] = "pdf"
+    return entries
 
 def make_blob_for_entry(entries, gdoc_service, document_path):
     entry_blobs = []
@@ -41,11 +53,13 @@ def make_blob_for_entry(entries, gdoc_service, document_path):
         blob["blob"] = ""
 
         for f in en["files"]:
+           # print('filetyyyyyyy',f)
             if f["fileType"] == "gdoc" and "fileId" in f:
                 text = get_doc_text_by_id(gdoc_service, f["fileId"])
                 blob["blob"] = blob["blob"] + text
             
             elif f["fileType"] == "txt":
+                # print("TITLEEE",f["title"])
                 file_t = open(document_path + f["title"],'r')
                 filelines = list(file_t)
                 file_t.close()
@@ -72,13 +86,10 @@ def term_freq_for_entry(json_data, gdoc_service, document_path):
                 file_t.close()
                 for f in filelines:
                     blob = blob + f
-                # with open(document_path + f["title"]) as text:
-                #     lines = text.readLines()
-                #     blob = blob + lines
 
         tok = get_tokens(blob)
         freq = get_top_words(tok)
-        # print(freq)
+     
         if len(freq) < 1:
             print(blob)
 
@@ -191,19 +202,32 @@ def collocations_maker(corpus):
 
     return ngrams
 
-
 def run_lda(docs):
 
     doc_clean = [clean(doc["blob"]).split() for doc in docs]
   
     # Creating the term dictionary of our courpus, where every unique term is assigned an index. 
     dictionary = corpora.Dictionary(doc_clean)
+    dictionary.filter_extremes(no_above=0.5)
     # Converting list of documents (corpus) into Document Term Matrix using dictionary prepared above.
     doc_term_matrix = [dictionary.doc2bow(doc) for doc in doc_clean]
     # Creating the object for LDA model using gensim library
     lda = gensim.models.ldamodel.LdaModel
 
+    num_topics =5
+    chunksize = 2000
+    passes = 20
+    iterations = 400
+    eval_every = None 
 
     # Running and Trainign LDA model on the document term matrix.
-    return lda(doc_term_matrix, num_topics=10, id2word = dictionary, passes=50)
+    return lda(doc_term_matrix, num_topics=num_topics, id2word=dictionary, chunksize=chunksize, passes=passes, iterations=iterations, alpha='auto', eta = 'auto')
   
+def tf_idf(docs, names):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(docs)
+    tfidf_df = pd.DataFrame(X.toarray(), index=names, columns=vectorizer.get_feature_names())
+    tfidf_df = tfidf_df.stack().reset_index()
+    tfidf_df2 = tfidf_df.rename(columns={0:'tfidf', 'level_0': 'document','level_1': 'term', 'level_2': 'term'})
+    top = tfidf_df2.sort_values(by=['document','tfidf'], ascending=[True,False]).groupby(['document']).head(10)
+    return top

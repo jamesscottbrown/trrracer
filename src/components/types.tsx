@@ -18,6 +18,7 @@ interface EntryType {
   files: File[];
   date: string;
   tags: string[];
+  tfidf: any;
 }
 
 interface TagType {
