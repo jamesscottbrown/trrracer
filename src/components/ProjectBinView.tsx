@@ -10,7 +10,7 @@ import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
 
 
-import ConceptNav from './concepts';
+import ConceptNav from './Concepts';
 
 const { ipcRenderer } = require('electron');
 
