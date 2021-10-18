@@ -185,48 +185,72 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
             });
 }
 
+const readProjectFile = (folderPath: string, fileName: string) => {
+  const filePath = path.join(folderPath, fileName);
+  const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
+  return JSON.parse(fileContents);
+};
+
 const appStateReducer = (state, action) => {
   //console.log("WATCH THIS HERE",'state', state, 'action', action);
   
   switch (action.type) {
-    case 'SET_DATA': {
+   case 'SET_DATA': {
 
-      let colloFile = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json', {encoding: 'utf-8'})
-     // getGoogleIds(action.projectData, state);
-      let collo = JSON.parse(colloFile);
+      // getGoogleIds(action.projectData, state);
       //addMetaDescrip(action.projectData, state);
 
-      let topicF = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/lda_run.json', {encoding: 'utf-8'})
-      let topics = JSON.parse(topicF);
+      const baseDir = action.folderName;
 
-      let tfidf_file = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/tf-idf.json', {encoding: 'utf-8'})
-      let tfidf = JSON.parse(tfidf_file);
-      console.log('TFIDF', tfidf)
-      let newEntries = action.projectData.entries.map((e, i)=> {
-        e.collo = collo[i];
-        console.log(e.title, tfidf['tfidf-data'].filter(t=>t.file === e.title))
-        let temp = tfidf['tfidf-data'].filter(t=>t.file === e.title)
-        e.tfidf = temp.length > 0 ? temp[0] : null;
-        return e;
-      });
+      let topics = [];
+      try {
+        topics = readProjectFile(baseDir, 'lda_run.json');
+      } catch (e) {
+        console.log(e);
+      }
 
-      let conFile = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/concept_concordance.json', {encoding: 'utf-8'})
-      let conCord = JSON.parse(conFile)
+      let newEntries;
+      try {
+        const collo = readProjectFile(baseDir, 'entry_collocations.json');
+        const tfidf = readProjectFile(baseDir, 'tf-idf.json');
 
-      let newConcepts = action.projectData.concepts.map((e, i)=> {
-        e.concordance = conCord.filter(c => c.concept === e.name)[0]
-        return e;
-      });
+        console.log('TFIDF', tfidf);
+        newEntries = action.projectData.entries.map((e, i) => {
+          e.collo = collo[i];
+          console.log(e.title, tfidf['tfidf-data'].filter(t => t.file === e.title));
+
+          const temp = tfidf['tfidf-data'].filter(t => t.file === e.title);
+          e.tfidf = temp.length > 0 ? temp[0] : null;
+
+          return e;
+        });
+      } catch (e) {
+        newEntries = action.projectData.entries;
+        console.log(e);
+      }
+
+
+      let newConcepts = [];
+      try {
+        const conCord = readProjectFile(baseDir, 'concept_concordance.json');
+
+        newConcepts = action.projectData.concepts.map((e, i) => {
+          e.concordance = conCord.filter(c => c.concept === e.name)[0];
+          return e;
+        });
+      } catch (e) {
+        console.log(e);
+      }
 
       const newProjectData = {
         ...action.projectData,
         concepts: newConcepts,
         entries: newEntries,
-        topics: topics
+        topics,
       };
 
       console.log('newProject data', newProjectData);
-      
+
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
