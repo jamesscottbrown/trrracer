@@ -20,6 +20,8 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
+  //console.log('ENTRY DATA',entryData)
+
   const colorBadge = (val)=>{
     if(val > .4){
       return 'gray.400';
@@ -33,10 +35,19 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   }
 
   const formatConcord = (tf)=>{
-    return tf.concord.map(m => {
-      let arr = m.split(tf.term);
-      return <p><span>{arr[0] + " "}<b>{tf.term}</b>{" " + arr[1]}</span><br /><br/></p>
-    });
+    let matches =  tf.entry_matches;
+   
+    if(matches[0].matches){
+      return matches[0].matches.map(m => {
+        let arr = m.concord.split(m.concept);
+        
+        return <p><span>{arr[0] + " "}<b>{m.concept}</b>{" " + arr[1]}</span><br /><br/></p>
+      });
+    }else{
+      console.log("not there")
+      return ""
+    }
+
   }
 
   return (
@@ -82,9 +93,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         {  entryData.tfidf != null ? 
             entryData.tfidf['tf-idf'].map(tf =>(
               <div style={{'display':'inline'}}>
-                <Tooltip placement="left" label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf.term}</Badge></Tooltip>
-                
-            
+                <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf.term}</Badge></Tooltip>
             </div>
             ))
         : <div></div>}
