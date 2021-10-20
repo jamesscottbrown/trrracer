@@ -36,7 +36,7 @@ const ConceptNav = (props:ConceptProps) => {
         let actionlist = f.actions.map(m=> m.action);
         return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
     }) : [];
-
+    console.log(conceptList)
 
 
     const addConceptForm = ()=>{

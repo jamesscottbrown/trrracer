@@ -202,7 +202,7 @@ const appStateReducer = (state, action) => {
       let tfidf_file = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/tf_idf.json', {encoding: 'utf-8'})
       let tfidf = JSON.parse(tfidf_file);
 
-      console.log('TFIDF',tfidf, action.projectData.entries)
+      //console.log('TFIDF',tfidf, action.projectData.entries)
      
       let newEntries = action.projectData.entries.map((e, i)=> {
         e.collo = collo[i];
@@ -219,7 +219,12 @@ const appStateReducer = (state, action) => {
       //console.log('conCORD',conCord)
 
       let newConcepts = action.projectData.concepts.map((e, i)=> {
-        console.log(e)
+        console.log('console concept',e, conCord.concept_matches);
+        e.concordance = conCord.concept_matches.filter(f=> {
+          let test = f.matches.filter(t=> t.name === e.name);
+          return test.length > 0
+        });
+        
         // e.concordance = conCord.filter(c => c.concept === e.name)[0]
         return e;
       });
