@@ -18,17 +18,18 @@ const { ipcRenderer } = require('electron');
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags }, dispatch] = useProjectState();
-  
+  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
+
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
+
+  console.log('SEARCH CONCEWPT IN LIST VIEW',searchConcept);
 
   useEffect(() => {
     setEditable(Array.from(Array(projectData.entries.length)));
   }, [projectData]);
 
- 
   // TODO: add files to json file and save
 
   const saveFiles = (fileList: FileObj[]) => {
@@ -73,86 +74,96 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     );
   };
 
-  return (
-    <div style={{padding:'10px'}}>
-      <ConceptNav concepts={projectData.concepts}/>
-      <br />
-      <Divider />
-      <EdgeControl edges={projectData.edges}/>
-      <br />
-      <Divider />
-      <TagList tags={projectData.tags} />
-      <br />
-      <Divider />
-      <Heading as="h2">Activities</Heading>
-    <br/>
+  if(searchConcept === null){
 
-
-
-      <ButtonGroup style={{display:"inline"}}>
-        {!editable.every((t) => t) && (
-          <Button onClick={makeAllEditable} type="button">
-            <FaEye />
-            Show all edit controls
-          </Button>
-        )}
-        {!editable.every((t) => !t) && (
-          <Button onClick={makeAllNonEditable} type="button">
-            <FaEyeSlash /> Hide all edit controls
-          </Button>
-        )}
-      </ButtonGroup>
-
-
-      <br />
-      <br />
-
-      <TagFilter />
-
+    return (
+      <div style={{padding:'10px'}}>
+        <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+        <br />
+        <Divider />
+        <EdgeControl edges={projectData.edges}/>
+        <br />
+        <Divider />
+        <TagList tags={projectData.tags} />
+        <br />
+        <Divider />
+        <Heading as="h2">Activities</Heading>
       <br/>
-
-      {filteredEntries.map((entryData: EntryType, i: number) => (
-        <>
-          {editable[i] ? (
-            <Entry
-              /* eslint-disable-next-line react/no-array-index-key */
-              key={i}
-              entryData={entryData}
-              entryIndex={i}
-              openFile={openFile}
-              updateEntryField={updateEntryField}
-              allTags={projectData.tags}
-            />
-          ) : (
-            <ReadonlyEntry
-              /* eslint-disable-next-line react/no-array-index-key */
-              key={i}
-              entryData={entryData}
-              openFile={openFile}
-              makeEditable={() => makeEditable(i)}
-            />
+        <ButtonGroup style={{display:"inline"}}>
+          {!editable.every((t) => t) && (
+            <Button onClick={makeAllEditable} type="button">
+              <FaEye />
+              Show all edit controls
+            </Button>
           )}
+          {!editable.every((t) => !t) && (
+            <Button onClick={makeAllNonEditable} type="button">
+              <FaEyeSlash /> Hide all edit controls
+            </Button>
+          )}
+        </ButtonGroup>
+  
+        <br />
+        <br />
+  
+        <TagFilter />
+  
+        <br/>
+  
+        {filteredEntries.map((entryData: EntryType, i: number) => (
+          <>
+            {editable[i] ? (
+              <Entry
+                /* eslint-disable-next-line react/no-array-index-key */
+                key={i}
+                entryData={entryData}
+                entryIndex={i}
+                openFile={openFile}
+                updateEntryField={updateEntryField}
+                allTags={projectData.tags}
+              />
+            ) : (
+              <ReadonlyEntry
+                /* eslint-disable-next-line react/no-array-index-key */
+                key={i}
+                entryData={entryData}
+                openFile={openFile}
+                makeEditable={() => makeEditable(i)}
+              />
+            )}
+  
+            <Divider marginTop="1em" marginBottom="1em" />
+          </>
+        ))}      
+        
+        <Button onClick={addEntry} type="button">
+          <FaPlus /> Add entry
+        </Button>
+  
+      <FileUpload
+        saveFiles={saveFiles}
+        containerStyle={{}}
+        msg={
+          <>
+            Drag and drop some files here, or <b>click to select files</b>,
+            create a new entry.
+          </>
+        }
+      />
+      </div>
+    );
 
-          <Divider marginTop="1em" marginBottom="1em" />
-        </>
-      ))}      
-      
-      <Button onClick={addEntry} type="button">
-        <FaPlus /> Add entry
-      </Button>
+  }else{
+    return  (
+      <div style={{padding:'10px'}}>
+      <ConceptNav concepts={projectData.concepts}/>
 
-    <FileUpload
-      saveFiles={saveFiles}
-      containerStyle={{}}
-      msg={
-        <>
-          Drag and drop some files here, or <b>click to select files</b>,
-          create a new entry.
-        </>
-      }
-    />
-  </div>
-  );
+    </div>
+    )
+
+  }
+
+
 };
 
 export default ProjectListView;

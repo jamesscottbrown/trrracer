@@ -4,13 +4,11 @@ import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
 
-
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
   const [, dispatch] = useProjectState();
   const [showFileCreate, setShowFileCreate] = useState(false);
   const {fileType, text, entryIndex} = props;
-
 
   let fileName = "new google doc";
 

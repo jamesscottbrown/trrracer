@@ -219,12 +219,10 @@ const appStateReducer = (state, action) => {
       //console.log('conCORD',conCord)
 
       let newConcepts = action.projectData.concepts.map((e, i)=> {
-        console.log('console concept',e, conCord.concept_matches);
         e.concordance = conCord.concept_matches.filter(f=> {
           let test = f.matches.filter(t=> t.name === e.name);
           return test.length > 0
         });
-        
         // e.concordance = conCord.filter(c => c.concept === e.name)[0]
         return e;
       });
@@ -242,6 +240,7 @@ const appStateReducer = (state, action) => {
         folderPath: action.folderName,
         projectData: newProjectData,
         filterTags: [],
+        searchConcept: null
       };
     }
 
@@ -675,6 +674,11 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_FILTER_TAGS': {
       return { ...state, filterTags: action.filterTags };
+    }
+
+    case 'UPDATE_SEARCH_CONCEPT': {
+      console.log('UPDATING', action)
+      return {...state, searchConcept : action.searchConcept };
     }
 
     default: {
