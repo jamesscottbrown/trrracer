@@ -278,9 +278,9 @@ const appStateReducer = (state, action) => {
  
        return saveJSON(newProjectData, state);
  
-     }
+    }
 
-     case 'MERGE_CONCEPT':{
+    case 'MERGE_CONCEPT':{
        
        const newConcepts  = state.projectData.concepts.map(m => {
         
@@ -299,7 +299,7 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData, state);
 
       
-     }
+    }
 
     case 'CREATE_EDGE':{
   
@@ -348,7 +348,7 @@ const appStateReducer = (state, action) => {
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
-          { title: newTag.text, color: 'black' },
+          { title: newTag.text, color: 'black', date: new Date().toISOString() },
         ];
       } else {
         newTags = state.projectData.tags;
