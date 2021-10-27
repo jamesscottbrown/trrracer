@@ -24,8 +24,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
 
-  console.log('SEARCH CONCEWPT IN LIST VIEW',searchConcept);
-
   useEffect(() => {
     setEditable(Array.from(Array(projectData.entries.length)));
   }, [projectData]);

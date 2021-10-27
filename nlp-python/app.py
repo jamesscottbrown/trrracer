@@ -74,7 +74,7 @@ def write_blobs_to_file(blob, document_path):
     json.dump(blob, outfile)
 
 
-@app.route("/")
+@app.route("/corr")
 def index():
     document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
     # load_all_blobs_as_corpus(document_path)
