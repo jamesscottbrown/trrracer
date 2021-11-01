@@ -55,6 +55,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               onClick={() => openFile(file.title)}
               title="Open file externally"
               size="12px"
+              style={{ display: 'inline' }}
             />{' '}
           </ListItem>
         ))}
