@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
 import {
   Button,
-  ButtonGroup,
   FormControl,
   FormLabel,
   Heading,
   Input,
   ListItem,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   UnorderedList,
 } from '@chakra-ui/react';
+
 import { FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
@@ -56,44 +62,55 @@ const URLList = (props: URLListProps) => {
 
   if (addingURL) {
     return (
-      <Modal
-        isOpen={addingURL}
-        onRequestClose={() => setAddingUrl(false)}
-        style={customStyles}
-      >
-        <Heading as="h1">Attach URL</Heading>
+      <Modal isOpen={addingURL} onClose={() => setAddingUrl(false)}>
+        <ModalOverlay />
 
-        <FormControl>
-          <FormLabel>URL:</FormLabel>
-          <Input
-            id="url"
-            value={additionURL}
-            onChange={(ev) => setAdditionURL(ev.target.value)}
-          />
-        </FormControl>
+        <ModalContent>
+          <ModalHeader>Attach URL</ModalHeader>
 
-        <br />
+          <ModalCloseButton />
 
-        <FormControl>
-          <FormLabel>Title:</FormLabel>
-          <Input
-            id="title"
-            value={additionTitle}
-            onChange={(ev) => setAdditionTitle(ev.target.value)}
-          />
-        </FormControl>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>URL:</FormLabel>
+              <Input
+                id="url"
+                value={additionURL}
+                onChange={(ev) => setAdditionURL(ev.target.value)}
+              />
+            </FormControl>
 
-        <br />
+            <br />
 
-        <ButtonGroup>
-          <Button disabled={!additionURL} onClick={attachURL} type="button">
-            Add
-          </Button>
+            <FormControl>
+              <FormLabel>Title:</FormLabel>
+              <Input
+                id="title"
+                value={additionTitle}
+                onChange={(ev) => setAdditionTitle(ev.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
 
-          <Button onClick={() => setAddingUrl(false)} type="button">
-            Cancel
-          </Button>
-        </ButtonGroup>
+          <ModalFooter>
+            <Button
+              onClick={() => setAddingUrl(false)}
+              type="button"
+              colorScheme="gray"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              disabled={!additionURL}
+              onClick={attachURL}
+              type="button"
+              colorScheme="blue"
+            >
+              Add
+            </Button>
+          </ModalFooter>
+        </ModalContent>
       </Modal>
     );
   }
