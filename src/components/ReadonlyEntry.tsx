@@ -14,6 +14,9 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
+  const urls = entryData.files.filter((f) => f.fileType === 'url');
+  const files = entryData.files.filter((f) => f.fileType !== 'url');
+
   return (
     <>
       <h3>
@@ -36,7 +39,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <p>Tags: {entryData.tags.join(', ')}</p>
       <p>{entryData.description}</p>
       <ul>
-        {entryData.files.map((file: File) => (
+        {files.map((file: File) => (
           <li key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
@@ -48,11 +51,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         ))}
       </ul>
 
-      {entryData.urls.length > 0 && (
+      {urls.length > 0 && (
         <>
           <h3>URLs</h3>
           <ul>
-            {entryData.urls.map((url) => (
+            {urls.map((url) => (
               <li key={url.url}>
                 <a href={url.url}>{url.title}</a>
               </li>

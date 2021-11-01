@@ -1,7 +1,9 @@
 // files
 
 interface File {
+  fileType: string;
   title: string;
+  url?: string;
 }
 
 interface FileObj {
