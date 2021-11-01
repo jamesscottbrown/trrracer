@@ -2,9 +2,10 @@ import React from 'react';
 
 import { Heading, ListItem, Tag, Text, UnorderedList } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-
 import { FaExternalLinkAlt } from 'react-icons/fa';
+
 import { format } from 'date-fns';
+import * as Showdown from 'showdown';
 
 import { File, EntryType, TagType } from './types';
 import textColor from '../colors';
@@ -33,6 +34,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     }
     return matchingTags[0].color;
   };
+
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
 
   return (
     <>
@@ -69,7 +77,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       <br />
 
-      <p>{entryData.description}</p>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: converter.makeHtml(entryData.description),
+        }}
+      />
 
       <UnorderedList>
         {files.map((file: File) => (
