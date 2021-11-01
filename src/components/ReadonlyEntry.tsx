@@ -6,7 +6,9 @@ import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 
-import { File, EntryType } from './types';
+import { File, EntryType, TagType } from './types';
+import textColor from '../colors';
+import { useProjectState } from './ProjectContext';
 
 interface EntryPropTypes {
   entryData: EntryType;
@@ -19,6 +21,18 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
+
+  const [{ projectData }] = useProjectState();
+
+  const getColor = (tagName: string) => {
+    const matchingTags = projectData.tags.filter(
+      (t: TagType) => t.title === tagName
+    );
+    if (matchingTags.length === 0) {
+      return 'gray';
+    }
+    return matchingTags[0].color;
+  };
 
   return (
     <>
@@ -42,7 +56,16 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <p>
         Tags:{' '}
         {entryData.tags.map((t) => (
-          <Tag key={t}>{t}</Tag>
+          <Tag
+            key={t}
+            borderColor={getColor(t)}
+            borderWidth="5px"
+            backgroundColor={getColor(t)}
+            color={textColor(getColor(t))}
+            marginLeft="0.25em"
+          >
+            {t}
+          </Tag>
         ))}
       </p>
       <p>{entryData.description}</p>

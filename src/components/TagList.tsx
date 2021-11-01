@@ -29,6 +29,7 @@ import { useProjectState } from './ProjectContext';
 import TagFilter from './SetFilterTags';
 
 import { EntryType, TagType } from './types';
+import textColor from '../colors';
 
 interface ColorChangeModalProps {
   tagToChangeColor: number;
@@ -267,19 +268,19 @@ const TagList = (props: TagListProps) => {
               <MenuButton
                 as={Button}
                 rightIcon={<ChevronDownIcon />}
-                colorScheme={filterTags.includes(tag.title) ? 'green' : 'gray'}
+                marginLeft="0.25em"
+                borderColor={tag.color}
+                borderWidth="5px"
+                bgColor={
+                  filterTags.includes(tag.title) ? tag.color : `${tag.color}59`
+                }
+                color={
+                  //  textColor(tag.color)
+                  filterTags.includes(tag.title)
+                    ? textColor(tag.color)
+                    : 'black'
+                }
               >
-                <span
-                  style={{
-                    color: tag.color,
-                    cursor: 'default',
-                    display: 'inline',
-                    // display: 'flex',
-                    // alignItems: 'center',
-                  }}
-                >
-                  ■
-                </span>
                 {tag.title}
               </MenuButton>
 
