@@ -75,7 +75,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '10px' }}>
       <Heading as="h1">{projectData.title}</Heading>
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
@@ -84,7 +84,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <Heading as="h2">Entries</Heading>
 
-      <ButtonGroup>
+      <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
             <FaEye />

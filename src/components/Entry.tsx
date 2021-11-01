@@ -125,7 +125,7 @@ const Entry = (props: EntryPropTypes) => {
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
   return (
-    <>
+    <div style={{ margin: 'auto' }}>
       <br />
       <Heading as="h3">
         <EdiText
@@ -222,7 +222,7 @@ const Entry = (props: EntryPropTypes) => {
 
       <URLList urls={urls} entryIndex={entryIndex} />
       <></>
-    </>
+    </div>
   );
 };
 

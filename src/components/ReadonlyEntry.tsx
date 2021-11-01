@@ -62,7 +62,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       {urls.length > 0 && (
         <>
-          <Heading as="h3">URLs</Heading>
+          <Heading as="h3" size="lg">
+            URLs
+          </Heading>
           <UnorderedList>
             {urls.map((url) => (
               <ListItem key={url.url}>
