@@ -12,7 +12,6 @@ import { EntryType, ProjectType, ProjectViewProps, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import Entry from './Entry';
 import TagList from './TagList';
-import TagFilter from './SetFilterTags';
 
 const { ipcRenderer } = require('electron');
 
@@ -183,7 +182,6 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
       <TagList tags={projectData.tags} />
 
       <Heading as="h2">Entries</Heading>
-      <TagFilter />
 
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
         <div>

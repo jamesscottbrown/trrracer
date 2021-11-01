@@ -16,15 +16,18 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  MenuDivider,
 } from '@chakra-ui/react';
 
-import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaFilter, FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { MdColorLens } from 'react-icons/md';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 import { GithubPicker } from 'react-color';
 
 import { useProjectState } from './ProjectContext';
+import TagFilter from './SetFilterTags';
+
 import { EntryType, TagType } from './types';
 
 interface ColorChangeModalProps {
@@ -206,7 +209,7 @@ const TagList = (props: TagListProps) => {
   const [tagToRename, setTagToRename] = useState<false | number>(false);
   const [newName, setNewName] = useState<string>('');
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ filterTags, projectData }, dispatch] = useProjectState();
 
   const deleteTag = (tagName: string) => {
     const entriesToModify = projectData.entries.filter((e: EntryType) =>
@@ -220,6 +223,20 @@ const TagList = (props: TagListProps) => {
     if (confirmation) {
       dispatch({ type: 'DELETE_TAG', title: tagName });
     }
+  };
+
+  const toggleTagInFilter = (tag: TagType) => {
+    let newFilterTags;
+    if (filterTags.includes(tag.title)) {
+      newFilterTags = filterTags.filter((t) => t !== tag.title);
+    } else {
+      newFilterTags = [...filterTags, tag.title];
+    }
+
+    dispatch({
+      type: 'UPDATE_FILTER_TAGS',
+      filterTags: newFilterTags,
+    });
   };
 
   return (
@@ -247,7 +264,11 @@ const TagList = (props: TagListProps) => {
           {tags.map((tag: TagType, i) => (
             // <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
             <Menu key={tag.title}>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                colorScheme={filterTags.includes(tag.title) ? 'green' : 'gray'}
+              >
                 <span
                   style={{
                     color: tag.color,
@@ -263,6 +284,15 @@ const TagList = (props: TagListProps) => {
               </MenuButton>
 
               <MenuList>
+                <MenuItem onClick={() => toggleTagInFilter(tag)}>
+                  <FaFilter title="Filter entry list" />
+                  {filterTags.includes(tag.title)
+                    ? 'Remove filter for tag'
+                    : 'Filter entries using tag'}
+                </MenuItem>
+
+                <MenuDivider />
+
                 <MenuItem onClick={() => setTagToChangeColor(i)}>
                   <MdColorLens
                     style={{ verticalAlign: 'middle', display: 'inline' }}
@@ -283,6 +313,8 @@ const TagList = (props: TagListProps) => {
           ))}
         </div>
       </div>
+
+      <TagFilter />
     </>
   );
 };

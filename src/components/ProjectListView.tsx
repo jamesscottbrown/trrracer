@@ -8,7 +8,6 @@ import { EntryType, FileObj, ProjectViewProps } from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import TagList from './TagList';
-import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
 
 const { ipcRenderer } = require('electron');
@@ -94,8 +93,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       </ButtonGroup>
 
       <br />
-
-      <TagFilter />
 
       {filteredEntries.map((entryData: EntryType, i: number) => (
         <>

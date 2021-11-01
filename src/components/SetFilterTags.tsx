@@ -19,8 +19,12 @@ const TagFilter = () => {
 
   return (
     <div>
-      Only show entries with tags:
+      <span style={{ float: 'left' }}>
+        Filter to only show entries with tags:
+      </span>
       <ReactTags
+        style={{ float: 'right' }}
+        placeholder="Start typing the name of a tag"
         minQueryLength={1}
         tags={filterTags.map((t: string) => ({ id: t, text: t }))}
         suggestions={allTagTitles.map((t: string) => ({ id: t, text: t }))}
@@ -36,6 +40,7 @@ const TagFilter = () => {
           setFilterTags([...filterTags, newTag.text])
         }
       />
+      <br />
     </div>
   );
 };
