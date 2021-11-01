@@ -138,13 +138,14 @@ const appStateReducer = (state, action) => {
     }
 
     case 'ADD_URL': {
+      let newFiles = state.projectData.entries[action.entryIndex].files;
+      newFiles = [
+        ...newFiles,
+        { title: action.title, url: action.url, fileType: 'url' },
+      ];
+
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-        action.entryIndex === i
-          ? {
-              ...d,
-              urls: [...d.urls, { url: action.url, title: action.title }],
-            }
-          : d
+        action.entryIndex === i ? { ...d, files: newFiles } : d
       );
 
       const newProjectData = { ...state.projectData, entries };

@@ -121,6 +121,9 @@ const Entry = (props: EntryPropTypes) => {
     enter: 13,
   };
 
+  const urls = entryData.files.filter((f) => f.fileType === 'url');
+  const files = entryData.files.filter((f) => f.fileType !== 'url');
+
   return (
     <>
       <br />
@@ -176,7 +179,7 @@ const Entry = (props: EntryPropTypes) => {
       )}
 
       <UnorderedList>
-        {entryData.files.map((file: File) => (
+        {files.map((file: File) => (
           <ListItem key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
@@ -217,8 +220,7 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
 
-      <URLList urls={entryData.urls} entryIndex={entryIndex} />
-
+      <URLList urls={urls} entryIndex={entryIndex} />
       <></>
     </>
   );
