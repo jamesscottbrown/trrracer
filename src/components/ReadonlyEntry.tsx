@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Heading, ListItem, Tag, UnorderedList } from '@chakra-ui/react';
+import { Heading, ListItem, Tag, Text, UnorderedList } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -43,31 +43,32 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           title="Click to show controls for editing this entry"
         />
       </Heading>
-      <p
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          width: 'max-content',
-        }}
-      >
+      <Text fontSize="lg" fontWeight="bold">
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
-      </p>
-      <br />
+      </Text>
       <p>
-        Tags:{' '}
-        {entryData.tags.map((t) => (
-          <Tag
-            key={t}
-            borderColor={getColor(t)}
-            borderWidth="5px"
-            backgroundColor={getColor(t)}
-            color={textColor(getColor(t))}
-            marginLeft="0.25em"
-          >
-            {t}
-          </Tag>
-        ))}
+        {entryData.tags.length === 0 ? (
+          <b>No tags.</b>
+        ) : (
+          <>
+            {entryData.tags.map((t) => (
+              <Tag
+                key={t}
+                borderColor={getColor(t)}
+                borderWidth="5px"
+                backgroundColor={getColor(t)}
+                color={textColor(getColor(t))}
+                marginRight="0.25em"
+              >
+                {t}
+              </Tag>
+            ))}
+          </>
+        )}
       </p>
+
+      <br />
+
       <p>{entryData.description}</p>
 
       <UnorderedList>
