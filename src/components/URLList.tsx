@@ -16,7 +16,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 
-import { FaPlus } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
 import { useProjectState } from './ProjectContext';
@@ -123,7 +123,12 @@ const URLList = (props: URLListProps) => {
           <UnorderedList>
             {urls.map((url) => (
               <ListItem key={url.url}>
-                <a href={url.url}>{url.title}</a>
+                <a href={url.url}>{url.title} </a>
+                <FaExternalLinkAlt
+                  title="Open URL in default web browser"
+                  size="12px"
+                  style={{ display: 'inline' }}
+                />
               </ListItem>
             ))}
           </UnorderedList>
