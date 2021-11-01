@@ -1,6 +1,14 @@
 /* eslint no-console: off */
 
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Heading,
+} from '@chakra-ui/react';
 
 import { ProjectType } from './types';
 import ProjectListView from './ProjectListView';
@@ -14,29 +22,34 @@ interface ProjectProps {
 const Project = (ProjectPropValues: ProjectProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [viewType, setViewType] = useState<string>('list');
+  return (
+    <>
+      <Heading as="h1">{projectData.title}</Heading>
 
-  if (viewType === 'list') {
-    return (
-      <ProjectListView
-        projectData={projectData}
-        folderPath={folderPath}
-        viewType={viewType}
-        setViewType={setViewType}
-      />
-    );
-  }
+      <Tabs variant="enclosed">
+        <TabList>
+          <Tab>List View</Tab>
+          <Tab>Timeline View</Tab>
+        </TabList>
 
-  if (viewType === 'timeline') {
-    return (
-      <ProjectTimelineView
-        projectData={projectData}
-        folderPath={folderPath}
-        viewType={viewType}
-        setViewType={setViewType}
-      />
-    );
-  }
+        <TabPanels>
+          <TabPanel>
+            <ProjectListView
+              projectData={projectData}
+              folderPath={folderPath}
+            />
+          </TabPanel>
+
+          <TabPanel>
+            <ProjectTimelineView
+              projectData={projectData}
+              folderPath={folderPath}
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </>
+  );
 
   return null;
 };

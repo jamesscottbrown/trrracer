@@ -7,7 +7,6 @@ import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
-import ViewTypeControl from './ViewTypeControl';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
@@ -15,7 +14,7 @@ import ReadonlyEntry from './ReadonlyEntry';
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
+  const { projectData, folderPath } = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
   const [editable, setEditable] = useState<boolean[]>(
@@ -76,10 +75,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      <Heading as="h1">{projectData.title}</Heading>
-
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
-
       <TagList tags={projectData.tags} />
 
       <Heading as="h2">Entries</Heading>

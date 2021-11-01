@@ -10,7 +10,6 @@ import { repositionPoints } from 'respacer';
 
 import { EntryType, ProjectType, ProjectViewProps, TagType } from './types';
 import { useProjectState } from './ProjectContext';
-import ViewTypeControl from './ViewTypeControl';
 import Entry from './Entry';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
@@ -152,7 +151,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
+  const { projectData, folderPath } = ProjectPropValues;
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
@@ -181,10 +180,6 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <Heading as="h1">{projectData.title}</Heading>
-
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
-
       <TagList tags={projectData.tags} />
 
       <Heading as="h2">Entries</Heading>
