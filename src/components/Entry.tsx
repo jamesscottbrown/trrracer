@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Heading, ListItem, UnorderedList } from '@chakra-ui/react';
 
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
-import { FaExternalLinkAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
@@ -125,7 +126,8 @@ const Entry = (props: EntryPropTypes) => {
 
   return (
     <>
-      <h3>
+      <br />
+      <Heading as="h3">
         <EdiText
           type="text"
           value={entryData.title}
@@ -133,7 +135,7 @@ const Entry = (props: EntryPropTypes) => {
           editOnViewClick
           submitOnUnfocus
         />
-      </h3>
+      </Heading>
 
       <EditDate
         date={entryData.date}
@@ -171,14 +173,14 @@ const Entry = (props: EntryPropTypes) => {
           />
         </div>
       ) : (
-        <button onClick={() => enableDescription()} type="button">
-          Add description
-        </button>
+        <Button onClick={() => enableDescription()} type="button">
+          <FaPlus /> Add description
+        </Button>
       )}
 
-      <ul>
+      <UnorderedList>
         {files.map((file: File) => (
-          <li key={file.title}>
+          <ListItem key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
               onClick={() => openFile(file.title)}
@@ -190,9 +192,9 @@ const Entry = (props: EntryPropTypes) => {
               title="Delete File"
               size="12px"
             />
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </UnorderedList>
 
       {showFileUpload ? (
         <>
@@ -206,20 +208,19 @@ const Entry = (props: EntryPropTypes) => {
               </>
             }
           />
-          <button onClick={() => setShowFileUpload(false)} type="button">
+          <Button onClick={() => setShowFileUpload(false)} type="button">
             Cancel
-          </button>
+          </Button>
         </>
       ) : (
-        <button onClick={() => setShowFileUpload(true)} type="button">
-          Add files
-        </button>
+        <Button onClick={() => setShowFileUpload(true)} type="button">
+          <FaPlus /> Add files
+        </Button>
       )}
 
       <br />
 
       <URLList urls={urls} entryIndex={entryIndex} />
-
       <></>
     </>
   );

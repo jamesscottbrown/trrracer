@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  ListItem,
+  UnorderedList,
+} from '@chakra-ui/react';
+import { FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
 import { useProjectState } from './ProjectContext';
@@ -50,37 +61,39 @@ const URLList = (props: URLListProps) => {
         onRequestClose={() => setAddingUrl(false)}
         style={customStyles}
       >
-        <h1>Attach URL</h1>
+        <Heading as="h1">Attach URL</Heading>
 
-        <label htmlFor="url">
-          URL:
-          <input
+        <FormControl>
+          <FormLabel>URL:</FormLabel>
+          <Input
             id="url"
             value={additionURL}
             onChange={(ev) => setAdditionURL(ev.target.value)}
           />
-        </label>
+        </FormControl>
 
         <br />
 
-        <label htmlFor="title">
-          Title:
-          <input
+        <FormControl>
+          <FormLabel>Title:</FormLabel>
+          <Input
             id="title"
             value={additionTitle}
             onChange={(ev) => setAdditionTitle(ev.target.value)}
           />
-        </label>
+        </FormControl>
 
         <br />
 
-        <button disabled={!additionURL} onClick={attachURL} type="button">
-          Add
-        </button>
+        <ButtonGroup>
+          <Button disabled={!additionURL} onClick={attachURL} type="button">
+            Add
+          </Button>
 
-        <button onClick={() => setAddingUrl(false)} type="button">
-          Cancel
-        </button>
+          <Button onClick={() => setAddingUrl(false)} type="button">
+            Cancel
+          </Button>
+        </ButtonGroup>
       </Modal>
     );
   }
@@ -89,19 +102,19 @@ const URLList = (props: URLListProps) => {
     <>
       {urls.length > 0 ? (
         <>
-          <h3>URLs</h3>
-          <ul>
+          <Heading as="h3">URLs</Heading>
+          <UnorderedList>
             {urls.map((url) => (
-              <li key={url.url}>
+              <ListItem key={url.url}>
                 <a href={url.url}>{url.title}</a>
-              </li>
+              </ListItem>
             ))}
-          </ul>
+          </UnorderedList>
         </>
       ) : null}
-      <button onClick={() => setAddingUrl(true)} type="button">
-        Attach URL
-      </button>
+      <Button onClick={() => setAddingUrl(true)} type="button">
+        <FaPlus /> Attach URL
+      </Button>
     </>
   );
 };

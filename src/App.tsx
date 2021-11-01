@@ -1,6 +1,7 @@
 /* eslint no-console: off */
 
 import React, { useState } from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
 
 import fs from 'fs';
 import path from 'path';
@@ -62,12 +63,24 @@ export default function App() {
   });
 
   if (noProjectSelected) {
-    return <Splash recentPaths={recentPaths} />;
+    return (
+      <ChakraProvider>
+        <Splash recentPaths={recentPaths} />
+      </ChakraProvider>
+    );
   }
 
   if (!projectData) {
-    return <p>Loading...</p>;
+    return (
+      <ChakraProvider>
+        <p>Loading...</p>
+      </ChakraProvider>
+    );
   }
 
-  return <Project projectData={projectData} folderPath={folderPath} />;
+  return (
+    <ChakraProvider>
+      <Project projectData={projectData} folderPath={folderPath} />
+    </ChakraProvider>
+  );
 }

@@ -1,5 +1,7 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
+import { Button, ButtonGroup, Divider, Heading } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, FileObj, ProjectViewProps } from './types';
@@ -74,26 +76,27 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <h1>{projectData.title}</h1>
+      <Heading as="h1">{projectData.title}</Heading>
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <TagList tags={projectData.tags} />
 
-      <h2>Entries</h2>
+      <Heading as="h2">Entries</Heading>
 
-      <div>
+      <ButtonGroup>
         {!editable.every((t) => t) && (
-          <button onClick={makeAllEditable} type="button">
+          <Button onClick={makeAllEditable} type="button">
+            <FaEye />
             Show all edit controls
-          </button>
+          </Button>
         )}
         {!editable.every((t) => !t) && (
-          <button onClick={makeAllNonEditable} type="button">
-            Hide all edit controls
-          </button>
+          <Button onClick={makeAllNonEditable} type="button">
+            <FaEyeSlash /> Hide all edit controls
+          </Button>
         )}
-      </div>
+      </ButtonGroup>
 
       <br />
 
@@ -121,13 +124,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
             />
           )}
 
-          <hr />
+          <Divider marginTop="1em" marginBottom="1em" />
         </>
       ))}
 
-      <button onClick={addEntry} type="button">
-        Add entry
-      </button>
+      <Button onClick={addEntry} type="button">
+        <FaPlus /> Add entry
+      </Button>
 
       <FileUpload
         saveFiles={saveFiles}

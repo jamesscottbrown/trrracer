@@ -1,6 +1,7 @@
 import path from 'path';
 
 import React, { useState } from 'react';
+import { Heading } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
@@ -180,13 +181,13 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <h1>{projectData.title}</h1>
+      <Heading as="h1">{projectData.title}</Heading>
 
       <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
       <TagList tags={projectData.tags} />
 
-      <h2>Entries</h2>
+      <Heading as="h2">Entries</Heading>
       <TagFilter />
 
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>

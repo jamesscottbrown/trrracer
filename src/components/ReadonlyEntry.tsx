@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { FaExternalLinkAlt, FaPencilAlt } from 'react-icons/fa';
+import { Heading, ListItem, Tag, UnorderedList } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 import { File, EntryType } from './types';
@@ -19,13 +22,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <>
-      <h3>
+      <Heading as="h2">
         {entryData.title}{' '}
-        <FaPencilAlt
+        <EditIcon
           onClick={makeEditable}
           title="Click to show controls for editing this entry"
         />
-      </h3>
+      </Heading>
       <p
         style={{
           marginLeft: 'auto',
@@ -36,31 +39,37 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
       </p>
       <br />
-      <p>Tags: {entryData.tags.join(', ')}</p>
+      <p>
+        Tags:{' '}
+        {entryData.tags.map((t) => (
+          <Tag key={t}>{t}</Tag>
+        ))}
+      </p>
       <p>{entryData.description}</p>
-      <ul>
+
+      <UnorderedList>
         {files.map((file: File) => (
-          <li key={file.title}>
+          <ListItem key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
               onClick={() => openFile(file.title)}
               title="Open file externally"
               size="12px"
             />{' '}
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </UnorderedList>
 
       {urls.length > 0 && (
         <>
-          <h3>URLs</h3>
-          <ul>
+          <Heading as="h3">URLs</Heading>
+          <UnorderedList>
             {urls.map((url) => (
-              <li key={url.url}>
+              <ListItem key={url.url}>
                 <a href={url.url}>{url.title}</a>
-              </li>
+              </ListItem>
             ))}
-          </ul>
+          </UnorderedList>
         </>
       )}
     </>
