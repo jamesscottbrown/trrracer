@@ -190,8 +190,9 @@ const Entry = (props: EntryPropTypes) => {
             />{' '}
             <FaTrashAlt
               onClick={() => deleteFile(file)}
-              title="Delete File"
+              title="Unattahch or delete File"
               size="12px"
+              style={{ display: 'inline' }}
             />
           </ListItem>
         ))}
