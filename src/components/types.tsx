@@ -24,6 +24,7 @@ interface EntryType {
 interface TagType {
   title: string;
   color: string;
+  dob: string;
 }
 
 interface ReactTagType {

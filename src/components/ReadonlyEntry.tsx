@@ -3,11 +3,13 @@ import React from 'react';
 import { Heading, ListItem, Tag, UnorderedList, Badge } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 
-
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 import { File, EntryType } from './types';
+
+import { Tooltip } from "@chakra-ui/react"
+
 
 interface EntryPropTypes {
   entryData: EntryType;
@@ -18,7 +20,7 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
-  console.log('in read only',entryData);
+  //console.log('ENTRY DATA',entryData)
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -30,6 +32,22 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     }else{
       return 'gray.100'
     }
+  }
+
+  const formatConcord = (tf)=>{
+    let matches =  tf.entry_matches;
+   
+    if(matches[0].matches){
+      return matches[0].matches.map(m => {
+        let arr = m.concord.split(m.concept);
+        
+        return <p><span>{arr[0] + " "}<b>{m.concept}</b>{" " + arr[1]}</span><br /><br/></p>
+      });
+    }else{
+      console.log("not there")
+      return ""
+    }
+
   }
 
   return (
@@ -45,13 +63,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         />
       </Heading>
       </div>
-        <p
-          // style={{
-          //   marginLeft: 'auto',
-          //   marginRight: 'auto',
-          //   width: 'max-content',
-          // }}
-        >
+        <p>
           {format(new Date(entryData.date), 'dd MMMM yyyy')}
         </p>
         <br />
@@ -80,7 +92,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         
         {  entryData.tfidf != null ? 
             entryData.tfidf['tf-idf'].map(tf =>(
-              <Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge>
+              <div style={{'display':'inline'}}>
+                <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf.term}</Badge></Tooltip>
+            </div>
             ))
         : <div></div>}
       </div>

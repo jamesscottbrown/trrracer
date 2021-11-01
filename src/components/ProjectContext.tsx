@@ -212,18 +212,18 @@ const appStateReducer = (state, action) => {
       let newEntries;
       try {
         const collo = readProjectFile(baseDir, 'entry_collocations.json');
-        const tfidf = readProjectFile(baseDir, 'tf-idf.json');
+        const tfidf = readProjectFile(baseDir, 'tf_idf.json');
 
         console.log('TFIDF', tfidf);
         newEntries = action.projectData.entries.map((e, i) => {
-          e.collo = collo[i];
-          console.log(e.title, tfidf['tfidf-data'].filter(t => t.file === e.title));
-
-          const temp = tfidf['tfidf-data'].filter(t => t.file === e.title);
-          e.tfidf = temp.length > 0 ? temp[0] : null;
-
-          return e;
-        });
+            e.collo = collo[i];
+            if(i < tfidf['tfidf'].length){
+              e.tfidf = tfidf['tfidf'][i]
+            }else{
+              e.tfidf = null;
+            }
+            return e;
+          });         
       } catch (e) {
         newEntries = action.projectData.entries;
         console.log(e);
@@ -232,10 +232,15 @@ const appStateReducer = (state, action) => {
 
       let newConcepts = [];
       try {
-        const conCord = readProjectFile(baseDir, 'concept_concordance.json');
+        const conCord = readProjectFile(baseDir, 'concept_concord_by_entry.json');
 
         newConcepts = action.projectData.concepts.map((e, i) => {
-          e.concordance = conCord.filter(c => c.concept === e.name)[0];
+          // e.concordance = conCord.filter(c => c.concept === e.name)[0];
+
+          e.concordance = conCord.concept_matches.filter(f=> {
+            return f.matches.filter(t=> t.name === e.name).length > 0;
+          });
+          
           return e;
         });
       } catch (e) {
@@ -255,6 +260,7 @@ const appStateReducer = (state, action) => {
         folderPath: action.folderName,
         projectData: newProjectData,
         filterTags: [],
+        searchConcept: null
       };
     }
 
@@ -292,9 +298,9 @@ const appStateReducer = (state, action) => {
  
        return saveJSON(newProjectData, state);
  
-     }
+    }
 
-     case 'MERGE_CONCEPT':{
+    case 'MERGE_CONCEPT':{
        
        const newConcepts  = state.projectData.concepts.map(m => {
         
@@ -313,7 +319,7 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData, state);
 
       
-     }
+    }
 
     case 'CREATE_EDGE':{
   
@@ -362,7 +368,7 @@ const appStateReducer = (state, action) => {
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
-          { title: newTag.text, color: 'black' },
+          { title: newTag.text, color: 'black', date: new Date().toISOString() },
         ];
       } else {
         newTags = state.projectData.tags;
@@ -688,6 +694,11 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_FILTER_TAGS': {
       return { ...state, filterTags: action.filterTags };
+    }
+
+    case 'UPDATE_SEARCH_CONCEPT': {
+      console.log('UPDATING', action)
+      return {...state, searchConcept : action.searchConcept };
     }
 
     default: {

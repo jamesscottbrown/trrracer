@@ -74,7 +74,7 @@ def write_blobs_to_file(blob, document_path):
     json.dump(blob, outfile)
 
 
-@app.route("/")
+@app.route("/corr")
 def index():
     document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
     # load_all_blobs_as_corpus(document_path)
@@ -89,8 +89,8 @@ def index():
     #     coco["collocations"] = collocations_maker(b)
     #     collocation_array.append(coco)
 
-    blob = extract_entry_text_to_blobs(document_path)
-    write_blobs_to_file(blob, document_path)
+    # blob = extract_entry_text_to_blobs(document_path)
+    # write_blobs_to_file(blob, document_path)
     # giantarray = []
     # nameArray = []
     # for bubs in blob['entries']:

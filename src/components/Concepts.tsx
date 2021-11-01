@@ -14,9 +14,6 @@ import {
     Heading
   } from "@chakra-ui/react"
 
-  import ChevronDownIcon from "@chakra-ui/icon"
-
-
 interface ConceptProps {
     concepts: ConceptType[];
 }
@@ -24,20 +21,19 @@ interface ConceptProps {
 const ConceptNav = (props:ConceptProps) => {
 
     const {concepts} = props; 
-    const [{ projectData }, dispatch] = useProjectState(); 
+    const [{ projectData, searchConcept }, dispatch] = useProjectState(); 
 
     const [showForm, setShowForm] = useState(false);
     const [showConcepts, setShowConcepts] = useState(false);
 
     const [value, setValue] = React.useState("New Concept")
     const handleChange = (event) => setValue(event.target.value)
-   
+  
     let conceptList = concepts ? concepts.filter(f=>{
         let actionlist = f.actions.map(m=> m.action);
         return (actionlist.indexOf('deleted') === -1 && actionlist.indexOf('merged') === -1);
     }) : [];
-
-
+    console.log('conceptlist',conceptList)
 
     const addConceptForm = ()=>{
         console.log("TESTING");
@@ -47,6 +43,10 @@ const ConceptNav = (props:ConceptProps) => {
         console.log('TEST THIS OUT');
         dispatch({ type: 'CREATE_CONCEPT', title: value })
     }
+
+    const setSearchConcept = (newSearchConcept : string) =>
+    dispatch({ type: 'UPDATE_SEARCH_CONCEPT', searchConcept: newSearchConcept });
+
 
     return(
         <>
@@ -89,7 +89,21 @@ const ConceptNav = (props:ConceptProps) => {
                 //     <Merger conceptList={conceptList} concept={con} index={i} ></Merger> */} 
                     
                     <Menu key={con.name}>
-                    <MenuButton    
+                    {(searchConcept === con.name) ?
+                        <MenuButton    
+                        px={4}
+                        py={2}
+                        transition="all 0.2s"
+                        borderRadius="md"
+                        borderWidth="1px"
+                        bg="orange.200"
+                        margin="3px"
+                        _hover={{ bg: "gray.300" }}
+                        _expanded={{ bg: "blue.400" }}
+                        _focus={{ boxShadow: "outline" }}
+                        >{con.name}</MenuButton>   
+                        :
+                        <MenuButton    
                         px={4}
                         py={2}
                         transition="all 0.2s"
@@ -100,10 +114,16 @@ const ConceptNav = (props:ConceptProps) => {
                         _hover={{ bg: "gray.300" }}
                         _expanded={{ bg: "blue.400" }}
                         _focus={{ boxShadow: "outline" }}
-                        >{con.name}</MenuButton>
+                        >{con.name}</MenuButton>   
+
+                    }
+                   
                     <MenuList>
                         {/* <MenuItem><Merger conceptList={conceptList} concept={con} index={i} ></Merger></MenuItem> */}
-                        <MenuItem>Search in Files</MenuItem>
+                        <MenuItem onClick={()=> {
+                            console.log(con)
+                            setSearchConcept(con.name)
+                            }}>Search in Files</MenuItem>
                         <MenuItem onClick={()=> dispatch({ type: 'DELETE_CONCEPT', title: con })}>Delete</MenuItem>
                     </MenuList>
                     </Menu>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Heading, Button } from '@chakra-ui/react';
+import { Grid, Heading, Button, Badge } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import EdiText from 'react-editext';
@@ -71,32 +71,36 @@ const TagList = (props: TagListProps) => {
         }} style={{display:"inline"}}/></Heading>
       <div style={{ width: 'fit-content' }}>
         {tags.map((tag: TagType, i) => (
-          <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
+          // <Grid key={tag.title} templateColumns="20px 20px 1fr 20px">
+          <Badge key={tag.title} style={{margin:'2px'}}>
             <span
               style={{
                       color: tag.color,
                       cursor: 'default',
-                      display: 'flex',
-                      alignItems: 'center',
+                      display:'inline'
+                      // display: 'flex',
+                      // alignItems: 'center',
                       }}
                     >
                       ■
                     </span>
                     <span
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
+                        display:'inline'
+                        // display: 'flex',
+                        // alignItems: 'center',
                       }}
                     >
                       {' '}
                       <MdColorLens
                         onClick={() => setTagToChangeColor(i)}
-                        style={{ verticalAlign: 'middle' }}
+                        style={{ verticalAlign: 'middle', display:'inline' }}
                         title="Change tag color"
                       />
                     </span>
         
                     <EdiText
+                     
                       type="text"
                       value={tag.title}
                       onSave={(val) => updateTagName(i, val)}
@@ -109,8 +113,9 @@ const TagList = (props: TagListProps) => {
         
                     <span
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
+                        display:'inline'
+                        // display: 'flex',
+                        // alignItems: 'center',
                       }}
                     >
                       <FaTrashAlt
@@ -133,7 +138,8 @@ const TagList = (props: TagListProps) => {
                         <div />
                       </>
                     )}
-                  </Grid>
+                  {/* </Grid> */}
+                  </Badge>
         ))}
       </div>
       </div>

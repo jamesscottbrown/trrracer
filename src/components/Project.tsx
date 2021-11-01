@@ -7,7 +7,8 @@ import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
 import TopBar from './TopBar';
 import ProjectBinView from './ProjectBinView';
-import TopicProjectListView from './TopicProjectListView'
+import TopicProjectListView from './TopicProjectListView';
+import ConceptEvo from './ConceptEvo';
 
 interface ProjectProps {
   projectData: ProjectType;
@@ -69,6 +70,20 @@ const Project = (ProjectPropValues: ProjectProps) => {
         viewType={viewType}
         setViewType={setViewType}
       />
+      </div>
+    );
+  }
+
+  if (viewType === 'concept evolution') {
+    return (
+      <div>
+      <TopBar  
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}/>
+        
+        <ConceptEvo></ConceptEvo>
       </div>
     );
   }

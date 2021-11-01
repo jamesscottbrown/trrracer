@@ -32,6 +32,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
         <option id="concepts/list">concepts/list</option>
         <option id="topics/list">topics/list</option>
         <option id="timeline">timeline</option>
+        <option id="concept-evolution">concept evolution</option>
       </Select>
     </FormControl>
     </>
