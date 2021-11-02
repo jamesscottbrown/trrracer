@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { Heading, ListItem, Tag, Text, UnorderedList } from '@chakra-ui/react';
+import {
+  Button,
+  Heading,
+  ListItem,
+  Tag,
+  Text,
+  UnorderedList,
+} from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
@@ -46,10 +53,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     <>
       <Heading as="h2">
         {entryData.title}{' '}
-        <EditIcon
-          onClick={makeEditable}
-          title="Click to show controls for editing this entry"
-        />
+        <Button leftIcon={<EditIcon />} onClick={makeEditable}>
+          Edit entry
+        </Button>
       </Heading>
       <Text fontSize="lg" fontWeight="bold">
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
