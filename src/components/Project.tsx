@@ -13,6 +13,7 @@ import {
 import { ProjectType } from './types';
 import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
+import ProjectGridView from './ProjectGridView';
 
 interface ProjectProps {
   projectData: ProjectType;
@@ -30,6 +31,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <TabList>
           <Tab>List View</Tab>
           <Tab>Timeline View</Tab>
+          <Tab>Grid View</Tab>
         </TabList>
 
         <TabPanels>
@@ -42,6 +44,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
           <TabPanel>
             <ProjectTimelineView
+              projectData={projectData}
+              folderPath={folderPath}
+            />
+          </TabPanel>
+
+          <TabPanel>
+            <ProjectGridView
               projectData={projectData}
               folderPath={folderPath}
             />
