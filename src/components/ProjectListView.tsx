@@ -1,6 +1,12 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup, Divider, Heading } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Divider,
+  Heading,
+} from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
@@ -19,6 +25,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
+  const [reversedOrder, setReversedOrder] = useState<boolean>(false);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -62,6 +69,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       entryData.tags.includes(requiredTag)
     );
   });
+  filteredEntries.sort(
+    (a, b) =>
+      (reversedOrder ? -1 : +1) *
+      (Number(new Date(a.date)) - Number(new Date(b.date)))
+  );
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -82,6 +94,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       <TagList tags={projectData.tags} />
 
       <Heading as="h2">Entries</Heading>
+
+      <Checkbox
+        checked={reversedOrder}
+        onChange={(e) => setReversedOrder(e.target.checked)}
+      >
+        Reverse chronological order
+      </Checkbox>
 
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
