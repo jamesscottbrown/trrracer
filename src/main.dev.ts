@@ -123,6 +123,7 @@ interface MenuEntry {
   label: string;
   click: () => void;
 }
+
 interface MenuDivider {
   type: 'separator';
 }
@@ -141,21 +142,24 @@ async function createSplashWindow() {
   // set open recent submenu
   const submenuOfOpenRecent: (MenuEntry | MenuDivider)[] = [];
   const paths = fileManager.readHistory();
-  const allPaths = await paths;
-  if (allPaths !== undefined) {
-    allPaths.paths.map((recentPath: string) => {
-      submenuOfOpenRecent.push(
-        {
-          label: recentPath,
-          click() {
-            fileManager.openRecentProject(recentPath);
-          },
-        },
-        { type: 'separator' }
-      );
-      return null;
-    });
+  let allPaths = await paths;
+
+  if (!allPaths) {
+    allPaths = { paths: [] };
   }
+
+  allPaths.paths.map((recentPath: string) => {
+    submenuOfOpenRecent.push(
+      {
+        label: recentPath,
+        click() {
+          fileManager.openRecentProject(recentPath);
+        },
+      },
+      { type: 'separator' }
+    );
+    return null;
+  });
 
   // Declare all menu
   const menuList = [
