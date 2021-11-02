@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Heading, ListItem, UnorderedList } from '@chakra-ui/react';
+import {
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Heading,
+  ListItem,
+  UnorderedList,
+} from '@chakra-ui/react';
 
 import DatePicker from 'react-datepicker';
-import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
 import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
@@ -128,13 +135,13 @@ const Entry = (props: EntryPropTypes) => {
     <div style={{ margin: 'auto' }}>
       <br />
       <Heading as="h3">
-        <EdiText
-          type="text"
-          value={entryData.title}
-          onSave={(val) => updateEntryField(entryIndex, 'title', val)}
-          editOnViewClick
-          submitOnUnfocus
-        />
+        <Editable
+          defaultValue={entryData.title}
+          onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
       </Heading>
 
       <EditDate
