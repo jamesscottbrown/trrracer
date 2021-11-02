@@ -19,7 +19,8 @@ import {
   MenuDivider,
 } from '@chakra-ui/react';
 
-import { FaFilter, FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
+import { RiFilterFill, RiFilterOffFill } from 'react-icons/ri';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { MdColorLens } from 'react-icons/md';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
@@ -240,6 +241,9 @@ const TagList = (props: TagListProps) => {
     });
   };
 
+  const isSelected = (tag: TagType) =>
+    filterTags.length === 0 || filterTags.includes(tag.title);
+
   return (
     <>
       <Heading as="h2">Tags</Heading>
@@ -271,25 +275,25 @@ const TagList = (props: TagListProps) => {
                 marginLeft="0.25em"
                 borderColor={tag.color}
                 borderWidth="5px"
-                bgColor={
-                  filterTags.includes(tag.title) ? tag.color : `${tag.color}59`
-                }
-                color={
-                  //  textColor(tag.color)
-                  filterTags.includes(tag.title)
-                    ? textColor(tag.color)
-                    : 'black'
-                }
+                bgColor={isSelected(tag) ? tag.color : `${tag.color}59`}
+                color={isSelected(tag) ? textColor(tag.color) : 'black'}
               >
                 {tag.title}
               </MenuButton>
 
               <MenuList>
                 <MenuItem onClick={() => toggleTagInFilter(tag)}>
-                  <FaFilter title="Filter entry list" />
-                  {filterTags.includes(tag.title)
-                    ? 'Remove filter for tag'
-                    : 'Filter entries using tag'}
+                  {filterTags.includes(tag.title) ? (
+                    <>
+                      <RiFilterOffFill />
+                      Remove filter for tag
+                    </>
+                  ) : (
+                    <>
+                      <RiFilterFill />
+                      Filter entries using tag
+                    </>
+                  )}
                 </MenuItem>
 
                 <MenuDivider />
