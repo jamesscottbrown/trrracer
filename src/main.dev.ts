@@ -54,6 +54,45 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+const openScreenshotWindow = async (projectPath: string, entryId: string) => {
+  const RESOURCES_PATH = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, '../assets');
+
+  const getAssetPath = (...paths: string[]): string => {
+    return path.join(RESOURCES_PATH, ...paths);
+  };
+
+  const screenshotWindow = new BrowserWindow({
+    show: false,
+    width: 1024,
+    height: 728,
+    icon: getAssetPath('icon.png'),
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  screenshotWindow.loadURL(`file://${__dirname}/index.html`);
+
+  // @TODO: Use 'ready-to-show' event
+  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  screenshotWindow.webContents.on('did-finish-load', () => {
+    if (!screenshotWindow) {
+      throw new Error('"screenshotWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      screenshotWindow.minimize();
+    } else {
+      screenshotWindow.show();
+      screenshotWindow.focus();
+    }
+
+    screenshotWindow.webContents.send('configScreenshot', projectPath, entryId);
+  });
+};
+
 const openProjectWindow = async (projectPath: string) => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -114,6 +153,13 @@ const openProjectWindow = async (projectPath: string) => {
   };
   mainWindow.webContents.on('will-navigate', handleRedirect);
 
+  // Screenshots
+  ipcMain.on('takeScreenshot', (_e, args) => {
+    console.log(args);
+
+    openScreenshotWindow(projectPath, args);
+  });
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -123,6 +169,7 @@ interface MenuEntry {
   label: string;
   click: () => void;
 }
+
 interface MenuDivider {
   type: 'separator';
 }
