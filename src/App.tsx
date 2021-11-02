@@ -80,7 +80,7 @@ export default function App() {
 
   return (
     <ChakraProvider>
-      <Project projectData={projectData} folderPath={folderPath} />
+      <Project folderPath={folderPath} />
     </ChakraProvider>
   );
 }

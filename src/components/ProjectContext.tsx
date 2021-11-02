@@ -90,6 +90,15 @@ const appStateReducer = (state, action) => {
       };
     }
 
+    case 'UPDATE_TITLE': {
+      const newProjectData = {
+        ...state.projectData,
+        title: action.title,
+      };
+
+      return saveJSON(newProjectData);
+    }
+
     case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
 

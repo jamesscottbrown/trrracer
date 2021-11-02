@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Tabs,
   TabList,
@@ -8,24 +8,45 @@ import {
   Tab,
   TabPanel,
   Heading,
+  Editable,
+  EditablePreview,
+  EditableInput,
 } from '@chakra-ui/react';
 
-import { ProjectType } from './types';
 import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
 import ProjectGridView from './ProjectGridView';
+import { useProjectState } from './ProjectContext';
 
 interface ProjectProps {
-  projectData: ProjectType;
   folderPath: string;
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
-  const { projectData, folderPath } = ProjectPropValues;
+  const { folderPath } = ProjectPropValues;
+  const [{ projectData }, dispatch] = useProjectState();
+
+  const [newTitle, setNewTitle] = useState<string>(projectData.title);
+
+  // Update title when projectData changes.
+  useEffect(() => {
+    setNewTitle(projectData.title);
+  }, [projectData]);
 
   return (
     <>
-      <Heading as="h1">{projectData.title}</Heading>
+      <Heading as="h1">
+        <Editable
+          /* defaultValue={projectData.title} */
+          value={newTitle}
+          onChange={(val) => setNewTitle(val)}
+          onCancel={() => setNewTitle(projectData.title)}
+          onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+      </Heading>
 
       <Tabs variant="enclosed">
         <TabList>
