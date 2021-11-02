@@ -84,6 +84,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <br />
 
       <div
+        className="readonlyEntryMarkdownPreview"
         dangerouslySetInnerHTML={{
           __html: converter.makeHtml(entryData.description),
         }}
