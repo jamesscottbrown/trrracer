@@ -181,7 +181,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
       : [];
 
   const positionedDeadlines =
-    entries.length > 0
+    deadlines.length > 0
       ? repositionPoints(
           deadlines.map((d, i) => ({
             ...d,
