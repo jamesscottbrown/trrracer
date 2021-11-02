@@ -24,7 +24,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
       setEditable([...editable, true]);
-    } else {
+    } else if (editable.length !== projectData.entries.length) {
       setEditable(
         Array.from(Array(projectData.entries.length), (_, x) => false)
       );
