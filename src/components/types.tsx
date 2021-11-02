@@ -35,11 +35,17 @@ interface ReactTagType {
   text: string;
 }
 
+interface DeadlineType {
+  title: string;
+  date: string;
+}
+
 interface ProjectType {
   title: string;
   description: string;
   tags: TagType[];
   entries: EntryType[];
+  deadlines: DeadlineType[];
 }
 
 interface ProjectViewProps {
@@ -48,6 +54,7 @@ interface ProjectViewProps {
 }
 
 export {
+  DeadlineType,
   EntryType,
   File,
   FileObj,
