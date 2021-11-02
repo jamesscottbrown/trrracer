@@ -21,8 +21,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
 
   useEffect(() => {
-    if (editable.length !== projectData.entries.length) {
-      setEditable(Array.from(Array(projectData.entries.length)));
+    if (editable.length === projectData.entries.length - 1) {
+      // one more entry was added
+      setEditable([...editable, true]);
+    } else {
+      setEditable(
+        Array.from(Array(projectData.entries.length), (_, x) => false)
+      );
     }
   }, [projectData]);
 
@@ -137,5 +142,4 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     </div>
   );
 };
-
 export default ProjectListView;
