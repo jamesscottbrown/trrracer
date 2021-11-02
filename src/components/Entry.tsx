@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Heading, ListItem, UnorderedList } from '@chakra-ui/react';
 
+import { ipcRenderer } from 'electron';
+
 import DatePicker from 'react-datepicker';
 import EdiText from 'react-editext';
 import ReactMde from 'react-mde';
-import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaCamera,
+  FaExternalLinkAlt,
+  FaPlus,
+  FaTrashAlt,
+} from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
@@ -219,6 +226,10 @@ const Entry = (props: EntryPropTypes) => {
           <FaPlus /> Add files
         </Button>
       )}
+
+      <Button onClick={() => ipcRenderer.send('takeScreenshot', entryIndex)}>
+        <FaCamera /> Take screenshot
+      </Button>
 
       <br />
 

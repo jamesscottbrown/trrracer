@@ -9,6 +9,7 @@ import { ipcRenderer } from 'electron';
 
 import Project from './components/Project';
 import Splash from './components/Splash';
+import Screenshot from './components/Screenshot';
 
 import './App.global.css';
 
@@ -37,6 +38,9 @@ export default function App() {
   const [noProjectSelected, setNoProjectSelected] = useState<boolean>(false);
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
+  const [screenshotEntryId, setScreenshotEntryId] =
+    useState<false | number>(false);
+
   ipcRenderer.on('projectPath', (_event, folderName) => {
     console.log('Received project path:', folderName);
 
@@ -57,10 +61,23 @@ export default function App() {
     });
   });
 
+  ipcRenderer.on('configScreenshot', (_event, folderName, entryId) => {
+    setPath(folderName);
+    setScreenshotEntryId(entryId);
+  });
+
   ipcRenderer.on('noProjectSelected', (_event, newRecentPaths) => {
     setNoProjectSelected(true);
     setRecentPaths(newRecentPaths);
   });
+
+  if (screenshotEntryId) {
+    return (
+      <ChakraProvider>
+        <Screenshot folderPath={folderPath} entryIndex={screenshotEntryId} />
+      </ChakraProvider>
+    );
+  }
 
   if (noProjectSelected) {
     return (
