@@ -105,9 +105,6 @@ const Entry = (props: EntryPropTypes) => {
   };
 
   const handleChangeTab = (newTab: 'write' | 'preview') => {
-    if (newTab === 'preview') {
-      updateEntryField(entryIndex, 'description', value);
-    }
     setSelectedTab(newTab);
   };
 
@@ -178,6 +175,22 @@ const Entry = (props: EntryPropTypes) => {
               Promise.resolve(converter.makeHtml(markdown))
             }
           />
+
+          {value !== entryData.description && (
+            <>
+              <b style={{ color: 'red' }}>
+                You have made unsaved changes to this field. These will be lost
+                if you switch to editing a different field.
+              </b>
+              <Button
+                onClick={() =>
+                  updateEntryField(entryIndex, 'description', value)
+                }
+              >
+                Save
+              </Button>
+            </>
+          )}
         </div>
       ) : (
         <Button onClick={() => enableDescription()} type="button">
