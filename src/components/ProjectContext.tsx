@@ -13,6 +13,32 @@ export function useProjectState() {
   return useContext(ProjectContext);
 }
 
+const pickTagColor = (tags: TagType[]) => {
+  const allColors = [
+    '#B80000',
+    '#DB3E00',
+    '#FCCB00',
+    '#008B02',
+    '#006B76',
+    '#1273DE',
+    '#004DCF',
+    '#5300EB',
+    '#EB9694',
+    '#FAD0C3',
+    '#FEF3BD',
+    '#C1E1C5',
+    '#BEDADC',
+    '#C4DEF6',
+    '#BED3F3',
+    '#D4C4FB',
+  ];
+  const usedColors = tags.map((k) => k.color);
+  const unusedColors = allColors.filter((c) => !usedColors.includes(c));
+  const availableColors = unusedColors.length > 0 ? unusedColors : allColors;
+
+  return availableColors[Math.floor(Math.random() * availableColors.length)];
+};
+
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   for (const file of fileList) {
@@ -104,11 +130,13 @@ const appStateReducer = (state, action) => {
 
       const existingTags = state.projectData.tags.map((k) => k.title);
 
+      const newColor = pickTagColor(state.projectData.tags);
+
       let newTags;
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
-          { title: newTag.text, color: 'black' },
+          { title: newTag.text, color: newColor },
         ];
       } else {
         newTags = state.projectData.tags;
