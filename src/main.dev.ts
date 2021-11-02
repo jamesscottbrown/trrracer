@@ -15,7 +15,6 @@ import path from 'path';
 import { app, Menu, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
 
 import ProjectLoader from './ProjectLoader';
 
@@ -101,9 +100,6 @@ const openProjectWindow = async (projectPath: string) => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   const handleRedirect = (e, url) => {
