@@ -8,6 +8,7 @@ import {
   ListItem,
   UnorderedList,
 } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
@@ -179,6 +180,15 @@ const Entry = (props: EntryPropTypes) => {
           dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex });
         }}
       />
+
+      <Button
+        colorScheme="red"
+        leftIcon={<DeleteIcon />}
+        onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
+      >
+        Delete Entry
+      </Button>
+      <br />
 
       {showDescription ? (
         <div className="markdownEditorContainer">

@@ -272,6 +272,23 @@ const appStateReducer = (state, action) => {
 
       return saveJSON(newProjectData);
     }
+    case 'DELETE_ENTRY': {
+      const confirmed = window.confirm(
+        'Are you sure that you want to delete this entry? This will not delete attached files.'
+      );
+      if (!confirmed) {
+        return state;
+      }
+
+      const newProjectData = {
+        ...state.projectData,
+        entries: state.projectData.entries.filter(
+          (e, i: number) => i !== action.entryIndex
+        ),
+      };
+
+      return saveJSON(newProjectData);
+    }
 
     case 'UPDATE_ENTRY_FIELD': {
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
