@@ -25,6 +25,16 @@ interface EntryType {
   tags: string[];
 }
 
+interface EntryTypeWithIndex {
+  description: string;
+  title: string;
+  files: File[];
+  urls: URLAttachment[];
+  date: string;
+  tags: string[];
+  index: number;
+}
+
 interface TagType {
   title: string;
   color: string;
@@ -56,6 +66,7 @@ interface ProjectViewProps {
 export {
   DeadlineType,
   EntryType,
+  EntryTypeWithIndex,
   File,
   FileObj,
   URLAttachment,

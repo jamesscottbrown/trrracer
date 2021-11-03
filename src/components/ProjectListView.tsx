@@ -10,7 +10,12 @@ import {
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
-import { EntryType, FileObj, ProjectViewProps } from './types';
+import {
+  EntryType,
+  EntryTypeWithIndex,
+  FileObj,
+  ProjectViewProps,
+} from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import TagList from './TagList';
@@ -64,11 +69,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
 
-  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every((requiredTag: string) =>
-      entryData.tags.includes(requiredTag)
-    );
-  });
+  const filteredEntries = projectData.entries
+    .filter((entryData: EntryType) => {
+      return filterTags.every((requiredTag: string) =>
+        entryData.tags.includes(requiredTag)
+      );
+    })
+    .map((e, index) => ({ ...e, index }));
   filteredEntries.sort(
     (a, b) =>
       (reversedOrder ? -1 : +1) *
@@ -119,26 +126,26 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {filteredEntries.map((entryData: EntryType, i: number) => (
+      {filteredEntries.map((entryData: EntryTypeWithIndex) => (
         <>
-          {editable[i] ? (
+          {editable[entryData.index] ? (
             <Entry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={i}
+              key={entryData.index}
               entryData={entryData}
-              entryIndex={i}
+              entryIndex={entryData.index}
               openFile={openFile}
               updateEntryField={updateEntryField}
               allTags={projectData.tags}
-              makeNonEditable={() => setEditableStatus(i, false)}
+              makeNonEditable={() => setEditableStatus(entryData.index, false)}
             />
           ) : (
             <ReadonlyEntry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={i}
+              key={entryData.index}
               entryData={entryData}
               openFile={openFile}
-              makeEditable={() => setEditableStatus(i, true)}
+              makeEditable={() => setEditableStatus(entryData.index, true)}
             />
           )}
 
