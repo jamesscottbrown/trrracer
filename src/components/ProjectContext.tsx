@@ -199,15 +199,15 @@ const appStateReducer = (state, action) => {
       let topicF = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/lda_run.json', {encoding: 'utf-8'})
       let topics = JSON.parse(topicF);
 
-      let tfidf_file = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/tf_idf.json', {encoding: 'utf-8'})
+      let tfidf_file = fs.readFileSync('/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/keywords.json', {encoding: 'utf-8'})
       let tfidf = JSON.parse(tfidf_file);
 
-      //console.log('TFIDF',tfidf, action.projectData.entries)
+      console.log('TFIDF',tfidf, action.projectData.entries)
      
       let newEntries = action.projectData.entries.map((e, i)=> {
         e.collo = collo[i];
-        if(i < tfidf['tfidf'].length){
-          e.tfidf = tfidf['tfidf'][i]
+        if(i < tfidf['entry_keywords'].length){
+          e.tfidf = tfidf['entry_keywords'][i]
         }else{
           e.tfidf = null;
         }

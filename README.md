@@ -75,3 +75,12 @@ There is a trrracer project folder named "Derya Artifact Trrracer" in the shared
 
 You might need to use this:
 `python3 -m spacy download en` 
+
+if this gets messed up with the installed packages:
+```
+deactivate
+source .venv/bin/activate
+
+# You might need to 
+pip install -r requirements.txt
+```
