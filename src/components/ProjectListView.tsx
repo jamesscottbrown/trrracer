@@ -101,6 +101,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       >
         Reverse chronological order
       </Checkbox>
+      <br />
 
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
