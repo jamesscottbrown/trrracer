@@ -11,7 +11,12 @@ import {
 
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
-import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import {
+  FaExternalLinkAlt,
+  FaEyeSlash,
+  FaPlus,
+  FaTrashAlt,
+} from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
@@ -67,6 +72,7 @@ interface EntryPropTypes {
     newData: any
   ) => void;
   allTags: TagType[];
+  makeNonEditable: () => void;
 }
 
 interface ReactTag {
@@ -75,7 +81,14 @@ interface ReactTag {
 }
 
 const Entry = (props: EntryPropTypes) => {
-  const { entryData, entryIndex, openFile, updateEntryField, allTags } = props;
+  const {
+    entryData,
+    entryIndex,
+    openFile,
+    updateEntryField,
+    allTags,
+    makeNonEditable,
+  } = props;
   const [, dispatch] = useProjectState();
 
   const [value, setValue] = useState(entryData.description);
@@ -139,6 +152,9 @@ const Entry = (props: EntryPropTypes) => {
           <EditablePreview />
           <EditableInput />
         </Editable>
+        <Button onClick={makeNonEditable} type="button">
+          <FaEyeSlash /> Hide edit controls
+        </Button>
       </Heading>
 
       <EditDate

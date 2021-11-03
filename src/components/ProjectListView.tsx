@@ -83,9 +83,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
   };
 
-  const makeEditable = (index: number) => {
+  const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>
-      oldEditable.map((d, i) => (i === index ? true : d))
+      oldEditable.map((d, i) => (i === index ? isEditable : d))
     );
   };
 
@@ -129,6 +129,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
               openFile={openFile}
               updateEntryField={updateEntryField}
               allTags={projectData.tags}
+              makeNonEditable={() => setEditableStatus(i, false)}
             />
           ) : (
             <ReadonlyEntry
@@ -136,7 +137,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
               key={i}
               entryData={entryData}
               openFile={openFile}
-              makeEditable={() => makeEditable(i)}
+              makeEditable={() => setEditableStatus(i, true)}
             />
           )}
 
