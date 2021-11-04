@@ -7,7 +7,7 @@ logs
 
 #flask stuff 
 nlp-python/__pycache__
-nlp-python/venv
+nlp-python/.venv
 
 #google
 assets/google_cred_desktop_app.json

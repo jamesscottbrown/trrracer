@@ -37,15 +37,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const formatConcord = (tf)=>{
     let matches =  tf.entry_matches;
    
-    if(matches[0].matches){
-      return matches[0].matches.map(m => {
+    if(matches.length > 0){
+      return matches.map(m => {
         let arr = m.concord.split(m.concept);
         
         return <p><span>{arr[0] + " "}<b>{m.concept}</b>{" " + arr[1]}</span><br /><br/></p>
       });
     }else{
       console.log("not there")
-      return ""
+      return <p><span>no matches for <b>{tf.term}</b></span></p>
     }
 
   }
@@ -88,12 +88,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           ))}
         </UnorderedList>
       </div>
-      <div style={{float:'right', width:'30%', display:'inline-block'}}>
+      <div style={{float:'right', width:'37%', display:'inline-block'}}>
         
-        {  entryData.tfidf != null ? 
-            entryData.tfidf['tf-idf'].map(tf =>(
+        {  entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
+            // console.log(entryData.tfidf.yak)
+            entryData.tfidf['yak'].map(tf =>(
               <div style={{'display':'inline'}}>
-                <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf.term}</Badge></Tooltip>
+                 <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf)}>{tf.term}</Badge></Tooltip>
+                {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
             </div>
             ))
         : <div></div>}

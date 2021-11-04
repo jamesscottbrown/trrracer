@@ -4,8 +4,7 @@ from collections import Counter
 # Importing Gensim
 import gensim
 from gensim import corpora
-
-from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
+from google_api import goog_auth  #, goog_doc_start, get_doc_text_by_id
 nlpS = spacy.load("en_core_web_sm")
 
 from nltk.corpus import webtext

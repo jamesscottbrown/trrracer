@@ -2,7 +2,7 @@ from flask import Flask
 import os
 import sys
 import json
-from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
+from google_api import goog_auth #goog_doc_start, get_doc_text_by_id
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
 
@@ -39,20 +39,21 @@ def reformat(entries):
     return new_entries
 
 def extract_entry_text_to_blobs(document_path):
-    cred = goog_auth()
-    gdoc_service = goog_doc_start(cred)
+    return document_path
+    # cred = goog_auth()
+    # gdoc_service = goog_doc_start(cred)
 
-    data_backbone = open(document_path + "trrrace.json", 'r')
-    d_b_json = json.load(data_backbone)
+    # data_backbone = open(document_path + "trrrace.json", 'r')
+    # d_b_json = json.load(data_backbone)
 
-    new_json = d_b_json
+    # new_json = d_b_json
 
-    fixed_entries = fix_missing_file_type(d_b_json["entries"])
+    # fixed_entries = fix_missing_file_type(d_b_json["entries"])
 
-    blob = {}
-    blob["entries"] = make_blob_for_entry(fixed_entries, gdoc_service, document_path)
+    # blob = {}
+    # blob["entries"] = make_blob_for_entry(fixed_entries, gdoc_service, document_path)
  
-    return blob
+    # return blob
 
 def load_all_blobs_as_corpus(document_path):
     blob_f = open(document_path + "blobs.json", 'r')
@@ -74,7 +75,7 @@ def write_blobs_to_file(blob, document_path):
     json.dump(blob, outfile)
 
 
-@app.route("/corr")
+@app.route("/")
 def index():
     document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
     # load_all_blobs_as_corpus(document_path)
@@ -123,8 +124,9 @@ def index():
         
     
     #json.dump(ldamodel.print_topics(), outfile)
-
-    return str(blob)
+    cred = goog_auth()
+    # return str(blob)
+    return str(cred)
     
 
           

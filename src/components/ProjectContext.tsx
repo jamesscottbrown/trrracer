@@ -212,13 +212,14 @@ const appStateReducer = (state, action) => {
       let newEntries;
       try {
         const collo = readProjectFile(baseDir, 'entry_collocations.json');
-        const tfidf = readProjectFile(baseDir, 'tf_idf.json');
+        const tfidf = readProjectFile(baseDir, 'keywords.json');
+
 
         console.log('TFIDF', tfidf);
         newEntries = action.projectData.entries.map((e, i) => {
             e.collo = collo[i];
-            if(i < tfidf['tfidf'].length){
-              e.tfidf = tfidf['tfidf'][i]
+            if(i < tfidf['entry_keywords'].length){
+              e.tfidf = tfidf['entry_keywords'][i]
             }else{
               e.tfidf = null;
             }
