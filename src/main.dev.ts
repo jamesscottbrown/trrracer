@@ -216,7 +216,7 @@ async function createSplashWindow() {
   });
 
   ipcMain.on('openProject', (_e, pathToOpen: string) => {
-    if (path) {
+    if (pathToOpen) {
       fileManager.openRecentProject(pathToOpen);
     } else {
       fileManager.openProjectPicker();
