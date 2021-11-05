@@ -539,16 +539,36 @@ const appStateReducer = (state, action) => {
     case 'DELETE_FILE': {
       const destination = path.join(state.folderPath, action.fileName);
 
-      const deleteFile = window.confirm(
-        `Really delete file ${action.fileName}?`
+      const unattachFile = window.confirm(
+        `Really un-attach file ${action.fileName}?`
       );
 
-      if (!deleteFile) {
+      if (!unattachFile) {
         return state;
       }
 
-      fs.unlinkSync(destination);
+      let otherUses = false;
+      for (let i = 0; i < state.projectData.entries.length; i += 1) {
+        const entry = state.projectData.entries[i];
 
+        const fileNames = entry.files.map((f: File) => f.title);
+        console.log({ entry, fileNames, i, ind: action.entryIndex });
+        if (i !== action.entryIndex && fileNames.includes(action.fileName)) {
+          otherUses = true;
+          break;
+        }
+      }
+
+      if (!otherUses) {
+        const deleteFile = window.confirm(
+          `File ${action.fileName} is not attached to any other entries - delete from project directory?`
+        );
+
+        if (deleteFile) {
+          fs.unlinkSync(destination);
+        }
+      }
+      
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
         action.entryIndex === i
           ? { ...d, files: d.files.filter((f) => f.title !== action.fileName) }
