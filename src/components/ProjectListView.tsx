@@ -10,7 +10,7 @@ import FileUpload from './FileUpload';
 import TagList from './TagList';
 import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
-import ConceptNav from './concepts';
+import ConceptNav from './Concepts';
 import EdgeControl from './Edges';
 
 const { ipcRenderer } = require('electron');
