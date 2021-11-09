@@ -20,7 +20,7 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
-  //console.log('ENTRY DATA',entryData)
+  console.log('ENTRY DATA',entryData)
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -90,7 +90,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </div>
       <div style={{float:'right', width:'37%', display:'inline-block'}}>
         
-        {  entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
+        {  entryData.tfidf != null && entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
             // console.log(entryData.tfidf.yak)
             entryData.tfidf['yak'].map(tf =>(
               <div style={{'display':'inline'}}>
