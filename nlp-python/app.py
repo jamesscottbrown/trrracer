@@ -3,6 +3,7 @@ import os
 import sys
 import json
 from google_api import goog_auth #goog_doc_start, get_doc_text_by_id
+from get_blobs import extract_entry_text_to_blobs, make_file_array_for_entry
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
 
@@ -37,23 +38,6 @@ def reformat(entries):
         new_entries.append(new_entry)
         
     return new_entries
-
-def extract_entry_text_to_blobs(document_path):
-    return document_path
-    # cred = goog_auth()
-    # gdoc_service = goog_doc_start(cred)
-
-    # data_backbone = open(document_path + "trrrace.json", 'r')
-    # d_b_json = json.load(data_backbone)
-
-    # new_json = d_b_json
-
-    # fixed_entries = fix_missing_file_type(d_b_json["entries"])
-
-    # blob = {}
-    # blob["entries"] = make_blob_for_entry(fixed_entries, gdoc_service, document_path)
- 
-    # return blob
 
 def load_all_blobs_as_corpus(document_path):
     blob_f = open(document_path + "blobs.json", 'r')
@@ -128,7 +112,27 @@ def index():
     # return str(blob)
     return str(cred)
     
+@app.route("/extract_text_files")
+def extract_text_files():
+    document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(document_path, make_file_array_for_entry)
 
+    # write_path = '/Users/jen/Documents/Trrracer Notebooks/blob_w_files.json'#/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/blob.json'
+
+    outfile = open(document_path+'blob_w_files.json', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
+
+@app.route("/extract_text_entry")
+def extract_text_entry():
+    document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(document_path, make_blob_for_entry)
+
+    # write_path = '/Users/jen/Documents/Trrracer Notebooks/blob_w_files.json'#/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/blob.json'
+
+    outfile = open(document_path+'blob.json', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
           
 
 if __name__ == "__main__":

@@ -78,9 +78,10 @@ You might need to use this:
 
 if this gets messed up with the installed packages:
 ```
-deactivate
-source .venv/bin/activate
+`deactivate`
+`source .venv/bin/activate`
 
 # You might need to 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
+
 ```
