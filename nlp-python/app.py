@@ -6,8 +6,12 @@ from google_api import goog_auth #goog_doc_start, get_doc_text_by_id
 from get_blobs import extract_entry_text_to_blobs, make_file_array_for_entry
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
+from word_extraction import extract_words_yake
+from concordance import key_concord
 
 app = Flask(__name__)
+
+DOCUMENT_PATH = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
 
 def reformat(entries):
     indexer = 0
@@ -114,10 +118,8 @@ def index():
     
 @app.route("/extract_text_files")
 def extract_text_files():
-    document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(document_path, make_file_array_for_entry)
-
-    # write_path = '/Users/jen/Documents/Trrracer Notebooks/blob_w_files.json'#/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/blob.json'
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_file_array_for_entry)
 
     outfile = open(document_path+'blob_w_files.json', 'w')
     json.dump(blob, outfile)
@@ -125,14 +127,42 @@ def extract_text_files():
 
 @app.route("/extract_text_entry")
 def extract_text_entry():
-    document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(document_path, make_blob_for_entry)
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_blob_for_entry)
 
-    # write_path = '/Users/jen/Documents/Trrracer Notebooks/blob_w_files.json'#/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/blob.json'
-
-    outfile = open(document_path+'blob.json', 'w')
+    outfile = open(DOCUMENT_PATH+'blob.json', 'w')
     json.dump(blob, outfile)
     return str(blob)
+
+@app.route("/yake_extract_words")
+def yake_extract_words():
+    # document_path = 
+    data_backbone = open(DOCUMENT_PATH + "blob_w_files.json", 'r')
+    d_b_json = json.load(data_backbone)
+    blob_array = extract_words_yake(d_b_json)
+   
+    bob = {}
+    bob['keyword_data'] = blob_array
+    outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
+    json.dump(bob, outfile)
+    return str(blob_array)
+
+@app.route("/get_keyword_concord")
+def get_keyword_concord():
+    # document_path = 
+    data_backbone = open(DOCUMENT_PATH + "keyword_data_array.json", 'r')
+    d_b_json = json.load(data_backbone)
+
+    # blob_array = extract_words_yake(d_b_json)
+    # bob = {}
+    # bob['keyword_data'] = blob_array
+    # outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
+    # json.dump(bob, outfile)
+    return str(d_b_json)
+
+
+
+
           
 
 if __name__ == "__main__":
