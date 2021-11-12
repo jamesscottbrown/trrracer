@@ -147,18 +147,7 @@ def yake_extract_words():
     json.dump(bob, outfile)
     return str(blob_array)
 
-@app.route("/get_keyword_concord")
-def get_keyword_concord():
-    # document_path = 
-    data_backbone = open(DOCUMENT_PATH + "keyword_data_array.json", 'r')
-    d_b_json = json.load(data_backbone)
 
-    # blob_array = extract_words_yake(d_b_json)
-    # bob = {}
-    # bob['keyword_data'] = blob_array
-    # outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
-    # json.dump(bob, outfile)
-    return str(d_b_json)
 
 
 

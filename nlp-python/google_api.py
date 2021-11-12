@@ -48,6 +48,7 @@ def read_paragraph_element(element):
             element: a ParagraphElement from a Google Doc.
     """
     text_run = element.get('textRun')
+    print(text_run)
     if not text_run:
         return ''
     return text_run.get('content')
