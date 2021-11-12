@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord } from 'react-icons/gr';
+import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, GrDocumentRtf, GrDocumentImage } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
 
 import { useProjectState } from './ProjectContext';
@@ -50,7 +50,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <GrDocumentCsv onClick={() => openFile(title)} size={size} />;
   }
 
-  if (title.endsWith('.ppt') || title.endsWith('.pptx')) {
+  if (title.endsWith('.ppt') || title.endsWith('.pptx') || title.endsWith('.key')) {
     return <GrDocumentPpt onClick={() => openFile(title)} size={size} />;
   }
 
@@ -58,8 +58,28 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <GrDocumentWord onClick={() => openFile(title)} size={size} />;
   }
 
+  if (title.endsWith('.gdoc')) {
+    return <GrDocumentWord onClick={() => openFile(title)} size={size} />;
+  }
+
+  if (title.endsWith('.gsheet')) {
+    return <GrDocumentExcel onClick={() => openFile(title)} size={size} />;
+  }
+
+  if (title.endsWith('.txt')) {
+    return <GrDocumentText onClick={() => openFile(title)} size={size} />;
+  }
+
+  if (title.endsWith('.rtf')) {
+    return <GrDocumentRtf onClick={() => openFile(title)} size={size} />;
+  }
+
   if (title.endsWith('.pdf')) {
     return <ImFilePdf onClick={() => openFile(title)} size={size} />;
+  }
+
+  if (title.endsWith('.HEIC')) {
+    return <GrDocumentImage onClick={() => openFile(title)} size={size} />;
   }
   return (
     <Image
