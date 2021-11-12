@@ -108,3 +108,10 @@ hr {
   cursor: pointer;
   background: none;
 }
+
+.readonlyEntryMarkdownPreview blockquote {
+  margin-left: 0;
+  padding: 0 1em;
+  color: #777;
+  border-left: 0.25em solid #ddd;
+}

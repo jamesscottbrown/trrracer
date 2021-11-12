@@ -15,7 +15,6 @@ import path from 'path';
 import { app, Menu, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
 
 import ProjectLoader from './ProjectLoader';
 import { authenticate } from './authenticateGoogle';
@@ -112,9 +111,6 @@ const openProjectWindow = async (projectPath: string) => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
   // Open urls in the user's browser
   const handleRedirect = (e, url) => {
     if (url !== e.sender.getURL()) {
@@ -133,6 +129,7 @@ interface MenuEntry {
   label: string;
   click: () => void;
 }
+
 interface MenuDivider {
   type: 'separator';
 }
@@ -151,21 +148,24 @@ async function createSplashWindow() {
   // set open recent submenu
   const submenuOfOpenRecent: (MenuEntry | MenuDivider)[] = [];
   const paths = fileManager.readHistory();
-  const allPaths = await paths;
-  if (allPaths !== undefined) {
-    allPaths.paths.map((recentPath: string) => {
-      submenuOfOpenRecent.push(
-        {
-          label: recentPath,
-          click() {
-            fileManager.openRecentProject(recentPath);
-          },
-        },
-        { type: 'separator' }
-      );
-      return null;
-    });
+  let allPaths = await paths;
+
+  if (!allPaths) {
+    allPaths = { paths: [] };
   }
+
+  allPaths.paths.map((recentPath: string) => {
+    submenuOfOpenRecent.push(
+      {
+        label: recentPath,
+        click() {
+          fileManager.openRecentProject(recentPath);
+        },
+      },
+      { type: 'separator' }
+    );
+    return null;
+  });
 
   // Declare all menu
   const menuList = [

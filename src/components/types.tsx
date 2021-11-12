@@ -1,10 +1,12 @@
 // files
 
 interface File {
-  title: string;
   fileType: string;
-  fileId: string;
+  title: string;
+  // fileType: string;
+  // fileId: string;
   meta: string;
+  url?: string;
 }
 
 interface FileObj {
@@ -12,13 +14,28 @@ interface FileObj {
   path: string;
 }
 
+interface URLAttachment {
+  title: string;
+  url: string;
+}
+
 interface EntryType {
   description: string;
   title: string;
   files: File[];
+  urls: URLAttachment[];
   date: string;
   tags: string[];
-  tfidf: any;
+}
+
+interface EntryTypeWithIndex {
+  description: string;
+  title: string;
+  files: File[];
+  urls: URLAttachment[];
+  date: string;
+  tags: string[];
+  index: number;
 }
 
 interface TagType {
@@ -49,6 +66,10 @@ interface ConceptActionType {
   action:string;
   when: string;
 }
+interface DeadlineType {
+  title: string;
+  date: string;
+}
 
 interface ProjectType {
   title: string;
@@ -58,19 +79,21 @@ interface ProjectType {
   concepts : ConceptType[];
   edges : EdgeType[];
   topics: [];
+  deadlines: DeadlineType[];
 }
 
 interface ProjectViewProps {
   projectData: ProjectType;
   folderPath: string;
-  viewType: string;
-  setViewType: (viewType: string) => void;
 }
 
 export {
+  DeadlineType,
   EntryType,
+  EntryTypeWithIndex,
   File,
   FileObj,
+  URLAttachment,
   TagType,
   ProjectType,
   ProjectViewProps,
