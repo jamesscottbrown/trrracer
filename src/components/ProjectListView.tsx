@@ -35,6 +35,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
   const [reversedOrder, setReversedOrder] = useState<boolean>(false);
 
+  const [showTags, setShowTags] = useState(false);
+
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
@@ -72,6 +74,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
+     // console.log('entry-data', entryData)
       return filterTags.every((requiredTag: string) =>
         entryData.tags.includes(requiredTag)
       );
@@ -165,7 +168,28 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
   return (
     <div style={{ padding: '10px' }}>
-      <TagList tags={projectData.tags} />
+
+      {showTags ?
+      <div>
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
+        <TagList tags={projectData.tags} />
+        </div>
+        :
+        <div><Heading as="h5">Tags <FaEye onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading></div>
+    }
+      
 
       <Heading as="h2">Entries</Heading>
 
@@ -198,7 +222,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           {editable[entryData.index] ? (
             <Entry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={entryData.index}
+              key={`${entryData.title}-${entryData.index}`}
               entryData={entryData}
               entryIndex={entryData.index}
               openFile={openFile}
@@ -209,7 +233,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           ) : (
             <ReadonlyEntry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={entryData.index}
+              key={`${entryData.title}-${entryData.index}`}
               entryData={entryData}
               openFile={openFile}
               makeEditable={() => setEditableStatus(entryData.index, true)}

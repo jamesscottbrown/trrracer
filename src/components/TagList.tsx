@@ -210,6 +210,7 @@ const TagList = (props: TagListProps) => {
 
   const [tagToRename, setTagToRename] = useState<false | number>(false);
   const [newName, setNewName] = useState<string>('');
+  const [showTags, setShowTags] = useState(false);
 
   const [{ filterTags, projectData }, dispatch] = useProjectState();
 
@@ -246,23 +247,24 @@ const TagList = (props: TagListProps) => {
 
   return (
     <>
-      <Heading as="h2">Tags</Heading>
 
-      <RenamingModal
-        tagToRename={tagToRename}
-        setTagToRename={setTagToRename}
-        newName={newName}
-        setNewName={setNewName}
-        tags={tags}
-      />
+    {/* <Heading as="h2">Tags</Heading> */}
 
-      {tagToChangeColor !== false && (
-        <ColorChangeModal
-          tagToChangeColor={tagToChangeColor}
-          setTagToChangeColor={setTagToChangeColor}
-          tags={tags}
-        />
-      )}
+          <RenamingModal
+            tagToRename={tagToRename}
+            setTagToRename={setTagToRename}
+            newName={newName}
+            setNewName={setNewName}
+            tags={tags}
+          />
+
+        {tagToChangeColor !== false && (
+          <ColorChangeModal
+            tagToChangeColor={tagToChangeColor}
+            setTagToChangeColor={setTagToChangeColor}
+            tags={tags}
+          />
+        )}
 
       <div>
         <div style={{ width: 'fit-content' }}>
@@ -318,8 +320,8 @@ const TagList = (props: TagListProps) => {
           ))}
         </div>
       </div>
-
       <TagFilter />
+
     </>
   );
 };

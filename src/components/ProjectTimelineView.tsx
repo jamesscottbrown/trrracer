@@ -37,7 +37,7 @@ const EntryPlot = (props: EntryPlotProps) => {
   const squareWidth = 10;
   const squarePadding = 2;
 
-  console.log('ENTRY DATA:', entryData);
+  //console.log('ENTRY DATA:', entryData);
 
   const getColor = (title: string) => {
     const tag = tags.filter((t) => t.title === title)[0];

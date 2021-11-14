@@ -128,8 +128,8 @@ const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
       </FormControl>
 
       <SimpleGrid columns={numColumns} spacing={10}>
-        {files.map((f) => (
-          <Box key={f.title}>
+        {files.map((f, i) => (
+          <Box key={`${f.title}-${i}`}>
             <AttachmentPreview
               folderPath={folderPath}
               title={f.title}
