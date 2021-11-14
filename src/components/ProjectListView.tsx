@@ -169,6 +169,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   return (
     <div style={{ padding: '10px' }}>
 
+      <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <br />
+      <Divider />
+
       {showTags ?
       <div>
         <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
@@ -200,6 +204,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
         Reverse chronological order
       </Checkbox>
       <br />
+      <br />
 
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
@@ -214,6 +219,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           </Button>
         )}
       </ButtonGroup>
+
+      <br />
+      <br />
 
       <br />
 

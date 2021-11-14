@@ -19,18 +19,6 @@ export function useProjectState() {
   return useContext(ProjectContext);
 }
 
-// export const saveJSON = (newProjectData: any, state: any) => {
-//   console.log('IN SAVE JSON',state.folderPath, newProjectData)
-//   let pathString = state.folderPath === null ? newProjectData.title : state.folderPath;
-//   fs.writeFileSync(
-//     path.join(pathString, 'trrrace.json'),
-//     JSON.stringify(newProjectData, null, 4),
-//     (err) => {
-//       if (err) {
-//         console.log(`Error writing file to disk: ${err}`);
-//       } else {
-//         // parse JSON string to JSON object
-//        // console.log('new Project data',newProjectData);
 export function addMetaDescrip(projectData, state){
 
   let newProjEntries = projectData.entries.map(( e: EntryType )=>{
@@ -90,49 +78,78 @@ const pickTagColor = (tags: TagType[]) => {
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   for (const file of fileList) {
-    console.log('About to copy:', folderPath, file.path);
 
     const sourceIsInProjectDir = file.path.startsWith(folderPath);
+    let destination = path.join(folderPath, file.name);
+    /**
+     * is it google??
+     */
+    let nameCheck = file.name.split(".");
+        
+    if(nameCheck[nameCheck.length - 1] === 'gdoc'){
+        
+          if (fs.existsSync(destination) && !sourceIsInProjectDir){
+            console.log('already herr');
 
-    try {
-      let saveFile = true;
-      let destination = path.join(folderPath, file.name);
-      let newName = file.name;
+            let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
+      
+            newFiles = [...newFiles, newFile];
 
-      if (fs.existsSync(destination) && !sourceIsInProjectDir) {
-        saveFile = window.confirm(
-          `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
-        );
+          }else{
+            console.log("COPY OVER THAT GOOGLE FILE")
+            copyGoogle(file, newFiles).then(fileArray => {
+              newFiles = [...fileArray]
+            });
+          }
 
-        let i = 1;
-        do {
-          const parts = file.name.split('.');
-          const base = parts.slice(0, -1).join('');
-          const extension = parts.slice(-1)[0];
-          newName = `${base} (${i}).${extension}`;
+        }else{
 
-          destination = path.join(folderPath, newName);
-          console.log('Trying new name:', newName);
+          console.log('About to copy:', folderPath, file.path);
 
-          i += 1;
-        } while (fs.existsSync(destination) && !sourceIsInProjectDir);
-      }
-
-      if (saveFile) {
-        if (!sourceIsInProjectDir) {
-          copyFileSync(file.path, destination);
+      
+          try {
+            let saveFile = true;
+            
+            let newName = file.name;
+      
+            if (fs.existsSync(destination) && !sourceIsInProjectDir) {
+              saveFile = window.confirm(
+                `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
+              );
+      
+              let i = 1;
+              do {
+                const parts = file.name.split('.');
+                const base = parts.slice(0, -1).join('');
+                const extension = parts.slice(-1)[0];
+                newName = `${base} (${i}).${extension}`;
+      
+                destination = path.join(folderPath, newName);
+                console.log('Trying new name:', newName);
+      
+                i += 1;
+              } while (fs.existsSync(destination) && !sourceIsInProjectDir);
+            }
+      
+            if (saveFile) {
+              if (!sourceIsInProjectDir) {
+                copyFileSync(file.path, destination);
+              }
+              console.log(`${file.path} was copied to ${destination}`);
+              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
+            }
+          } catch (e) {
+            console.log('Error', e.stack);
+            console.log('Error', e.name);
+            console.log('Error', e.message);
+      
+            console.log('The file could not be copied');
+          }
         }
-        console.log(`${file.path} was copied to ${destination}`);
-        newFiles = [...newFiles, { title: newName }];
-      }
-    } catch (e) {
-      console.log('Error', e.stack);
-      console.log('Error', e.name);
-      console.log('Error', e.message);
 
-      console.log('The file could not be copied');
-    }
-  }
+        }
+
+
   return newFiles;
 };
 
@@ -195,11 +212,11 @@ export async function getGoogleIds(projectData, state){
 
 }
 
-async function copyGoogle(file:any, entryIndex:number, state:any, metaText:string){
+async function copyGoogle(file:any, fileList:any){
 
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
             const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
-            oAuth2Client.setCredentials(JSON.parse(token))
+            oAuth2Client.setCredentials(JSON.parse(token));
            
             let drive = google.drive({version: 'v3', auth: oAuth2Client});
          
@@ -232,24 +249,26 @@ async function copyGoogle(file:any, entryIndex:number, state:any, metaText:strin
                         return;
                       }
                     
-                      console.log('response', response, state)
-                      let newFiles = state.projectData.entries[entryIndex].files;
-                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: metaText, fileId: response.data.id }
+                      // console.log('response', response, state)
+                      // let newFiles = state.projectData.entries[entryIndex].files;
+                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: "null", fileId: response.data.id }
         
-                      newFiles = [...newFiles, newFile];
+                      fileList = [...fileList, newFile];
                 
-                      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-                        entryIndex === i ? { ...d, files: newFiles } : d
-                      );
+                      // const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+                      //   entryIndex === i ? { ...d, files: newFiles } : d
+                      // );
                 
-                      const newProjectData = { ...state.projectData, entries };
-                      console.log('new project', newProjectData);
-                      return saveJSON(newProjectData, state);
+                      // const newProjectData = { ...state.projectData, entries };
+                      // console.log('new project', newProjectData);
+                      // return saveJSON(newProjectData, state);
                       
                     }
                   );
             
             });
+
+            return fileList;
 }
 
 const readProjectFile = (folderPath: string, fileName: string) => {
@@ -468,108 +487,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //       return saveJSON(newProjectData, state);
 //     }
 
-//   case 'ADD_FILES_TO_ENTRY': {
-//       const { fileList, entryIndex } = action;
-
-// //       let newFiles = state.projectData.entries[entryIndex].files;
-// //       for (const file of fileList) {
-// //         console.log('file in fileList', file);
-// //         try {
-// //           const destination = path.join(state.folderPath, file.name);
-// //           let nameCheck = file.name.split(".");
-        
-// //           if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-// //             let test = state.projectData.entries.flatMap(m=> m.files.map(fil => fil.title));
-
-// //             console.log('google file!', file.name, test.indexOf(file.name), test)
-
-// //             if(test.indexOf(file.name) === -1){
-// //                 copyGoogle(file, entryIndex, state, "null");
-// //             }else{
-// //               console.log('already herr');
-// //               let newFiles = state.projectData.entries[entryIndex].files;
-
-// //               let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
-        
-// //               newFiles = [...newFiles, newFile];
-        
-// //               const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-// //                 entryIndex === i ? { ...d, files: newFiles } : d
-// //               );
-        
-// //               const newProjectData = { ...state.projectData, entries };
-// //               console.log('new project same doc', newProjectData);
-// //               return saveJSON(newProjectData, state);
-// //             }
-           
-
-// //           }else{
-// // //NEED TO INTEGRATE THIS MORE
-// //           let saveFile = true;
-// //           let destination = path.join(state.folderPath, file.name);
-// //           let newName = file.name;
-
-// //           if (fs.existsSync(destination)) {
-// //             saveFile = window.confirm(
-// //               `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
-// //             );
-
-// //             let i = 1;
-// //             do {
-// //               const parts = file.name.split('.');
-// //               const base = parts.slice(0, -1).join('');
-// //               const extension = parts.slice(-1)[0];
-// //               newName = `${base} (${i}).${extension}`;
-
-// //               destination = path.join(state.folderPath, newName);
-            
-
-// //               i += 1;
-// //             } while (fs.existsSync(destination));
-// //           }
-
-// //           if (saveFile) {
-          
-// //             copyFileSync(file.path, destination);
-// //             console.log(`${file.path} was copied to ${destination}`);
-// //             if(nameCheck[nameCheck.length - 1] === 'txt'){
-
-// //               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
-
-// //               newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
-// //             }else{
-
-// //               newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
-// //             }
-
-            
-
-// //           }
-
-// //         }
-
-// //         } catch (e) {
-// //           console.log('Error', e.stack);
-// //           console.log('Error', e.name);
-// //           console.log('Error', e.message);
-
-// //           console.log('The file could not be copied');
-// //         }
-// //       }
-
-//       const currentFiles = state.projectData.entries[entryIndex].files;
-//       const newFiles = [
-//         ...currentFiles,
-//         ...copyFiles(fileList, state.folderPath),
-//       ];
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-//         entryIndex === i ? { ...d, files: newFiles } : d
-//       );
-
-//       const newProjectData = { ...state.projectData, entries };
-
-//       return saveJSON(newProjectData, state);
-//     }
 
 //     case 'CREATE_GOOGLE_IN_ENTRY': {
 //       const { name, fileType, fileId, entryIndex } = action;
@@ -871,7 +788,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 
 
 const appStateReducer = (state, action) => {
-  const saveJSON = (newProjectData) => {
+  const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
       JSON.stringify(newProjectData, null, 4),
@@ -918,7 +835,8 @@ const appStateReducer = (state, action) => {
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
-          { title: newTag.text, color: newColor },
+          { title: newTag.text, color: newColor, date: new Date().toISOString() },
+          // { title: newTag.text, color: newColor },
         ];
       } else {
         newTags = state.projectData.tags;
@@ -938,10 +856,108 @@ const appStateReducer = (state, action) => {
 
       return saveJSON(newProjectData);
     }
+//   case 'ADD_FILES_TO_ENTRY': {
+//       const { fileList, entryIndex } = action;
+
+// //       let newFiles = state.projectData.entries[entryIndex].files;
+// //       for (const file of fileList) {
+// //         console.log('file in fileList', file);
+// //         try {
+// //           const destination = path.join(state.folderPath, file.name);
+// //           let nameCheck = file.name.split(".");
+        
+// //           if(nameCheck[nameCheck.length - 1] === 'gdoc'){
+// //             let test = state.projectData.entries.flatMap(m=> m.files.map(fil => fil.title));
+
+// //             console.log('google file!', file.name, test.indexOf(file.name), test)
+
+// //             if(test.indexOf(file.name) === -1){
+// //                 copyGoogle(file, entryIndex, state, "null");
+// //             }else{
+// //               console.log('already herr');
+// //               let newFiles = state.projectData.entries[entryIndex].files;
+
+// //               let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
+        
+// //               newFiles = [...newFiles, newFile];
+        
+// //               const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+// //                 entryIndex === i ? { ...d, files: newFiles } : d
+// //               );
+        
+// //               const newProjectData = { ...state.projectData, entries };
+// //               console.log('new project same doc', newProjectData);
+// //               return saveJSON(newProjectData, state);
+// //             }
+           
+
+// //           }else{
+// // //NEED TO INTEGRATE THIS MORE
+// //           let saveFile = true;
+// //           let destination = path.join(state.folderPath, file.name);
+// //           let newName = file.name;
+
+// //           if (fs.existsSync(destination)) {
+// //             saveFile = window.confirm(
+// //               `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
+// //             );
+
+// //             let i = 1;
+// //             do {
+// //               const parts = file.name.split('.');
+// //               const base = parts.slice(0, -1).join('');
+// //               const extension = parts.slice(-1)[0];
+// //               newName = `${base} (${i}).${extension}`;
+
+// //               destination = path.join(state.folderPath, newName);
+            
+
+// //               i += 1;
+// //             } while (fs.existsSync(destination));
+// //           }
+
+// //           if (saveFile) {
+          
+// //             copyFileSync(file.path, destination);
+// //             console.log(`${file.path} was copied to ${destination}`);
+// //             if(nameCheck[nameCheck.length - 1] === 'txt'){
+
+// //               let test = fs.readFileSync(destination,{ encoding: 'utf8' });
+
+// //               newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
+// //             }else{
+
+// //               newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
+// //             }
+// //           }
+// //         }
+// //         } catch (e) {
+// //           console.log('Error', e.stack);
+// //           console.log('Error', e.name);
+// //           console.log('Error', e.message);
+
+// //           console.log('The file could not be copied');
+// //         }
+// //       }
+
+//       const currentFiles = state.projectData.entries[entryIndex].files;
+//       const newFiles = [
+//         ...currentFiles,
+//         ...copyFiles(fileList, state.folderPath),
+//       ];
+//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+//         entryIndex === i ? { ...d, files: newFiles } : d
+//       );
+
+//       const newProjectData = { ...state.projectData, entries };
+
+//       return saveJSON(newProjectData, state);
+//     }
 
     case 'ADD_FILES_TO_ENTRY': {
       const { fileList, entryIndex } = action;
 
+    
       const currentFiles = state.projectData.entries[entryIndex].files;
       const newFiles = [
         ...currentFiles,
@@ -1127,6 +1143,63 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_FILTER_TAGS': {
       return { ...state, filterTags: action.filterTags };
+    }
+
+    case 'CREATE_CONCEPT':{
+      
+      const newConcepts  = [
+        ...state.projectData.concepts,
+        { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
+      ];
+
+      const newProjectData = {
+        ...state.projectData,
+        concepts: newConcepts
+      };
+
+      return saveJSON(newProjectData);
+
+    }
+
+    case 'DELETE_CONCEPT':{
+    
+       const newConcepts  = state.projectData.concepts.map(m => {
+        
+           if(m.name === action.title.name){
+          
+             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
+           }
+           return m;
+         });
+
+       const newProjectData = {
+         ...state.projectData,
+         concepts: newConcepts
+       };
+ 
+       return saveJSON(newProjectData);
+ 
+    }
+
+    case 'MERGE_CONCEPT':{
+       
+       const newConcepts  = state.projectData.concepts.map(m => {
+        
+        if(m.name === action.fromName){
+
+          m.actions = [...m.actions, { action:'merged', with: action.mergeName, when: new Date().toISOString() }]
+        }
+        return m;
+      });
+      
+       const newProjectData = {
+        ...state.projectData,
+        concepts: newConcepts
+      };
+
+      return saveJSON(newProjectData);
+
+      
     }
 
     default: {

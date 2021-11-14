@@ -3,9 +3,8 @@
 interface File {
   fileType: string;
   title: string;
-  // fileType: string;
   // fileId: string;
-  meta: string;
+  context: string;
   url?: string;
 }
 

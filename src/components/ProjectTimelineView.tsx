@@ -1,12 +1,16 @@
 import path from 'path';
 
 import React, { useState } from 'react';
-import { Heading } from '@chakra-ui/react';
+import { Heading, Divider } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
 
 import { repositionPoints } from 'respacer';
+
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+
+import ConceptNav from './Concepts';
 
 import {
   DeadlineType,
@@ -224,9 +228,11 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
+  const [showTags, setShowTags] = useState(false);
+
   console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -258,7 +264,29 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
       // <Heading as="h2">Entries</Heading>
       // <TagFilter /> */}
-      <TagList tags={projectData.tags} />
+       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <br />
+      <Divider />
+        {showTags ?
+      <div>
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
+        <TagList tags={projectData.tags} />
+        </div>
+        :
+        <div><Heading as="h5">Tags <FaEye onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading></div>
+    }
 
       <Heading as="h2">Entries</Heading>
 

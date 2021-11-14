@@ -9,15 +9,18 @@ import {
   Heading,
   Image,
   SimpleGrid,
+  Divider,
 } from '@chakra-ui/react';
 
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, GrDocumentRtf, GrDocumentImage } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, ProjectViewProps } from './types';
 import TagList from './TagList';
+
+import ConceptNav from './Concepts';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -92,8 +95,10 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
 const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags }] = useProjectState();
+  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
   const [numColumns, setNumColumns] = useState<number>(4);
+
+  const [showTags, setShowTags] = useState(false);
 
   const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
     return filterTags.every((requiredTag: string) =>
@@ -112,7 +117,29 @@ const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      <TagList tags={projectData.tags} />
+      <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <br />
+      <Divider />
+    {showTags ?
+      <div>
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
+        <TagList tags={projectData.tags} />
+        </div>
+        :
+        <div><Heading as="h5">Tags <FaEye onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading></div>
+    }
 
       <Heading as="h2">Attachments</Heading>
 
