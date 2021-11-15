@@ -353,7 +353,7 @@ const Entry = (props: EntryPropTypes) => {
       setShowURL(true)
     }}>Add URL</Button>
     }  */}
-      )}
+      {/* )} */}
 
       <br />
 
