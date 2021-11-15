@@ -956,27 +956,12 @@ const appStateReducer = (state, action) => {
 
       console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
 
-      // let newFiles = state.projectData.entries[entryIndex].files;
 
-      // let newFile = {title: `${name}.${extension}`, fileType: extension, fileId: fileId}
-        
-      // //newFiles = [...newFiles, { title: `${name}.${extension}`, fileType: extension, fileId: fileId }];
-      // newFiles = [...newFiles, newFile];
-
-      // const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-      //   entryIndex === i ? { ...d, files: newFiles } : d
-      // );
-
-      // const newProjectData = { ...state.projectData, entries };
-
-      // console.log('ENTRIES', entries)
-
-      // return saveJSON(newProjectData, state);
 
       const currentFiles = state.projectData.entries[entryIndex].files;
       const newFiles = [
         ...currentFiles,
-        //...copyFiles(fileList, state.folderPath),
+      
         {title: `${name}.${extension}`, fileType: extension, fileId: fileId, context: "null"}
       ];
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
