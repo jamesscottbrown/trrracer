@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
+import * as fs from 'fs';
 const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
+import {
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Heading,
+  ListItem,
+  UnorderedList,
+} from '@chakra-ui/react';
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
@@ -20,18 +30,19 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
 
     console.log('save files NAME', fileName);
     
-   createGoogleFile(fileName);
-   setShowFileCreate(false);
+    createGoogleFile(fileName);
+    setShowFileCreate(false);
     
   };
 
   async function testGoog(){
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    const token = await readFile('token.json')
+    // const token = await readFile('token.json')
+    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
     oAuth2Client.setCredentials(JSON.parse(token))
     console.log('init client');
     console.log('auth Instance', google)
-    console.log('tokemn', oAuth2Client.credentials)
+    console.log('token', oAuth2Client.credentials)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
 
     drive.files.list({
@@ -47,7 +58,8 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   async function createGoogleFile(name : string){
   
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    const token = await readFile('token.json')
+    // const token = await readFile('token.json')
+    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
     oAuth2Client.setCredentials(JSON.parse(token))
     
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -86,11 +98,11 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
      {showFileCreate ? (
         <>
           
-          <button color="primary" onClick={() => {
+          <Button color="primary" onClick={() => {
             testGoog();
             setShowFileCreate(false)}} type="button">
             Cancel
-          </button>
+          </Button>
        
           <form>
             <label>
@@ -98,16 +110,16 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
             </label>
             </form>
           {/* <input type="text" onChange={handleChange}/> */}
-          <button color="primary" onClick={()=> saveGoogleFile()} type="button">
+          <Button color="primary" onClick={()=> saveGoogleFile()} type="button">
           Create
-          </button>
+          </Button>
         </>
       ) : (
-        <button color="primary" onClick={()=> {
+        <Button color="primary" onClick={()=> {
           testGoog();
           setShowFileCreate(true)}} type="button">
           {text}
-        </button>
+        </Button>
         
       )}
      

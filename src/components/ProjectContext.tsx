@@ -43,7 +43,7 @@ export function addMetaDescrip(projectData, state){
 
   console.log('NEW NEW proj while whrtie', newProj);
   
-  return saveJSON(newProj, state);
+  return null//saveJSON(newProj);
   
 
 //});
@@ -147,7 +147,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
           }
         }
 
-        }
+    }
 
 
   return newFiles;
@@ -488,30 +488,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //     }
 
 
-//     case 'CREATE_GOOGLE_IN_ENTRY': {
-//       const { name, fileType, fileId, entryIndex } = action;
 
-//       let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
-
-//       console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
-
-//       let newFiles = state.projectData.entries[entryIndex].files;
-
-//       let newFile = {title: `${name}.${extension}`, fileType: extension, fileId: fileId}
-        
-//       //newFiles = [...newFiles, { title: `${name}.${extension}`, fileType: extension, fileId: fileId }];
-//       newFiles = [...newFiles, newFile];
-
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-//         entryIndex === i ? { ...d, files: newFiles } : d
-//       );
-
-//       const newProjectData = { ...state.projectData, entries };
-
-//       console.log('ENTRIES', entries)
-
-//       return saveJSON(newProjectData, state);
-//     }
 
 //     case 'ADD_URL': {
 //       let newFiles = state.projectData.entries[action.entryIndex].files;
@@ -962,6 +939,45 @@ const appStateReducer = (state, action) => {
       const newFiles = [
         ...currentFiles,
         ...copyFiles(fileList, state.folderPath),
+      ];
+      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+        entryIndex === i ? { ...d, files: newFiles } : d
+      );
+
+      const newProjectData = { ...state.projectData, entries };
+
+      return saveJSON(newProjectData);
+    }
+
+    case 'CREATE_GOOGLE_IN_ENTRY': {
+      const { name, fileType, fileId, entryIndex } = action;
+
+      let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
+
+      console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
+
+      // let newFiles = state.projectData.entries[entryIndex].files;
+
+      // let newFile = {title: `${name}.${extension}`, fileType: extension, fileId: fileId}
+        
+      // //newFiles = [...newFiles, { title: `${name}.${extension}`, fileType: extension, fileId: fileId }];
+      // newFiles = [...newFiles, newFile];
+
+      // const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+      //   entryIndex === i ? { ...d, files: newFiles } : d
+      // );
+
+      // const newProjectData = { ...state.projectData, entries };
+
+      // console.log('ENTRIES', entries)
+
+      // return saveJSON(newProjectData, state);
+
+      const currentFiles = state.projectData.entries[entryIndex].files;
+      const newFiles = [
+        ...currentFiles,
+        //...copyFiles(fileList, state.folderPath),
+        {title: `${name}.${extension}`, fileType: extension, fileId: fileId, context: "null"}
       ];
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
         entryIndex === i ? { ...d, files: newFiles } : d
