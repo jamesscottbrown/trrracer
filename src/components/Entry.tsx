@@ -31,6 +31,7 @@ import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 
 
 import URLList from './URLList';
+// import { file } from 'googleapis/build/src/apis/file';
 
 interface EditDateTypes {
   date: string;
@@ -66,6 +67,35 @@ const EditDate = (props: EditDateTypes) => {
   );
 };
 
+
+const FileContext = (props:any)=>{
+
+    let {file, entryIndex, fileIndex} = props;
+
+    const [, dispatch] = useProjectState();
+
+    
+    let contextFill = file.meta ? file.meta : file.context;
+    console.log('contextttt',contextFill)
+    let contextStarter = contextFill != "null" ? contextFill : "No context here yet."
+
+    const [context, setContext] = useState(contextStarter);
+
+    const [editing, setEditing] = useState(false);
+  
+    const updateMeta = () => {
+      dispatch({type: 'FILE_META', entryIndex, fileIndex, context});
+    }
+
+    return (
+      <Editable defaultValue={context === "null" ? "No context here yet." : context}>
+      <EditablePreview/>
+      <EditableInput/>
+      <Button onClick={()=> updateMeta()}>Update Context</Button>
+      </Editable>
+    )
+}
+
 interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
@@ -93,7 +123,10 @@ const Entry = (props: EntryPropTypes) => {
     allTags,
     makeNonEditable,
   } = props;
+
   const [, dispatch] = useProjectState();
+
+  console.log('ENTRY DATA', entryData)
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
@@ -155,17 +188,6 @@ const Entry = (props: EntryPropTypes) => {
   //   //testNat();
   //   dispatch({ type: 'ADD_URL', url, entryIndex })
   // }
-
-  let metaForm = "";
-
-  const handleMetaChange = (event)=> {
-    metaForm = event.target.value
-  }
-
-  const updateMeta = (file, indexFile) => {
-   // console.log('update meta', file, index, metaForm);
-    dispatch({type: 'FILE_META', entryIndex, indexFile, metaForm});
-  }
 
   // return (
   //   <div style={{margin:"auto"}}>
@@ -264,7 +286,7 @@ const Entry = (props: EntryPropTypes) => {
       )}
 
       <UnorderedList>
-        {files.map((file: File) => (
+        {files.map((file: File, j:any) => (
           <ListItem key={file.title}>
             {file.title}{' '}
             <FaExternalLinkAlt
@@ -284,12 +306,13 @@ const Entry = (props: EntryPropTypes) => {
             <UnorderedList>
                <ListItem> 
                  
-                  <form>
+                  {/* <form>
                   <label>Context:
                       <input defaultValue={file.meta} onChange={handleMetaChange} type="text" />
                   </label>
                   <Button onClick={()=> updateMeta(file, j)}>Update Context</Button>
-                  </form>
+                  </form> */}
+                  <FileContext file={file} entryIndex={entryIndex} fileIndex={j}></FileContext>
                
                </ListItem> 
             </UnorderedList>
