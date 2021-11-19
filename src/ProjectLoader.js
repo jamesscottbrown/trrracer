@@ -89,9 +89,15 @@ class ProjectLoader {
                   );
                 }
 
+                const projectJSON = JSON.stringify({
+                  ...getEmptyProject(),
+                  title: path.basename(folderName),
+                });
+
                 fs.writeFile(
                   path.join(folderName, 'trrrace.json'),
-                  JSON.stringify(getEmptyProject(folderName)),
+                  // JSON.stringify(getEmptyProject(folderName)),
+                  projectJSON,
                   (writeErr) => {
                     if (writeErr) {
                       dialog.showErrorBox(

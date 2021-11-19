@@ -1,19 +1,27 @@
 import path from 'path';
 
 import React, { useState } from 'react';
-import { Heading } from '@chakra-ui/react';
+import { Heading, Divider } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
 
 import { repositionPoints } from 'respacer';
 
-import { EntryType, ProjectType, ProjectViewProps, TagType } from './types';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+
+import ConceptNav from './Concepts';
+
+import {
+  DeadlineType,
+  EntryType,
+  ProjectType,
+  ProjectViewProps,
+  TagType,
+} from './types';
 import { useProjectState } from './ProjectContext';
-import ViewTypeControl from './ViewTypeControl';
 import Entry from './Entry';
 import TagList from './TagList';
-import TagFilter from './SetFilterTags';
 
 const { ipcRenderer } = require('electron');
 
@@ -33,7 +41,7 @@ const EntryPlot = (props: EntryPlotProps) => {
   const squareWidth = 10;
   const squarePadding = 2;
 
-  console.log('ENTRY DATA:', entryData);
+  //console.log('ENTRY DATA:', entryData);
 
   const getColor = (title: string) => {
     const tag = tags.filter((t) => t.title === title)[0];
@@ -100,6 +108,45 @@ const EntryPlot = (props: EntryPlotProps) => {
   return null;
 };
 
+interface DeadlineProps {
+  deadline: DeadlineType;
+  width: number;
+  y: (t: Date) => number;
+}
+
+const Deadline = (props: DeadlineProps) => {
+  const { deadline, width, y } = props;
+
+  const spaceForTitle = 300;
+  const slopeLength = 25;
+
+  return (
+    <>
+      <line
+        x1={0}
+        x2={width - spaceForTitle - slopeLength}
+        y1={deadline.yDirect}
+        y2={deadline.yDirect}
+        stroke="grey"
+        strokeDasharray="4,4"
+      />
+
+      <line
+        x1={width - spaceForTitle - slopeLength}
+        x2={width - spaceForTitle}
+        y1={deadline.yDirect}
+        y2={deadline.y}
+        stroke="grey"
+        strokeDasharray="4,4"
+      />
+
+      <text x={width - spaceForTitle} y={deadline.y}>
+        {deadline.title}
+      </text>
+    </>
+  );
+};
+
 interface TimelinePlotProps {
   projectData: ProjectType;
   filteredEntries: EntryType[];
@@ -114,11 +161,16 @@ const TimelinePlot = (props: TimelinePlotProps) => {
     date: new Date(e.date),
   }));
 
+  const deadlines = projectData.deadlines ? projectData.deadlines : [];
+  const deadlineDates = deadlines.map((d) => new Date(d.date));
+
   const dates = entries.map((e) => e.date);
 
+  const height = Math.max(40 * entries.length, 600);
+
   const y = scaleTime()
-    .range([0, 40 * entries.length])
-    .domain(extent(dates));
+    .range([0, height])
+    .domain(extent([...dates, ...deadlineDates]));
 
   const positionEntries =
     entries.length > 0
@@ -132,8 +184,25 @@ const TimelinePlot = (props: TimelinePlotProps) => {
         )
       : [];
 
+  const positionedDeadlines =
+    deadlines.length > 0
+      ? repositionPoints(
+          deadlines.map((d, i) => ({
+            ...d,
+            yDirect: y(new Date(d.date)),
+            entryIndex: i,
+          })),
+          {
+            oldPositionName: 'yDirect',
+            newPositionName: 'y',
+            minSpacing: 40,
+          }
+        )
+      : [];
+
+  const width = 500;
   return (
-    <svg height={40 * dates.length + 100} width={1000}>
+    <svg height={height} width={width}>
       <g transform="translate(20, 20)">
         <line x1={0} x2={0} y1={y.range()[0]} y2={y.range()[1]} stroke="grey" />
 
@@ -146,18 +215,24 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             setEntryAsSelected={() => setSelectedEntryIndex(e.entryIndex)}
           />
         ))}
+
+        {positionedDeadlines.map((d) => (
+          <Deadline deadline={d} key={d.title} width={width} y={y} />
+        ))}
       </g>
     </svg>
   );
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
+  const { projectData, folderPath } = ProjectPropValues;
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
+
+  const [showTags, setShowTags] = useState(false);
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -181,14 +256,39 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      <Heading as="h1">{projectData.title}</Heading>
+      {/* // <Heading as="h1">{projectData.title}</Heading>
 
-      <ViewTypeControl viewType={viewType} setViewType={setViewType} />
+      // <ViewTypeControl viewType={viewType} setViewType={setViewType} />
 
-      <TagList tags={projectData.tags} />
+      // <TagList tags={projectData.tags} />
+
+      // <Heading as="h2">Entries</Heading>
+      // <TagFilter /> */}
+       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <br />
+      <Divider />
+        {showTags ?
+      <div>
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
+        <TagList tags={projectData.tags} />
+        </div>
+        :
+        <div><Heading as="h5">Tags <FaEye onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading></div>
+    }
 
       <Heading as="h2">Entries</Heading>
-      <TagFilter />
 
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
         <div>

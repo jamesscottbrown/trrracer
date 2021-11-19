@@ -15,14 +15,24 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
-const migrateTrrraceFormat = (projectData) => {
+const migrateTrrraceFormat = (projectData:any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
+  console.log('project data',projectData)
+
+  projectData.entries = projectData.entries.map(e => {
+    console.log('E', e);
+    return e
+  });
+
   return {
     ...projectData,
     entries: projectData.entries.map((e) => ({
       ...e,
-      urls: e.urls ? e.urls : [],
+      files: [
+        ...e.files,
+        ...e.urls.map((u) => ({ title: u.title, url: u.url, fileType: 'url' })),
+      ],
       tags: e.tags.map((t) => (typeof t === 'string' ? t : t.text)),
     })),
   };
@@ -49,9 +59,9 @@ export default function App() {
         dispatch({
           type: 'SET_DATA',
           folderName,
-          projectData: migrateTrrraceFormat(JSON.parse(data)),
+          // projectData: migrateTrrraceFormat(JSON.parse(data)),
+          projectData: JSON.parse(data)
         });
-        //console.log(data);
       }
     });
   });
@@ -79,7 +89,7 @@ export default function App() {
 
   return (
     <ChakraProvider>
-      <Project projectData={projectData} folderPath={folderPath} />
+      <Project folderPath={folderPath} />
     </ChakraProvider>
   );
 }

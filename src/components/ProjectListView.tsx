@@ -1,14 +1,24 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup, Divider, Heading } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Divider,
+  Heading,
+} from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
-import { EntryType, FileObj, ProjectViewProps } from './types';
+import {
+  EntryType,
+  EntryTypeWithIndex,
+  FileObj,
+  ProjectViewProps,
+} from './types';
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import TagList from './TagList';
-import TagFilter from './SetFilterTags';
 import ReadonlyEntry from './ReadonlyEntry';
 import ConceptNav from './Concepts';
 import EdgeControl from './Edges';
@@ -23,9 +33,19 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
+  const [reversedOrder, setReversedOrder] = useState<boolean>(false);
+
+  const [showTags, setShowTags] = useState(false);
 
   useEffect(() => {
-    setEditable(Array.from(Array(projectData.entries.length)));
+    if (editable.length === projectData.entries.length - 1) {
+      // one more entry was added
+      setEditable([...editable, true]);
+    } else if (editable.length !== projectData.entries.length) {
+      setEditable(
+        Array.from(Array(projectData.entries.length), (_, x) => false)
+      );
+    }
   }, [projectData]);
 
   // TODO: add files to json file and save
@@ -52,11 +72,19 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     console.log('after ipcRenderer')
   };
 
-  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every((requiredTag: string) =>
-      entryData.tags.includes(requiredTag)
-    );
-  });
+  const filteredEntries = projectData.entries
+    .filter((entryData: EntryType) => {
+     // console.log('entry-data', entryData)
+      return filterTags.every((requiredTag: string) =>
+        entryData.tags.includes(requiredTag)
+      );
+    })
+    .map((e, index) => ({ ...e, index }));
+  filteredEntries.sort(
+    (a, b) =>
+      (reversedOrder ? -1 : +1) *
+      (Number(new Date(a.date)) - Number(new Date(b.date)))
+  );
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -66,78 +94,168 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
   };
 
-  const makeEditable = (index: number) => {
+  const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>
-      oldEditable.map((d, i) => (i === index ? true : d))
+      oldEditable.map((d, i) => (i === index ? isEditable : d))
     );
   };
 
-  if(searchConcept === null){
+  // if(searchConcept === null){
 
-    return (
-      <div style={{padding:'10px'}}>
-        <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
-        <br />
-        <Divider />
-        <EdgeControl edges={projectData.edges}/>
-        <br />
-        <Divider />
-        <TagList tags={projectData.tags} />
-        <br />
-        <Divider />
-        <Heading as="h2">Activities</Heading>
-      <br/>
-        <ButtonGroup style={{display:"inline"}}>
-          {!editable.every((t) => t) && (
-            <Button onClick={makeAllEditable} type="button">
-              <FaEye />
-              Show all edit controls
-            </Button>
-          )}
-          {!editable.every((t) => !t) && (
-            <Button onClick={makeAllNonEditable} type="button">
-              <FaEyeSlash /> Hide all edit controls
-            </Button>
-          )}
-        </ButtonGroup>
+  //   return (
+  //     <div style={{padding:'10px'}}>
+  //       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+  //       <br />
+  //       <Divider />
+  //       <EdgeControl edges={projectData.edges}/>
+  //       <br />
+  //       <Divider />
+  //       <TagList tags={projectData.tags} />
+  //       <br />
+  //       <Divider />
+  //       <Heading as="h2">Activities</Heading>
+  //     <br/>
+  //       <ButtonGroup style={{display:"inline"}}>
+  //         {!editable.every((t) => t) && (
+  //           <Button onClick={makeAllEditable} type="button">
+  //             <FaEye />
+  //             Show all edit controls
+  //           </Button>
+  //         )}
+  //         {!editable.every((t) => !t) && (
+  //           <Button onClick={makeAllNonEditable} type="button">
+  //             <FaEyeSlash /> Hide all edit controls
+  //           </Button>
+  //         )}
+  //       </ButtonGroup>
   
-        <br />
-        <br />
+  //       <br />
+  //       <br />
   
-        <TagFilter />
+  //       <TagFilter />
   
-        <br/>
+  //       <br/>
   
-        {filteredEntries.map((entryData: EntryType, i: number) => (
-          <>
-            {editable[i] ? (
-              <Entry
-                /* eslint-disable-next-line react/no-array-index-key */
-                key={i}
-                entryData={entryData}
-                entryIndex={i}
-                openFile={openFile}
-                updateEntryField={updateEntryField}
-                allTags={projectData.tags}
-              />
-            ) : (
-              <ReadonlyEntry
-                /* eslint-disable-next-line react/no-array-index-key */
-                key={i}
-                entryData={entryData}
-                openFile={openFile}
-                makeEditable={() => makeEditable(i)}
-              />
-            )}
+  //       {filteredEntries.map((entryData: EntryType, i: number) => (
+  //         <>
+  //           {editable[i] ? (
+  //             <Entry
+  //               /* eslint-disable-next-line react/no-array-index-key */
+  //               key={i}
+  //               entryData={entryData}
+  //               entryIndex={i}
+  //               openFile={openFile}
+  //               updateEntryField={updateEntryField}
+  //               allTags={projectData.tags}
+  //             />
+  //           ) : (
+  //             <ReadonlyEntry
+  //               /* eslint-disable-next-line react/no-array-index-key */
+  //               key={i}
+  //               entryData={entryData}
+  //               openFile={openFile}
+  //               makeEditable={() => makeEditable(i)}
+  //             />
+  //           )}
   
-            <Divider marginTop="1em" marginBottom="1em" />
-          </>
-        ))}      
+  //           <Divider marginTop="1em" marginBottom="1em" />
+  //         </>
+  //       ))}      
         
-        <Button onClick={addEntry} type="button">
-          <FaPlus /> Add entry
-        </Button>
+  //       <Button onClick={addEntry} type="button">
+  //         <FaPlus /> Add entry
+  //       </Button>
   
+  return (
+    <div style={{ padding: '10px' }}>
+
+      <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <br />
+      <Divider />
+
+      {showTags ?
+      <div>
+        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading>
+        <TagList tags={projectData.tags} />
+        </div>
+        :
+        <div><Heading as="h5">Tags <FaEye onClick={()=>{
+          if(showTags){ 
+            setShowTags(false);
+          }else{ 
+            setShowTags(true);
+          };
+        }} style={{display:"inline"}}/></Heading></div>
+    }
+      
+
+      <Heading as="h2">Entries</Heading>
+
+      <Checkbox
+        checked={reversedOrder}
+        onChange={(e) => setReversedOrder(e.target.checked)}
+      >
+        Reverse chronological order
+      </Checkbox>
+      <br />
+      <br />
+
+      <ButtonGroup style={{ display: 'inline' }}>
+        {!editable.every((t) => t) && (
+          <Button onClick={makeAllEditable} type="button">
+            <FaEye />
+            Show edit controls for all entries
+          </Button>
+        )}
+        {!editable.every((t) => !t) && (
+          <Button onClick={makeAllNonEditable} type="button">
+            <FaEyeSlash /> Hide edit controls for all entries
+          </Button>
+        )}
+      </ButtonGroup>
+
+      <br />
+      <br />
+
+      <br />
+
+      {filteredEntries.map((entryData: EntryTypeWithIndex) => (
+        <>
+          {editable[entryData.index] ? (
+            <Entry
+              /* eslint-disable-next-line react/no-array-index-key */
+              key={`${entryData.title}-${entryData.index}`}
+              entryData={entryData}
+              entryIndex={entryData.index}
+              openFile={openFile}
+              updateEntryField={updateEntryField}
+              allTags={projectData.tags}
+              makeNonEditable={() => setEditableStatus(entryData.index, false)}
+            />
+          ) : (
+            <ReadonlyEntry
+              /* eslint-disable-next-line react/no-array-index-key */
+              key={`${entryData.title}-${entryData.index}`}
+              entryData={entryData}
+              openFile={openFile}
+              makeEditable={() => setEditableStatus(entryData.index, true)}
+            />
+          )}
+
+          <Divider marginTop="1em" marginBottom="1em" />
+        </>
+      ))}
+
+      <Button onClick={addEntry} type="button">
+        <FaPlus /> Add entry
+      </Button>
+
       <FileUpload
         saveFiles={saveFiles}
         containerStyle={{}}
@@ -151,17 +269,16 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       </div>
     );
 
-  }else{
-    return  (
-      <div style={{padding:'10px'}}>
-      <ConceptNav concepts={projectData.concepts}/>
+  // }else{
+  //   return  (
+  //     <div style={{padding:'10px'}}>
+  //     <ConceptNav concepts={projectData.concepts}/>
 
-    </div>
-    )
+  //   </div>
+  //   )
 
-  }
+  // }
 
 
 };
-
 export default ProjectListView;

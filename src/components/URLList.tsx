@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
 import {
   Button,
   ButtonGroup,
@@ -9,9 +9,16 @@ import {
   Input,
   ListItem,
   UnorderedList,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 
-import { FaPlus } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
 import { useProjectState } from './ProjectContext';
@@ -57,44 +64,93 @@ const URLList = (props: URLListProps) => {
 
   if (addingURL) {
     return (
-      <Modal
-        isOpen={addingURL}
-        onRequestClose={() => setAddingUrl(false)}
-        style={customStyles}
-      >
-        <Heading as="h1">Attach URL</Heading>
+      // <Modal
+      //   isOpen={addingURL}
+      //   onRequestClose={() => setAddingUrl(false)}
+      //   style={customStyles}
+      // >
+      //   <Heading as="h1">Attach URL</Heading>
 
-        <FormControl>
-          <FormLabel>URL:</FormLabel>
-          <Input
-            id="url"
-            value={additionURL}
-            onChange={(ev) => setAdditionURL(ev.target.value)}
-          />
-        </FormControl>
+      //   <FormControl>
+      //     <FormLabel>URL:</FormLabel>
+      //     <Input
+      //       id="url"
+      //       value={additionURL}
+      //       onChange={(ev) => setAdditionURL(ev.target.value)}
+      //     />
+      //   </FormControl>
 
-        <br />
+      //   <br />
 
-        <FormControl>
-          <FormLabel>Title:</FormLabel>
-          <Input
-            id="title"
-            value={additionTitle}
-            onChange={(ev) => setAdditionTitle(ev.target.value)}
-          />
-        </FormControl>
+      //   <FormControl>
+      //     <FormLabel>Title:</FormLabel>
+      //     <Input
+      //       id="title"
+      //       value={additionTitle}
+      //       onChange={(ev) => setAdditionTitle(ev.target.value)}
+      //     />
+      //   </FormControl>
 
-        <br />
+      //   <br />
 
-        <ButtonGroup>
-          <Button disabled={!additionURL} onClick={attachURL} type="button">
-            Add
-          </Button>
+      //   <ButtonGroup>
+      //     <Button disabled={!additionURL} onClick={attachURL} type="button">
+      //       Add
+      //     </Button>
 
-          <Button onClick={() => setAddingUrl(false)} type="button">
-            Cancel
-          </Button>
-        </ButtonGroup>
+      //     <Button onClick={() => setAddingUrl(false)} type="button">
+      //       Cancel
+      //     </Button>
+      //   </ButtonGroup>
+      <Modal isOpen={addingURL} onClose={() => setAddingUrl(false)}>
+        <ModalOverlay />
+
+        <ModalContent>
+          <ModalHeader>Attach URL</ModalHeader>
+
+          <ModalCloseButton />
+
+          <ModalBody>
+            <FormControl>
+              <FormLabel>URL:</FormLabel>
+              <Input
+                id="url"
+                value={additionURL}
+                onChange={(ev) => setAdditionURL(ev.target.value)}
+              />
+            </FormControl>
+
+            <br />
+
+            <FormControl>
+              <FormLabel>Title:</FormLabel>
+              <Input
+                id="title"
+                value={additionTitle}
+                onChange={(ev) => setAdditionTitle(ev.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => setAddingUrl(false)}
+              type="button"
+              colorScheme="gray"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              disabled={!additionURL}
+              onClick={attachURL}
+              type="button"
+              colorScheme="blue"
+            >
+              Add
+            </Button>
+          </ModalFooter>
+        </ModalContent>
       </Modal>
     );
   }
@@ -107,7 +163,13 @@ const URLList = (props: URLListProps) => {
           <UnorderedList>
             {urls.map((url) => (
               <ListItem key={url.url}>
-                <a href={url.url}>{url.title}</a>
+                {/* // <a href={url.url}>{url.title}</a> */}
+                <a href={url.url}>{url.title} </a>
+                <FaExternalLinkAlt
+                  title="Open URL in default web browser"
+                  size="12px"
+                  style={{ display: 'inline' }}
+                />
               </ListItem>
             ))}
           </UnorderedList>

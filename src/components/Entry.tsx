@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Heading, ListItem, UnorderedList } from '@chakra-ui/react';
+import {
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Heading,
+  ListItem,
+  UnorderedList,
+} from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 import DatePicker from 'react-datepicker';
-import EdiText from 'react-editext';
-import ReactMde, { TextArea } from 'react-mde';
-import { FaExternalLinkAlt, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import ReactMde from 'react-mde';
+import {
+  FaExternalLinkAlt,
+  FaEyeSlash,
+  FaPlus,
+  FaTrashAlt,
+} from 'react-icons/fa';
 
 import { WithContext as ReactTags } from 'react-tag-input';
 
@@ -12,11 +25,13 @@ import * as Showdown from 'showdown';
 
 import FileUpload from './FileUpload';
 
-import { File, FileObj, EntryType, TagType } from './types';
+import { EntryType, File, FileObj, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 
 
+import URLList from './URLList';
+// import { file } from 'googleapis/build/src/apis/file';
 
 interface EditDateTypes {
   date: string;
@@ -52,6 +67,35 @@ const EditDate = (props: EditDateTypes) => {
   );
 };
 
+
+const FileContext = (props:any)=>{
+
+    let {file, entryIndex, fileIndex} = props;
+
+    const [, dispatch] = useProjectState();
+
+    
+    let contextFill = file.meta ? file.meta : file.context;
+    console.log('contextttt',contextFill)
+    let contextStarter = contextFill != "null" ? contextFill : "No context here yet."
+
+    const [context, setContext] = useState(contextStarter);
+
+    const [editing, setEditing] = useState(false);
+  
+    const updateMeta = () => {
+      dispatch({type: 'FILE_META', entryIndex, fileIndex, context});
+    }
+
+    return (
+      <Editable defaultValue={context === "null" ? "No context here yet." : context}>
+      <EditablePreview/>
+      <EditableInput/>
+      <Button onClick={()=> updateMeta()}>Update Context</Button>
+      </Editable>
+    )
+}
+
 interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
@@ -62,6 +106,7 @@ interface EntryPropTypes {
     newData: any
   ) => void;
   allTags: TagType[];
+  makeNonEditable: () => void;
 }
 
 interface ReactTag {
@@ -70,8 +115,18 @@ interface ReactTag {
 }
 
 const Entry = (props: EntryPropTypes) => {
-  const { entryData, entryIndex, openFile, updateEntryField, allTags } = props;
+  const {
+    entryData,
+    entryIndex,
+    openFile,
+    updateEntryField,
+    allTags,
+    makeNonEditable,
+  } = props;
+
   const [, dispatch] = useProjectState();
+
+  console.log('ENTRY DATA', entryData)
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
@@ -102,9 +157,6 @@ const Entry = (props: EntryPropTypes) => {
   };
 
   const handleChangeTab = (newTab: 'write' | 'preview') => {
-    if (newTab === 'preview') {
-      updateEntryField(entryIndex, 'description', value);
-    }
     setSelectedTab(newTab);
   };
 
@@ -125,40 +177,46 @@ const Entry = (props: EntryPropTypes) => {
     enter: 13,
   };
 
-  let url = ''
+  // let url = ''
 
-  let handleChange = (event) =>{
-    url = event.target.value;
-  }
+  // let handleChange = (event) =>{
+  //   url = event.target.value;
+  // }
 
-  const addURL = () =>{
-    console.log('TEST THIS OUT');
-    //testNat();
-    dispatch({ type: 'ADD_URL', url, entryIndex })
-  }
+  // const addURL = () =>{
+  //   console.log('TEST THIS OUT');
+  //   //testNat();
+  //   dispatch({ type: 'ADD_URL', url, entryIndex })
+  // }
 
-  let metaForm = "";
-
-  const handleMetaChange = (event)=> {
-    metaForm = event.target.value
-  }
-
-  const updateMeta = (file, indexFile) => {
-   // console.log('update meta', file, index, metaForm);
-    dispatch({type: 'FILE_META', entryIndex, indexFile, metaForm});
-  }
+  // return (
+  //   <div style={{margin:"auto"}}>
+  //     <br />
+  //     <Heading as='h3'>
+  //       <EdiText
+  //         type="text"
+  //         value={entryData.title}
+  //         onSave={(val) => updateEntryField(entryIndex, 'title', val)}
+  //         editOnViewClick
+  //         submitOnUnfocus
+  //       />
+  const urls = entryData.files.filter((f) => f.fileType === 'url');
+  const files = entryData.files.filter((f) => f.fileType !== 'url');
 
   return (
-    <div style={{margin:"auto"}}>
+    <div style={{ margin: 'auto' }}>
       <br />
-      <Heading as='h3'>
-        <EdiText
-          type="text"
-          value={entryData.title}
-          onSave={(val) => updateEntryField(entryIndex, 'title', val)}
-          editOnViewClick
-          submitOnUnfocus
-        />
+      <Heading as="h3">
+        <Editable
+          defaultValue={entryData.title}
+          onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+        <Button onClick={makeNonEditable} type="button">
+          <FaEyeSlash /> Hide edit controls
+        </Button>
       </Heading>
 
       <EditDate
@@ -184,6 +242,15 @@ const Entry = (props: EntryPropTypes) => {
         }}
       />
 
+      <Button
+        colorScheme="red"
+        leftIcon={<DeleteIcon />}
+        onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
+      >
+        Delete Entry
+      </Button>
+      <br />
+
       {showDescription ? (
         <div className="markdownEditorContainer">
           <ReactMde
@@ -195,6 +262,22 @@ const Entry = (props: EntryPropTypes) => {
               Promise.resolve(converter.makeHtml(markdown))
             }
           />
+
+          {value !== entryData.description && (
+            <>
+              <b style={{ color: 'red' }}>
+                You have made unsaved changes to this field. These will be lost
+                if you switch to editing a different field.
+              </b>
+              <Button
+                onClick={() =>
+                  updateEntryField(entryIndex, 'description', value)
+                }
+              >
+                Save
+              </Button>
+            </>
+          )}
         </div>
       ) : (
         <Button onClick={() => enableDescription()} type="button">
@@ -203,31 +286,33 @@ const Entry = (props: EntryPropTypes) => {
       )}
 
       <UnorderedList>
-        {entryData.files.map((file: File, j:Number) => (
-          
-          <ListItem key={`${file.title}-${j}`}>
-            {file.title}{'    '}
+        {files.map((file: File, j:any) => (
+          <ListItem key={file.title}>
+            {file.title}{' '}
             <FaExternalLinkAlt
               onClick={() => {
                 console.log("FILEZZ", file, file.title);
                 openFile(file.title)}}
               title="Open file externally"
               size="12px"
+              style={{ display: 'inline' }}
             />{' '}
             <FaTrashAlt
               onClick={() => deleteFile(file)}
-              title="Delete File"
+              title="Unattahch or delete File"
               size="12px"
+              style={{ display: 'inline' }}
             />
             <UnorderedList>
                <ListItem> 
                  
-                  <form>
+                  {/* <form>
                   <label>Context:
                       <input defaultValue={file.meta} onChange={handleMetaChange} type="text" />
                   </label>
                   <Button onClick={()=> updateMeta(file, j)}>Update Context</Button>
-                  </form>
+                  </form> */}
+                  <FileContext file={file} entryIndex={entryIndex} fileIndex={j}></FileContext>
                
                </ListItem> 
             </UnorderedList>
@@ -270,7 +355,7 @@ const Entry = (props: EntryPropTypes) => {
       text={"Create Google Sheet"}
       entryIndex={entryIndex}
     />
-    {showURL ?
+    {/* {showURL ?
     <div>
       <Button color="primary" onClick={()=>{ 
         setShowURL(false)
@@ -290,7 +375,13 @@ const Entry = (props: EntryPropTypes) => {
     <Button color="primary" onClick={()=>{
       setShowURL(true)
     }}>Add URL</Button>
-    } 
+    }  */}
+      {/* )} */}
+
+      <br />
+
+      <URLList urls={urls} entryIndex={entryIndex} />
+      <></>
     </div>
   );
 };

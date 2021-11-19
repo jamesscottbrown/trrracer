@@ -1,37 +1,46 @@
 import React, { useState } from 'react';
+import * as fs from 'fs';
 const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
 import { readFile } from '../fileUtil';
+import {
+  Button,
+  ButtonGroup,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Heading,
+  ListItem,
+  UnorderedList,
+} from '@chakra-ui/react';
+
+
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
-  const [, dispatch] = useProjectState();
-  const [showFileCreate, setShowFileCreate] = useState(false);
   const {fileType, text, entryIndex} = props;
 
-  let fileName = "new google doc";
+  const [, dispatch] = useProjectState();
+  const [showFileCreate, setShowFileCreate] = useState(false);
+  const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
 
-  function handleChange(event){
-    fileName = event.target.value;
-  }
   
   const saveGoogleFile = () => {
-
-    console.log('save files NAME', fileName);
     
-   createGoogleFile(fileName);
-   setShowFileCreate(false);
+    createGoogleFile(googleFileName);
+    setShowFileCreate(false);
     
   };
 
   async function testGoog(){
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    const token = await readFile('token.json')
+    // const token = await readFile('token.json')
+    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
     oAuth2Client.setCredentials(JSON.parse(token))
     console.log('init client');
     console.log('auth Instance', google)
-    console.log('tokemn', oAuth2Client.credentials)
+    console.log('token', oAuth2Client.credentials)
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
 
     drive.files.list({
@@ -47,7 +56,8 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   async function createGoogleFile(name : string){
   
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    const token = await readFile('token.json')
+    // const token = await readFile('token.json')
+    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
     oAuth2Client.setCredentials(JSON.parse(token))
     
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -68,8 +78,6 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
           var file = response.result;
           console.log('Created File data google', response, response.data.id);
 
-          
-
           dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
 
           break;
@@ -86,28 +94,43 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
      {showFileCreate ? (
         <>
           
-          <button color="primary" onClick={() => {
+            <Editable
+            defaultValue={googleFileName}
+            startWithEditView={true}
+            onChange={(val)=> setGoogleFileName(val)}
+            w="420px"
+            boxShadow="xs" p="4" rounded="md" bg="white"
+            >
+          <EditablePreview 
+          // display="inline"
+          border="1px"
+          borderColor="gray.200"
+          boxShadow="sm" p="2"
+          />
+          <EditableInput 
+          display="inline"
+          />
+          <ButtonGroup display="inline">
+          <Button color="primary" display="inline-block" onClick={()=> saveGoogleFile()} type="button">
+            {/* <Button color="primary" onClick={(val)=> console.log(googleFileName)} type="button"> */}
+            Create
+          </Button>
+          <Button color="red.400" onClick={() => {
             testGoog();
             setShowFileCreate(false)}} type="button">
             Cancel
-          </button>
-       
-          <form>
-            <label>
-                <input onChange={handleChange} type="text" />
-            </label>
-            </form>
+          </Button>
+          </ButtonGroup>
+          </Editable>
           {/* <input type="text" onChange={handleChange}/> */}
-          <button color="primary" onClick={()=> saveGoogleFile()} type="button">
-          Create
-          </button>
+         
         </>
       ) : (
-        <button color="primary" onClick={()=> {
+        <Button m="3px" onClick={()=> {
           testGoog();
           setShowFileCreate(true)}} type="button">
           {text}
-        </button>
+        </Button>
         
       )}
      
