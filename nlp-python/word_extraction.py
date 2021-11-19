@@ -27,10 +27,10 @@ def extract_words_yake(d_b_json):
 
     keyKeep = []
     for en in d_b_json['entries']:
-    #     print(len(en['blob']))
+   
         enob = {}
         enob['title'] = en['title']
-        # enob['file-array'] = []
+       
         wumbo_blob_clean = ""
         wumbo_blob_raw = ""
         for file in en['file-array']:

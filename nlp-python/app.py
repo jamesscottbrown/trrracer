@@ -2,7 +2,7 @@ from flask import Flask
 import os
 import sys
 import json
-from google_api import goog_auth #goog_doc_start, get_doc_text_by_id
+from google_api import goog_auth, goog_doc_start, get_doc_text_by_id, get_doc_all_by_id
 from get_blobs import extract_entry_text_to_blobs, make_file_array_for_entry
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
@@ -66,7 +66,55 @@ def write_blobs_to_file(blob, document_path):
 @app.route("/")
 def index():
     document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    # load_all_blobs_as_corpus(document_path)
+   
+    cred = goog_auth()
+    gdoc_service = goog_doc_start(cred)
+    test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
+    return str(test)
+    
+@app.route("/extract_text_files")
+def extract_text_files():
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_file_array_for_entry)
+
+    outfile = open(DOCUMENT_PATH+'blob_w_files.json', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
+
+@app.route("/extract_emphasized_text")
+def extract_emphasized_text():
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_file_array_for_entry)
+
+    outfile = open(DOCUMENT_PATH+'emphasized_text_from_files', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
+
+@app.route("/extract_text_entry")
+def extract_text_entry():
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_blob_for_entry)
+
+    outfile = open(DOCUMENT_PATH+'blob.json', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
+
+@app.route("/yake_extract_words")
+def yake_extract_words():
+    # document_path = 
+    data_backbone = open(DOCUMENT_PATH + "blob_w_files.json", 'r')
+    d_b_json = json.load(data_backbone)
+    blob_array = extract_words_yake(d_b_json)
+   
+    bob = {}
+    bob['keyword_data'] = blob_array
+    outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
+    json.dump(bob, outfile)
+    return str(blob_array)
+
+
+
+ # load_all_blobs_as_corpus(document_path)
     # new_json["entries"] = reformat(d_b_json["entries"]
     # json_with_freq_w = get_frequent_words_all_files(d_b_json, gdoc_service, document_path)
     # json_with_entry_freq = term_freq_for_entry(d_b_json, gdoc_service, document_path)
@@ -112,44 +160,6 @@ def index():
         
     
     #json.dump(ldamodel.print_topics(), outfile)
-    cred = goog_auth()
-    # return str(blob)
-    return str(cred)
-    
-@app.route("/extract_text_files")
-def extract_text_files():
-    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_file_array_for_entry)
-
-    outfile = open(document_path+'blob_w_files.json', 'w')
-    json.dump(blob, outfile)
-    return str(blob)
-
-@app.route("/extract_text_entry")
-def extract_text_entry():
-    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_blob_for_entry)
-
-    outfile = open(DOCUMENT_PATH+'blob.json', 'w')
-    json.dump(blob, outfile)
-    return str(blob)
-
-@app.route("/yake_extract_words")
-def yake_extract_words():
-    # document_path = 
-    data_backbone = open(DOCUMENT_PATH + "blob_w_files.json", 'r')
-    d_b_json = json.load(data_backbone)
-    blob_array = extract_words_yake(d_b_json)
-   
-    bob = {}
-    bob['keyword_data'] = blob_array
-    outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
-    json.dump(bob, outfile)
-    return str(blob_array)
-
-
-
-
 
 
           

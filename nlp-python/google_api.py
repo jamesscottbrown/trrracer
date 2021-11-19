@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os.path
+import json
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -48,13 +49,49 @@ def read_paragraph_element(element):
             element: a ParagraphElement from a Google Doc.
     """
     text_run = element.get('textRun')
-    print(text_run)
+   
     if not text_run:
         return ''
     return text_run.get('content')
 
+def get_emphasized_text(doc_content):
+    keeper = []
+    for par in doc_content:
+        if 'paragraph' in par:
+            for te in par['paragraph']['elements']:
+                if 'textRun' in te:
+                    if ("italic", True) in te['textRun']['textStyle'].items():
+                        keeper.append(te['textRun'])
+                    elif ("bold", True) in te['textRun']['textStyle'].items():
+                        keeper.append(te['textRun'])
+                    elif "foregroundColor" in te['textRun']['textStyle']:
+                        keeper.append(te['textRun'])
+                    elif "backgroundColor" in te['textRun']['textStyle']:
+                        keeper.append(te['textRun'])
+    return keeper
+
+
+def get_doc_all_by_id(goog_serv, id):
+    keeper = []
+    doc = goog_serv.documents().get(documentId=id).execute()
+    doc_content = doc.get('body').get('content')
+ 
+    for par in doc_content:
+        if 'paragraph' in par:
+            for te in par['paragraph']['elements']:
+               
+                if ("italic", True) in te['textRun']['textStyle'].items():
+                    keeper.append(te['textRun'])
+                elif ("bold", True) in te['textRun']['textStyle'].items():
+                    keeper.append(te['textRun'])
+                elif "foregroundColor" in te['textRun']['textStyle']:
+                    keeper.append(te['textRun'])
+                elif "backgroundColor" in te['textRun']['textStyle']:
+                    keeper.append(te['textRun'])
+    return keeper
 
 def read_strucutural_elements(elements):
+
     """Recurses through a list of Structural Elements to read a document's text where text may be
         in nested elements.
 
@@ -81,9 +118,20 @@ def read_strucutural_elements(elements):
             text += read_strucutural_elements(toc.get('content'))
     return text
 
+def get_emph_text_by_id():
+    doc = docs_service.documents().get(documentId=id).execute()
+    doc_content = doc.get('body').get('content')
+    
+    textOb = {}
+    textOb['emphasized'] = get_emphasized_text(doc_content)
+
+
 def get_doc_text_by_id(docs_service, id):
     doc = docs_service.documents().get(documentId=id).execute()
     doc_content = doc.get('body').get('content')
-    # print(read_strucutural_elements(doc_content))
+    
+    textOb = {}
+    textOb['emphasized'] = get_emphasized_text(doc_content)
+    textOb['text'] = read_strucutural_elements(doc_content)
 
-    return read_strucutural_elements(doc_content)
+    return textOb
