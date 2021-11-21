@@ -243,8 +243,10 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
   };
 
   const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every((requiredTag: string) =>
-      entryData.tags.includes(requiredTag)
+    return filterTags.every(
+      (requiredTag: string) =>
+        entryData.tags.includes(requiredTag) ||
+        entryData.quoteTags.includes(requiredTag)
     );
   });
 

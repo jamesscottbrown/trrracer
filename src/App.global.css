@@ -137,3 +137,10 @@ hr {
   margin-top: 0;
   margin-bottom: 16px;
 }
+
+/* override the monospace font for code blocks with language trrrace */
+code.language-trrrace {
+  /* color: red; */
+  font-family: var(--chakra-fonts-body);
+  color: var(--chakra-colors-gray-800);
+}
