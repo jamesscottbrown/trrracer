@@ -1,4 +1,5 @@
 import React from 'react';
+import reactDOMServer from 'react-dom/server';
 
 import {
   Button,
@@ -12,7 +13,10 @@ import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 
 import { format } from 'date-fns';
-import * as Showdown from 'showdown';
+
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+// import 'highlight.js/styles/default.css';
 
 import { File, EntryType, TagType } from './types';
 import textColor from '../colors';
@@ -42,11 +46,43 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return matchingTags[0].color;
   };
 
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
+  const formatter = MarkdownIt({
+    html: true,
+    highlight(str: string, lang: string) {
+      if (lang === 'trrrace') {
+        const [header, ...rest] = str.split('\n');
+        const tags = header.split(',').map((t) => t.trim());
+        const tagHTML = tags.map((t) =>
+          reactDOMServer.renderToString(
+            <Tag
+              key={t}
+              borderColor={getColor(t)}
+              borderWidth="5px"
+              backgroundColor={getColor(t)}
+              color={textColor(getColor(t))}
+              marginRight="0.25em"
+            >
+              {t}
+            </Tag>
+          )
+        );
+
+        const body = formatter.render(rest.join('\n'));
+
+        return `<div style='border-left: 2px solid var(--chakra-colors-blue-200); padding-left: 5px;'<p>Tags: ${tagHTML.join(
+          ' '
+        )}</p> ${body}</div>`;
+      }
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (__) {
+          console.error('SYNTAX HIGLIGHTING FAIL!');
+        }
+      }
+
+      return ''; // use external default escaping
+    },
   });
 
   return (
@@ -94,7 +130,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         <div
           className="readonlyEntryMarkdownPreview"
           dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(entryData.description),
+            __html: formatter.render(entryData.description),
           }}
         />
       )}

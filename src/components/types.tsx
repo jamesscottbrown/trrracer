@@ -23,6 +23,7 @@ interface EntryType {
   urls: URLAttachment[];
   date: string;
   tags: string[];
+  quoteTags: string[];
   isPrivate: boolean;
 }
 
