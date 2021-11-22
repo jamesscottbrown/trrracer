@@ -109,9 +109,38 @@ hr {
   background: none;
 }
 
+/* Markdown previw in readonly mode */
+.readonlyEntryMarkdownPreview {
+  border: solid 1px #f1f1f1;
+  border-radius: 25px;
+  padding: 1em;
+  margin-bottom: 0.5em;
+}
+
 .readonlyEntryMarkdownPreview blockquote {
   margin-left: 0;
   padding: 0 1em;
   color: #777;
   border-left: 0.25em solid #ddd;
+}
+
+.readonlyEntryMarkdownPreview a {
+  color: #4078c0;
+  text-decoration: none;
+}
+
+.readonlyEntryMarkdownPreview ul {
+  padding-left: 2em;
+}
+
+.readonlyEntryMarkdownPreview p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+/* override the monospace font for code blocks with language trrrace */
+code.language-trrrace {
+  /* color: red; */
+  font-family: var(--chakra-fonts-body);
+  color: var(--chakra-colors-gray-800);
 }

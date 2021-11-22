@@ -4,6 +4,8 @@ import { copyFileSync } from 'fs';
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
+import MarkdownIt from 'markdown-it';
+
 import { EntryType, File, FileObj, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 
@@ -12,6 +14,31 @@ export const ProjectContext = createContext();
 export function useProjectState() {
   return useContext(ProjectContext);
 }
+
+const getQuoteTags = (description: string) => {
+  let tagsInEntry: string[] = [];
+
+  const formatter = MarkdownIt({
+    html: true,
+    highlight(str: string, lang: string) {
+      if (lang === 'trrrace') {
+        const [header, ...rest] = str.split('\n');
+        const tagsInBlock = header.split(',').map((t) => t.trim());
+        tagsInEntry = [...tagsInEntry, ...tagsInBlock];
+      }
+    },
+  });
+
+  formatter.render(description);
+  return tagsInEntry;
+};
+
+const addQuoteTags = (entry: EntryType) => {
+  return {
+    ...entry,
+    quoteTags: getQuoteTags(entry.description),
+  };
+};
 
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
@@ -109,9 +136,16 @@ const appStateReducer = (state, action) => {
   console.log('ACTION:', action);
   switch (action.type) {
     case 'SET_DATA': {
+      const newProjectData = {
+        ...action.projectData,
+        entries: action.projectData.entries.map((e: EntryType) =>
+          addQuoteTags(e)
+        ),
+      };
+
       return {
         folderPath: action.folderName,
-        projectData: action.projectData,
+        projectData: newProjectData,
         filterTags: [],
       };
     }
@@ -263,6 +297,7 @@ const appStateReducer = (state, action) => {
         date: new Date().toISOString(),
         tags: [],
         urls: [],
+        quoteTags: [],
       };
 
       const newProjectData = {
@@ -293,7 +328,11 @@ const appStateReducer = (state, action) => {
     case 'UPDATE_ENTRY_FIELD': {
       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
         action.entryIndex === i
-          ? { ...d, [action.fieldName]: action.newValue }
+          ? {
+              ...d,
+              [action.fieldName]: action.newValue,
+              quoteTags: getQuoteTags(d.description),
+            }
           : d
       );
 
