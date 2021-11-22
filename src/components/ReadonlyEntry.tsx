@@ -10,7 +10,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 
 import { format } from 'date-fns';
 
@@ -88,6 +88,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   return (
     <>
       <Heading as="h2">
+        {entryData.isPrivate && (
+          <FaLock
+            title="This entry is private, and will be hidden when the Trrrace is exported."
+            size="0.75em"
+            style={{ display: 'inline', fill: 'lightgrey' }}
+          />
+        )}
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
           Edit entry

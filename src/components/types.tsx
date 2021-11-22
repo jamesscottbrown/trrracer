@@ -24,6 +24,7 @@ interface EntryType {
   date: string;
   tags: string[];
   quoteTags: string[];
+  isPrivate: boolean;
 }
 
 interface EntryTypeWithIndex {
