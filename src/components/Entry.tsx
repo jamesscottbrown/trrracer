@@ -11,6 +11,7 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons';
 
 import DatePicker from 'react-datepicker';
+import { timeFormat } from 'd3-time-format';
 import ReactMde from 'react-mde';
 import {
   FaExternalLinkAlt,
@@ -44,15 +45,9 @@ interface EditDateTypes {
 const EditDate = (props: EditDateTypes) => {
   const { date, entryIndex, updateEntryField } = props;
 
+  const formatTime = timeFormat('%Y-%m-%d');
   const updateDate = (newDate: Date) => {
-    // if in GMT, the time will be returned in UTC, so will be 11pm of the day before
-    newDate.setHours(newDate.getHours() + 1);
-
-    updateEntryField(
-      entryIndex,
-      'date',
-      newDate.toISOString().substring(0, 10)
-    );
+    updateEntryField(entryIndex, 'date', formatTime(newDate));
   };
 
   return (
