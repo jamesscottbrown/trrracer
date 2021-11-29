@@ -1,4 +1,5 @@
 import React from 'react';
+import reactDOMServer from 'react-dom/server';
 
 import {
   Button,
@@ -9,10 +10,13 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 
 import { format } from 'date-fns';
-import * as Showdown from 'showdown';
+
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+// import 'highlight.js/styles/default.css';
 
 import { File, EntryType, TagType } from './types';
 import textColor from '../colors';
@@ -42,16 +46,55 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return matchingTags[0].color;
   };
 
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
+  const formatter = MarkdownIt({
+    html: true,
+    highlight(str: string, lang: string) {
+      if (lang === 'trrrace') {
+        const [header, ...rest] = str.split('\n');
+        const tags = header.split(',').map((t) => t.trim());
+        const tagHTML = tags.map((t) =>
+          reactDOMServer.renderToString(
+            <Tag
+              key={t}
+              borderColor={getColor(t)}
+              borderWidth="5px"
+              backgroundColor={getColor(t)}
+              color={textColor(getColor(t))}
+              marginRight="0.25em"
+            >
+              {t}
+            </Tag>
+          )
+        );
+
+        const body = formatter.render(rest.join('\n'));
+
+        return `<div style='border-left: 2px solid var(--chakra-colors-blue-200); padding-left: 5px;'<p>Tags: ${tagHTML.join(
+          ' '
+        )}</p> ${body}</div>`;
+      }
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(str, { language: lang }).value;
+        } catch (__) {
+          console.error('SYNTAX HIGLIGHTING FAIL!');
+        }
+      }
+
+      return ''; // use external default escaping
+    },
   });
 
   return (
     <>
       <Heading as="h2">
+        {entryData.isPrivate && (
+          <FaLock
+            title="This entry is private, and will be hidden when the Trrrace is exported."
+            size="0.75em"
+            style={{ display: 'inline', fill: 'lightgrey' }}
+          />
+        )}
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
           Edit entry
@@ -87,7 +130,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         <div
           className="readonlyEntryMarkdownPreview"
           dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(entryData.description),
+            __html: formatter.render(entryData.description),
           }}
         />
       )}

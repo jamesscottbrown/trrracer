@@ -16,6 +16,8 @@ import ReactMde from 'react-mde';
 import {
   FaExternalLinkAlt,
   FaEyeSlash,
+  FaLock,
+  FaLockOpen,
   FaPlus,
   FaTrashAlt,
 } from 'react-icons/fa';
@@ -150,6 +152,18 @@ const Entry = (props: EntryPropTypes) => {
         </Editable>
         <Button onClick={makeNonEditable} type="button">
           <FaEyeSlash /> Hide edit controls
+        </Button>
+        <Button
+          colorScheme="red"
+          onClick={() =>
+            updateEntryField(entryIndex, 'isPrivate', !entryData.isPrivate)
+          }
+        >
+          {entryData.isPrivate ? (
+            <FaLock title="Entry is currently private; click to make it public." />
+          ) : (
+            <FaLockOpen title="Entry is currently public; click to make it private." />
+          )}
         </Button>
       </Heading>
 
