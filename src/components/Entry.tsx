@@ -76,7 +76,7 @@ const FileContext = (props:any)=>{
 
     
     let contextFill = file.meta ? file.meta : file.context;
-    console.log('contextttt',contextFill)
+   
     let contextStarter = contextFill != "null" ? contextFill : "No context here yet."
 
     const [context, setContext] = useState(contextStarter);
@@ -126,7 +126,7 @@ const Entry = (props: EntryPropTypes) => {
 
   const [, dispatch] = useProjectState();
 
-  console.log('ENTRY DATA', entryData)
+  
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
@@ -184,7 +184,7 @@ const Entry = (props: EntryPropTypes) => {
   // }
 
   // const addURL = () =>{
-  //   console.log('TEST THIS OUT');
+  
   //   //testNat();
   //   dispatch({ type: 'ADD_URL', url, entryIndex })
   // }
@@ -291,7 +291,7 @@ const Entry = (props: EntryPropTypes) => {
             {file.title}{' '}
             <FaExternalLinkAlt
               onClick={() => {
-                console.log("FILEZZ", file, file.title);
+                
                 openFile(file.title)}}
               title="Open file externally"
               size="12px"

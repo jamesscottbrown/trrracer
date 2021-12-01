@@ -32,7 +32,7 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
-  console.log('ENTRY DATA',entryData)
+
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -103,7 +103,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   //     <div style={{float:'right', width:'37%', display:'inline-block'}}>
         
   //       {  entryData.tfidf != null && entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
-  //           // console.log(entryData.tfidf.yak)
+  //        
   //           entryData.tfidf['yak'].map(tf =>(
   //             <div style={{'display':'inline'}}>
   //                <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf)}>{tf.term}</Badge></Tooltip>
@@ -212,7 +212,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
      <div style={{float:'right', width:'37%', display:'inline-block'}}>
         
             {  entryData.tfidf != null && entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
-                  // console.log(entryData.tfidf.yak)
+                 
                   entryData.tfidf['yak'].map(tf =>(
                     <div style={{'display':'inline'}}>
                        <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf)}>{tf.term}</Badge></Tooltip>

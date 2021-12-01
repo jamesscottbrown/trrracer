@@ -9,6 +9,7 @@ import path from 'path';
 import { EntryType, File, FileObj, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
+import DataDisplayer from '../callsToFlask';
 
 // import * as collo from '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json'
 
@@ -652,6 +653,7 @@ const appStateReducer = (state, action) => {
 
 
       const baseDir = action.folderName;
+      // DataDisplayer('jen')
 
       let topics = [];
       try {

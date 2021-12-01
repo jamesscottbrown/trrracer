@@ -11,7 +11,8 @@ from concordance import key_concord
 
 app = Flask(__name__)
 
-DOCUMENT_PATH = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+DOCUMENT_PATH_DERYA = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+DOCUMENT_PATH_JEN = '/Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/'
 
 def reformat(entries):
     indexer = 0
@@ -65,17 +66,36 @@ def write_blobs_to_file(blob, document_path):
 
 @app.route("/")
 def index():
-    document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
    
-    cred = goog_auth()
-    gdoc_service = goog_doc_start(cred)
-    test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
-    return str(test)
+    # cred = goog_auth()
+    # gdoc_service = goog_doc_start(cred)
+    # test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
+    return "nothing happening"
+
+@app.route('/get_all_google_extract/<string:path>')
+def get_all_google_extract(path):
+    path_array = path.split("+")
+    document_path = "/".join(path_array) + "/"
+
+    # import glob
+    # print(glob.glob("/Volumes/GoogleDrive/"))
+    # return str(glob.glob(document_path))
+
+    # /Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/trrrace.json
+    final_path = DOCUMENT_PATH_DERYA if path == 'derya' else DOCUMENT_PATH_JEN 
+   
+    blob = extract_entry_text_to_blobs(final_path, make_file_array_for_entry)
+
+    outfile = open(final_path+'emphasized_text_from_files.json', 'w')
+    json.dump(blob, outfile)
+    return str(blob)
+
     
 @app.route("/extract_text_files")
 def extract_text_files():
     # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_file_array_for_entry)
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH+"/", make_file_array_for_entry)
 
     outfile = open(DOCUMENT_PATH+'blob_w_files.json', 'w')
     json.dump(blob, outfile)
