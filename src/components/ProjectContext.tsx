@@ -9,7 +9,7 @@ import path from 'path';
 import { EntryType, File, FileObj, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
-import DataDisplayer from '../callsToFlask';
+import DataDisplayer from '../CallFlask';
 
 // import * as collo from '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json'
 

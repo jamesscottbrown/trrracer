@@ -5,6 +5,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+# from pydrive.auth import GoogleAuth
+# from pydrive.drive import GoogleDrive
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -39,6 +41,11 @@ def goog_auth():
 def goog_doc_start(creds):
 
     service = build('docs', 'v1', credentials=creds)
+
+    return service
+
+def google_drive_start(creds):
+    service  = build('drive', 'v3', credentials=creds)
 
     return service
 
@@ -135,3 +142,7 @@ def get_doc_text_by_id(docs_service, id):
     textOb['text'] = read_strucutural_elements(doc_content)
 
     return textOb
+
+def get_comments_by_id(gdrive_service, id):
+    print(gdrive_service, id)
+    

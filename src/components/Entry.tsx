@@ -31,6 +31,7 @@ import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 
 
 import URLList from './URLList';
+import DataDisplayer from './CallFlask';
 // import { file } from 'googleapis/build/src/apis/file';
 
 interface EditDateTypes {
@@ -355,6 +356,7 @@ const Entry = (props: EntryPropTypes) => {
       text={"Create Google Sheet"}
       entryIndex={entryIndex}
     />
+    <DataDisplayer user={"jen"}/>
     {/* {showURL ?
     <div>
       <Button color="primary" onClick={()=>{ 

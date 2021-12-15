@@ -51,6 +51,12 @@ const FileUpload = (props: FileUploadProps) => {
     isDragAccept,
     isDragReject,
   } = useDropzone({
+    onDragOver: (event) => {
+      // Without this function the drop event would fail to fire (but only sometimes)
+      // Solution from https://stackoverflow.com/a/50233827
+      event.stopPropagation();
+      event.preventDefault();
+    },
     // accept: '.pdf,.doc,.docx',
     onDropAccepted: (files) => {
       saveFiles(files);

@@ -174,7 +174,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     </>
   );
 
-  return null;
+  // return null;
 };
 
 export default Project;

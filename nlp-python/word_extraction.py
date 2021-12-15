@@ -22,6 +22,42 @@ def remove_string_special_characters(s):
     if stripped != '':
             return stripped.lower()
 
+def use_yake_for_text(file_text):
+    
+    enob = {}
+    wumbo_blob_clean = ""
+    wumbo_blob_raw = ""
+
+    if len(file_text) > 2:
+        
+        test = remove_string_special_characters(file_text)
+
+        if test is not None:
+                
+            stop_words = set(stopwords.words('english'))
+            your_list = ['think', 'know', '\n', 'pre', 'post', 'PRE', 'POST', 'yeah', 'https', 'httpssitesdukeedudnac', 'researchinteresting']
+
+            temp = ' '.join([x for x in nltk.word_tokenize(test) if ( x not in stop_words ) and ( x not in your_list )])
+                    
+            wumbo_blob_clean = wumbo_blob_clean + temp
+
+        language = "en"
+        max_ngram_size = 2
+        deduplication_thresold = 0.2
+        deduplication_algo = 'seqm'
+        windowSize = 1
+        numOfKeywords = 20
+
+        kw_extractor = yake.KeywordExtractor(lan=language, n=max_ngram_size, dedupLim=deduplication_thresold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None)
+        keywords = kw_extractor.extract_keywords(wumbo_blob_clean)
+        key_array = key_concord(keywords, file_text)
+
+        enob['keywords'] = key_array
+
+        return enob
+            
+        
+
 
 def extract_words_yake(d_b_json):
 

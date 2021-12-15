@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 import sys
 import json
@@ -6,7 +6,7 @@ from google_api import goog_auth, goog_doc_start, get_doc_text_by_id, get_doc_al
 from get_blobs import extract_entry_text_to_blobs, make_file_array_for_entry
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
-from word_extraction import extract_words_yake
+from word_extraction import extract_words_yake, use_yake_for_text
 from concordance import key_concord
 
 app = Flask(__name__)
@@ -73,23 +73,20 @@ def index():
     # test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
     return "nothing happening"
 
-@app.route('/get_all_google_extract/<string:path>')
-def get_all_google_extract(path):
-    path_array = path.split("+")
-    document_path = "/".join(path_array) + "/"
+@app.route('/get_all_sig_blobs/<string:path>')
+def get_all_sig_blobs(path):
+   
+    print('PATHHHH',path)
 
-    # import glob
-    # print(glob.glob("/Volumes/GoogleDrive/"))
-    # return str(glob.glob(document_path))
-
-    # /Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/trrrace.json
     final_path = DOCUMENT_PATH_DERYA if path == 'derya' else DOCUMENT_PATH_JEN 
    
     blob = extract_entry_text_to_blobs(final_path, make_file_array_for_entry)
 
     outfile = open(final_path+'emphasized_text_from_files.json', 'w')
     json.dump(blob, outfile)
-    return str(blob)
+    return jsonify(blob)
+
+
 
     
 @app.route("/extract_text_files")

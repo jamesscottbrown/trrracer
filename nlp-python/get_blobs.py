@@ -7,15 +7,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from word_extraction import extract_words_yake, use_yake_for_text
 import nltk
 import spacy
 STOP = stopwords.words('english')
-from google_api import goog_auth, goog_doc_start, get_doc_text_by_id
+from google_api import goog_auth, goog_doc_start, google_drive_start, get_doc_text_by_id, get_comments_by_id
 
 def extract_entry_text_to_blobs(document_path, fun_function):
     
     cred = goog_auth()
     gdoc_service = goog_doc_start(cred)
+    gdrive_service = google_drive_start(cred)
+    print(gdrive_service)
 
     data_backbone = open(document_path + "trrrace.json", 'r')
     d_b_json = json.load(data_backbone)
@@ -25,7 +28,7 @@ def extract_entry_text_to_blobs(document_path, fun_function):
     fixed_entries = fix_missing_file_type(d_b_json["entries"])
 
     blob = {}
-    blob["entries"] = fun_function(fixed_entries, gdoc_service, document_path)
+    blob["entries"] = fun_function(fixed_entries, gdoc_service, gdrive_service, document_path)
  
     return blob
 
@@ -71,7 +74,7 @@ def make_blob_for_entry(entries, gdoc_service, document_path):
 
     return entry_blobs
 
-def make_file_array_for_entry(entries, gdoc_service, document_path):
+def make_file_array_for_entry(entries, gdoc_service, gdrive_service, document_path):
     entry_blobs = []
     entry_index = 0
     for en in entries:
@@ -83,23 +86,28 @@ def make_file_array_for_entry(entries, gdoc_service, document_path):
         blob["file-array"] = []
 
         for f in en["files"]:
-            # print('filetyyyyyyy',f)
+         
             if f["fileType"] == "gdoc" and "fileId" in f:
                 tblob = {}
                 tblob['title'] = f['title']
                 tblob['blob'] = get_doc_text_by_id(gdoc_service, f["fileId"])
+                tblob['comments'] = get_comments_by_id(gdrive_service, f['fileId'])
                 blob["file-array"].append(tblob)
             
             elif f["fileType"] == "txt":
-                # print("TITLEEE",f["title"])
+               
                 tblob = {}
                 tblob['title'] = f['title']
                 file_t = open(document_path + f["title"],'r')
                 filelines = list(file_t)
                 file_t.close()
-                tblob['blob'] = ""
+                # tblob['blob'] = ""
+                temp = ""
                 for f in filelines:
-                    tblob['blob'] = tblob['blob'] + f
+                    # tblob['blob'] = tblob['blob'] + f
+                    temp = temp + f
+
+                tblob['blob'] = use_yake_for_text(temp)
                     
                 blob["file-array"].append(tblob)
    
