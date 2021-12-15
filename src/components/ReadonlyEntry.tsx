@@ -169,12 +169,20 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       <br />
 
-      <div
+      {/* <div
         className="readonlyEntryMarkdownPreview"
         dangerouslySetInnerHTML={{
           __html: converter.makeHtml(entryData.description),
         }}
-      />
+      /> */}
+          {entryData.description && (
+        <div
+          className="readonlyEntryMarkdownPreview"
+          dangerouslySetInnerHTML={{
+            __html: converter.makeHtml(entryData.description),
+          }}
+        />
+      )}
 
       <UnorderedList>
         {files.map((file: File) => (
