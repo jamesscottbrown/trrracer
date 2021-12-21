@@ -73,8 +73,7 @@ const FileContext = (props:any)=>{
 
     let {file, entryIndex, fileIndex} = props;
 
-    const [, dispatch] = useProjectState();
-
+    const [state, dispatch] = useProjectState();
     
     let contextFill = file.meta ? file.meta : file.context;
    
@@ -125,7 +124,9 @@ const Entry = (props: EntryPropTypes) => {
     makeNonEditable,
   } = props;
 
-  const [, dispatch] = useProjectState();
+  const [state, dispatch] = useProjectState();
+
+  console.log('STATE IN ENTRY', state);
 
   
 
@@ -356,7 +357,7 @@ const Entry = (props: EntryPropTypes) => {
       text={"Create Google Sheet"}
       entryIndex={entryIndex}
     />
-    <DataDisplayer user={"jen"}/>
+    <DataDisplayer user={state}/>
     {/* {showURL ?
     <div>
       <Button color="primary" onClick={()=>{ 

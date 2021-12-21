@@ -5,8 +5,20 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-# from pydrive.auth import GoogleAuth
-# from pydrive.drive import GoogleDrive
+from googleapiclient.errors import HttpError
+from pyasn1.type.univ import Null
+import requests
+from threading import Timer 
+import socket
+import time
+import random
+import datetime
+
+class TimeoutException(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+socket.setdefaulttimeout(100)
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -41,11 +53,13 @@ def goog_auth():
 def goog_doc_start(creds):
 
     service = build('docs', 'v1', credentials=creds)
+    
 
     return service
 
 def google_drive_start(creds):
     service  = build('drive', 'v3', credentials=creds)
+    
 
     return service
 
@@ -78,24 +92,46 @@ def get_emphasized_text(doc_content):
     return keeper
 
 
-def get_doc_all_by_id(goog_serv, id):
-    keeper = []
-    doc = goog_serv.documents().get(documentId=id).execute()
-    doc_content = doc.get('body').get('content')
- 
-    for par in doc_content:
-        if 'paragraph' in par:
-            for te in par['paragraph']['elements']:
-               
-                if ("italic", True) in te['textRun']['textStyle'].items():
-                    keeper.append(te['textRun'])
-                elif ("bold", True) in te['textRun']['textStyle'].items():
-                    keeper.append(te['textRun'])
-                elif "foregroundColor" in te['textRun']['textStyle']:
-                    keeper.append(te['textRun'])
-                elif "backgroundColor" in te['textRun']['textStyle']:
-                    keeper.append(te['textRun'])
+
+def get_goog_doc(service, id):
+
+    try:
+        print(id)
+        doc = service.documents().get(documentId=id).execute()
+        return json.dumps(doc, indent=4, sort_keys=True)
+
+    except HttpError as err:
+        print(err)
+
+def get_doc_data_from_id_array(goog_serv, id_array):
+    
+   
+   
+    keeper = {}
+    
+    for id in id_array:
+      
+        try:
+            keeper[id] = get_goog_doc(goog_serv, id) # Whatever your function that might hang
+       
+        except TimeoutException:
+            print("timeOUT")
+            continue # continue the for loop if function A takes more than 5 second
+        
+
+                # Reset the alarm
     return keeper
+
+def get_doc_all_by_id(goog_serv, id):
+
+    print("REQUEST", id)
+    try:
+        doc = goog_serv.documents().get(documentId=id).execute()
+        return json.dumps(doc, indent=4, sort_keys=True)
+
+    except HttpError as err:
+        return err
+
 
 def read_strucutural_elements(elements):
 
@@ -134,12 +170,15 @@ def get_emph_text_by_id():
 
 
 def get_doc_text_by_id(docs_service, id):
+    print("REQUEST", id)
     doc = docs_service.documents().get(documentId=id).execute()
     doc_content = doc.get('body').get('content')
-    
+    print("REQUEST DONE", doc)
     textOb = {}
     textOb['emphasized'] = get_emphasized_text(doc_content)
     textOb['text'] = read_strucutural_elements(doc_content)
+
+    print("TEXT OB HERE",textOb)
 
     return textOb
 

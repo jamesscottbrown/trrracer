@@ -54,8 +54,12 @@ def make_blob_for_entry(entries, gdoc_service, document_path):
         for f in en["files"]:
            # print('filetyyyyyyy',f)
             if f["fileType"] == "gdoc" and "fileId" in f:
-                text = get_doc_text_by_id(gdoc_service, f["fileId"])
-                blob["blob"] = blob["blob"] + text
+                if f["fileId"] is not "":
+                    print('google doc file', f["fileId"])
+                    text = get_doc_text_by_id(gdoc_service, f["fileId"])
+                    blob["blob"] = blob["blob"] + text
+                else:
+                    print("google doc has no id")
             
             elif f["fileType"] == "txt":
                 # print("TITLEEE",f["title"])

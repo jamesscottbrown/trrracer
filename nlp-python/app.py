@@ -3,16 +3,18 @@ import os
 import sys
 import json
 from google_api import goog_auth, goog_doc_start, get_doc_text_by_id, get_doc_all_by_id
-from get_blobs import extract_entry_text_to_blobs, make_file_array_for_entry
+from get_blobs import extract_entry_text_to_blobs, make_files_for_text_data
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
 from word_extraction import extract_words_yake, use_yake_for_text
 from concordance import key_concord
 
+
 app = Flask(__name__)
 
 DOCUMENT_PATH_DERYA = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
 DOCUMENT_PATH_JEN = '/Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/'
+DOCUMENT_PATH_EVO = '/Volumes/GoogleDrive/Shared drives/trrrace/EvoBio Design Study/'
 
 def reformat(entries):
     indexer = 0
@@ -78,9 +80,18 @@ def get_all_sig_blobs(path):
    
     print('PATHHHH',path)
 
-    final_path = DOCUMENT_PATH_DERYA if path == 'derya' else DOCUMENT_PATH_JEN 
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+        
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+
+    print('FINAL PATH',final_path)
+    # DOCUMENT_PATH_DERYA if path == 'derya' DOCUMENT_PATH_EVO elif path === '' else DOCUMENT_PATH_JEN 
    
-    blob = extract_entry_text_to_blobs(final_path, make_file_array_for_entry)
+    blob = extract_entry_text_to_blobs(final_path, make_files_for_text_data)
 
     outfile = open(final_path+'emphasized_text_from_files.json', 'w')
     json.dump(blob, outfile)
@@ -110,7 +121,7 @@ def extract_emphasized_text():
 @app.route("/extract_text_entry")
 def extract_text_entry():
     # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_blob_for_entry)
+    blob = extract_entry_text_to_blobs(DOCUMENT_PATH, make_blob_for_google_files)
 
     outfile = open(DOCUMENT_PATH+'blob.json', 'w')
     json.dump(blob, outfile)
