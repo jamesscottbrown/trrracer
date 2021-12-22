@@ -10,9 +10,8 @@ from pyasn1.type.univ import Null
 import requests
 from threading import Timer 
 import socket
-import time
-import random
-import datetime
+
+from func_timeout import func_timeout, FunctionTimedOut
 
 class TimeoutException(Exception):
     def __init__(self, *args, **kwargs):
@@ -98,21 +97,22 @@ def get_goog_doc(service, id):
     try:
         print(id)
         doc = service.documents().get(documentId=id).execute()
-        return json.dumps(doc, indent=4, sort_keys=True)
+        return doc
+        # json.dumps(doc, indent=4, sort_keys=True)
 
     except HttpError as err:
         print(err)
 
-def get_doc_data_from_id_array(goog_serv, id_array):
+def get_doc_data_from_id_array(goog_serv, id_array, outpath, keeper_ob):
     
-   
-   
-    keeper = {}
     
     for id in id_array:
       
         try:
-            keeper[id] = get_goog_doc(goog_serv, id) # Whatever your function that might hang
+            keeper_ob[id] = get_goog_doc(goog_serv, id) # Whatever your function that might hang
+            outfile = open(outpath+'goog_data.json', 'w')
+            json.dump(keeper_ob, outfile)
+            
        
         except TimeoutException:
             print("timeOUT")

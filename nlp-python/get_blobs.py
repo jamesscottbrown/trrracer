@@ -86,7 +86,19 @@ def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_pat
     entry_index = 0
     request_counter = 0
 
-    
+    keeper = {}
+
+    try:
+        blob_f = open(document_path + "goog_data.json", 'r')
+        # print(blob_f)
+        blobb = json.load(blob_f)
+        keeper = blobb
+        # print(keeper)
+
+    except:
+        print('does not exist')
+
+
 
     for en in entries:
 
@@ -109,8 +121,10 @@ def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_pat
             if f["fileType"] == "gdoc" and "fileId" in f:
                 tblob = {}
                 tblob['title'] = f['title']
-              
-                goog_id_array.append(f['fileId'])
+                if f['fileId'] not in keeper.keys():
+                    
+                    goog_id_array.append(f['fileId'])
+                
                 # request_counter = request_counter + 1
                 # print("REQUESTSSSSS",request_counter)
                 # tblob['blob'] = get_doc_all_by_id(gdoc_service, f["fileId"])
@@ -135,7 +149,7 @@ def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_pat
                 # text_blob["file-array"].append(tblob)
 
     print('goog id array', goog_id_array)
-    goog_data_array = get_doc_data_from_id_array(gdoc_service, goog_id_array)
+    goog_data_array = get_doc_data_from_id_array(gdoc_service, goog_id_array, document_path, keeper)
    
         # entry_blobs_google.append(google_blob)
         # entry_blobs_txt.append(text_blob)
@@ -143,3 +157,4 @@ def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_pat
         # giant_wrapper["text"] = entry_blobs_txt
 
     return goog_data_array
+    
