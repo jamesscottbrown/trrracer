@@ -12,14 +12,12 @@ import nltk
 import spacy
 
 STOP = stopwords.words('english')
-from google_api import goog_auth, goog_doc_start, google_drive_start, get_doc_text_by_id, get_doc_all_by_id, get_doc_data_from_id_array
+from google_api import goog_auth, goog_doc_start, google_drive_start, get_doc_data_from_id_array
 
-def extract_entry_text_to_blobs(document_path, fun_function):
+def extract_entry_text_to_blobs(document_path):
     
     cred = goog_auth()
     gdoc_service = goog_doc_start(cred)
-    gdrive_service = google_drive_start(cred)
-    print(gdrive_service)
 
     data_backbone = open(document_path + "trrrace.json", 'r')
     d_b_json = json.load(data_backbone)
@@ -28,8 +26,10 @@ def extract_entry_text_to_blobs(document_path, fun_function):
     # fix_missing_file_type(d_b_json["entries"])
 
     blob = {}
-    blob["entries"] = fun_function(fixed_entries, gdoc_service, gdrive_service, document_path)
- 
+    # google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)
+    # text_data = make_file_for_text_data(fixed_entries, document_path)
+
+
     return blob
 
 def fix_missing_file_type(entries):
@@ -44,61 +44,69 @@ def fix_missing_file_type(entries):
                     f["fileType"] = "pdf"
     return entries
 
-def make_blob_for_google_files(entries, gdoc_service, document_path):
-    entry_blobs = []
-    entry_index = 0
-    for en in entries:
+"""
+Makes object that has the text data and important keywords for each text file.
+Args:
+    entries: entry data object
+    document_path: read/write 
+"""
+def make_file_for_text_data(entries, document_path):
+    keeper = {}
+    entry_blobs_txt = []
 
-        blob = {}
-        blob["title"] = en["title"]
-        blob["index"] = entry_index
-        entry_index  += 1
-        blob["blob"] = ""
+    for i in range(len(entries)):
 
-        for f in en["files"]:
-           # print('filetyyyyyyy',f)
-           
-            if f["fileType"] == "gdoc":
-                print("its a google doc", f["title"])
-                if f["fileId"] != "":
-                    text = get_doc_text_by_id(gdoc_service, f["fileId"])
-                    blob["blob"] = blob["blob"] + text
-                else: 
-                    print("google doc no id")
+        en = entries[i]
+
+        for j in range(len(en["files"])):
             
-            elif f["fileType"] == "txt":
-                
-                file_t = open(document_path + f["title"],'r')
+            fil = en["files"][j]
+
+            if fil["fileType"] == "txt":
+                print("text file")
+
+                text_blob = {}
+                text_blob["entry-title"] = en["title"]
+                text_blob["entry-index"] = i
+                text_blob["file-index"] = j
+                text_blob["file-title"] = fil["title"]
+
+                file_t = open(document_path + fil["title"],'r')
                 filelines = list(file_t)
                 file_t.close()
+               
+                temp = ""
                 for f in filelines:
-                    blob["blob"] = blob["blob"] + f
-        # print(blob)
-        entry_blobs.append(blob)
+                    temp = temp + f
 
-    return entry_blobs
+                text_blob['keywords'] = use_yake_for_text(temp)
+                text_blob["text"] = temp
+                    
+                entry_blobs_txt.append(text_blob)
+    
 
-def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_path):
-    giant_wrapper = {}
-    entry_blobs_google = []
+
+    keeper["text-data"] = entry_blobs_txt
+
+    outfile = open(document_path+'text_data.json', 'w')
+    json.dump(keeper, outfile)
+
+    return keeper
+
+def make_file_for_google_data(entries, gdoc_service, document_path):
+ 
     goog_id_array = []
-    entry_blobs_txt = []
     entry_index = 0
-    request_counter = 0
 
     keeper = {}
 
     try:
         blob_f = open(document_path + "goog_data.json", 'r')
-        # print(blob_f)
         blobb = json.load(blob_f)
         keeper = blobb
-        # print(keeper)
 
     except:
         print('does not exist')
-
-
 
     for en in entries:
 
@@ -125,36 +133,14 @@ def make_files_for_text_data(entries, gdoc_service, gdrive_service, document_pat
                     
                     goog_id_array.append(f['fileId'])
                 
-                # request_counter = request_counter + 1
-                # print("REQUESTSSSSS",request_counter)
-                # tblob['blob'] = get_doc_all_by_id(gdoc_service, f["fileId"])
-                # # tblob['comments'] = get_comments_by_id(gdrive_service, f['fileId'])
-                # google_blob["file-array"].append(tblob)
-            
             elif f["fileType"] == "txt":
                 print("text file")
-                # tblob = {}
-                # tblob['title'] = f['title']
-                # file_t = open(document_path + f["title"],'r')
-                # filelines = list(file_t)
-                # file_t.close()
-                # # tblob['blob'] = ""
-                # temp = ""
-                # for f in filelines:
-                #     # tblob['blob'] = tblob['blob'] + f
-                #     temp = temp + f
-
-                # tblob['blob'] = use_yake_for_text(temp)
-                    
-                # text_blob["file-array"].append(tblob)
 
     print('goog id array', goog_id_array)
-    goog_data_array = get_doc_data_from_id_array(gdoc_service, goog_id_array, document_path, keeper)
-   
-        # entry_blobs_google.append(google_blob)
-        # entry_blobs_txt.append(text_blob)
-        # giant_wrapper["google"] = entry_blobs_google
-        # giant_wrapper["text"] = entry_blobs_txt
+    
+    if len(goog_id_array) > 0:
+        goog_data_array = get_doc_data_from_id_array(gdoc_service, goog_id_array, document_path, keeper)
+
 
     return goog_data_array
     

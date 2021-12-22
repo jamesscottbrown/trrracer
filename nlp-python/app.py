@@ -2,8 +2,8 @@ from flask import Flask, jsonify
 import os
 import sys
 import json
-from google_api import goog_auth, goog_doc_start, get_doc_text_by_id, get_doc_all_by_id
-from get_blobs import extract_entry_text_to_blobs, make_files_for_text_data
+from google_api import create_google_file
+from get_blobs import extract_entry_text_to_blobs
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
 from word_extraction import extract_words_yake, use_yake_for_text
@@ -75,6 +75,25 @@ def index():
     # test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
     return "nothing happening"
 
+@app.route("/create_google_file/<string:name>/<string:type>/<string:path>")
+def create_google(name, type, path):
+
+    print('PATHHHH',path)
+
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+        
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+
+    print('FINAL PATH',final_path)
+    
+    create_google_file(name, type, path)
+    return " " + name + " " + type
+
+
 @app.route('/get_all_sig_blobs/<string:path>')
 def get_all_sig_blobs(path):
    
@@ -91,10 +110,10 @@ def get_all_sig_blobs(path):
     print('FINAL PATH',final_path)
     # DOCUMENT_PATH_DERYA if path == 'derya' DOCUMENT_PATH_EVO elif path === '' else DOCUMENT_PATH_JEN 
    
-    blob = extract_entry_text_to_blobs(final_path, make_files_for_text_data)
+    blob = extract_entry_text_to_blobs(final_path)
 
-    outfile = open(final_path+'emphasized_text_from_files.json', 'w')
-    json.dump(blob, outfile)
+    # outfile = open(final_path+'emphasized_text_from_files.json', 'w')
+    # json.dump(blob, outfile)
     return jsonify(blob)
 
 

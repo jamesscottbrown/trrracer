@@ -2,6 +2,7 @@ from __future__ import print_function
 import os.path
 import json
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -19,23 +20,21 @@ class TimeoutException(Exception):
 
 socket.setdefaulttimeout(100)
 
-# If modifying these scopes, delete the file token.json.
+""" If modifying these scopes, delete the file token.json. """
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-# The ID of a sample document.
-DOCUMENT_ID = '195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE'
-
+""" this generates the tokens to use the google apis. If you get an invalid grant error delete the taoken-py file. """
 def goog_auth():
-    """Shows basic usage of the Docs API.
-    Prints the title of a sample document.
-    """
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
+    """
+    The file 'token-py.json' stores the user's access and refresh tokens, and is
+    created automatically when the authorization flow completes for the first
+    time.
+    """
     if os.path.exists('token-py.json'):
         creds = Credentials.from_authorized_user_file('token-py.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
+
+    """ If there are no (valid) credentials available, let the user log in."""
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -43,7 +42,8 @@ def goog_auth():
             flow = InstalledAppFlow.from_client_secrets_file(
                 '../assets/google_cred_desktop_app.json', SCOPES)
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
+
+        """ Save the credentials for the next run """
         with open('token-py.json', 'w') as token:
             token.write(creds.to_json())
 
@@ -58,8 +58,6 @@ def goog_doc_start(creds):
 
 def google_drive_start(creds):
     service  = build('drive', 'v3', credentials=creds)
-    
-
     return service
 
 def read_paragraph_element(element):
@@ -91,20 +89,28 @@ def get_emphasized_text(doc_content):
     return keeper
 
 
-
+""" This makes the api call using google python client to get the google data. 
+    Args: 
+    service: the google doc service
+    id: a string google id """
 def get_goog_doc(service, id):
 
     try:
         print(id)
         doc = service.documents().get(documentId=id).execute()
         return doc
-        # json.dumps(doc, indent=4, sort_keys=True)
 
     except HttpError as err:
         print(err)
 
+""" This function loops through array of ids and gets google data for these via get_google_doc, and writes these to the file 
+    Args: 
+        goog_serv: google doc service, 
+        id_array: a google id array, 
+        outpath: the path to read/write to, 
+        keeper_ob: the dictionary object to add entries for google data to write
+"""
 def get_doc_data_from_id_array(goog_serv, id_array, outpath, keeper_ob):
-    
     
     for id in id_array:
       
@@ -120,17 +126,40 @@ def get_doc_data_from_id_array(goog_serv, id_array, outpath, keeper_ob):
         
 
                 # Reset the alarm
-    return keeper
+    return keeper_ob
 
-def get_doc_all_by_id(goog_serv, id):
+"""
+Create a google file
 
-    print("REQUEST", id)
+"""
+def create_google_file(title, file_type, document_path):
+    print('in create',title, file_type, document_path)
+     
+    cred = goog_auth()
+    gdrive_service = google_drive_start(cred)
+    file_metadata = {
+    'name': title,
+    'mimeType' : "application/vnd.google-apps."+file_type,
+    'parents': ['120QnZNEmJNF40VEEDnxq1F80Dy6esxGC']
+    }
+    # media = MediaFileUpload(
+    #     "files/testingtoo.gdoc",
+    #     mimetype = "application/vnd.google-apps.document",
+    #     resumable=True
+    # )
     try:
-        doc = goog_serv.documents().get(documentId=id).execute()
-        return json.dumps(doc, indent=4, sort_keys=True)
+        new_file = gdrive_service.files().create(body=file_metadata,
+      supportsAllDrives=True).execute()
 
-    except HttpError as err:
-        return err
+        file_title = new_file.get('title')
+        file_desc = new_file.get('id')
+
+        print('dows this work?',file_title, file_desc)
+
+    except HttpError as error:
+    # TODO(developer) - Handle errors from drive API.
+        print(f'An error occurred: {error}')
+
 
 
 def read_strucutural_elements(elements):
