@@ -642,15 +642,8 @@ const appStateReducer = (state, action) => {
 
   console.log('ACTION:', action);
   switch (action.type) {
-    // case 'SET_DATA': {
-    //   return {
-    //     folderPath: action.folderName,
-    //     projectData: action.projectData,
-    //     filterTags: [],
-    //   };
-    // }
+  
     case 'SET_DATA': {
-
 
       const baseDir = action.folderName;
       // DataDisplayer('jen')
@@ -783,26 +776,10 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
-    case 'CREATE_GOOGLE_IN_ENTRY': {
-      const { name, fileType, fileId, entryIndex } = action;
-
-      let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
-
-      console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
-
-      const currentFiles = state.projectData.entries[entryIndex].files;
-      const newFiles = [
-        ...currentFiles,
+    case 'CREATED_GOOGLE_IN_ENTRY': {
       
-        {title: `${name}.${extension}`, fileType: extension, fileId: fileId, context: "null"}
-      ];
-      const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-        entryIndex === i ? { ...d, files: newFiles } : d
-      );
-
-      const newProjectData = { ...state.projectData, entries };
-
-      return saveJSON(newProjectData);
+     
+      return action.newProjectData
     }
 
     case 'ADD_URL': {

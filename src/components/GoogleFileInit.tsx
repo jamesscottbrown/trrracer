@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as fs from 'fs';
 const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
@@ -17,43 +17,27 @@ import {
 import DataDisplayer from './CallFlask';
 
 
-
-
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
   const {fileType, text, entryIndex} = props;
 
-  const [, dispatch] = useProjectState();
+  const [state, dispatch] = useProjectState();
   const [showFileCreate, setShowFileCreate] = useState(false);
   const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
 
-  
-  const saveGoogleFile = () => {
-    
-    createGoogleFile(googleFileName);
+  const sendToFlask = async() =>{
+
+    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/document/${entryIndex}/${state.projectData.title}`);
+
     setShowFileCreate(false);
+
+    let newData = await response.json();
+
+    dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData })
     
-  };
-
-  async function testGoog(){
-    const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    // const token = await readFile('token.json')
-    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
-    oAuth2Client.setCredentials(JSON.parse(token))
-    console.log('init client');
-    console.log('auth Instance', google)
-    console.log('token', oAuth2Client.credentials)
-    let drive = google.drive({version: 'v3', auth: oAuth2Client});
-
-    drive.files.list({
-      q:"parents in '0AFyqaJXF-KkGUk9PVA' and trashed = false", 
-      fields:"nextPageToken, files(id, name)",
-      supportsAllDrives: true,
-      includeItemsFromAllDrives: true,
-    }).then((folder)=> console.log('folder',folder))
-
-    
-  }
+    // let test = await response.text();
+    // console.log(test);
+  } 
 
   async function createGoogleFile(name : string){
   
@@ -80,7 +64,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
           var file = response.result;
           console.log('Created File data google', response, response.data.id);
 
-          dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
+          // dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
 
           break;
         default:
@@ -113,24 +97,19 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
           display="inline"
           />
           <ButtonGroup display="inline">
-          <Button color="primary" display="inline-block" onClick={()=> saveGoogleFile()} type="button">
-            {/* <Button color="primary" onClick={(val)=> console.log(googleFileName)} type="button"> */}
+          <Button color="primary" display="inline-block" onClick={()=> sendToFlask()} type="button">
             Create
           </Button>
           <Button color="red.400" onClick={() => {
-            testGoog();
             setShowFileCreate(false)}} type="button">
             Cancel
           </Button>
           </ButtonGroup>
           </Editable>
       
-          
-         
         </>
       ) : (
         <Button m="3px" onClick={()=> {
-          testGoog();
           setShowFileCreate(true)}} type="button">
           {text}
         </Button>

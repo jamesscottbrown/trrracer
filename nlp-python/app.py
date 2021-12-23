@@ -75,10 +75,8 @@ def index():
     # test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
     return "nothing happening"
 
-@app.route("/create_google_file/<string:name>/<string:type>/<string:path>")
-def create_google(name, type, path):
-
-    print('PATHHHH',path)
+@app.route("/create_google_file/<string:name>/<string:type>/<string:entrynum>/<string:path>")
+def create_google(name, type, entrynum, path):
 
     if path == 'EvoBio Design Study':
         final_path = DOCUMENT_PATH_EVO
@@ -90,8 +88,22 @@ def create_google(name, type, path):
 
     print('FINAL PATH',final_path)
     
-    create_google_file(name, type, path)
-    return " " + name + " " + type
+    goog_id = create_google_file(name, type, path)
+
+    blob_f = open(final_path + "trrrace.json", 'r')
+    trrrace = json.load(blob_f)
+
+    blob = {}
+    blob['title'] = name + ".gdoc"
+    blob["fileId"] = goog_id
+    blob["fileType"] = "gdoc"
+
+    trrrace["entries"][int(entrynum)]["files"].append(blob)
+
+    outfile = open(final_path +'trrrace.json', 'w')
+    json.dump(trrrace, outfile)
+
+    return trrrace
 
 
 @app.route('/get_all_sig_blobs/<string:path>')

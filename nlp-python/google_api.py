@@ -133,7 +133,7 @@ Create a google file
 
 """
 def create_google_file(title, file_type, document_path):
-    print('in create',title, file_type, document_path)
+   
      
     cred = goog_auth()
     gdrive_service = google_drive_start(cred)
@@ -142,23 +142,18 @@ def create_google_file(title, file_type, document_path):
     'mimeType' : "application/vnd.google-apps."+file_type,
     'parents': ['120QnZNEmJNF40VEEDnxq1F80Dy6esxGC']
     }
-    # media = MediaFileUpload(
-    #     "files/testingtoo.gdoc",
-    #     mimetype = "application/vnd.google-apps.document",
-    #     resumable=True
-    # )
+
     try:
-        new_file = gdrive_service.files().create(body=file_metadata,
-      supportsAllDrives=True).execute()
+        new_file = gdrive_service.files().create(body=file_metadata, supportsAllDrives=True).execute()
+        file_id = new_file.get('id')
 
-        file_title = new_file.get('title')
-        file_desc = new_file.get('id')
-
-        print('dows this work?',file_title, file_desc)
+        return file_id
 
     except HttpError as error:
     # TODO(developer) - Handle errors from drive API.
         print(f'An error occurred: {error}')
+
+        return Null
 
 
 
