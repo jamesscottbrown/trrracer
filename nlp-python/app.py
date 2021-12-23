@@ -13,8 +13,11 @@ from concordance import key_concord
 app = Flask(__name__)
 
 DOCUMENT_PATH_DERYA = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
+FOLDER_ID_DERYA = ''
 DOCUMENT_PATH_JEN = '/Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/'
+FOLDER_ID_JEN  = ''
 DOCUMENT_PATH_EVO = '/Volumes/GoogleDrive/Shared drives/trrrace/EvoBio Design Study/'
+FOLDER_ID_EVO = ''
 
 def reformat(entries):
     indexer = 0
@@ -93,10 +96,12 @@ def create_google(name, type, entrynum, path):
     blob_f = open(final_path + "trrrace.json", 'r')
     trrrace = json.load(blob_f)
 
+    extension = "gdoc" if type == "document" else "gsheet"
+
     blob = {}
-    blob['title'] = name + ".gdoc"
+    blob['title'] = "{name}.{extension}"
     blob["fileId"] = goog_id
-    blob["fileType"] = "gdoc"
+    blob["fileType"] = extension
 
     trrrace["entries"][int(entrynum)]["files"].append(blob)
 

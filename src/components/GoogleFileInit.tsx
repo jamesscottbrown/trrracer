@@ -14,7 +14,7 @@ import {
   ListItem,
   UnorderedList,
 } from '@chakra-ui/react';
-import DataDisplayer from './CallFlask';
+
 
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
@@ -27,7 +27,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
 
   const sendToFlask = async() =>{
 
-    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/document/${entryIndex}/${state.projectData.title}`);
+    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`);
 
     setShowFileCreate(false);
 
@@ -35,44 +35,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
 
     dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData })
     
-    // let test = await response.text();
-    // console.log(test);
   } 
-
-  async function createGoogleFile(name : string){
-  
-    const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-    // const token = await readFile('token.json')
-    const token = fs.readFileSync('token.json', {encoding: 'utf-8'});
-    oAuth2Client.setCredentials(JSON.parse(token))
-    
-    let drive = google.drive({version: 'v3', auth: oAuth2Client});
-  
-    var parentId = '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg';//some parentId of a folder under which to create the new folder
-    var fileMetadata = {
-      'name' : name,
-      'mimeType' : `application/vnd.google-apps.${fileType}`,
-      'parents': [parentId],
-   
-    };
-    drive.files.create({
-      resource: fileMetadata,
-      supportsAllDrives: true,
-    }).then(function(response) {
-      switch(response.status){
-        case 200:
-          var file = response.result;
-          console.log('Created File data google', response, response.data.id);
-
-          // dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
-
-          break;
-        default:
-          console.log('Error creating the folder, '+response);
-          break;
-        }
-    });
-  }
 
   return(
 
