@@ -13,11 +13,11 @@ from concordance import key_concord
 app = Flask(__name__)
 
 DOCUMENT_PATH_DERYA = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-FOLDER_ID_DERYA = ''
+FOLDER_ID_DERYA = '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg'
 DOCUMENT_PATH_JEN = '/Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trrracer/Jen/'
-FOLDER_ID_JEN  = ''
+FOLDER_ID_JEN  = '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp'
 DOCUMENT_PATH_EVO = '/Volumes/GoogleDrive/Shared drives/trrrace/EvoBio Design Study/'
-FOLDER_ID_EVO = ''
+FOLDER_ID_EVO = '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC'
 
 def reformat(entries):
     indexer = 0
@@ -83,15 +83,17 @@ def create_google(name, type, entrynum, path):
 
     if path == 'EvoBio Design Study':
         final_path = DOCUMENT_PATH_EVO
+        folder_id = FOLDER_ID_EVO
         
     elif path == 'Jen':
         final_path = DOCUMENT_PATH_JEN
+        folder_id = FOLDER_ID_JEN
     else:
         final_path = DOCUMENT_PATH_DERYA
+        folder_id = FOLDER_ID_DERYA
 
-    print('FINAL PATH',final_path)
     
-    goog_id = create_google_file(name, type, path)
+    goog_id = create_google_file(name, type, folder_id)
 
     blob_f = open(final_path + "trrrace.json", 'r')
     trrrace = json.load(blob_f)
@@ -99,7 +101,7 @@ def create_google(name, type, entrynum, path):
     extension = "gdoc" if type == "document" else "gsheet"
 
     blob = {}
-    blob['title'] = "{name}.{extension}"
+    blob['title'] = f'{name}.{extension}'
     blob["fileId"] = goog_id
     blob["fileType"] = extension
 

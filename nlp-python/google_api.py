@@ -132,7 +132,7 @@ def get_doc_data_from_id_array(goog_serv, id_array, outpath, keeper_ob):
 Create a google file
 
 """
-def create_google_file(title, file_type, document_path):
+def create_google_file(title, file_type, folder_id):
    
      
     cred = goog_auth()
@@ -140,7 +140,7 @@ def create_google_file(title, file_type, document_path):
     file_metadata = {
     'name': title,
     'mimeType' : "application/vnd.google-apps."+file_type,
-    'parents': ['120QnZNEmJNF40VEEDnxq1F80Dy6esxGC']
+    'parents': [folder_id]
     }
 
     try:
