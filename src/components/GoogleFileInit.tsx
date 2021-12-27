@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import * as fs from 'fs';
-const {google} = require('googleapis');
-import *  as googleCred from '../../assets/google_cred_desktop_app.json';
 import { useProjectState } from './ProjectContext';
-import { readFile } from '../fileUtil';
+
 import {
   Button,
   ButtonGroup,
@@ -27,9 +24,9 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
 
   const sendToFlask = async() =>{
 
-    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`);
-
     setShowFileCreate(false);
+
+    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`);
 
     let newData = await response.json();
 

@@ -79,13 +79,74 @@ def get_emphasized_text(doc_content):
             for te in par['paragraph']['elements']:
                 if 'textRun' in te:
                     if ("italic", True) in te['textRun']['textStyle'].items():
-                        keeper.append(te['textRun'])
+                        if te['textRun']['content'].isspace() == False:
+                            temp = {}
+                            get = te['textRun']['content'].split('\n')
+                            
+                            empha = "".join(get)
+                            te['textRun']['content'] = empha
+                            
+                            temp["em"] = te['textRun']
+
+                            context = ""
+                            for con in par['paragraph']['elements']:
+                                if 'textRun' in con:
+                                    rem = con['textRun']["content"].split('\n')
+                                    context = context + " " + "".join(rem)
+                            test = context.split(empha)
+                            temp['context'] = test
+
+                            keeper.append(temp)
                     elif ("bold", True) in te['textRun']['textStyle'].items():
-                        keeper.append(te['textRun'])
+                        if te['textRun']['content'].isspace() == False:
+                            temp = {}
+                            get = te['textRun']['content'].split('\n')
+                            empha = "".join(get)
+                            te['textRun']['content'] = empha
+                            
+                            temp["em"] = te['textRun']
+                            context = ""
+                            for con in par['paragraph']['elements']:
+                                if 'textRun' in con:
+                                    rem = con['textRun']["content"].split('\n')
+                                    context = context + " " + "".join(rem)
+                            test = context.split(empha)
+                            temp['context'] = test
+
+                            keeper.append(temp)
                     elif "foregroundColor" in te['textRun']['textStyle']:
-                        keeper.append(te['textRun'])
+                        if te['textRun']['content'].isspace() == False:
+                            temp = {}
+                            get = te['textRun']['content'].split('\n')
+                            empha = "".join(get)
+                            te['textRun']['content'] = empha
+
+                            temp["em"] = te['textRun']
+                            context = ""
+                            for con in par['paragraph']['elements']:
+                                if 'textRun' in con:
+                                    rem = con['textRun']["content"].split('\n')
+                                    context = context + " " + "".join(rem)
+                            test = context.split(empha)
+                            temp['context'] = test
+
+                            keeper.append(temp)
                     elif "backgroundColor" in te['textRun']['textStyle']:
-                        keeper.append(te['textRun'])
+                        if te['textRun']['content'].isspace() == False:
+                            temp = {}
+                            get = te['textRun']['content'].split('\n')
+                            empha = "".join(get)
+                            te['textRun']['content'] = empha
+                            temp["em"] = te['textRun']
+                            context = ""
+                            for con in par['paragraph']['elements']:
+                                if 'textRun' in con:
+                                    rem = con['textRun']["content"].split('\n')
+                                    context = context + " " + "".join(rem)
+                            test = context.split(empha)
+                            temp['context'] = test
+
+                            keeper.append(temp)
     return keeper
 
 

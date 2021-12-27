@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import os
 import sys
 import json
-from google_api import create_google_file
+from google_api import create_google_file, get_emphasized_text
 from get_blobs import extract_entry_text_to_blobs
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
@@ -71,11 +71,6 @@ def write_blobs_to_file(blob, document_path):
 
 @app.route("/")
 def index():
-    # document_path = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
-   
-    # cred = goog_auth()
-    # gdoc_service = goog_doc_start(cred)
-    # test = get_doc_all_by_id(gdoc_service, '1haYPT-BK_iP4sLmvSjgOaqSa0eAXrEgXYqVMPwyMqdk')
     return "nothing happening"
 
 @app.route("/create_google_file/<string:name>/<string:type>/<string:entrynum>/<string:path>")
@@ -112,11 +107,32 @@ def create_google(name, type, entrynum, path):
 
     return trrrace
 
+@app.route('/extract_emphasized_from_google/<string:path>')
+def extract_emphasized_from_google(path):
+
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+
+    outfile = open(final_path+'goog_data.json', 'r')
+    goog_data = json.load(outfile)
+    print(goog_data.keys())
+    em_text = {}
+    for key in goog_data:
+        
+        test = goog_data[key].get('body').get('content')
+        
+        em_text[key] = get_emphasized_text(test)
+
+    outfile = open(final_path+'goog_em.json', 'w')
+    json.dump(em_text, outfile)
+    return em_text
 
 @app.route('/get_all_sig_blobs/<string:path>')
 def get_all_sig_blobs(path):
-   
-    print('PATHHHH',path)
 
     if path == 'EvoBio Design Study':
         final_path = DOCUMENT_PATH_EVO
@@ -131,8 +147,6 @@ def get_all_sig_blobs(path):
    
     blob = extract_entry_text_to_blobs(final_path)
 
-    # outfile = open(final_path+'emphasized_text_from_files.json', 'w')
-    # json.dump(blob, outfile)
     return jsonify(blob)
 
 

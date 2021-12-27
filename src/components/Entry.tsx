@@ -27,12 +27,12 @@ import FileUpload from './FileUpload';
 
 import { EntryType, File, FileObj, TagType } from './types';
 import { useProjectState } from './ProjectContext';
-import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
+import GoogFileInit from './GoogleFileInit';
 
 
 import URLList from './URLList';
-import DataDisplayer from './CallFlask';
-// import { file } from 'googleapis/build/src/apis/file';
+
+
 
 interface EditDateTypes {
   date: string;
@@ -357,7 +357,7 @@ const Entry = (props: EntryPropTypes) => {
       text={"Create Google Sheet"}
       entryIndex={entryIndex}
     />
-    <DataDisplayer user={state}/>
+
     {/* {showURL ?
     <div>
       <Button color="primary" onClick={()=>{ 

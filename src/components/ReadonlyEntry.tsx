@@ -33,6 +33,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
 
 
+  
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -47,17 +48,19 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   }
 
   const formatConcord = (tf)=>{
-    let matches =  tf.entry_matches;
+
+   
+    let matches =  tf.matches;
    
     if(matches.length > 0){
       return matches.map(m => {
-        let arr = m.concord.split(m.concept);
+        let arr = m.split(tf.key);
         
-        return <p><span>{arr[0] + " "}<b>{m.concept}</b>{" " + arr[1]}</span><br /><br/></p>
+        return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
       });
     }else{
       console.log("not there")
-      return <p><span>no matches for <b>{tf.term}</b></span></p>
+      return <p><span>no matches for <b>{tf.key}</b></span></p>
     }
 
   }
@@ -115,6 +118,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   //   </div>
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
+
+  const key = entryData.key_txt.flatMap(kt => {
+    return kt.keywords.keywords.map(k => k)
+  })
+
+  const googEm = entryData.files.filter(f=> {
+    return f.fileType === 'gdoc' && f.emphasized;
+  }).flatMap(m=> m.emphasized)
+ 
 
   const [{ projectData }] = useProjectState();
 
@@ -218,16 +230,23 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         </>
       )}
      <div style={{float:'right', width:'37%', display:'inline-block'}}>
-        
-            {  entryData.tfidf != null && entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
-                 
-                  entryData.tfidf['yak'].map(tf =>(
-                    <div style={{'display':'inline'}}>
-                       <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf)}>{tf.term}</Badge></Tooltip>
-                      {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
+            { googEm.length > 0 ? 
+              googEm.map(em => (
+              
+                <Badge>{em['em']["content"]}</Badge>
+              ))
+              : <div></div>
+          }
+            {  key.length > 0  ? 
+                 key.map(k => (
+                  <div style={{'display':'inline'}}>
+                  {/* <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge></Badge></Tooltip> */}
+                  <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}}>{k.key}</Badge></Tooltip>
+                    {/* <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}} bg={colorBadge(k.freq)}>{k.key}</Badge></Tooltip> */}
+                    {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
                   </div>
-                  ))
-              : <div></div>}
+                 ))
+              : <div></div> }
             </div>
     </>
   );

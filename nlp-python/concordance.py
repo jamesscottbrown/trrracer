@@ -50,22 +50,38 @@ def key_concord(keywords, blob):
     key_array = []
 
     for k in keywords:
-        k_ob = {}
-        k_ob['key'] = k[0]
-        k_ob['freq'] = k[1]
-        k_ob['matches'] = []
+        test = k[0].split(' ')
+        if len(test) > 1:
+            if test[0] != test[1]:
+                k_ob = {}
+                k_ob['key'] = k[0]
+                k_ob['freq'] = k[1]
+                k_ob['matches'] = []
 
-        matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-        patterns = [nlp.make_doc(name) for name in [k[0]]]
-        matcher.add("Names", patterns)
+                for sent in doc.sents:
+                  
+                    if test[0] in str(sent.text) and test[1] in str(sent.text):
+                        k_ob['matches'].append(str(sent.text))
 
-        for sent in doc.sents:
-            for match_id, start, end in matcher(nlp(sent.text)):
-                if nlp.vocab.strings[match_id] in ["Names"]:
-            
-                    k_ob['matches'].append(str(sent.text))
+                key_array.append(k_ob)
 
-        key_array.append(k_ob)
+        elif len(test) == 1:
+            k_ob = {}
+            k_ob['key'] = k[0]
+            k_ob['freq'] = k[1]
+            k_ob['matches'] = []
+
+            matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+            patterns = [nlp.make_doc(name) for name in [k[0]]]
+            matcher.add("Names", patterns)
+
+            for sent in doc.sents:
+                for match_id, start, end in matcher(nlp(sent.text)):
+                    if nlp.vocab.strings[match_id] in ["Names"]:
+                        if str(sent.text) not in k_ob['matches']:
+                            k_ob['matches'].append(str(sent.text))
+
+            key_array.append(k_ob)
 
     return key_array
     

@@ -586,42 +586,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 
 //     }
 
-
-
-//     case 'FILE_META': {
-
-//       console.log('is this reaching??')
-
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) => {
-   
-//         if(action.entryIndex === i){
-//           d.files.map((f, j)=> {
-//             if(j === action.indexFile){
-//               f.context = action.metaForm;
-//             }
-//             return f;
-//           })
-//         }
-//         return d;
-//       });
-
-     
-//       const newProjectData = { ...state.projectData, entries };
-
-//       return saveJSON(newProjectData, state);
-
-//     }
-
-//     case 'UPDATE_TAG_COLOR': {
-//       const tags = state.projectData.tags.map((tag: TagType, i: number) =>
-//         i === action.tagIndex ? { ...tag, color: action.color } : tag
-//       );
-
-//       const newProjectData = { ...state.projectData, tags };
-
-//       return saveJSON(newProjectData, state);
-//     }
-
 const appStateReducer = (state, action) => {
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
@@ -646,7 +610,7 @@ const appStateReducer = (state, action) => {
     case 'SET_DATA': {
 
       const baseDir = action.folderName;
-      // DataDisplayer('jen')
+    
 
       let topics = [];
       try {
@@ -657,48 +621,35 @@ const appStateReducer = (state, action) => {
 
       let newEntries;
       try {
-        const collo = readProjectFile(baseDir, 'entry_collocations.json');
-        const tfidf = readProjectFile(baseDir, 'keywords.json');
+        const google_data = readProjectFile(baseDir, 'goog_em.json');
+        console.log("google_data", google_data);
 
+        const text_data = readProjectFile(baseDir, 'text_data.json');
+        
 
-        // console.log('TFIDF', tfidf);
         newEntries = action.projectData.entries.map((e, i) => {
-            // e.collo = collo[i];
-            if(i < tfidf['entry_keywords'].length){
-              e.tfidf = tfidf['entry_keywords'][i]
-            }else{
-              e.tfidf = null;
+            e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
+           
+            let testArray = e.files.filter(f=> f.fileType === 'gdoc');
+            if(testArray.length > 0){
+              e.files = e.files.map(ef => {
+                if(ef.fileType === "gdoc"){
+                  ef.emphasized = google_data[ef.fileId];
+                }
+                return ef
+              })
             }
-            e.files = e.files.map((f, j)=> {
-              //console.log(topics.entries[i]['file-array'][j].blob.emphasized)
-              if(topics.entries[i]['file-array'][j]){
-                f.emphasized = topics.entries[i]['file-array'][j].blob.emphasized
-              }
-              
-              return f
-            })
             return e;
+
           });         
       } catch (e) {
         newEntries = action.projectData.entries;
-        console.log(e);
+        
+       
+        return e;
       }
       let newConcepts = [];
-      try {
-        const conCord = readProjectFile(baseDir, 'concept_concord_by_entry.json');
-
-        newConcepts = action.projectData.concepts.map((e, i) => {
-          // e.concordance = conCord.filter(c => c.concept === e.name)[0];
-
-          e.concordance = conCord.concept_matches.filter(f=> {
-            return f.matches.filter(t=> t.name === e.name).length > 0;
-          });
-
-          return e;
-        });
-      } catch (e) {
-        console.log(e);
-      }
+    
 
       const newProjectData = {
         ...action.projectData,
@@ -777,8 +728,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATED_GOOGLE_IN_ENTRY': {
-      
-     
+         
       return action.newProjectData
     }
 

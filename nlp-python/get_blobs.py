@@ -27,10 +27,10 @@ def extract_entry_text_to_blobs(document_path):
 
     blob = {}
     # google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)
-    # text_data = make_file_for_text_data(fixed_entries, document_path)
+    text_data = make_file_for_text_data(fixed_entries, document_path)
 
 
-    return blob
+    return text_data
 
 def fix_missing_file_type(entries):
     for en in entries:
