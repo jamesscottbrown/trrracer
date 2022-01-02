@@ -229,7 +229,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </UnorderedList>
         </>
       )}
-     <div style={{float:'right', width:'37%', display:'inline-block'}}>
+     <div style={{float:'right', width:'37%', display:'inline-block', overflowY:'auto', height:'200px'}}>
             { googEm.length > 0 ? 
               googEm.map(em => (
               

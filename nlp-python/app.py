@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import os
 import sys
 import json
-from google_api import create_google_file, get_emphasized_text
+from google_api import create_google_file, get_emphasized_text, get_comments_for_all_goog
 from get_blobs import extract_entry_text_to_blobs
 from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concordance, make_blob_for_entry, get_concordance_for_concepts, collocations_maker, run_lda, fix_missing_file_type, tf_idf
 from doc_clean import clean
@@ -72,6 +72,32 @@ def write_blobs_to_file(blob, document_path):
 @app.route("/")
 def index():
     return "nothing happening"
+
+@app.route("/get_google_comments/<string:path>")
+def get_google_comments(path):
+
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+        folder_id = FOLDER_ID_EVO
+        
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+        folder_id = FOLDER_ID_JEN
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+        folder_id = FOLDER_ID_DERYA
+
+    goog_ids = []
+
+    blob_f = open(final_path + "goog_data.json", 'r')
+    goog = json.load(blob_f)
+
+    comms = get_comments_for_all_goog(final_path, goog.keys())
+
+    outfile = open(final_path +'goog_comms.json', 'w')
+    json.dump(comms, outfile)
+
+    return comms
 
 @app.route("/create_google_file/<string:name>/<string:type>/<string:entrynum>/<string:path>")
 def create_google(name, type, entrynum, path):

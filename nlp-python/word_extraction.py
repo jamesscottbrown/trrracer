@@ -26,7 +26,7 @@ def use_yake_for_text(file_text):
     
     enob = {}
     wumbo_blob_clean = ""
-    wumbo_blob_raw = ""
+   
 
     if len(file_text) > 2:
         

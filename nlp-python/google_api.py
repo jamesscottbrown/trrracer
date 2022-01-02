@@ -149,6 +149,34 @@ def get_emphasized_text(doc_content):
                             keeper.append(temp)
     return keeper
 
+def get_comments_for_all_goog(path, goog_ids):
+    
+    cred = goog_auth()
+    gdrive_service = google_drive_start(cred)
+    comm_ob = {}
+    for key in goog_ids:
+        
+        comm_ob[key] = get_google_comments_by_id(key, gdrive_service)
+
+    return comm_ob
+        
+
+"""
+get comments for a google doc by google id returns repsponse object for comments
+Args:
+    id: google id
+    gdrive_service: google drive service 
+"""
+def get_google_comments_by_id(id, gdrive_service):
+   
+    comment = gdrive_service.comments()
+    
+    try:
+        res = comment.list(fileId=id, includeDeleted=None, pageSize=None, pageToken=None, startModifiedTime=None, fields="*").execute()
+        return res
+    except HttpError as err:
+        print(err)
+    
 
 """ This makes the api call using google python client to get the google data. 
     Args: 
