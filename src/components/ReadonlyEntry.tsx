@@ -7,8 +7,18 @@ import {
   Tag,
   Text,
   UnorderedList,
-  Badge
+  Badge,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from '@chakra-ui/react';
+
+
 
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -21,6 +31,8 @@ import textColor from '../colors';
 import { useProjectState } from './ProjectContext';
 
 import { Tooltip } from "@chakra-ui/react"
+import Span from './Span';
+import PopComment from './PopComment';
 
 
 interface EntryPropTypes {
@@ -31,9 +43,6 @@ interface EntryPropTypes {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
-
-
-  
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -47,9 +56,10 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     }
   }
 
+
+
   const formatConcord = (tf)=>{
 
-   
     let matches =  tf.matches;
    
     if(matches.length > 0){
@@ -65,57 +75,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   }
 
-  // return (
-  //   <div style={{margin:"auto", padding:"10px"}}>
-
-  //     <div style={{width:'60%', display:'inline-block'}}>
-  //     <div style={{width:'100%'}}>
-  //     <Heading as="h2">
-  //       {entryData.title}{' '}
-  //       <EditIcon
-  //         onClick={makeEditable}
-  //         title="Click to show controls for editing this entry"
-  //       />
-  //     </Heading>
-  //     </div>
-  //       <p>
-  //         {format(new Date(entryData.date), 'dd MMMM yyyy')}
-  //       </p>
-  //       <br />
-  //       <p>
-  //         Tags:{' '}
-  //         {entryData.tags.map((t) => (
-  //           <Tag key={t}>{t}</Tag>
-  //         ))}
-  //       </p>
-  //       <p>{entryData.description}</p>
-  //       <UnorderedList>
-  //         {entryData.files.map((file: File) => (
-  //           <ListItem key={file.title}>
-  //             {file.title}{' '}
-  //             <FaExternalLinkAlt
-  //               onClick={() => openFile(file.title)}
-  //               title="Open file externally"
-  //               size="12px"
-  //               style={{display:"inline"}}
-  //             />{' '}
-  //           </ListItem>
-  //         ))}
-  //       </UnorderedList>
-  //     </div>
-  //     <div style={{float:'right', width:'37%', display:'inline-block'}}>
-        
-  //       {  entryData.tfidf != null && entryData.tfidf.yak != null && entryData.tfidf.yak != 'null' ? 
-  //        
-  //           entryData.tfidf['yak'].map(tf =>(
-  //             <div style={{'display':'inline'}}>
-  //                <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf)}>{tf.term}</Badge></Tooltip>
-  //               {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
-  //           </div>
-  //           ))
-  //       : <div></div>}
-  //     </div>
-  //   </div>
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
@@ -126,7 +85,17 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const googEm = entryData.files.filter(f=> {
     return f.fileType === 'gdoc' && f.emphasized;
   }).flatMap(m=> m.emphasized)
- 
+
+  const googComm = entryData.files.filter(f => {
+    return f.fileType === 'gdoc' && f.comments
+  }).flatMap(m => {
+    let com = m.comments.comments.map(c =>{
+      c.goog_id = m.fileId;
+      return c;
+    });
+    
+    return com
+  });
 
   const [{ projectData }] = useProjectState();
 
@@ -181,12 +150,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       <br />
 
-      {/* <div
-        className="readonlyEntryMarkdownPreview"
-        dangerouslySetInnerHTML={{
-          __html: converter.makeHtml(entryData.description),
-        }}
-      /> */}
           {entryData.description && (
         <div
           className="readonlyEntryMarkdownPreview"
@@ -230,24 +193,32 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         </>
       )}
      <div style={{float:'right', width:'37%', display:'inline-block', overflowY:'auto', height:'200px'}}>
-            { googEm.length > 0 ? 
+        { googEm.length > 0 ? 
               googEm.map(em => (
-              
-                <Badge>{em['em']["content"]}</Badge>
+              <Span data={em} spanType={"emphasize"}></Span>
+                // <span style={formatEmphasis(em)}>{em['em']["content"]}</span>
               ))
               : <div></div>
-          }
-            {  key.length > 0  ? 
+        }
+        { googComm.length > 0 ? 
+              googComm.map(co => (
+                <PopComment data={co} spanType={"comment"} />
+                //<Tooltip placement="left" hasArrow label={`comment: ${co["content"]}`}><Span data={co} spanType={"comment"}/></Tooltip>
+                // <Tooltip placement="left" hasArrow label={`comment: ${co["content"]}`}><span style={{backgroundColor: "yellow", fontWeight:"bold", margin:"5px"}}>{`${co["quotedFileContent"]["value"]}`}</span></Tooltip>
+              ))
+              : <div></div>
+        }
+        {  key.length > 0  ? 
                  key.map(k => (
                   <div style={{'display':'inline'}}>
-                  {/* <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge></Badge></Tooltip> */}
                   <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}}>{k.key}</Badge></Tooltip>
                     {/* <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}} bg={colorBadge(k.freq)}>{k.key}</Badge></Tooltip> */}
                     {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
                   </div>
                  ))
-              : <div></div> }
-            </div>
+              : <div></div> 
+          }
+      </div>
     </>
   );
 };
