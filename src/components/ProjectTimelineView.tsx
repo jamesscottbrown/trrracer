@@ -5,6 +5,7 @@ import { Heading } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
+import { timeFormat } from 'd3-time-format';
 
 import { repositionPoints } from 'respacer';
 
@@ -31,8 +32,8 @@ interface EntryPlotProps {
 const EntryPlot = (props: EntryPlotProps) => {
   const { entryData, y, tags, setEntryAsSelected } = props;
 
-  const angledLineWidth = 10;
-  const straightLineWidth = 10;
+  const angledLineWidth = 100;
+  const straightLineWidth = 20;
 
   const squareWidth = 10;
   const squarePadding = 2;
@@ -176,6 +177,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             oldPositionName: 'yDirect',
             newPositionName: 'y',
             minSpacing: 40,
+            width: height - 20,
           }
         )
       : [];
@@ -192,14 +194,38 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             oldPositionName: 'yDirect',
             newPositionName: 'y',
             minSpacing: 40,
+            width: height - 20,
           }
         )
       : [];
 
-  const width = 500;
+  const width = 1000;
+  const dateLabelWidth = 130;
+  const tickWidth = 20;
+  const ticks = y.ticks();
+
+  const formatTime = timeFormat('%Y-%m-%d (%a)');
+
   return (
     <svg height={height} width={width}>
-      <g transform="translate(20, 20)">
+      <g transform="translate(20,20)">
+        {ticks.map((t) => (
+          <>
+            <text x={0} y={y(t)}>
+              {formatTime(t)}
+            </text>
+            <line
+              x1={dateLabelWidth}
+              x2={dateLabelWidth + tickWidth}
+              y1={y(t)}
+              y2={y(t)}
+              stroke="black"
+            />
+          </>
+        ))}
+      </g>
+
+      <g transform={`translate(${20 + dateLabelWidth + tickWidth}, 20)`}>
         <line x1={0} x2={0} y1={y.range()[0]} y2={y.range()[1]} stroke="grey" />
 
         {positionEntries.map((e) => (
