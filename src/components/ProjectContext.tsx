@@ -147,6 +147,7 @@ const appStateReducer = (state, action) => {
         folderPath: action.folderName,
         projectData: newProjectData,
         filterTags: [],
+        filterDates: [null, null],
       };
     }
 
@@ -386,6 +387,21 @@ const appStateReducer = (state, action) => {
       return { ...state, filterTags: action.filterTags };
     }
 
+    case 'UPDATE_FILTER_DATES': {
+      console.log(
+        state.filterDates.map((d: string, i: number) =>
+          i === action.field ? action.value : d
+        )
+      );
+
+      return {
+        ...state,
+        filterDates: state.filterDates.map((d: string, i: number) =>
+          i === action.field ? action.value : d
+        ),
+      };
+    }
+
     default: {
       console.log("Can't handle:", action);
       return state;
@@ -397,6 +413,7 @@ const initialState = {
   projectData: getEmptyProject(),
   folderPath: null,
   filterTags: [],
+  filterDates: [null, null],
 };
 
 export function ProjectStateProvider({ children }) {

@@ -19,6 +19,7 @@ import {
 import { useProjectState } from './ProjectContext';
 import Entry from './Entry';
 import TagList from './TagList';
+import DateFilter from './FilterDates';
 
 const { ipcRenderer } = require('electron');
 
@@ -252,7 +253,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, filterDates }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -268,17 +269,25 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   };
 
-  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every(
-      (requiredTag: string) =>
-        entryData.tags.includes(requiredTag) ||
-        entryData.quoteTags.includes(requiredTag)
-    );
-  });
+  const filteredEntries = projectData.entries
+    .filter((entryData: EntryType) => {
+      return filterTags.every(
+        (requiredTag: string) =>
+          entryData.tags.includes(requiredTag) ||
+          entryData.quoteTags.includes(requiredTag)
+      );
+    })
+    .filter((entryData: EntryType) => {
+      return (
+        (!filterDates[0] || filterDates[0] <= entryData.date) &&
+        (!filterDates[1] || entryData.date <= filterDates[1])
+      );
+    });
 
   return (
     <div>
       <TagList tags={projectData.tags} />
+      <DateFilter />
 
       <Heading as="h2">Entries</Heading>
 

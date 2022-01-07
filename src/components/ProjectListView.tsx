@@ -20,13 +20,14 @@ import Entry from './Entry';
 import FileUpload from './FileUpload';
 import TagList from './TagList';
 import ReadonlyEntry from './ReadonlyEntry';
+import DateFilter from './FilterDates';
 
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, filterDates }, dispatch] = useProjectState();
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
@@ -77,6 +78,12 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           entryData.quoteTags.includes(requiredTag)
       );
     })
+    .filter((entryData: EntryType) => {
+      return (
+        (!filterDates[0] || filterDates[0] <= entryData.date) &&
+        (!filterDates[1] || entryData.date <= filterDates[1])
+      );
+    })
     .map((e, index) => ({ ...e, index }));
   filteredEntries.sort(
     (a, b) =>
@@ -101,6 +108,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   return (
     <div style={{ padding: '10px' }}>
       <TagList tags={projectData.tags} />
+      <DateFilter />
 
       <Heading as="h2">Entries</Heading>
 
