@@ -18,6 +18,7 @@ import { ImFilePdf } from 'react-icons/im';
 import { useProjectState } from './ProjectContext';
 import { EntryType, ProjectViewProps } from './types';
 import TagList from './TagList';
+import DateFilter from './FilterDates';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -72,16 +73,23 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
 const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags }] = useProjectState();
+  const [{ filterTags, filterDates }] = useProjectState();
   const [numColumns, setNumColumns] = useState<number>(4);
 
-  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every(
-      (requiredTag: string) =>
-        entryData.tags.includes(requiredTag) ||
-        entryData.quoteTags.includes(requiredTag)
-    );
-  });
+  const filteredEntries = projectData.entries
+    .filter((entryData: EntryType) => {
+      return filterTags.every(
+        (requiredTag: string) =>
+          entryData.tags.includes(requiredTag) ||
+          entryData.quoteTags.includes(requiredTag)
+      );
+    })
+    .filter((entryData: EntryType) => {
+      return (
+        (!filterDates[0] || filterDates[0] <= entryData.date) &&
+        (!filterDates[1] || entryData.date <= filterDates[1])
+      );
+    });
 
   const files = filteredEntries
     .map((entry) => entry.files.filter((f) => f.fileType !== 'url'))
@@ -95,6 +103,7 @@ const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   return (
     <div style={{ padding: '10px' }}>
       <TagList tags={projectData.tags} />
+      <DateFilter />
 
       <Heading as="h2">Attachments</Heading>
 
