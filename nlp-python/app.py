@@ -145,13 +145,13 @@ def extract_emphasized_from_google(path):
 
     outfile = open(final_path+'goog_data.json', 'r')
     goog_data = json.load(outfile)
-    print(goog_data.keys())
+    
     em_text = {}
     for key in goog_data:
         
         test = goog_data[key].get('body').get('content')
         
-        em_text[key] = get_emphasized_text(test)
+        em_text[key] = get_emphasized_text(test, key)
 
     outfile = open(final_path+'goog_em.json', 'w')
     json.dump(em_text, outfile)
@@ -174,9 +174,6 @@ def get_all_sig_blobs(path):
     blob = extract_entry_text_to_blobs(final_path)
 
     return jsonify(blob)
-
-
-
     
 @app.route("/extract_text_files")
 def extract_text_files():

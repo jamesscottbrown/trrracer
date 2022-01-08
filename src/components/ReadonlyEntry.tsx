@@ -195,7 +195,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
      <div style={{float:'right', width:'37%', display:'inline-block', overflowY:'auto', height:'200px'}}>
         { googEm.length > 0 ? 
               googEm.map(em => (
-              <Span data={em} spanType={"emphasize"}></Span>
+                <PopComment data={em} spanType={"emphasize"} />
+              // <Span data={em} spanType={"emphasize"}></Span>
                 // <span style={formatEmphasis(em)}>{em['em']["content"]}</span>
               ))
               : <div></div>

@@ -613,22 +613,24 @@ const appStateReducer = (state, action) => {
     
 
       let topics = [];
-      // try {
-      //   topics = readProjectFile(baseDir, 'blob_w_files.json');
-      // } catch (e) {
-      //   console.log(e);
-      // }
 
       let newEntries;
+
+      let roleData;
+
       try {
-        const google_data = readProjectFile(baseDir, 'goog_em.json');
+        const google_em = readProjectFile(baseDir, 'goog_em.json');
+        console.log("google_data", google_em);
+        const google_data = readProjectFile(baseDir, 'goog_data.json');
         console.log("google_data", google_data);
 
         const text_data = readProjectFile(baseDir, 'text_data.json');
 
         const comment_data = readProjectFile(baseDir, 'goog_comms.json');
         
+        roleData = readProjectFile(baseDir, 'roles.json');
 
+      
         newEntries = action.projectData.entries.map((e, i) => {
             e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
            
@@ -636,7 +638,7 @@ const appStateReducer = (state, action) => {
             if(testArray.length > 0){
               e.files = e.files.map(ef => {
                 if(ef.fileType === "gdoc"){
-                  ef.emphasized = google_data[ef.fileId];
+                  ef.emphasized = google_em[ef.fileId];
                   ef.comments = comment_data[ef.fileId];
 
                 }
@@ -659,7 +661,9 @@ const appStateReducer = (state, action) => {
         ...action.projectData,
         concepts: newConcepts,
         entries: newEntries,
+        roles: roleData,
         topics,
+        
       };
 
       console.log('newProject data', newProjectData);

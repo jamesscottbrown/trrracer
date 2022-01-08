@@ -34,6 +34,8 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
     
   } 
 
+  console.log('STATE', state);
+
   return(
 
     <div>

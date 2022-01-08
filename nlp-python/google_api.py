@@ -12,7 +12,6 @@ import requests
 from threading import Timer 
 import socket
 
-from func_timeout import func_timeout, FunctionTimedOut
 
 class TimeoutException(Exception):
     def __init__(self, *args, **kwargs):
@@ -72,9 +71,11 @@ def read_paragraph_element(element):
         return ''
     return text_run.get('content')
 
-def get_emphasized_text(doc_content):
+def get_emphasized_text(doc_content, id):
     keeper = []
-    for par in doc_content:
+ 
+    for i in range(len(doc_content)):
+        par = doc_content[i]
         if 'paragraph' in par:
             for te in par['paragraph']['elements']:
                 if 'textRun' in te:
@@ -96,6 +97,9 @@ def get_emphasized_text(doc_content):
                             test = context.split(empha)
                             temp['context'] = test
 
+                            temp['index-in'] = i
+                            temp['google-id'] = id
+
                             keeper.append(temp)
                     elif ("bold", True) in te['textRun']['textStyle'].items():
                         if te['textRun']['content'].isspace() == False:
@@ -113,6 +117,9 @@ def get_emphasized_text(doc_content):
                             test = context.split(empha)
                             temp['context'] = test
 
+                            temp['index-in'] = i
+                            temp['google-id'] = id
+
                             keeper.append(temp)
                     elif "foregroundColor" in te['textRun']['textStyle']:
                         if te['textRun']['content'].isspace() == False:
@@ -129,7 +136,8 @@ def get_emphasized_text(doc_content):
                                     context = context + " " + "".join(rem)
                             test = context.split(empha)
                             temp['context'] = test
-
+                            temp['index-in'] = i
+                            temp['google-id'] = id
                             keeper.append(temp)
                     elif "backgroundColor" in te['textRun']['textStyle']:
                         if te['textRun']['content'].isspace() == False:
@@ -145,7 +153,8 @@ def get_emphasized_text(doc_content):
                                     context = context + " " + "".join(rem)
                             test = context.split(empha)
                             temp['context'] = test
-
+                            temp['index-in'] = i
+                            temp['google-id'] = id
                             keeper.append(temp)
     return keeper
 
@@ -223,7 +232,6 @@ Create a google file
 """
 def create_google_file(title, file_type, folder_id):
    
-     
     cred = goog_auth()
     gdrive_service = google_drive_start(cred)
     file_metadata = {
