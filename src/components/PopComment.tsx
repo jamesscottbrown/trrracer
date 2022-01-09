@@ -37,10 +37,18 @@ import { format } from 'path/posix';
           if(spanType === "comment"){
             
             return `${blob["quotedFileContent"]["value"]}`
-            // return `${blob["author"]["displayName"]}: "${blob["content"]}"`
+           
           }else{
               return blob['em']["content"]
           }
+      }
+
+      const formatContext = (blob, pos) => {
+        if(blob.context){
+          return pos === 'before' ? blob.context[0] : blob.context[1]
+        }else{
+          return ""
+        }
       }
 
       const renderPop = (blob) => {
@@ -62,12 +70,16 @@ import { format } from 'path/posix';
       }
 
       const formatPopoverEmText = (blob) => {
-        console.log("blob for emphasized", blob);
+       
+        let blobIndex = blob['index-in'];
+        // let before = (blobIndex > 1 && state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph.elements : " ";
+        // let after = (state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1] && state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph.elements : " ";
+        // return `${before[0].textRun} .... ${after.at(-1).textRun}`
       }
       
       const formatEmphasis = (blob) => {
           
-          let blobOb =  {margin: '4px', display: 'block'}
+          let blobOb =  {margin: '4px'}
           if(spanType === 'comment'){ 
              
               blobOb["fontWeight"] = "bold";
@@ -82,18 +94,31 @@ import { format } from 'path/posix';
           return blobOb
         }
   
-      
       return(
 
         <Popover trigger="hover">
         <PopoverTrigger>
-        <span style={formatEmphasis(data)}>{formatText(data)}</span>
+          <div>
+          <span style={formatEmphasis(data)}>{formatText(data)}</span>
+          </div>
+        
         </PopoverTrigger>
         <PopoverContent bg='white' color='gray'>
             <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader>
             <PopoverArrow bg='white' />
             
             <PopoverBody>
+              {
+                spanType === "comment" ? 
+
+                <Box>{renderPop(data)}</Box> :
+
+                <Box>
+                <span>{formatContext(data, 'before')}</span>
+                <span style={formatEmphasis(data)}>{formatText(data)}</span>
+                <span>{formatContext(data, 'after')}</span>
+                </Box>
+              }
             {/* <Box
             // as="iframe"
             // src={`https://docs.google.com/document/d/${data.goog_id}`}
@@ -101,7 +126,7 @@ import { format } from 'path/posix';
             alt="demo"
             /> */}
             {/* <Box>{formatPopoverComment(data)}</Box> */}
-            <Box>{renderPop(data)}</Box>
+           
             </PopoverBody>
             <PopoverFooter><Button>Go to Doc</Button></PopoverFooter>
         </PopoverContent>

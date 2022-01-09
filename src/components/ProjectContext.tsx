@@ -617,11 +617,12 @@ const appStateReducer = (state, action) => {
       let newEntries;
 
       let roleData;
+      let google_data;
 
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json');
-        console.log("google_data", google_em);
-        const google_data = readProjectFile(baseDir, 'goog_data.json');
+    
+        google_data = readProjectFile(baseDir, 'goog_data.json');
         console.log("google_data", google_data);
 
         const text_data = readProjectFile(baseDir, 'text_data.json');
@@ -662,6 +663,7 @@ const appStateReducer = (state, action) => {
         concepts: newConcepts,
         entries: newEntries,
         roles: roleData,
+        googleData: google_data,
         topics,
         
       };
