@@ -30,7 +30,7 @@ import { format } from 'path/posix';
       }
   
       const colorConvert = (codes: Object)=> {
-        console.log(`rgb(${(255 * codes.red)},${(255 * codes.green)},${(255 * codes.blue)})`)
+        
           return `rgb(${(255 * codes.red)},${(255 * codes.green)},${(255 * codes.blue)})`
         }
   
@@ -84,13 +84,43 @@ import { format } from 'path/posix';
           if(spanType === 'comment'){ 
              
               blobOb["fontWeight"] = "bold";
-              blobOb["backgroundColor"] = "yellow";
+              blobOb["backgroundColor"] = "rgb(253,213,145)";
           }else{
               if(blob['em']['textStyle'].bold === true) blobOb["fontWeight"] = "bold";
-              if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
-              if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
+              // if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
+              // if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
               if(blob['em']['textStyle'].backgroundColor) blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
-              if(blob['em']['textStyle'].foregroundColor) blobOb["color"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor)
+              //if(blob['em']['textStyle'].foregroundColor) blobOb["color"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor)
+          }
+          return blobOb
+        }
+
+        const formatEmphasisVis = (blob) => {
+          
+          let blobOb =  {margin: '4px', width:'100px', height:'10px', "backgroundColor": 'gray'}
+          if(spanType === 'comment'){ 
+             
+              blobOb["fontWeight"] = "bold";
+              blobOb["backgroundColor"] = "rgb(253,213,145)";
+          }else{
+              if(blob['em']['textStyle'].bold === true) blobOb["height"] = '20px';
+              if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
+              // if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
+              if(blob['em']['textStyle'].backgroundColor) {
+                blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
+                // console.log(colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor))
+                blobOb["borderColor"] = "gray";
+                blobOb["borderStyle"] = "solid";
+                blobOb["borderWidth"] = '1px';
+              }
+              if(blob['em']['textStyle'].foregroundColor){ 
+                console.log(colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor))
+                blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor);
+                blobOb["borderColor"] = "gray";
+                blobOb["borderStyle"] = "solid";
+                blobOb["borderWidth"] = '1px';
+              
+              }
           }
           return blobOb
         }
@@ -99,8 +129,7 @@ import { format } from 'path/posix';
 
         <Popover trigger="hover">
         <PopoverTrigger>
-          <div>
-          <span style={formatEmphasis(data)}>{formatText(data)}</span>
+          <div style={formatEmphasisVis(data)}>
           </div>
         
         </PopoverTrigger>
@@ -120,13 +149,6 @@ import { format } from 'path/posix';
                 <span>{formatContext(data, 'after')}</span>
                 </Box>
               }
-            {/* <Box
-            // as="iframe"
-            // src={`https://docs.google.com/document/d/${data.goog_id}`}
-            // src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.952912260219!2d3.375295414770757!3d6.5276316452784755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc9e87a367c3d9cb!2sLagos!5e0!3m2!1sen!2sng!4v1567723392506!5m2!1sen!2sng"
-            alt="demo"
-            /> */}
-            {/* <Box>{formatPopoverComment(data)}</Box> */}
            
             </PopoverBody>
             <PopoverFooter><Button>Go to Doc</Button></PopoverFooter>
