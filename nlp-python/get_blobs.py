@@ -26,11 +26,11 @@ def extract_entry_text_to_blobs(document_path):
     # fix_missing_file_type(d_b_json["entries"])
 
     blob = {}
-    # google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)
-    text_data = make_file_for_text_data(fixed_entries, document_path)
+    google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)
+    # text_data = make_file_for_text_data(fixed_entries, document_path)
 
 
-    return text_data
+    return google_data
 
 def fix_missing_file_type(entries):
     for en in entries:

@@ -30,13 +30,14 @@ import { format } from 'path/posix';
       }
   
       const colorConvert = (codes: Object)=> {
+        console.log(`rgb(${(255 * codes.red)},${(255 * codes.green)},${(255 * codes.blue)})`)
           return `rgb(${(255 * codes.red)},${(255 * codes.green)},${(255 * codes.blue)})`
         }
   
       const formatText = (blob)=> {
           if(spanType === "comment"){
             
-            return `${blob["quotedFileContent"]["value"]}`
+            return blob["quotedFileContent"] ? `${blob["quotedFileContent"]["value"]}` : " "
            
           }else{
               return blob['em']["content"]
@@ -88,7 +89,7 @@ import { format } from 'path/posix';
               if(blob['em']['textStyle'].bold === true) blobOb["fontWeight"] = "bold";
               if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
               if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
-              if(blob['em']['textStyle'].backgroundColor) blobOb["backgroundColor"] = "azure"
+              if(blob['em']['textStyle'].backgroundColor) blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
               if(blob['em']['textStyle'].foregroundColor) blobOb["color"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor)
           }
           return blobOb

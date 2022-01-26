@@ -641,7 +641,6 @@ const appStateReducer = (state, action) => {
                 if(ef.fileType === "gdoc"){
                   ef.emphasized = google_em[ef.fileId];
                   ef.comments = comment_data[ef.fileId];
-
                 }
                 return ef
               })
@@ -665,7 +664,6 @@ const appStateReducer = (state, action) => {
         roles: roleData,
         googleData: google_data,
         topics,
-        
       };
 
       console.log('newProject data', newProjectData);
