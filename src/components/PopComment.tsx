@@ -102,19 +102,22 @@ import { format } from 'path/posix';
              
               blobOb["fontWeight"] = "bold";
               blobOb["backgroundColor"] = "rgb(253,213,145)";
+
           }else{
+
               if(blob['em']['textStyle'].bold === true) blobOb["height"] = '20px';
               if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
-              // if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
+      
               if(blob['em']['textStyle'].backgroundColor) {
+
                 blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
-                // console.log(colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor))
                 blobOb["borderColor"] = "gray";
                 blobOb["borderStyle"] = "solid";
                 blobOb["borderWidth"] = '1px';
+
               }
               if(blob['em']['textStyle'].foregroundColor){ 
-                console.log(colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor))
+                
                 blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor);
                 blobOb["borderColor"] = "gray";
                 blobOb["borderStyle"] = "solid";

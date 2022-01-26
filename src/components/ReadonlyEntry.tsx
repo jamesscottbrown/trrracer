@@ -16,9 +16,16 @@ import {
   PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
+  Box,
+  FormControl,
+  FormLabel,
+  Image,
+  SimpleGrid,
+  Divider,
 } from '@chakra-ui/react';
 
 
+import AttachmentPreview from './AttachmentPreview';
 
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -97,7 +104,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return com
   });
 
-  const [{ projectData }] = useProjectState();
+  const [{ projectData, folderPath }] = useProjectState();
 
   const getColor = (tagName: string) => {
     const matchingTags = projectData.tags.filter(
@@ -159,7 +166,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         />
       )}
 
-      <UnorderedList>
+      {/* <UnorderedList>
         {files.map((file: File) => (
           <ListItem key={file.title}>
             {file.title}{' '}
@@ -171,7 +178,27 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             />{' '}
           </ListItem>
         ))}
-      </UnorderedList>
+      </UnorderedList> */}
+      
+      <SimpleGrid columns={4} spacing={10}>
+        {files.map((f, i) => (
+          <Box key={`${f.title}-${i}`}>
+            <AttachmentPreview
+              folderPath={folderPath}
+              //folderPath='null'
+              title={f.title}
+              openFile={openFile}
+            />
+            {f.title}{' '}
+            <FaExternalLinkAlt
+              onClick={() => openFile(f.title)}
+              title="Open file externally"
+              size="12px"
+              style={{ display: 'inline' }}
+            />
+          </Box>
+        ))}
+      </SimpleGrid>
 
       {urls.length > 0 && (
         <>
