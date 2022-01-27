@@ -35,7 +35,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <audio src={`file://${path.join(folderPath, title)}`} controls />;
   }
 
-  const size = '75%';
+  const size = '65%';
 
   if (title.endsWith('.csv')) {
     return <GrDocumentCsv onClick={() => openFile(title)} size={size} />;

@@ -180,21 +180,20 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         ))}
       </UnorderedList> */}
       
-      <SimpleGrid columns={4} spacing={10}>
+      <SimpleGrid size="8px" columns={4} spacing={10}>
         {files.map((f, i) => (
           <Box key={`${f.title}-${i}`}>
-            <AttachmentPreview
-              folderPath={folderPath}
-              //folderPath='null'
-              title={f.title}
-              openFile={openFile}
-            />
             {f.title}{' '}
             <FaExternalLinkAlt
               onClick={() => openFile(f.title)}
               title="Open file externally"
               size="12px"
               style={{ display: 'inline' }}
+            />
+            <AttachmentPreview
+              folderPath={folderPath}
+              title={f.title}
+              openFile={openFile}
             />
           </Box>
         ))}
