@@ -35,7 +35,7 @@ const TopTimeline = (projectProps:any)=>{
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align={'center'}
         >
-        {"THIS IS A TEST"}
+        <svg><rect></rect></svg>
         </Flex>
         </Box>
     )
