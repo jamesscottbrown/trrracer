@@ -23,16 +23,14 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
   return (
     <>
     <FormControl>
-      <FormLabel> View type: </FormLabel>
       <Select
         onChange={(ev) => setViewType(ev.target.value)}
         value={viewType}
         width="max-content"
       >
-        <option id="concepts/list">concepts/list</option>
-        <option id="topics/list">topics/list</option>
-        <option id="timeline">timeline</option>
-        <option id="concept-evolution">concept evolution</option>
+        <option id="activity view">activity view</option>
+        <option id="tag view">tag view</option>
+
       </Select>
     </FormControl>
     </>

@@ -168,10 +168,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
   return (
     <div style={{ padding: '10px' }}>
-
+{/* 
       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
       <br />
-      <Divider />
+      <Divider /> */}
 
       {showTags ?
       <div>

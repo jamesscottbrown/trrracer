@@ -11,14 +11,14 @@ import {
   Editable,
   EditablePreview,
   EditableInput,
+  Input
 } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
 import TopBar from './TopBar';
 import ProjectBinView from './ProjectBinView';
-import TopicProjectListView from './TopicProjectListView';
-import ConceptEvo from './ConceptEvo';
+
 import ProjectGridView from './ProjectGridView';
 import { useProjectState } from './ProjectContext';
 
@@ -28,44 +28,44 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   // const { projectData, folderPath } = ProjectPropValues;
+  const { folderPath } = ProjectPropValues;
+  const [{ projectData }, dispatch] = useProjectState();
+  const [viewType, setViewType] = useState<string>('activity view');
 
-  // const [viewType, setViewType] = useState<string>('concepts/list');
-
-  // if (viewType === 'concepts/list') {
-  //   return (
-  //     <div>
-  //     <TopBar  
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}/>
-  //     <ProjectListView
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}
-  //     />
-  //     </div>
-  //   );
-  // }
-
-  // if (viewType === 'topics/list') {
-  //   return (
-  //     <div>
-  //     <TopBar  
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}/>
-  //     <TopicProjectListView
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}
-  //     />
-  //     </div>
-  //   );
-  // }
+  if (viewType === 'activity view') {
+    return (
+      <div>
+      <TopBar  
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}/>
+      <ProjectListView
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}
+      />
+      </div>
+    );
+  }
+  if (viewType === 'tag view') {
+    return (
+      <div>
+      <TopBar  
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}/>
+      {/* <ProjectListView
+        projectData={projectData}
+        folderPath={folderPath}
+        viewType={viewType}
+        setViewType={setViewType}
+      /> */}
+      </div>
+    );
+  }
 
   // if (viewType === 'timeline') {
   //   return (
@@ -116,8 +116,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
   //     </div>
   //   );
   // }
-  const { folderPath } = ProjectPropValues;
-  const [{ projectData }, dispatch] = useProjectState();
+
+
+  console.log('IN PROJECT',projectData);
 
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
 
@@ -126,22 +127,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
     setNewTitle(projectData.title);
   }, [projectData]);
 
-  return (
-    <>
-      <Heading as="h1">
-        <Editable
-          /* defaultValue={projectData.title} */
-          value={newTitle}
-          onChange={(val) => setNewTitle(val)}
-          onCancel={() => setNewTitle(projectData.title)}
-          onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
-        >
-          <EditablePreview />
-          <EditableInput />
-        </Editable>
-      </Heading>
+  // return (
+    // <>
 
-      <Tabs variant="enclosed">
+
+    {/* <TopBar projectData={projectData} folderPath={folderPath}></TopBar> */}
+      {/* <Tabs variant="enclosed">
         <TabList>
           <Tab>List View</Tab>
           <Tab>Timeline View</Tab>
@@ -170,9 +161,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
             />
           </TabPanel>
         </TabPanels>
-      </Tabs>
-    </>
-  );
+      </Tabs> */}
+    // </>
+  // );
 
   // return null;
 };

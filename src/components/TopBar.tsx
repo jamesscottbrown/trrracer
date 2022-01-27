@@ -7,18 +7,23 @@ import {
   Spacer,
   useBreakpointValue,
   useDisclosure,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Button
 } from '@chakra-ui/react';
 import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
+  Search2Icon,
+  SearchIcon
 } from '@chakra-ui/icons';
 import { EntryType, FileObj, ProjectViewProps } from './types';
 import ViewTypeControl from './ViewTypeControl';
+import TopTimeline from './TopTimeline';
+
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 const { projectData, folderPath, viewType, setViewType } = ProjectPropValues;
 
+console.log('PROJECT DATA', projectData)
 
 let splitTitle = (title)=>{
     let t = title.split('/');
@@ -26,7 +31,6 @@ let splitTitle = (title)=>{
 }
 
 return (
-
 <Box>
   <Flex  
     bg={useColorModeValue('white', 'gray.800')}
@@ -39,10 +43,32 @@ return (
     borderColor={useColorModeValue('gray.200', 'gray.900')}
     align={'center'}
     >
+    {/* <Heading as="h1">
+        <Editable
+      
+          value={newTitle}
+          onChange={(val) => setNewTitle(val)}
+          onCancel={() => setNewTitle(projectData.title)}
+          onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
+    </Heading> */}
     <Heading as="h3">{splitTitle(projectData.title)}</Heading>
     <Spacer/>
+    <InputGroup align={'center'} width={'400px'} marginEnd={'90px'}>
+      <Input variant='flushed' placeholder='Search by term' />
+      <InputRightElement width='4.5rem'>
+        <Button h='1.75rem' size='sm' onClick={console.log("TEST")}>
+          <Search2Icon/>
+        </Button>
+      </InputRightElement>
+    </InputGroup>
+    
      <div style={{float:"right"}}><ViewTypeControl viewType={viewType} setViewType={setViewType} /></div>
     </Flex>
+    <TopTimeline projectData={projectData}/>
 </Box>
 )
 
