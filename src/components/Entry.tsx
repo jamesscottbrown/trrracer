@@ -128,8 +128,6 @@ const Entry = (props: EntryPropTypes) => {
 
   console.log('STATE IN ENTRY', state);
 
-  
-
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
