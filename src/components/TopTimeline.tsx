@@ -102,16 +102,13 @@ const TopTimeline = (projectProps:any)=>{
               .attr("opacity", 0.5)
               .attr("color", "gray.900")
               .attr("font-size", "0.75rem");
-  
-
       }, [activity]);
 
     return(
-        <Box>
-        <Flex  
+        <Flex flex={4} 
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        minH={'60px'}
+        h={'150px'}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -122,7 +119,7 @@ const TopTimeline = (projectProps:any)=>{
         <svg ref={svgRef} width={'100%'} height={'100%'} style={{backgroundColor:"green"}}>
         </svg>
         </Flex>
-        </Box>
+      
     )
 }
 

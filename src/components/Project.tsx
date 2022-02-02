@@ -24,6 +24,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
+  const [newTitle, setNewTitle] = useState<string>(projectData.title);
 
   console.log('projectrData',projectData)
 
@@ -36,8 +37,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         projectData={projectData}
         folderPath={folderPath}
         viewType={viewType}
-        setViewType={setViewType}/>
-      <Flex>
+        setViewType={setViewType}
+        reversedOrder={reversedOrder}
+        setReversedOrder={setReversedOrder}
+        setNewTitle={setNewTitle}/>
+      <Flex top={300}>
       <LeftSidebar projectData={projectData}></LeftSidebar>
       <CenterView projectEntries={projectData.entries}></CenterView>
       <Box flex=".5" bg='green.500' maxWidth='25%'>
@@ -61,12 +65,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
         folderPath={folderPath}
         viewType={viewType}
         setViewType={setViewType}/>
-      {/* <ProjectListView
-        projectData={projectData}
-        folderPath={folderPath}
-        viewType={viewType}
-        setViewType={setViewType}
-      /> */}
       </div>
     );
   }
@@ -89,47 +87,17 @@ const Project = (ProjectPropValues: ProjectProps) => {
   //   );
   // }
 
-  // if (viewType === 'concept evolution') {
-  //   return (
-  //     <div>
-  //     <TopBar  
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}/>
-        
-  //       <ConceptEvo></ConceptEvo>
-  //     </div>
-  //   );
-  // }
 
-  // if (viewType === 'bin') {
-  //   return (
-  //     <div>
-  //     <TopBar  
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}/>
-  //     <ProjectBinView
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}
-  //     />
-  //     </div>
-  //   );
-  // }
 
 
   console.log('IN PROJECT',projectData);
 
-  const [newTitle, setNewTitle] = useState<string>(projectData.title);
+
 
   // Update title when projectData changes.
-  useEffect(() => {
-    setNewTitle(projectData.title);
-  }, [projectData]);
+  // useEffect(() => {
+  //   setNewTitle(projectData.title);
+  // }, [projectData]);
 
   // return (
     // <>

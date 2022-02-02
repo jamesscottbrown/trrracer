@@ -10,12 +10,14 @@ import {
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
+
 import {
   EntryType,
   EntryTypeWithIndex,
   FileObj,
   ProjectViewProps,
 } from './types';
+
 import Entry from './Entry';
 import FileUpload from './FileUpload';
 import TagList from './TagList';
@@ -144,7 +146,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
         </>
       ))}
 
-      <Button onClick={addEntry} type="button">
+      {/* <Button onClick={addEntry} type="button">
         <FaPlus /> Add entry
       </Button>
 
@@ -157,7 +159,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
             create a new entry.
           </>
         }
-      />
+      /> */}
       </div>
     );
 
