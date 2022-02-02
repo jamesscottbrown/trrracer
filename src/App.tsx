@@ -46,7 +46,7 @@ export default function App() {
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
   ipcRenderer.on('projectPath', (_event, folderName) => {
-   // console.log('Received project path:', folderName);
+    console.log('Received project path:', folderName);
 
     setPath(folderName);
 
@@ -59,8 +59,7 @@ export default function App() {
         dispatch({
           type: 'SET_DATA',
           folderName,
-          // projectData: migrateTrrraceFormat(JSON.parse(data)),
-          projectData: JSON.parse(data)
+          projectData: migrateTrrraceFormat(JSON.parse(data)),
         });
       }
     });

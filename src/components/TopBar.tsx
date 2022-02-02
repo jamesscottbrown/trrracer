@@ -29,9 +29,14 @@ let splitTitle = (title)=>{
     let t = title.split('/');
     return t[t.length - 1];
 }
-
+// background: #0596d8;
+// padding: 10px;
+// box-shadow: 1px 2px 3px #ccc;
+// color: white;
+// display: flex;
+// flex-flow: row nowrap;
 return (
-<Box>
+<Box flexFlow={'row nowrap'}>
   <Flex  
     bg={useColorModeValue('white', 'gray.800')}
     color={useColorModeValue('gray.600', 'white')}
@@ -57,6 +62,12 @@ return (
     </Heading> */}
     <Heading as="h3">{splitTitle(projectData.title)}</Heading>
     <Spacer/>
+    {/* <Checkbox
+        checked={reversedOrder}
+        onChange={(e) => setReversedOrder(e.target.checked)}
+      >
+        Reverse chronological order
+    </Checkbox>  */}
     <InputGroup align={'center'} width={'400px'} marginEnd={'90px'}>
       <Input variant='flushed' placeholder='Search by term' />
       <InputRightElement width='4.5rem'>

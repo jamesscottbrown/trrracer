@@ -26,16 +26,15 @@ import EdgeControl from './Edges';
 const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath } = ProjectPropValues;
+  
+  const { projectData, folderPath, reversedOrder} = ProjectPropValues;
 
   const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
-  const [reversedOrder, setReversedOrder] = useState<boolean>(false);
 
-  const [showTags, setShowTags] = useState(false);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -74,7 +73,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
-     // console.log('entry-data', entryData)
+    
       return filterTags.every((requiredTag: string) =>
         entryData.tags.includes(requiredTag)
       );
@@ -100,108 +99,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     );
   };
 
-  // if(searchConcept === null){
-
-  //   return (
-  //     <div style={{padding:'10px'}}>
-  //       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
-  //       <br />
-  //       <Divider />
-  //       <EdgeControl edges={projectData.edges}/>
-  //       <br />
-  //       <Divider />
-  //       <TagList tags={projectData.tags} />
-  //       <br />
-  //       <Divider />
-  //       <Heading as="h2">Activities</Heading>
-  //     <br/>
-  //       <ButtonGroup style={{display:"inline"}}>
-  //         {!editable.every((t) => t) && (
-  //           <Button onClick={makeAllEditable} type="button">
-  //             <FaEye />
-  //             Show all edit controls
-  //           </Button>
-  //         )}
-  //         {!editable.every((t) => !t) && (
-  //           <Button onClick={makeAllNonEditable} type="button">
-  //             <FaEyeSlash /> Hide all edit controls
-  //           </Button>
-  //         )}
-  //       </ButtonGroup>
-  
-  //       <br />
-  //       <br />
-  
-  //       <TagFilter />
-  
-  //       <br/>
-  
-  //       {filteredEntries.map((entryData: EntryType, i: number) => (
-  //         <>
-  //           {editable[i] ? (
-  //             <Entry
-  //               /* eslint-disable-next-line react/no-array-index-key */
-  //               key={i}
-  //               entryData={entryData}
-  //               entryIndex={i}
-  //               openFile={openFile}
-  //               updateEntryField={updateEntryField}
-  //               allTags={projectData.tags}
-  //             />
-  //           ) : (
-  //             <ReadonlyEntry
-  //               /* eslint-disable-next-line react/no-array-index-key */
-  //               key={i}
-  //               entryData={entryData}
-  //               openFile={openFile}
-  //               makeEditable={() => makeEditable(i)}
-  //             />
-  //           )}
-  
-  //           <Divider marginTop="1em" marginBottom="1em" />
-  //         </>
-  //       ))}      
-        
-  //       <Button onClick={addEntry} type="button">
-  //         <FaPlus /> Add entry
-  //       </Button>
-  
   return (
-    <div style={{ padding: '10px' }}>
-
-      {showTags ?
-      <div>
-        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading>
-        <TagList tags={projectData.tags} />
-        </div>
-        :
-        <div><Heading as="h5">Tags <FaEye onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading></div>
-    }
-      
-
-      <Heading as="h2">Entries</Heading>
-
-      <Checkbox
-        checked={reversedOrder}
-        onChange={(e) => setReversedOrder(e.target.checked)}
-      >
-        Reverse chronological order
-      </Checkbox>
-      <br />
-      <br />
-
+    <div style={{ padding: '10px'}}>
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
@@ -215,9 +114,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           </Button>
         )}
       </ButtonGroup>
-
-      <br />
-      <br />
 
       <br />
 
@@ -264,17 +160,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       />
       </div>
     );
-
-  // }else{
-  //   return  (
-  //     <div style={{padding:'10px'}}>
-  //     <ConceptNav concepts={projectData.concepts}/>
-
-  //   </div>
-  //   )
-
-  // }
-
 
 };
 export default ProjectListView;

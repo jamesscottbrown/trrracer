@@ -19,19 +19,19 @@ import {
 import { EntryType, FileObj, ProjectViewProps } from './types';
 import * as d3 from "d3";
 
+const calcAxis = (axisProps: any) => {
+
+}
+
 const TopTimeline = (projectProps:any)=>{
     const svgRef = React.useRef(null);
 
     const { projectData } = projectProps;
     const activity = projectData.entries;
 
-    console.log('higher up activity', projectData, activity)
-
-
     let width = 1000;
     let height = 200;
 
-    // console.log('test this out', projectData.entries, d3)
     const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
 
     function monthDiff(d1, d2) {
@@ -41,70 +41,69 @@ const TopTimeline = (projectProps:any)=>{
         months += d2.getMonth();
         return months <= 0 ? 0 : months;
     }
-    console.log('ACTIVITY',activity)
-    let spanTime = d3.extent(activity.map(m=> new Date(m.date)))
-    console.log('SPAN TIME', spanTime)
 
     React.useEffect(() => {
 
-       
-       // console.log('this changed', spanTime, monthDiff(spanTime[0], spanTime[1]))
-
-        // let wrapper = new Array(monthDiff(spanTime[0], spanTime[1]))
-        // console.log('WRAPPER', wrapper)
-
+     // if(activity.length > 0){
 
         
-        // .map((d, i, n)=>{
-        //     console.log('ddd', d)
-        //     return d;
-        // })
-    
-        console.log("EXTENT MONTH NEW", monthGroups)
-
-        const monthScale = d3.scaleLinear().domain([0, monthDiff(spanTime[0], spanTime[1])]).range([0, 1000])
-        
-        const xScale = d3.scaleTime()
-          .domain(d3.extent(activity.map(m=> new Date(m.date))))
-          .range([0, width]);
-
-          console.log(xScale.domain())
-
-        // Create root container where we will append all other chart elements
-        const svgEl = d3.select(svgRef.current);
-        svgEl.selectAll("*").remove(); // Clear svg content before adding new elements 
-        const svg = svgEl
-          .append("g")
-          .attr("transform", `translate(10, 10)`);
-
-        svg.selectAll('rect').data(activity).enter().append('rect').attr('x', d=> {
-            console.log('XSCALE', new Date(d.date).getMonth())
-            return xScale(new Date(d.date))}).attr('y',20).attr('width', 2).attr('height', 100)
-
-            svg.selectAll('text').data(activity).enter().append('text').text(d=> d.title).attr('x', d=> {
-                //console.log('XSCALE', d3.timeMonth(new Date (d.date)))
-                return xScale(new Date(d.date))}).attr('y', 20).attr('width', 2).attr('height', 100)
-    //    // Add X grid lines with labels
-
-        const xAxis = d3.axisBottom(monthScale)
-            .ticks(5)
-            .tickSize(-height + 10);
+        let spanTime = d3.extent(activity.map(m=> new Date(m.date)))
+     
+      
+      
+          console.log("EXTENT MONTH NEW", monthGroups)
+          console.log('span time', spanTime);
+          console.log("SPANNER", monthDiff(spanTime[0], spanTime[1]))
+  
+          const monthScale = d3.scaleLinear().domain([0, monthDiff(spanTime[0], spanTime[1])]).range([0, 1000])
+          
+          let dateHolder = new Array(monthDiff(spanTime[0], spanTime[1]))
+          console.log('datehoder',dateHolder)
+          let start = new Date(spanTime[0]).getMonth()
+          dateHolder.map((dh, i) => {
+            console.log(dh, i, start)
             
-        const xAxisGroup = svg.append("g")
-            .attr("transform", `translate(0, ${height - 10})`)
-            .call(xAxis);
+          })
 
-        xAxisGroup.select(".domain").remove();
-        xAxisGroup.selectAll("line").enter().append('line').attr("stroke", 'gray.900');
-        //    xAxisGroup.selectAll("line").attr("stroke", "rgba(255, 255, 255, 0.2)");
-        xAxisGroup.selectAll("text").enter().append('text')
-            .attr("opacity", 0.5)
-            .attr("color", "gray.900")
-            .attr("font-size", "0.75rem");
+          const xScale = d3.scaleTime()
+            .domain(d3.extent(activity.map(m=> new Date(m.date))))
+            .range([0, width]);
+  
+            // console.log(xScale.domain())
+  
+          // Create root container where we will append all other chart elements
+          const svgEl = d3.select(svgRef.current);
+          svgEl.selectAll("*").remove(); // Clear svg content before adding new elements 
+          const svg = svgEl
+            .append("g")
+            .attr("transform", `translate(10, 10)`);
+  
+          // svg.selectAll('rect').data(activity).enter().append('rect').attr('x', d=> {
+          //     // console.log('XSCALE', new Date(d.date).getMonth())
+          //     return xScale(new Date(d.date))}).attr('y',20).attr('width', 2).attr('height', 100)
+  
+          svg.selectAll('text').data(activity).enter().append('text').text(d=> d.title).attr('x', d=> {
+                  //console.log('XSCALE', d3.timeMonth(new Date (d.date)))
+                  return xScale(new Date(d.date))}).attr('y', 20).attr('width', 2).attr('height', 100)
+      //    // Add X grid lines with labels
+  
+          const xAxis = d3.axisBottom(monthScale)
+              .ticks(5)
+              .tickSize(-height + 10);
+              
+          const xAxisGroup = svg.append("g")
+              .attr("transform", `translate(0, ${height - 10})`)
+              .call(xAxis);
+  
+          xAxisGroup.select(".domain").remove();
+          xAxisGroup.selectAll("line").enter().append('line').attr("stroke", 'gray.900');
+          //    xAxisGroup.selectAll("line").attr("stroke", "rgba(255, 255, 255, 0.2)");
+          xAxisGroup.selectAll("text").enter().append('text')
+              .attr("opacity", 0.5)
+              .attr("color", "gray.900")
+              .attr("font-size", "0.75rem");
+  
 
-
-    //     // Draw the lines
-    
       }, [activity]);
 
     return(
@@ -120,10 +119,7 @@ const TopTimeline = (projectProps:any)=>{
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align={'center'}
         >
-        <svg ref={svgRef} width={'100%'} height={'100%'}>
-            {/* { entries.map((e:any, i:any) => (
-                <rect y={0} x={`${i * 30}px`} width={'5px'} height={'100%'} fill={'red'}></rect>
-            ))} */}
+        <svg ref={svgRef} width={'100%'} height={'100%'} style={{backgroundColor:"green"}}>
         </svg>
         </Flex>
         </Box>

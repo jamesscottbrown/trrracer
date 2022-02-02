@@ -1,26 +1,18 @@
 /* eslint no-console: off */
 
 import React, { useEffect, useState } from 'react';
+// import { StyleSheet, Text, View } from "react-native";
 import {
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Heading,
-  Editable,
-  EditablePreview,
-  EditableInput,
-  Input
+  Flex,
+  Box
 } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
 import ProjectTimelineView from './ProjectTimelineView';
 import TopBar from './TopBar';
-import ProjectBinView from './ProjectBinView';
-
-import ProjectGridView from './ProjectGridView';
 import { useProjectState } from './ProjectContext';
+import CenterView from './CenterView';
+import LeftSidebar from './LeftSidebar';
 
 interface ProjectProps {
   folderPath: string;
@@ -31,21 +23,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
+  const [reversedOrder, setReversedOrder] = useState<boolean>(true);
+
+  console.log('projectrData',projectData)
 
   if (viewType === 'activity view') {
+
     return (
+      
       <div>
       <TopBar  
         projectData={projectData}
         folderPath={folderPath}
         viewType={viewType}
         setViewType={setViewType}/>
-      <ProjectListView
-        projectData={projectData}
-        folderPath={folderPath}
-        viewType={viewType}
-        setViewType={setViewType}
-      />
+      <Flex>
+      <LeftSidebar projectData={projectData}></LeftSidebar>
+      <CenterView projectEntries={projectData.entries}></CenterView>
+      <Box flex=".5" bg='green.500' maxWidth='25%'>
+        <ProjectListView
+            projectData={projectData}
+            folderPath={folderPath}
+            viewType={viewType}
+            reversedOrder={reversedOrder}
+            setViewType={setViewType}
+            />
+      </Box>
+      </Flex>
       </div>
     );
   }

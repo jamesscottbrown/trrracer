@@ -978,7 +978,8 @@ const appStateReducer = (state, action) => {
 };
 
 const initialState = {
-  projectData: getEmptyProject('null'),
+  projectData: null,
+  //projectData: getEmptyProject('null'),
   folderPath: null,
   filterTags: [],
 };

@@ -8,6 +8,7 @@ import {
   Text,
   UnorderedList,
   Badge,
+  Flex,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -38,7 +39,6 @@ import textColor from '../colors';
 import { useProjectState } from './ProjectContext';
 
 import { Tooltip } from "@chakra-ui/react"
-import Span from './Span';
 import PopComment from './PopComment';
 
 
@@ -124,11 +124,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   });
 
   return (
-    <>
-      <Heading as="h2">
+    <Box>
+      <Heading as="h6">
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
-          Edit entry
+          Edit
         </Button>
       </Heading>
       <Text fontSize="lg" fontWeight="bold">
@@ -156,8 +156,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </p>
 
       <br />
-
-          {entryData.description && (
+      {entryData.description && (
         <div
           className="readonlyEntryMarkdownPreview"
           dangerouslySetInnerHTML={{
@@ -165,39 +164,31 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           }}
         />
       )}
+     
+          <SimpleGrid columns={2} spacing={3}>
+            {files.map((f, i) => (
+                <Box key={`${f.title}-${i}`} p={3}>
+                  {f.title}{' '}
+                  <FaExternalLinkAlt
+                    onClick={() => openFile(f.title)}
+                    title="Open file externally"
+                    size="10px"
+                    style={{ display: 'inline' }}
+                  />
+                  <AttachmentPreview
+                    folderPath={folderPath}
+                    title={f.title}
+                    openFile={openFile}
+                  />
+                </Box>
+              ))}
 
-      {/* <UnorderedList>
-        {files.map((file: File) => (
-          <ListItem key={file.title}>
-            {file.title}{' '}
-            <FaExternalLinkAlt
-              onClick={() => openFile(file.title)}
-              title="Open file externally"
-              size="12px"
-              style={{ display: 'inline' }}
-            />{' '}
-          </ListItem>
-        ))}
-      </UnorderedList> */}
-      
-      <SimpleGrid size="8px" columns={4} spacing={10}>
-        {files.map((f, i) => (
-          <Box key={`${f.title}-${i}`}>
-            {f.title}{' '}
-            <FaExternalLinkAlt
-              onClick={() => openFile(f.title)}
-              title="Open file externally"
-              size="12px"
-              style={{ display: 'inline' }}
-            />
-            <AttachmentPreview
-              folderPath={folderPath}
-              title={f.title}
-              openFile={openFile}
-            />
-          </Box>
-        ))}
-      </SimpleGrid>
+          </SimpleGrid>
+ 
+     
+
+     
+   
 
       {urls.length > 0 && (
         <>
@@ -218,7 +209,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </UnorderedList>
         </>
       )}
-     <div style={{float:'right', width:'37%', display:'inline-block', overflowY:'auto', height:'200px'}}>
+     <div style={{float:'right', display:'inline-block', overflowY:'auto', height:'200px'}}>
         { googEm.length > 0 ? 
               googEm.map(em => (
                 <PopComment data={em} spanType={"emphasize"} />
@@ -246,7 +237,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               : <div></div> 
           }
       </div>
-    </>
+    </Box>
   );
 };
 
