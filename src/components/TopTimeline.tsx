@@ -44,32 +44,27 @@ const TopTimeline = (projectProps:any)=>{
 
     React.useEffect(() => {
 
-     // if(activity.length > 0){
+
 
         
         let spanTime = d3.extent(activity.map(m=> new Date(m.date)))
      
       
       
-          console.log("EXTENT MONTH NEW", monthGroups)
-          console.log('span time', spanTime);
-          console.log("SPANNER", monthDiff(spanTime[0], spanTime[1]))
+  
   
           const monthScale = d3.scaleLinear().domain([0, monthDiff(spanTime[0], spanTime[1])]).range([0, 1000])
           
           let dateHolder = new Array(monthDiff(spanTime[0], spanTime[1]))
-          console.log('datehoder',dateHolder)
+      
           let start = new Date(spanTime[0]).getMonth()
-          dateHolder.map((dh, i) => {
-            console.log(dh, i, start)
-            
-          })
+        
 
           const xScale = d3.scaleTime()
             .domain(d3.extent(activity.map(m=> new Date(m.date))))
             .range([0, width]);
   
-            // console.log(xScale.domain())
+            
   
           // Create root container where we will append all other chart elements
           const svgEl = d3.select(svgRef.current);
@@ -78,12 +73,12 @@ const TopTimeline = (projectProps:any)=>{
             .append("g")
             .attr("transform", `translate(10, 10)`);
   
-          // svg.selectAll('rect').data(activity).enter().append('rect').attr('x', d=> {
-          //     // console.log('XSCALE', new Date(d.date).getMonth())
-          //     return xScale(new Date(d.date))}).attr('y',20).attr('width', 2).attr('height', 100)
+          svg.selectAll('rect').data(activity).enter().append('rect').attr('x', d=> {
+            
+              return xScale(new Date(d.date))}).attr('y',20).attr('width', 2).attr('height', 100)
   
           svg.selectAll('text').data(activity).enter().append('text').text(d=> d.title).attr('x', d=> {
-                  //console.log('XSCALE', d3.timeMonth(new Date (d.date)))
+                 
                   return xScale(new Date(d.date))}).attr('y', 20).attr('width', 2).attr('height', 100)
       //    // Add X grid lines with labels
   

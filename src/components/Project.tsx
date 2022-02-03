@@ -13,6 +13,7 @@ import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
 import CenterView from './CenterView';
 import LeftSidebar from './LeftSidebar';
+import { relative } from 'path/posix';
 
 interface ProjectProps {
   folderPath: string;
@@ -26,7 +27,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
 
-  console.log('projectrData',projectData)
+
 
   if (viewType === 'activity view') {
 
@@ -41,7 +42,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         reversedOrder={reversedOrder}
         setReversedOrder={setReversedOrder}
         setNewTitle={setNewTitle}/>
-      <Flex top={300}>
+      <Flex position={'relative'} top={220}>
       <LeftSidebar projectData={projectData}></LeftSidebar>
       <CenterView projectEntries={projectData.entries}></CenterView>
       <Box flex=".5" bg='green.500' maxWidth='25%'>
@@ -90,7 +91,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
 
 
-  console.log('IN PROJECT',projectData);
 
 
 
