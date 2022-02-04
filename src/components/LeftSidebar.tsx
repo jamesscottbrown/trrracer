@@ -31,33 +31,36 @@ const LeftSidebar = (projectProps: any) => {
 
     let sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length)
    
+    const headerStyle = {fontSize:'19px', fontWeight:600}
 
     return(
         
-        <Box p={5} flex='1' flexDirection='column'>
-           <Box>
-           <Heading as="h7">
-              {`${projectData.entries.length} Activities`}
-            </Heading><br></br>
-            <Heading as="h7">
-              {`${artifacts.length} Artifacts`}
-            </Heading><br></br>
+        <Box margin="8px" p={5} flex='1' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
+            <Box>
+                <span style={headerStyle}>
+                    {`${projectData.entries.length} Activities`}
+                </span><br></br>
+                <span style={headerStyle}>
+                    {`${artifacts.length} Artifacts`}
+            </span><br></br>
             <span></span>
            </Box>
            <Box>
-               {sortedTypes.map(m => (
+                {sortedTypes.map(m => (
                    <Box>{`${m[1].length} ${m[0]} files`}</Box>
-               ))}
+                ))}
                <br></br>
            </Box>
-           <Heading as="h7">
+           <span style={headerStyle}>
               {`${tags.length} Tags`}
-            </Heading><br></br>
-            {
+            </span><br></br>
+            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
+            {   
                 sortedTags.map(st => (
                     <Box>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
+            </Box>
         </Box>
       
         

@@ -33,7 +33,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     return (
       
-      <div>
+      <div style={{backgroundColor:'yellow', height: '100vh', position:'fixed', top:0, bottom:0}}>
       <TopBar  
         projectData={projectData}
         folderPath={folderPath}
@@ -45,7 +45,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       <Flex position={'relative'} top={220}>
       <LeftSidebar projectData={projectData}></LeftSidebar>
       <CenterView projectEntries={projectData.entries}></CenterView>
-      <Box flex=".5" bg='green.500' maxWidth='25%'>
+      <Box flex="1.4" bg='green.500' h='calc(100vh - 250px)' overflowY={'auto'}>
         <ProjectListView
             projectData={projectData}
             folderPath={folderPath}
