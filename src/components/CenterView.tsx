@@ -8,32 +8,10 @@ import {
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
-import { ReactWrapper } from 'enzyme';
-import { BiColumns } from 'react-icons/bi';
 
-let getIndexOfMonth = (months, firstLast) => {
-  console.log('in months', months)
-  let empty = true;
-  let index = 0;
-  if(firstLast === 'first'){
-    while(empty && index < 12){
-      if(months[index].activities.length > 0){
-        empty = false;
-      }else{
-        index = index + 1
-      }
-    }
-  }else{
-    while(empty && index < 12){
-      if(months[index].activities.length === 0){
-        empty = false;
-      }else{
-        index = index + 1
-      }
-    }
-  }
-  return index;
-}
+import CenterFileRender from './centerFileRender';
+import { getIndexOfMonth } from '../timeHelperFunctions';
+
 
 const CenterView = (projectProps: any) => {
   const {projectEntries} = projectProps;
@@ -53,7 +31,7 @@ const CenterView = (projectProps: any) => {
         return a})
         return f[1]}) : [];
       if(activity.length > 0){ 
-        activity[0].first = true;
+        activity[0].firstMonth = true;
       }
       return { month: i, year: year[0], activities: activity }
     });
@@ -61,19 +39,18 @@ const CenterView = (projectProps: any) => {
     return {year: year[0], months: wrapper}
   });
 
-  console.log('YEAR MONTH',yearMonth);
+ 
 
   
 /**
  * Trim the empty months in beginnign and end of timeline
- */
+ */ 
   let startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
   let endIndex = getIndexOfMonth(yearMonth[yearMonth.length - 1].months, 'last')
   yearMonth[0].months = yearMonth[0].months.filter((f, i)=> i > startIndex - 1)
   yearMonth[yearMonth.length - 1].months = yearMonth[yearMonth.length - 1].months.filter((f, i)=> i < endIndex)
 
   let flatActivities = yearMonth.flatMap(yr => yr.months.flatMap(mo => mo.activities))
-  console.log('FA',flatActivities);
 
   let getMonth = (activity) => {
     let monthDict = [ "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -81,12 +58,14 @@ const CenterView = (projectProps: any) => {
   }
     return(
         
-        <Box bg='green' flex='3' h='calc(100vh - 250px)' overflowY='auto'>
+        <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
             {flatActivities.map(fa => (
               <>
-              { fa.first ? (<Box marginTop={7}>{`${getMonth(fa)}`}</Box>) : ("") }
-              <Box w={50} h={50} backgroundColor={'red'} marginTop={2}></Box>
+              { fa.firstMonth ? (<Box marginTop={7}>{`${getMonth(fa)}`}</Box>) : ("") }
+              <Box w={50} backgroundColor={'gray'} marginTop={2}>
+                <CenterFileRender fileArray={fa.files}></CenterFileRender>
+              </Box>
               </>
             ))
             }

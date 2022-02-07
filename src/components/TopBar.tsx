@@ -132,7 +132,7 @@ return (
 
     <TopTimeline projectData={projectData}/>
 
-    <Box flex="1.8" bg='green.500' maxWidth='25%'>
+    <Box flex="1.8" maxWidth='25%'>
       <Flex flexFlow={'row wrap'} p={5}>
         
         <Button alignSelf={"center"} onClick={addEntry} type="button">

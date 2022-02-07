@@ -35,7 +35,7 @@ const LeftSidebar = (projectProps: any) => {
 
     return(
         
-        <Box margin="8px" p={5} flex='1' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
+        <Box margin="8px" p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
             <Box>
                 <span style={headerStyle}>
                     {`${projectData.entries.length} Activities`}
