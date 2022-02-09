@@ -65,34 +65,19 @@ const TopTimeline = (projectProps:any)=>{
     yearMonth[0].months = yearMonth[0].months.filter((f, i)=> i > startIndex - 1)
     yearMonth[yearMonth.length - 1].months = yearMonth[yearMonth.length - 1].months.filter((f, i)=> i < endIndex)
   
-    let flatActivities = yearMonth.flatMap(yr => yr.months);
+    let flatActivities = yearMonth.flatMap(yr => yr.months.flatMap(mo => mo.activities));
 
-    console.log('flatActi', flatActivities);
-
-    let lineData = flatActivities.map((m, i) => {
-      return [i, m.activities.length]
-    })
+   
 
 
     
 
     React.useEffect(() => {
 
-   
-
-      let spanTime = d3.extent(activity.map(m=> new Date(m.date)))
-     
-      const monthScale = d3.scaleLinear().domain([0, monthDiff(spanTime[0], spanTime[1])]).range([0, 1000])
-          
-      let dateHolder = new Array(monthDiff(spanTime[0], spanTime[1]))
-      
-      let start = new Date(spanTime[0]).getMonth()
-        
       const xScale = d3.scaleTime()
             .domain(d3.extent(activity.map(m=> new Date(m.date))))
-            .range([0, width]);
-  
-            
+            .range([0, width])
+            .nice();
   
           // Create root container where we will append all other chart elements
           const svgEl = d3.select(svgRef.current);
@@ -100,38 +85,32 @@ const TopTimeline = (projectProps:any)=>{
           const svg = svgEl
             .append("g")
             .attr("transform", `translate(10, 10)`);
-
-          // var lineGenerator = d3.line();
-          // var pathString = lineGenerator(lineData);
-          
-          // let path = svg.append('path')
-          // d3.select(path)
-          //   .attr('d', pathString);
   
-          svg.selectAll('rect').data(activity).enter().append('rect').attr('x', d=> {
-            
-              return xScale(new Date(d.date))}).attr('y',20).attr('width', 2).attr('height', 100)
+          svg.selectAll('rect').data(activity).join('rect')
+          .attr('x', d=> {
+              return xScale(new Date(d.date))})
+          .attr('y',20)
+          .attr('width', 2)
+          .attr('height', 60)
+          .attr('fill', 'gray')
+          .attr('fill-opacity', .6)
   
-          // svg.selectAll('text').data(activity).enter().append('text').text(d=> d.title).attr('x', d=> {
-                 
-          //         return xScale(new Date(d.date))}).attr('y', 20).attr('width', 2).attr('height', 100)
-      //    // Add X grid lines with labels
-  
-          // const xAxis = d3.axisBottom(monthScale)
-          //     .ticks(5)
-          //     .tickSize(-height + 10);
+          const xAxis = d3.axisBottom(xScale)
+              .ticks(16)
+              .tickSize(10);
               
-          // const xAxisGroup = svg.append("g")
-          //     .attr("transform", `translate(0, ${height - 10})`)
-          //     .call(xAxis);
+          const xAxisGroup = svg.append("g")
+              .attr("transform", `translate(10, 90)`)
+              .call(xAxis);
   
-          // xAxisGroup.select(".domain").remove();
-          // xAxisGroup.selectAll("line").enter().append('line').attr("stroke", 'gray.900');
-          // //    xAxisGroup.selectAll("line").attr("stroke", "rgba(255, 255, 255, 0.2)");
-          // xAxisGroup.selectAll("text").enter().append('text')
-          //     .attr("opacity", 0.5)
-          //     .attr("color", "gray.900")
-          //     .attr("font-size", "0.75rem");
+          xAxisGroup.select(".domain").remove();
+          xAxisGroup.selectAll("line").enter().append('line').attr("stroke", 'gray.900');
+   
+          xAxisGroup.selectAll("text").join('text')
+              .attr("opacity", 0.5)
+              .attr("color", "gray.900")
+              .attr("font-size", "0.75rem");
+
       }, [activity]);
 
     return(
@@ -146,7 +125,7 @@ const TopTimeline = (projectProps:any)=>{
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align={'center'}
         >
-        <svg ref={svgRef} width={'100%'} height={'100%'} >
+        <svg id={'time-svg'} ref={svgRef} width={'100%'} height={'100%'} >
         </svg>
         </Flex>
     )

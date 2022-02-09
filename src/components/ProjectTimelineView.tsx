@@ -41,7 +41,7 @@ const EntryPlot = (props: EntryPlotProps) => {
   const squareWidth = 10;
   const squarePadding = 2;
 
-  //console.log('ENTRY DATA:', entryData);
+
 
   const getColor = (title: string) => {
     const tag = tags.filter((t) => t.title === title)[0];
@@ -229,8 +229,6 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
   const [showTags, setShowTags] = useState(false);
-
-  console.log('SELECTED INDEX:', selectedEntryIndex);
 
   const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 

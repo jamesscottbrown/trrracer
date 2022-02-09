@@ -44,15 +44,15 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setNewTitle={setNewTitle}/>
       <Flex position={'relative'} top={220}>
       <LeftSidebar projectData={projectData}></LeftSidebar>
-      <CenterView projectEntries={projectData.entries}></CenterView>
+      <CenterView projectEntries={projectData.entries} folderPath={folderPath}></CenterView>
       <Box flex="1.1" h='calc(100vh - 250px)' overflowY={'auto'}>
         <ProjectListView
-            projectData={projectData}
-            folderPath={folderPath}
-            viewType={viewType}
-            reversedOrder={reversedOrder}
-            setViewType={setViewType}
-            />
+          projectData={projectData}
+          folderPath={folderPath}
+          viewType={viewType}
+          reversedOrder={reversedOrder}
+          setViewType={setViewType}
+        />
       </Box>
       </Flex>
       </div>

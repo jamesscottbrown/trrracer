@@ -18,8 +18,6 @@ const LeftSidebar = (projectProps: any) => {
     let types = d3.groups(artifacts, a => a.fileType);
 
     let sortedTypes = types.sort((a, b)=> b[1].length - a[1].length)
-
-    console.log(sortedTypes);
     
 
     let tags = projectData.tags.map(t => {
@@ -45,7 +43,7 @@ const LeftSidebar = (projectProps: any) => {
             </span><br></br>
             <span></span>
            </Box>
-           <Box>
+           <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map(m => (
                    <Box>{`${m[1].length} ${m[0]} files`}</Box>
                 ))}

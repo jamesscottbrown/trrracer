@@ -42,7 +42,7 @@ export function addMetaDescrip(projectData, state){
 
   let newProj = {...projectData, 'entries': newProjEntries}
 
-  console.log('NEW NEW proj while whrtie', newProj);
+
   
   return null//saveJSON(newProj);
   
@@ -90,14 +90,14 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
     if(nameCheck[nameCheck.length - 1] === 'gdoc'){
         
           if (fs.existsSync(destination) && !sourceIsInProjectDir){
-            console.log('already herr');
+          
 
             let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
       
             newFiles = [...newFiles, newFile];
 
           }else{
-            console.log("COPY OVER THAT GOOGLE FILE")
+         
             copyGoogle(file, newFiles).then(fileArray => {
               newFiles = [...fileArray]
             });
@@ -105,7 +105,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
 
         }else{
 
-          console.log('About to copy:', folderPath, file.path);
+         
 
       
           try {
@@ -126,7 +126,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
                 newName = `${base} (${i}).${extension}`;
       
                 destination = path.join(folderPath, newName);
-                console.log('Trying new name:', newName);
+           
       
                 i += 1;
               } while (fs.existsSync(destination) && !sourceIsInProjectDir);
@@ -156,7 +156,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
 
 export async function getGoogleIds(projectData, state){
 
-  console.log('projectData in get google ids', projectData.entries);
+
   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
             const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
             oAuth2Client.setCredentials(JSON.parse(token))
@@ -171,7 +171,7 @@ export async function getGoogleIds(projectData, state){
 
             }).then((fi)=> {
 
-              console.log("FILES", fi);
+           
               let newProjEntries = projectData.entries.map(( e: EntryType )=>{
                
                 e.files = e.files.map(f => {
@@ -180,7 +180,7 @@ export async function getGoogleIds(projectData, state){
                   
                   if(nameCheck[nameCheck.length - 1] === 'gdoc'){
 
-                    // console.log('nameCheck in google doc', f.title, fi.data.files);
+                  
 
                     let id = fi.data.files.filter(m=> {
                       return `${m.name}.gdoc` === f.title});
@@ -204,8 +204,6 @@ export async function getGoogleIds(projectData, state){
 
               let newProj = {...projectData, 'entries': newProjEntries}
 
-              console.log('NEW NEW proj while whrtie', newProj);
-              
               return saveJSON(newProj, state);
               
             
@@ -250,7 +248,7 @@ async function copyGoogle(file:any, fileList:any){
                         return;
                       }
                     
-                      // console.log('response', response, state)
+                 
                       // let newFiles = state.projectData.entries[entryIndex].files;
                       let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: "null", fileId: response.data.id }
         
@@ -261,7 +259,7 @@ async function copyGoogle(file:any, fileList:any){
                       // );
                 
                       // const newProjectData = { ...state.projectData, entries };
-                      // console.log('new project', newProjectData);
+                   
                       // return saveJSON(newProjectData, state);
                       
                     }
@@ -344,7 +342,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //     case 'DELETE_EDGE':{
     
 //       const newEdges  = state.projectData.edges.map(m => {
-//           console.log('MMM', m.key, action.key)
+  
 //           if(m.key === action.key){
          
 //             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
@@ -425,25 +423,21 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //     case 'ADD_FILES': {
 //       const { fileList } = action;
 
-//      console.log('ADD_FILES is this firing??', fileList)
+
 
 //     //  if(fileList){
 
 //     //       let copiedFiles: File[] = [];
 
 //     //       for (const file of fileList) {
-//     //         console.log('file', file.path)
+
 //     //         try {
 //     //           const destination = path.join(state.folderPath, file.name);
 //     //           copyFileSync(file.path, destination);
-//     //           console.log(`${file.path} was copied to ${destination}`);
+
 //     //           copiedFiles = [...copiedFiles, { title: file.name, format: 'null', id: "" }];
 //     //         } catch (e) {
-//     //           console.log('Error', e.stack);
-//     //           console.log('Error', e.name);
-//     //           console.log('Error', e.message);
 
-//     //           console.log('The file could not be copied');
 //     //         }
 //     //       }
 
@@ -497,7 +491,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //         const entry = state.projectData.entries[i];
 
 //         const fileNames = entry.files.map((f: File) => f.title);
-//         console.log({ entry, fileNames, i, ind: action.entryIndex });
+
 //         if (i !== action.entryIndex && fileNames.includes(action.fileName)) {
 //           otherUses = true;
 //           break;
@@ -570,7 +564,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //     }
 
 //     case 'ADD_URL': {
-//       console.log('LOG URL');
+
 
 //       let newFiles = state.projectData.entries[action.entryIndex].files;
         
@@ -596,7 +590,7 @@ const appStateReducer = (state, action) => {
           console.log(`Error writing file to disk: ${err}`);
         } else {
           // parse JSON string to JSON object
-          console.log(newProjectData);
+ 
         }
       }
     );
@@ -604,7 +598,7 @@ const appStateReducer = (state, action) => {
     return { ...state, projectData: newProjectData };
   };
 
-  console.log('ACTION:', action);
+
   switch (action.type) {
   
     case 'SET_DATA': {
@@ -623,7 +617,7 @@ const appStateReducer = (state, action) => {
         const google_em = readProjectFile(baseDir, 'goog_em.json');
     
         google_data = readProjectFile(baseDir, 'goog_data.json');
-        console.log("google_data", google_data);
+
 
         const text_data = readProjectFile(baseDir, 'text_data.json');
 
@@ -665,8 +659,6 @@ const appStateReducer = (state, action) => {
         googleData: google_data,
         topics,
       };
-
-      console.log('newProject data', newProjectData);
 
       return {
         folderPath: action.folderName,
@@ -758,8 +750,6 @@ const appStateReducer = (state, action) => {
     case 'ADD_FILES': {
       const { fileList } = action;
 
-      console.log('ADD_FILES:', fileList);
-
       const copiedFiles = copyFiles(fileList, state.folderPath);
 
       const newEntry: EntryType = {
@@ -794,7 +784,7 @@ const appStateReducer = (state, action) => {
         const entry = state.projectData.entries[i];
 
         const fileNames = entry.files.map((f: File) => f.title);
-        console.log({ entry, fileNames, i, ind: action.entryIndex });
+
         if (i !== action.entryIndex && fileNames.includes(action.fileName)) {
           otherUses = true;
           break;

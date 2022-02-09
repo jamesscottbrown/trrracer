@@ -50,7 +50,7 @@ interface EntryPropTypes {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
-
+  console.log('entryDATA', entryData)
   const colorBadge = (val)=>{
     if(val > .4){
       return 'gray.400';
@@ -62,8 +62,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       return 'gray.100'
     }
   }
-
-
 
   const formatConcord = (tf)=>{
 
@@ -91,7 +89,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   const googEm = entryData.files.filter(f=> {
     return f.fileType === 'gdoc' && f.emphasized;
-  }).flatMap(m=> m.emphasized)
+  }).flatMap(m=> m.emphasized);
 
   const googComm = entryData.files.filter(f => {
     return f.fileType === 'gdoc' && f.comments
@@ -125,13 +123,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
-      <Heading as="h6">
+      <span style={{fontSize:"24", fontWeight:"bold"}}>
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
           Edit
         </Button>
-      </Heading>
-      <Text fontSize="lg" fontWeight="bold">
+      </span>
+    
+      <Text style={{fontSize:"15", fontWeight:"bold"}}>
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
       </Text>
       <p>
@@ -165,31 +164,43 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         />
       )}
      
-          <SimpleGrid columns={2} spacing={3}>
-            {files.map((f, i) => (
-                <Box key={`${f.title}-${i}`} p={3}>
-                  {f.title}{' '}
-                  <FaExternalLinkAlt
-                    onClick={() => openFile(f.title)}
-                    title="Open file externally"
-                    size="10px"
-                    style={{ display: 'inline' }}
-                  />
-                  <AttachmentPreview
-                    folderPath={folderPath}
-                    title={f.title}
-                    openFile={openFile}
-                  />
-                </Box>
-              ))}
-
-          </SimpleGrid>
- 
-     
-
-     
+      <SimpleGrid columns={2} spacing={3}>
+        {files.map((f, i) => (
+          <>
+          <Box key={`${f.title}-${i}`} p={3}>
+            <span style={{fontSize:'11px'}}>{f.title}{' '}</span>
+            <FaExternalLinkAlt
+              onClick={() => openFile(f.title)}
+              title="Open file externally"
+              size="10px"
+              style={{ display: 'inline' }}
+            />
+            <AttachmentPreview
+              folderPath={folderPath}
+              title={f.title}
+              openFile={openFile}
+            />
+          </Box>
+          
+          {f.fileType === "gdoc" ? (<Box>
+          {
+            f.emphasized ? <Box>{f.emphasized.map(em => (
+                <PopComment data={em} spanType={"emphasize"} />
+                ))}</Box> : <Box>{""}</Box>
+          }
+          {
+            (f.comments && f.comments.comments.length > 0) ? 
+              f.comments.comments.map(co => (
+                  <PopComment data={co} spanType={"comment"} />
+              )) : <Box></Box>
+          }
+          </Box>) : 
+          (<Box></Box>)}
    
+        </>
+        ))}
 
+      </SimpleGrid>
       {urls.length > 0 && (
         <>
           <Heading as="h3" size="lg">
@@ -210,22 +221,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         </>
       )}
      <div style={{float:'right', display:'inline-block', overflowY:'auto', height:'200px'}}>
-        { googEm.length > 0 ? 
-              googEm.map(em => (
-                <PopComment data={em} spanType={"emphasize"} />
-              // <Span data={em} spanType={"emphasize"}></Span>
-                // <span style={formatEmphasis(em)}>{em['em']["content"]}</span>
-              ))
-              : <div></div>
-        }
-        { googComm.length > 0 ? 
-              googComm.map(co => (
-                <PopComment data={co} spanType={"comment"} />
-                //<Tooltip placement="left" hasArrow label={`comment: ${co["content"]}`}><Span data={co} spanType={"comment"}/></Tooltip>
-                // <Tooltip placement="left" hasArrow label={`comment: ${co["content"]}`}><span style={{backgroundColor: "yellow", fontWeight:"bold", margin:"5px"}}>{`${co["quotedFileContent"]["value"]}`}</span></Tooltip>
-              ))
-              : <div></div>
-        }
+  
         {  key.length > 0  ? 
                  key.map(k => (
                   <div style={{'display':'inline'}}>

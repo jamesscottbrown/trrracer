@@ -14,7 +14,7 @@ import { getIndexOfMonth } from '../timeHelperFunctions';
 
 
 const CenterView = (projectProps: any) => {
-  const {projectEntries} = projectProps;
+  const {projectEntries, folderPath} = projectProps;
   
   let years = d3.groups(projectEntries, y => new Date(y.date).getFullYear())
 
@@ -39,9 +39,6 @@ const CenterView = (projectProps: any) => {
     return {year: year[0], months: wrapper}
   });
 
- 
-
-  
 /**
  * Trim the empty months in beginnign and end of timeline
  */ 
@@ -63,8 +60,8 @@ const CenterView = (projectProps: any) => {
             {flatActivities.map(fa => (
               <>
               { fa.firstMonth ? (<Box marginTop={7}>{`${getMonth(fa)}`}</Box>) : ("") }
-              <Box w={50} backgroundColor={'gray'} marginTop={2}>
-                <CenterFileRender fileArray={fa.files}></CenterFileRender>
+              <Box w={50} backgroundColor={'yellow'} marginTop={2}>
+                <CenterFileRender fileArray={fa.files} folderPath={folderPath}></CenterFileRender>
               </Box>
               </>
             ))

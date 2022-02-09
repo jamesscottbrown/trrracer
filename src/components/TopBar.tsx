@@ -138,16 +138,15 @@ return (
         <Button alignSelf={"center"} onClick={addEntry} type="button">
           <FaPlus /> Add entry
         </Button>
-    
-       
+  
         <FileUpload
           saveFiles={saveFiles}
           containerStyle={{}}
           msg={
-            <>
+            <span style={{fontSize:'11px'}}>
               Drag and drop some files here, or <b>click to select files</b>,
               create a new entry.
-            </>
+            </span>
           }
         />
       </Flex>
