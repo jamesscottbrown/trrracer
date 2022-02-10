@@ -69,7 +69,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   const key = entryData.key_txt.flatMap(kt => {
     return kt.keywords.keywords.map(k => k)
-  })
+  });
 
   const [{ projectData, folderPath }] = useProjectState();
 
@@ -92,14 +92,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
-      <span style={{fontSize:20, fontWeight:"bold"}}>
+      <span style={{fontSize:22, fontWeight:"bold"}}>
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
           Edit
         </Button>
       </span>
     
-      <Text style={{fontSize:"15", fontWeight:"bold"}}>
+      <Text style={{fontSize:15, fontWeight:"bold"}}>
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
       </Text>
       <p>
@@ -137,7 +137,21 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         {files.map((f, i) => (
           <>
           <Box key={`${f.title}-${i}`} p={3}>
-            <span style={{fontSize:20, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
+
+            <Popover trigger="hover">
+              <PopoverTrigger>
+                <span style={{fontSize:18, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
+              </PopoverTrigger>
+              <PopoverContent bg='white' color='gray'>
+                  {/* <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader> */}
+                  <PopoverArrow bg='white' />
+                  <PopoverBody>
+                      <Button>Go to Doc</Button>
+                  </PopoverBody>
+                  {/* <PopoverFooter><Button>Go to Doc</Button></PopoverFooter> */}
+              </PopoverContent>
+            </Popover>
+
             <FaExternalLinkAlt
               onClick={() => openFile(f.title)}
               title="Open file externally"

@@ -87,34 +87,28 @@ import { format } from 'path/posix';
               blobOb["backgroundColor"] = "rgb(253,213,145)";
           }else{
               if(blob['em']['textStyle'].bold === true) blobOb["fontWeight"] = "bold";
-              // if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
-              // if(blob['em']['textStyle'].magnitude > 8) blobOb["fontSize"] = `${['em']['textStyle'].magnitude}px`;
+ 
               if(blob['em']['textStyle'].backgroundColor) blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
-              //if(blob['em']['textStyle'].foregroundColor) blobOb["color"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor)
+              
           }
           return blobOb
         }
 
         const formatEmphasisVis = (blob) => {
           
-          let blobOb =  {margin: '4px', width:'100px', height:'10px', "backgroundColor": 'gray'}
+          let blobOb =  {margin: '2px', width:'5px', height:'100px', backgroundColor: 'gray', display:"inline-block"}
           if(spanType === 'comment'){ 
-             
               blobOb["fontWeight"] = "bold";
               blobOb["backgroundColor"] = "rgb(253,213,145)";
-
           }else{
-
-              if(blob['em']['textStyle'].bold === true) blobOb["height"] = '20px';
+              if(blob['em']['textStyle'].bold === true) blobOb["width"] = '10px';
               if(blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
       
               if(blob['em']['textStyle'].backgroundColor) {
-
                 blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
                 blobOb["borderColor"] = "gray";
                 blobOb["borderStyle"] = "solid";
                 blobOb["borderWidth"] = '1px';
-
               }
               if(blob['em']['textStyle'].foregroundColor){ 
                 

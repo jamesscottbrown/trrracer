@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
-GrDocumentRtf, GrDocumentImage, GrChatOption } from 'react-icons/gr';
+GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im'
 
 
@@ -60,6 +60,10 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
     return <GrDocumentText onClick={() => openFile(title)} size={size} />;
+  }
+
+    if (title.endsWith('.phy') || title.endsWith('.nex')) {
+    return <GrCluster onClick={() => openFile(title)} size={size} />;
   }
 
   if (title.endsWith('.rtf')) {

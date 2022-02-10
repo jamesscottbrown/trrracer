@@ -74,6 +74,7 @@ const FileTextRender = (fileDataProps) => {
           {
             (fileData.comments && fileData.comments.comments.length > 0) ? 
               fileData.comments.comments.map(co => (
+                  
                   <PopComment data={co} spanType={"comment"} />
               )) : <Box></Box>
           }
