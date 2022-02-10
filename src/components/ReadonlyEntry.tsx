@@ -92,7 +92,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
-      <span style={{fontSize:"24", fontWeight:"bold"}}>
+      <span style={{fontSize:20, fontWeight:"bold"}}>
         {entryData.title}{' '}
         <Button leftIcon={<EditIcon />} onClick={makeEditable}>
           Edit
@@ -137,23 +137,23 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         {files.map((f, i) => (
           <>
           <Box key={`${f.title}-${i}`} p={3}>
-            <span style={{fontSize:'11px'}}>{f.title}{' '}</span>
+            <span style={{fontSize:20, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
             <FaExternalLinkAlt
               onClick={() => openFile(f.title)}
               title="Open file externally"
-              size="10px"
+              size="13px"
               style={{ display: 'inline' }}
             />
-            <AttachmentPreview
-              folderPath={folderPath}
-              title={f.title}
-              openFile={openFile}
-            />
+            {
+              (f.fileType != 'gdoc' && f.fileType != 'txt') ? 
+                <AttachmentPreview
+                  folderPath={folderPath}
+                  title={f.title}
+                  openFile={openFile}
+                /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
+            }
           </Box>
           
-        {
-          (f.fileType === 'gdoc' || f.fileType === 'txt') ? <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} /> : <div></div>
-        }
         </>
         ))}
 
