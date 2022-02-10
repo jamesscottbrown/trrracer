@@ -40,6 +40,7 @@ import { useProjectState } from './ProjectContext';
 
 import { Tooltip } from "@chakra-ui/react"
 import PopComment from './PopComment';
+import FileTextRender from './FileTextRender'
 
 
 interface EntryPropTypes {
@@ -50,7 +51,7 @@ interface EntryPropTypes {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable } = props;
-  console.log('entryDATA', entryData)
+ 
   const colorBadge = (val)=>{
     if(val > .4){
       return 'gray.400';
@@ -63,44 +64,12 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     }
   }
 
-  const formatConcord = (tf)=>{
-
-    let matches =  tf.matches;
-   
-    if(matches.length > 0){
-      return matches.map(m => {
-        let arr = m.split(tf.key);
-        
-        return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
-      });
-    }else{
-      console.log("not there")
-      return <p><span>no matches for <b>{tf.key}</b></span></p>
-    }
-
-  }
-
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
   const key = entryData.key_txt.flatMap(kt => {
     return kt.keywords.keywords.map(k => k)
   })
-
-  const googEm = entryData.files.filter(f=> {
-    return f.fileType === 'gdoc' && f.emphasized;
-  }).flatMap(m=> m.emphasized);
-
-  const googComm = entryData.files.filter(f => {
-    return f.fileType === 'gdoc' && f.comments
-  }).flatMap(m => {
-    let com = m.comments.comments.map(c =>{
-      c.goog_id = m.fileId;
-      return c;
-    });
-    
-    return com
-  });
 
   const [{ projectData, folderPath }] = useProjectState();
 
@@ -138,7 +107,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           <b>No tags.</b>
         ) : (
           <>
-            {entryData.tags.map((t) => (
+            {entryData.tags.map((t) => 
               <Tag
                 key={t}
                 borderColor={getColor(t)}
@@ -149,7 +118,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               >
                 {t}
               </Tag>
-            ))}
+            )}
           </>
         )}
       </p>
@@ -164,7 +133,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         />
       )}
      
-      <SimpleGrid columns={2} spacing={3}>
+      <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
           <>
           <Box key={`${f.title}-${i}`} p={3}>
@@ -182,21 +151,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             />
           </Box>
           
-          {f.fileType === "gdoc" ? (<Box>
-          {
-            f.emphasized ? <Box>{f.emphasized.map(em => (
-                <PopComment data={em} spanType={"emphasize"} />
-                ))}</Box> : <Box>{""}</Box>
-          }
-          {
-            (f.comments && f.comments.comments.length > 0) ? 
-              f.comments.comments.map(co => (
-                  <PopComment data={co} spanType={"comment"} />
-              )) : <Box></Box>
-          }
-          </Box>) : 
-          (<Box></Box>)}
-   
+        {
+          (f.fileType === 'gdoc' || f.fileType === 'txt') ? <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} /> : <div></div>
+        }
         </>
         ))}
 
@@ -220,19 +177,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </UnorderedList>
         </>
       )}
-     <div style={{float:'right', display:'inline-block', overflowY:'auto', height:'200px'}}>
-  
-        {  key.length > 0  ? 
-                 key.map(k => (
-                  <div style={{'display':'inline'}}>
-                  <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}}>{k.key}</Badge></Tooltip>
-                    {/* <Tooltip placement="left" hasArrow label={formatConcord(k)}><Badge style={{margin:'3px'}} bg={colorBadge(k.freq)}>{k.key}</Badge></Tooltip> */}
-                    {/* <Tooltip placement="left" hasArrow label={formatConcord(tf)}><Badge style={{margin:'3px'}} bg={colorBadge(tf[1])}>{tf[0]}</Badge></Tooltip> */}
-                  </div>
-                 ))
-              : <div></div> 
-          }
-      </div>
+
     </Box>
   );
 };

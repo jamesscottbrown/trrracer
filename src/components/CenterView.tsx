@@ -60,7 +60,7 @@ const CenterView = (projectProps: any) => {
             {flatActivities.map(fa => (
               <>
               { fa.firstMonth ? (<Box marginTop={7}>{`${getMonth(fa)}`}</Box>) : ("") }
-              <Box w={50} backgroundColor={'yellow'} marginTop={2}>
+              <Box w={50} marginTop={2}>
                 <CenterFileRender fileArray={fa.files} folderPath={folderPath}></CenterFileRender>
               </Box>
               </>

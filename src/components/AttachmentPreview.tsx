@@ -6,8 +6,9 @@ import {
   Image
 } from '@chakra-ui/react';
 
-import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, GrDocumentRtf, GrDocumentImage } from 'react-icons/gr';
-import { ImFilePdf } from 'react-icons/im';
+import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
+GrDocumentRtf, GrDocumentImage, GrChatOption } from 'react-icons/gr';
+import { ImFilePdf } from 'react-icons/im'
 
 
 interface AttachmentPreviewPropsType {
@@ -63,6 +64,9 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
 
   if (title.endsWith('.rtf')) {
     return <GrDocumentRtf onClick={() => openFile(title)} size={size} />;
+  }
+  if (title.endsWith('.eml')) {
+    return <GrChatOption onClick={() => openFile(title)} size={size} />;
   }
 
   if (title.endsWith('.pdf')) {

@@ -57,8 +57,6 @@ const CenterFileRender = (fileArrayProps: any) => {
           
             images.each((im, i, n) => {
 
-                console.log('im', im, n)
-
                 let defs = d3.select(n[i])
                     .append("defs")
                     .append("pattern")
@@ -69,8 +67,7 @@ const CenterFileRender = (fileArrayProps: any) => {
                     .attr("xlink:href", `file://${path.join(folderPath, im.title)}`)
                     .attr("width", 50)
                     .attr("height", 50)
- 
-                console.log('defs', defs)
+
 
                 d3.select(n[i]).select("rect")
                     .attr("fill", `url(#image${im.title})`)
@@ -93,11 +90,10 @@ const CenterFileRender = (fileArrayProps: any) => {
     }, [fileArray]);
 
     return(
-        <Box w={50} bg={'#F8F8F8'}>
-        {/* <Box w={50}> */}
-            <svg width={50} height={getSvgHeight()} ref={svgRef}>
+        <div style={{backgroundColor:'#F8F8F8', width:50, borderRightWidth:1, borderRightColor:'black', paddingRight:5}}>
+            <svg width={44} height={getSvgHeight()} ref={svgRef}>
             </svg>
-        </Box>
+        </div>
     )
   }
   
