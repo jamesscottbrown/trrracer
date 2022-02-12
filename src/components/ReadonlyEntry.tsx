@@ -47,10 +47,11 @@ interface EntryPropTypes {
   entryData: EntryType;
   openFile: (a: string) => void;
   makeEditable: () => void;
+  setViewType: (viewType: string) => void;
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, openFile, makeEditable } = props;
+  const { entryData, openFile, makeEditable, setViewType } = props;
  
   const colorBadge = (val)=>{
     if(val > .4){
@@ -146,7 +147,10 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                   {/* <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader> */}
                   <PopoverArrow bg='white' />
                   <PopoverBody>
-                      <Button>Go to Doc</Button>
+                      <Button onClick={()=> {
+                        setViewType("detail view")
+
+                        }}>See artifact in detail.</Button>
                   </PopoverBody>
                   {/* <PopoverFooter><Button>Go to Doc</Button></PopoverFooter> */}
               </PopoverContent>

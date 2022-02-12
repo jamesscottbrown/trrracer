@@ -128,7 +128,6 @@ import { format } from 'path/posix';
         <PopoverTrigger>
           <div style={formatEmphasisVis(data)}>
           </div>
-        
         </PopoverTrigger>
         <PopoverContent bg='white' color='gray'>
             <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader>

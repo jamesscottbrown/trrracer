@@ -14,16 +14,18 @@ import { useProjectState } from './ProjectContext';
 import CenterView from './CenterView';
 import LeftSidebar from './LeftSidebar';
 import { relative } from 'path/posix';
+import ArtifactDetailWindow from './ArtifactDetailWindow';
 
 interface ProjectProps {
   folderPath: string;
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
-  // const { projectData, folderPath } = ProjectPropValues;
+  
   const { folderPath } = ProjectPropValues;
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
+  const [selectedArtifact, setSelectedArtifact] = useState<string>('null')
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
 
@@ -70,6 +72,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
     );
   }
 
+  if (viewType === 'detail view') {
+    return (
+      <ArtifactDetailWindow selectedArtifact={selectedArtifact} setSelectedArtifact={setSelectedArtifact} setViewType={setViewType}/>
+    );
+  }
+
   // if (viewType === 'timeline') {
   //   return (
   //     <div>
@@ -87,57 +95,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   //     </div>
   //   );
   // }
-
-
-
-
-
-
-
-  // Update title when projectData changes.
-  // useEffect(() => {
-  //   setNewTitle(projectData.title);
-  // }, [projectData]);
-
-  // return (
-    // <>
-
-
-    {/* <TopBar projectData={projectData} folderPath={folderPath}></TopBar> */}
-      {/* <Tabs variant="enclosed">
-        <TabList>
-          <Tab>List View</Tab>
-          <Tab>Timeline View</Tab>
-          <Tab>Grid View</Tab>
-        </TabList>
-
-        <TabPanels>
-          <TabPanel>
-            <ProjectListView
-              projectData={projectData}
-              folderPath={folderPath}
-            />
-          </TabPanel>
-
-          <TabPanel>
-            <ProjectTimelineView
-              projectData={projectData}
-              folderPath={folderPath}
-            />
-          </TabPanel>
-
-          <TabPanel>
-            <ProjectGridView
-              projectData={projectData}
-              folderPath={folderPath}
-            />
-          </TabPanel>
-        </TabPanels>
-      </Tabs> */}
-    // </>
-  // );
-
-  // return null;
+ 
 };
 
 export default Project;

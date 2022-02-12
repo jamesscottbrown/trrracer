@@ -38,9 +38,9 @@ const CenterFileRender = (fileArrayProps: any) => {
         let typeGroups = svgEl.selectAll('g').data(typeData).enter().append('g').attr('class', c => c.fileType)
 
         let rects = typeGroups.selectAll('rect').data(d => [d]).join('rect');
-        rects.attr('width', (d)=> d.fileType === 'url' ? 50 : 40).attr('height', h => getRectHeight(h))
+        rects.attr('width', (d)=> d.fileType === 'url' ? 45 : 40).attr('height', h => getRectHeight(h))
         
-        rects.attr('fill', (d)=> d.fileType === 'url' ? "#3A9BDC" : "gray");
+        rects.attr('fill', (d)=> d.fileType === 'url' ? "#3A9BDC" : "#AAAAAA");
         rects.attr('x', (d) => d.fileType === 'url' ? 0 : 20);
         
         typeGroups.attr('transform', (d, i, n)=> {
@@ -93,7 +93,7 @@ const CenterFileRender = (fileArrayProps: any) => {
         <div style={{backgroundColor:'#F8F8F8', width:50, borderRightWidth:1, borderRightColor:'black', paddingRight:5}}>
             <svg width={44} height={getSvgHeight()} ref={svgRef}>
             </svg>
-        </div>
+        </div> 
     )
   }
   

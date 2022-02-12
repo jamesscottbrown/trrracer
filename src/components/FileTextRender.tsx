@@ -58,11 +58,8 @@ const FileTextRender = (fileDataProps) => {
         console.log("not there")
         return <p><span>no matches for <b>{tf.key}</b></span></p>
         }
-
     }
 
-
-    
     return (
         <>
         {fileData.fileType === "gdoc" ? (<Box>

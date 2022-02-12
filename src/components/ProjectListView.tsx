@@ -29,7 +29,7 @@ const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
-  const { projectData, folderPath, reversedOrder} = ProjectPropValues;
+  const { projectData, folderPath, reversedOrder, setViewType} = ProjectPropValues;
 
   const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
@@ -138,6 +138,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
               key={`${entryData.title}-${entryData.index}`}
               entryData={entryData}
               openFile={openFile}
+              setViewType={setViewType}
               makeEditable={() => setEditableStatus(entryData.index, true)}
             />
           )}
