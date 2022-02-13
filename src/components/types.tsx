@@ -84,6 +84,9 @@ interface ProjectType {
 interface ProjectViewProps {
   projectData: ProjectType;
   folderPath: string;
+  setViewType: (v: any) => void; 
+  setSelectedArtifactIndex: (i: Number) => void;
+  setSelectedArtifactEntry: (e: any) => void;
 }
 
 export {

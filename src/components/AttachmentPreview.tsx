@@ -14,7 +14,7 @@ import { ImFilePdf } from 'react-icons/im'
 interface AttachmentPreviewPropsType {
   folderPath: string;
   title: string;
-  openFile: (title: string) => void;
+  openFile: (title: string, fp: string) => void;
 }
 
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
@@ -39,51 +39,51 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const size = '65%';
 
   if (title.endsWith('.csv')) {
-    return <GrDocumentCsv onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.ppt') || title.endsWith('.pptx') || title.endsWith('.key')) {
-    return <GrDocumentPpt onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.doc') || title.endsWith('.docx')) {
-    return <GrDocumentWord onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.gdoc')) {
-    return <GrDocumentWord onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.gsheet')) {
-    return <GrDocumentExcel onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentExcel onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.txt')) {
-    return <GrDocumentText onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
     if (title.endsWith('.phy') || title.endsWith('.nex')) {
-    return <GrCluster onClick={() => openFile(title)} size={size} />;
+    return <GrCluster onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.rtf')) {
-    return <GrDocumentRtf onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />;
   }
   if (title.endsWith('.eml')) {
-    return <GrChatOption onClick={() => openFile(title)} size={size} />;
+    return <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.pdf')) {
-    return <ImFilePdf onClick={() => openFile(title)} size={size} />;
+    return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.HEIC')) {
-    return <GrDocumentImage onClick={() => openFile(title)} size={size} />;
+    return <GrDocumentImage onClick={() => openFile(title, folderPath)} size={size} />;
   }
   return (
     <Image
       src={`file://${path.join(folderPath, title)}`}
-      onClick={() => openFile(title)}
+      onClick={() => openFile(title, folderPath)}
     />
   );
 };

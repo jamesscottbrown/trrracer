@@ -25,7 +25,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
-  const [selectedArtifact, setSelectedArtifact] = useState<string>('null')
+  const [selectedArtifactIndex, setSelectedArtifactIndex] = useState<any>(null);
+  const [selectedArtifactEntry, setSelectedArtifactEntry] = useState<any>(null);
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
 
@@ -51,9 +52,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <ProjectListView
           projectData={projectData}
           folderPath={folderPath}
-          viewType={viewType}
+          // viewType={viewType}
           reversedOrder={reversedOrder}
           setViewType={setViewType}
+          setSelectedArtifactIndex={setSelectedArtifactIndex}
+          setSelectedArtifactEntry={setSelectedArtifactEntry}
         />
       </Box>
       </Flex>
@@ -74,7 +77,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   if (viewType === 'detail view') {
     return (
-      <ArtifactDetailWindow selectedArtifact={selectedArtifact} setSelectedArtifact={setSelectedArtifact} setViewType={setViewType}/>
+      <ArtifactDetailWindow 
+      selectedArtifactIndex={selectedArtifactIndex} 
+      setSelectedArtifactIndex={setSelectedArtifactIndex} 
+      setSelectedArtifactEntry={setSelectedArtifactEntry} 
+      selectedArtifactEntry={selectedArtifactEntry} 
+      setViewType={setViewType} 
+      folderPath={folderPath}
+      projectData={projectData}
+      />
+    
+      
+    
     );
   }
 

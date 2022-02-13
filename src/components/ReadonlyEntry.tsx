@@ -45,13 +45,15 @@ import FileTextRender from './FileTextRender'
 
 interface EntryPropTypes {
   entryData: EntryType;
-  openFile: (a: string) => void;
+  openFile: (a: string, fp: string) => void;
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
+  setSelectedArtifactIndex: (index: number) => void;
+  setSelectedArtifactEntry: (ent: any) => void;
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, openFile, makeEditable, setViewType } = props;
+  const { entryData, openFile, makeEditable, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry } = props;
  
   const colorBadge = (val)=>{
     if(val > .4){
@@ -95,9 +97,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     <Box>
       <span style={{fontSize:22, fontWeight:"bold"}}>
         {entryData.title}{' '}
-        <Button leftIcon={<EditIcon />} onClick={makeEditable}>
-          Edit
-        </Button>
+        {
+          makeEditable ? 
+          <Button leftIcon={<EditIcon />} onClick={makeEditable}>
+            Edit
+          </Button>
+          : ""
+        }
+        
       </span>
     
       <Text style={{fontSize:15, fontWeight:"bold"}}>
@@ -149,7 +156,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                   <PopoverBody>
                       <Button onClick={()=> {
                         setViewType("detail view")
-
+                        setSelectedArtifactIndex(i);
+                        setSelectedArtifactEntry(entryData)
                         }}>See artifact in detail.</Button>
                   </PopoverBody>
                   {/* <PopoverFooter><Button>Go to Doc</Button></PopoverFooter> */}
@@ -157,7 +165,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             </Popover>
 
             <FaExternalLinkAlt
-              onClick={() => openFile(f.title)}
+              onClick={() => openFile(f.title, folderPath)}
               title="Open file externally"
               size="13px"
               style={{ display: 'inline' }}

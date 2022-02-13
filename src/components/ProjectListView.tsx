@@ -27,11 +27,18 @@ import EdgeControl from './Edges';
 
 const { ipcRenderer } = require('electron');
 
+export const openFile = (fileName: string, folderPath: string) => {
+  console.log('Open file:', path.join(folderPath, fileName));
+  ipcRenderer.send('open-file', path.join(folderPath, fileName));
+  console.log('after ipcRenderer')
+};
+
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
-  const { projectData, folderPath, reversedOrder, setViewType} = ProjectPropValues;
+  const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry} = ProjectPropValues;
 
-  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
+  const [{ filterTags }, dispatch] = useProjectState();
+  //const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -67,11 +74,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-  const openFile = (fileName: string) => {
-    console.log('Open file:', path.join(folderPath, fileName));
-    ipcRenderer.send('open-file', path.join(folderPath, fileName));
-    console.log('after ipcRenderer')
-  };
+  // const openFile = (fileName: string) => {
+  //   console.log('Open file:', path.join(folderPath, fileName));
+  //   ipcRenderer.send('open-file', path.join(folderPath, fileName));
+  //   console.log('after ipcRenderer')
+  // };
 
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
@@ -139,6 +146,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
               entryData={entryData}
               openFile={openFile}
               setViewType={setViewType}
+              setSelectedArtifactIndex={setSelectedArtifactIndex}
+              setSelectedArtifactEntry={setSelectedArtifactEntry}
               makeEditable={() => setEditableStatus(entryData.index, true)}
             />
           )}
