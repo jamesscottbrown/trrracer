@@ -45,7 +45,7 @@ const FileTextRender = (fileDataProps) => {
     const { fileData, index, keywordArray } = fileDataProps;
 
      const formatConcord = (tf)=>{
-        console.log('tf', tf)
+        
         let matches =  tf.matches;
    
         if(matches  && matches.length > 0){

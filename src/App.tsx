@@ -18,12 +18,12 @@ import { useProjectState } from './components/ProjectContext';
 const migrateTrrraceFormat = (projectData:any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
-  console.log('project data',projectData)
+  // console.log('project data',projectData)
 
-  projectData.entries = projectData.entries.map(e => {
-    console.log('E', e);
-    return e
-  });
+  // projectData.entries = projectData.entries.map(e => {
+  //   console.log('E', e);
+  //   return e
+  // });
 
   return {
     ...projectData,

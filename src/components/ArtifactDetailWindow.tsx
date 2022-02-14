@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import { StyleSheet, Text, View } from "react-native";
 import path from 'path';
 import {
   Flex,
@@ -13,6 +12,7 @@ import ProjectListView, { openFile } from './ProjectListView';
 
 import TopTimeline from './TopTimeline';
 import ReadonlyEntry from './ReadonlyEntry';
+import DetailPreview from './DetailPreview';
 
 interface DetailProps {
     selectedArtifactIndex : any;
@@ -25,12 +25,14 @@ interface DetailProps {
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
+
     const { selectedArtifactIndex, setSelectedArtifactIndex, selectedArtifactEntry, setSelectedArtifactEntry, setViewType, folderPath, projectData} = props;
 
     const [editable, setEditable] = useState<boolean[]>(
         Array.from(Array(projectData.entries.length), (_, x) => false)
       );
-    
+
+    console.log('fffff', selectedArtifactEntry[selectedArtifactIndex])
     
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
@@ -83,21 +85,21 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
             }}>{"<< GO BACK TO OVERVIEW"}</Button>
          </Flex>
-         <Flex><TopTimeline projectData={projectData}/></Flex>
+         <Flex><Spacer></Spacer><TopTimeline projectData={projectData}/><Spacer></Spacer></Flex>
        
         </Box>
        
 
         <Flex position={'relative'} top={220}>
 
-        <Box margin="8px" bg={'yellow'}p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
+        <Box margin="8px" p={5} flex='2' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
             <Box>
-                <div><text style={{fontSize:20, fontWeight:700}} >{selectedArtifactEntry.title}</text></div>
+                <div><span style={{fontSize:20, fontWeight:700}} >{selectedArtifactEntry.title}</span></div>
                 <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                     {selectedArtifactEntry.files.map((f, i)=> (
                         
                         (i === selectedArtifactIndex) ?
-                        <div style={{backgroundColor:'red'}}>{selectedArtifactEntry.files[i].title}</div>
+                        <div style={{backgroundColor:'#RRGGBB'}}>{selectedArtifactEntry.files[i].title}</div>
                         : <div>{selectedArtifactEntry.files[i].title}</div>
                         
                     ))}
@@ -107,7 +109,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Box>
             <span style={{fontSize:20, fontWeight:700}}>Activity Tags</span>
             {selectedArtifactEntry.tags.map((t, i)=> (
-                <Box style={{padding:5, backgroundColor:'red', borderRadius:5}}>
+                <Box style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
                     <Flex>
                     <span>{"<< "}</span><Spacer></Spacer><span style={{alignSelf:'center'}}>{t}</span><Spacer></Spacer><span>{" >>"}</span>
                     </Flex>
@@ -118,14 +120,12 @@ const ArtifactDetailWindow = (props: DetailProps) => {
            
         </Box>
         <Box flex="4">
-        <Image
-            maxWidth={'90%'}
-            src={`file://${path.join(folderPath, selectedArtifactEntry.files[selectedArtifactIndex].title)}`}
-            // onClick={() => openFile(title)}
-        />
+           
+           <DetailPreview folderPath={folderPath} file={selectedArtifactEntry.files[selectedArtifactIndex]} openFile={openFile}></DetailPreview>
+        
         </Box>
-        {/* <CenterView projectEntries={projectData.entries} folderPath={folderPath}></CenterView> */}
-        <Box flex="1.1" h='calc(100vh - 250px)' overflowY={'auto'}>
+       
+        <Box flex="2" h='calc(100vh - 250px)' overflowY={'auto'}>
             <ReadonlyEntry
                 /* eslint-disable-next-line react/no-array-index-key */
                 key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
@@ -135,7 +135,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 setSelectedArtifactIndex={setSelectedArtifactIndex}
                 setSelectedArtifactEntry={setSelectedArtifactEntry}
                 makeEditable={() => setEditableStatus(selectedArtifactEntry.index, true)}
-                />
+            />
         </Box>
         </Flex>
         </div>

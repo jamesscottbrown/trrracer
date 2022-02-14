@@ -58,8 +58,6 @@ const TopTimeline = (projectProps:any)=>{
       return {year: year[0], months: wrapper}
     });
 
-    console.log('yearMonth', yearMonth)
-
     let startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
     let endIndex = getIndexOfMonth(yearMonth[yearMonth.length - 1].months, 'last')
     yearMonth[0].months = yearMonth[0].months.filter((f, i)=> i > startIndex - 1)

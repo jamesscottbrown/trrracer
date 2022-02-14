@@ -58,13 +58,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   // TODO: add files to json file and save
 
-  const saveFiles = (fileList: FileObj[]) => {
-    dispatch({ type: 'ADD_FILES', fileList });
-  };
+  // const saveFiles = (fileList: FileObj[]) => {
+  //   dispatch({ type: 'ADD_FILES', fileList });
+  // };
 
-  const addEntry = () => {
-    dispatch({ type: 'ADD_ENTRY' });
-  };
+  // const addEntry = () => {
+  //   dispatch({ type: 'ADD_ENTRY' });
+  // };
 
   const updateEntryField = (
     entryIndex: number,
@@ -74,11 +74,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-  // const openFile = (fileName: string) => {
-  //   console.log('Open file:', path.join(folderPath, fileName));
-  //   ipcRenderer.send('open-file', path.join(folderPath, fileName));
-  //   console.log('after ipcRenderer')
-  // };
 
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
