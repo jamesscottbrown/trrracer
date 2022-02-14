@@ -107,7 +107,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             </Box>
 
             <Box>
-            <span style={{fontSize:20, fontWeight:700}}>Activity Tags</span>
+            <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
             {selectedArtifactEntry.tags.map((t, i)=> (
                 <Box style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
                     <Flex>
