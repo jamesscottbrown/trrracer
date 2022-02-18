@@ -27,11 +27,11 @@ const calcAxis = (axisProps: any) => {
 const TopTimeline = (projectProps:any)=>{
     const svgRef = React.useRef(null);
 
-    const { projectData } = projectProps;
+    const { projectData, defineEvent } = projectProps;
     const activity = projectData.entries;
 
     let width = 1000;
-    let height = 200;
+    let height = 100;
 
     const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
 
@@ -63,13 +63,8 @@ const TopTimeline = (projectProps:any)=>{
     yearMonth[0].months = yearMonth[0].months.filter((f, i)=> i > startIndex - 1)
     yearMonth[yearMonth.length - 1].months = yearMonth[yearMonth.length - 1].months.filter((f, i)=> i < endIndex)
   
-    let flatActivities = yearMonth.flatMap(yr => yr.months.flatMap(mo => mo.activities));
-
-   
-
-
+    let jitter = (val:any) => Math.random() * val;
     
-
     React.useEffect(() => {
 
       const xScale = d3.scaleTime()
@@ -84,21 +79,20 @@ const TopTimeline = (projectProps:any)=>{
             .append("g")
             .attr("transform", `translate(10, 10)`);
   
-          svg.selectAll('rect').data(activity).join('rect')
-          .attr('x', d=> {
-              return xScale(new Date(d.date))})
-          .attr('y',20)
-          .attr('width', 2)
-          .attr('height', 60)
+          svg.selectAll('circle').data(activity).join('circle')
+          .attr('cx', d=> xScale(new Date(d.date)))
+          .attr('cy', ()=> jitter(10))
+          .attr('r', 5)
+      
           .attr('fill', 'gray')
-          .attr('fill-opacity', .6)
+          .attr('fill-opacity', .4)
   
           const xAxis = d3.axisBottom(xScale)
               .ticks(16)
               .tickSize(10);
               
           const xAxisGroup = svg.append("g")
-              .attr("transform", `translate(10, 90)`)
+              .attr("transform", `translate(10, 40)`)
               .call(xAxis);
   
           xAxisGroup.select(".domain").remove();
@@ -109,13 +103,18 @@ const TopTimeline = (projectProps:any)=>{
               .attr("color", "gray.900")
               .attr("font-size", "0.75rem");
 
+        if(!defineEvent){
+          console.log("THIS IS FALSE");
+          let bX = d3.brushX();
+        }
+
       }, [activity]);
 
     return(
         <Flex flex={4} 
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
-        h={'150px'}
+        h={height}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}

@@ -109,12 +109,12 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
             <FaEye />
-            Show edit controls for all entries
+            Show edit controls for all activities
           </Button>
         )}
         {!editable.every((t) => !t) && (
           <Button onClick={makeAllNonEditable} type="button">
-            <FaEyeSlash /> Hide edit controls for all entries
+            <FaEyeSlash /> Hide edit controls for all activities
           </Button>
         )}
       </ButtonGroup>

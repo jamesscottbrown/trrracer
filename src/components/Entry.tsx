@@ -7,6 +7,7 @@ import {
   Heading,
   ListItem,
   UnorderedList,
+  Flex
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 
@@ -31,8 +32,6 @@ import GoogFileInit from './GoogleFileInit';
 
 
 import URLList from './URLList';
-
-
 
 interface EditDateTypes {
   date: string;
@@ -214,16 +213,28 @@ const Entry = (props: EntryPropTypes) => {
           <EditablePreview />
           <EditableInput />
         </Editable>
-        <Button onClick={makeNonEditable} type="button">
-          <FaEyeSlash /> Hide edit controls
+        <Button 
+        style={{display:'inline'}} onClick={makeNonEditable} type="button">
+          Hide edit controls
         </Button>
+        <Button
+        style={{display:'inline'}}
+        colorScheme="red"
+        leftIcon={<DeleteIcon />}
+        onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
+        >
+        Delete Activity
+      </Button>
       </Heading>
-
+      <br />
+      <Flex alignItems={'center'}>
       <EditDate
         date={entryData.date}
         entryIndex={entryIndex}
         updateEntryField={updateEntryField}
       />
+      </Flex>
+     
       <br />
 
       <ReactTags
@@ -242,13 +253,7 @@ const Entry = (props: EntryPropTypes) => {
         }}
       />
 
-      <Button
-        colorScheme="red"
-        leftIcon={<DeleteIcon />}
-        onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
-      >
-        Delete Entry
-      </Button>
+
       <br />
 
       {showDescription ? (
@@ -285,6 +290,10 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
       )}
 
+      <br />
+      <div style={{marginTop:10}}>
+        <span style={{fontSize:24, fontWeight:500}}>Artifacts</span>
+      <br />
       <UnorderedList>
         {files.map((file: File, j:any) => (
           <ListItem key={file.title}>
@@ -305,15 +314,7 @@ const Entry = (props: EntryPropTypes) => {
             />
             <UnorderedList>
                <ListItem> 
-                 
-                  {/* <form>
-                  <label>Context:
-                      <input defaultValue={file.meta} onChange={handleMetaChange} type="text" />
-                  </label>
-                  <Button onClick={()=> updateMeta(file, j)}>Update Context</Button>
-                  </form> */}
                   <FileContext file={file} entryIndex={entryIndex} fileIndex={j}></FileContext>
-               
                </ListItem> 
             </UnorderedList>
             
@@ -321,11 +322,15 @@ const Entry = (props: EntryPropTypes) => {
         ))}
       </UnorderedList>
 
+      </div>
+     
+
       {showFileUpload ? (
         <>
+        <Flex style={{borderColor:'gray', borderRadius:5, alignItems:'center', justifyContent:'left'}}>
           <FileUpload
             saveFiles={saveFiles}
-            containerStyle={{}}
+            containerStyle={{outerWidth:'100%'}}
             msg={
               <>
                 Drag and drop some files here, or <b>click to select files</b>,
@@ -336,6 +341,7 @@ const Entry = (props: EntryPropTypes) => {
           <Button onClick={() => setShowFileUpload(false)} type="button">
             Cancel
           </Button>
+          </Flex>
         </>
       ) : (
         <Button onClick={() => setShowFileUpload(true)} type="button">

@@ -64,15 +64,15 @@ const FileTextRender = (fileDataProps) => {
         <>
         {fileData.fileType === "gdoc" ? (<Box>
           {
-            fileData.emphasized ? <Box>{fileData.emphasized.map(em => (
-                <PopComment data={em} spanType={"emphasize"} />
+            fileData.emphasized ? <Box>{fileData.emphasized.map((em, i) => (
+                <PopComment key={`em-${fileData.title}-${i}`} data={em} spanType={"emphasize"} />
                 ))}</Box> : <Box>{""}</Box>
           }
           {
             (fileData.comments && fileData.comments.comments.length > 0) ? 
-              fileData.comments.comments.map(co => (
+              fileData.comments.comments.map((co, i) => (
                   
-                  <PopComment data={co} spanType={"comment"} />
+                  <PopComment key={`co-${fileData.title}-${i}`} data={co} spanType={"comment"} />
               )) : <Box></Box>
           }
           </Box>) : 

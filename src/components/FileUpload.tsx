@@ -21,7 +21,7 @@ const baseStyle = {
   color: 'black',
   outline: 'none',
   transition: 'border .24s ease-in-out',
-  lineHeight: '1.5em',
+  lineHeight: '1.2em',
 };
 
 const activeStyle = {

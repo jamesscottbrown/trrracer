@@ -57,10 +57,10 @@ const CenterView = (projectProps: any) => {
         
         <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
-            {flatActivities.map(fa => (
+            {flatActivities.map((fa, i) => (
               <>
               { fa.firstMonth ? (<Box marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
-              <Box w={50} marginTop={2}>
+              <Box key={`${fa.title}-${i}`} w={50} marginTop={2}>
                 <CenterFileRender fileArray={fa.files} folderPath={folderPath}></CenterFileRender>
               </Box>
               </>

@@ -35,6 +35,9 @@ import { useProjectState } from './ProjectContext';
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
   const [, dispatch] = useProjectState();
+
+  const [defineEvent, setDefineEvent] = useState<boolean>(false);
+
   const { projectData, folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle } = ProjectPropValues;
 
   console.log('PROJECT DATA', projectData)
@@ -92,8 +95,11 @@ return (
       <div style={{float:"right"}}><ViewTypeControl viewType={viewType} setViewType={setViewType} /></div>
     </Flex>
     <Flex  h={'150px'}>
-    <Box flex={1.1} p={10} bg={useColorModeValue('white', 'gray.800')}
+    <Box backgroundColor={'red.100'} flex={1.1} p={10} bg={useColorModeValue('white', 'gray.800')}
     color={useColorModeValue('gray.600', 'white')}>
+
+      <Button onClick={()=> console.log('BUTTON PUSH')}>Add events to timline</Button>
+
       <Box>
         <FormControl display='flex' alignItems='center'>
         <FormLabel htmlFor='filter-artifacts' mb='2'>
@@ -104,6 +110,7 @@ return (
       </Box>
 
       <Box>
+     
       <FormControl display='flex' alignItems='center'>
       <FormLabel>{`Old ---> New`}</FormLabel>
         <Checkbox
@@ -115,28 +122,18 @@ return (
       </Box>
 
       <Box>
-      <FormControl display='flex' alignItems='center'>
-        <FormLabel>Artifact space</FormLabel>
-        <Slider aria-label='slider-ex-2' colorScheme='pink' defaultValue={30} width={150}>
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </FormControl>
+
 
     </Box>
-  
- 
     </Box>
 
-    <TopTimeline projectData={projectData}/>
+    <TopTimeline projectData={projectData} defineEvent={defineEvent}/>
 
     <Box flex="1.8" maxWidth='25%'>
       <Flex flexFlow={'row wrap'} p={5}>
         
         <Button alignSelf={"center"} onClick={addEntry} type="button">
-          <FaPlus /> Add entry
+          <FaPlus /> Add activity
         </Button>
   
         <FileUpload
