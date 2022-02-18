@@ -75,11 +75,16 @@ const TopTimeline = (projectProps:any)=>{
           // Create root container where we will append all other chart elements
           const svgEl = d3.select(svgRef.current);
           svgEl.selectAll("*").remove(); // Clear svg content before adding new elements 
+
           const svg = svgEl
             .append("g")
             .attr("transform", `translate(10, 10)`);
+
+          let circleG = svg.append('g').classed('circle-group', true);
+
+          circleG.attr('transform', 'translate(0, 20)')
   
-          svg.selectAll('circle').data(activity).join('circle')
+          circleG.selectAll('circle').data(activity).join('circle')
           .attr('cx', d=> xScale(new Date(d.date)))
           .attr('cy', ()=> jitter(10))
           .attr('r', 5)
@@ -105,8 +110,126 @@ const TopTimeline = (projectProps:any)=>{
 
         if(!defineEvent){
           console.log("THIS IS FALSE");
-          let bX = d3.brushX();
+
+          const filteredDomain = function (scale:any, min:any, max:any) {
+            let dif = scale(d3.min(scale.domain())) - scale.range()[0];
+                // iMin = (min - dif) < 0 ? 0 : Math.round((min - dif)/xScale.step()),
+                let iMin = (min - dif) < 0 ? 0 : Math.round((min - dif))
+                let iMax = Math.round((max - dif));
+                // iMax = Math.round((max - dif)/xScale.step());
+            if (iMax == iMin) --iMin; // It happens with empty selections.
+    
+            return scale.domain().slice(iMin, iMax)
+          }
+
+          const snappedSelection = function (bandScale:any, domain:any) {
+            const min = d3.min(domain),
+                  max = d3.max(domain);
+            return [bandScale(min), bandScale(max) + bandScale.bandwidth()]
+          }
+
+
+          const brushed = function(event, d) {
+
+            console.log('d3 event selection', event)
+            
+            if (!event.selection && !event.sourceEvent) return;
+            const s0 = event.selection ? event.selection : [1, 2].fill(event.sourceEvent.offsetX),
+                  d0 = filteredDomain(xScale, s0[0], s0[1]);
+            let s1 = s0;
+          
+            if (event.sourceEvent && event.type === 'end') {
+              s1 = snappedSelection(xScale, d0);
+              d3.select(this).transition().call(event.target.move, s1);
+            }
+            
+            // move handlers
+            d3.selectAll('g.handles')
+              .attr('transform', d => {
+                const x = d == 'handle--o' ? s1[0] : s1[1];
+                return `translate(${x}, 0)`;
+              });
+          
+             // update labels
+             d3.selectAll('g.handles').selectAll('text')
+              .attr('dx', d0.length > 1 ? 0 : 6)
+              .text((d, i) => {
+                let year;
+                if (d0.length > 1) {
+                  year = d == 'handle--o' ? d3.min(d0) : d3.max(d0);
+                } else {
+                  year = d == 'handle--o' ? d3.min(d0) : '';
+                } 
+                return year;
+             })
+          
+              // update bars
+              d3.selectAll('circle')
+                .attr('opacity', d => d0.includes(d.year) ? 1 : 0.2);
+          }
+
+          let bX = d3.brushX()
+          .handleSize(8)
+          .extent([[0, 0], [width, height]])
+          .on('start brush end', brushed)
+
+          const gBrush = svg.append('g')
+          .call(bX)
+          .call(bX.move, [0, width])
+
+            // Custom handlers
+          // Handle group
+          const gHandles = gBrush.selectAll('g.handles')
+          .data(['handle--o', 'handle--e'])
+          .join('g')
+          .attr('class', d => `handles ${d}`)
+          .attr('fill', 'red')
+          .attr('transform', d => {
+            const x = d == 'handle--o' ? 0 : width;
+            return `translate(${x}, 5)`;
+          });
+
+          // Label
+          gHandles.selectAll('text')
+            .data(d => [d])
+            .enter()
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy', 0)
+            .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()));
+
+          // // Triangle
+          // gHandles.selectAll('.triangle')
+          //   .data(d => [d])
+          //   .enter()
+          //   .append('path')
+          //   .attr('class', d => `triangle ${d}`)
+          //   .attr('d', triangle)
+          //   .attr('transform', d => {
+          //     const x = d == 'handle--o' ? -6 : 6,
+          //           rot = d == 'handle--o' ? -90 : 90;
+          //     return `translate(${x}, ${size.h / 2}) rotate(${rot})`;
+          //   });
+
+      // Visible Line
+      gHandles.selectAll('.line')
+        .data(d => [d])
+          .enter()
+      .append('line')
+        .attr('class', d => `line ${d}`)
+        .attr('x1', 0)
+        .attr('y1', -5)
+        .attr('x2', 0)
+        .attr('y2', height + 5)
+        .attr('stroke', 'red');
+
+
+         
         }
+
+     
+
+
 
       }, [activity]);
 

@@ -51,11 +51,10 @@ const FileTextRender = (fileDataProps) => {
         if(matches  && matches.length > 0){
         return matches.map(m => {
             let arr = m.split(tf.key);
-            
             return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
         });
         }else{
-        console.log("not there")
+        console.log("not there");
         return <p><span>no matches for <b>{tf.key}</b></span></p>
         }
     }
