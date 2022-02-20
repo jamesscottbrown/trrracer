@@ -35,7 +35,7 @@ export const openFile = (fileName: string, folderPath: string) => {
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
-  const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry} = ProjectPropValues;
+  const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry, timeFilter, setTimeFilter} = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
   //const [{ filterTags, searchConcept }, dispatch] = useProjectState();
@@ -89,6 +89,9 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       (Number(new Date(a.date)) - Number(new Date(b.date)))
   );
 
+  let fAct = timeFilter != null ? filteredEntries.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : filteredEntries;
+  console.log('fact!!',fAct);
+
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
   };
@@ -121,12 +124,12 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {filteredEntries.map((entryData: EntryTypeWithIndex) => (
+      {fAct.map((entryData: EntryTypeWithIndex, i:number) => (
         <>
           {editable[entryData.index] ? (
             <Entry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={`${entryData.title}-${entryData.index}`}
+              key={`en-${entryData.title}-${entryData.index}-${i}`}
               entryData={entryData}
               entryIndex={entryData.index}
               openFile={openFile}
@@ -137,7 +140,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           ) : (
             <ReadonlyEntry
               /* eslint-disable-next-line react/no-array-index-key */
-              key={`${entryData.title}-${entryData.index}`}
+              key={`ro-${entryData.title}-${entryData.index}-${i}`}
               entryData={entryData}
               openFile={openFile}
               setViewType={setViewType}

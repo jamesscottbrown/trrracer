@@ -36,11 +36,25 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
   const [, dispatch] = useProjectState();
 
+  const ref = React.useRef();
+  const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
-  const { projectData, folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle } = ProjectPropValues;
+  const { projectData, folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
 
   console.log('PROJECT DATA', projectData)
+
+  React.useEffect(() => {
+  if (ref.current) {
+    setDimensions({
+      width: ref.current.offsetWidth,
+      height: ref.current.offsetHeight
+    });
+
+    console.log('dimensions',dimensions)
+  }
+  }, []);
 
   let splitTitle = (title)=>{
     let t = title.split('/');
@@ -54,6 +68,7 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
   const saveFiles = (fileList: FileObj[]) => {
     dispatch({ type: 'ADD_FILES', fileList });
   };
+
 
 return (
 <Box position={"fixed"} left={0} right={0} flexFlow={'row wrap'} zIndex={1000} height={200}>
@@ -127,7 +142,7 @@ return (
     </Box>
     </Box>
 
-    <TopTimeline projectData={projectData} defineEvent={defineEvent}/>
+    <TopTimeline projectData={projectData} defineEvent={defineEvent} timeFilter={timeFilter} setTimeFilter={setTimeFilter} />
 
     <Box flex="1.8" maxWidth='25%'>
       <Flex flexFlow={'row wrap'} p={5}>

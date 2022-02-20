@@ -14,7 +14,7 @@ import { getIndexOfMonth } from '../timeHelperFunctions';
 
 
 const CenterView = (projectProps: any) => {
-  const {projectEntries, folderPath} = projectProps;
+  const {projectEntries, folderPath, timeFilter, setTimeFilter} = projectProps;
   
   let years = d3.groups(projectEntries, y => new Date(y.date).getFullYear())
 
@@ -49,19 +49,32 @@ const CenterView = (projectProps: any) => {
 
   let flatActivities = yearMonth.flatMap(yr => yr.months.flatMap(mo => mo.activities))
 
-  let getMonth = (activity) => {
+  let getMonth = (activity: Object) => {
     let monthDict = [ "Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
     return monthDict[activity.month]
   }
+
+  React.useEffect(() => {
+      let fAct = timeFilter != null ? flatActivities.filter(f => f.date >= timeFilter[0] && f.date <= timeFilter[1]) : flatActivities;
+      // if(timeFilter != null){
+      //   console.log('TIMEFILTER CHANGED', timeFilter)
+      //   let  = flatActivities.filter(f => f.date >= timeFilter[0] && f.date <= timeFilter[1])
+      //   console.log(flatActivities)
+      // }
+      
+    }, [timeFilter]);
+
+    let fAct = timeFilter != null ? flatActivities.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : flatActivities;
+    console.log('fact!!',fAct);
     return(
         
         <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
-            {flatActivities.map((fa, i) => (
+            {fAct.map((fa:any, i:number) => (
               <>
-              { fa.firstMonth ? (<Box marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
+              { fa.firstMonth ? (<Box key={`first-${fa.title}-${i}`} marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
               <Box key={`${fa.title}-${i}`} w={50} marginTop={2}>
-                <CenterFileRender fileArray={fa.files} folderPath={folderPath}></CenterFileRender>
+                <CenterFileRender key={`cfr-${fa.title}-${i}`} fileArray={fa.files} folderPath={folderPath} ></CenterFileRender>
               </Box>
               </>
             ))

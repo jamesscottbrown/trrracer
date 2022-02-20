@@ -29,7 +29,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [selectedArtifactEntry, setSelectedArtifactEntry] = useState<any>(null);
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
-
+  const [timeFilter, setTimeFilter] = useState<any>(null);
 
 
   if (viewType === 'activity view') {
@@ -44,10 +44,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setViewType={setViewType}
         reversedOrder={reversedOrder}
         setReversedOrder={setReversedOrder}
-        setNewTitle={setNewTitle}/>
+        setNewTitle={setNewTitle}
+        timeFilter={timeFilter} 
+        setTimeFilter={setTimeFilter}
+        />
       <Flex position={'relative'} top={220}>
       <LeftSidebar projectData={projectData}></LeftSidebar>
-      <CenterView projectEntries={projectData.entries} folderPath={folderPath}></CenterView>
+      <CenterView projectEntries={projectData.entries} folderPath={folderPath} timeFilter={timeFilter} setTimeFilter={setTimeFilter}></CenterView>
       <Box flex="1.1" h='calc(100vh - 250px)' overflowY={'auto'}>
         <ProjectListView
           projectData={projectData}
@@ -57,6 +60,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setViewType={setViewType}
           setSelectedArtifactIndex={setSelectedArtifactIndex}
           setSelectedArtifactEntry={setSelectedArtifactEntry}
+          timeFilter={timeFilter} 
+          setTimeFilter={setTimeFilter}
         />
       </Box>
       </Flex>

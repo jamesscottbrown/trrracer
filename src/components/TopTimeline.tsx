@@ -26,12 +26,14 @@ const calcAxis = (axisProps: any) => {
 
 const TopTimeline = (projectProps:any)=>{
     const svgRef = React.useRef(null);
+   
 
-    const { projectData, defineEvent } = projectProps;
+    const { projectData, defineEvent, timeFilter, setTimeFilter } = projectProps;
     const activity = projectData.entries;
 
     let width = 1000;
     let height = 100;
+    let margin = 200
 
     const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
 
@@ -69,7 +71,7 @@ const TopTimeline = (projectProps:any)=>{
 
       const xScale = d3.scaleTime()
             .domain(d3.extent(activity.map(m=> new Date(m.date))))
-            .range([0, width])
+            .range([0, (width - margin)])
             .nice();
   
           // Create root container where we will append all other chart elements
@@ -113,34 +115,28 @@ const TopTimeline = (projectProps:any)=>{
 
           const filteredDomain = function (scale:any, min:any, max:any) {
             let dif = scale(d3.min(scale.domain())) - scale.range()[0];
-                // iMin = (min - dif) < 0 ? 0 : Math.round((min - dif)/xScale.step()),
-                let iMin = (min - dif) < 0 ? 0 : Math.round((min - dif))
-                let iMax = Math.round((max - dif));
-                // iMax = Math.round((max - dif)/xScale.step());
+               
+            let iMin = (min - dif) < 0 ? 0 : Math.round((min - dif));
+            let iMax = Math.round((max - dif));
+              
             if (iMax == iMin) --iMin; // It happens with empty selections.
     
             return scale.domain().slice(iMin, iMax)
           }
 
-          const snappedSelection = function (bandScale:any, domain:any) {
-            const min = d3.min(domain),
-                  max = d3.max(domain);
-            return [bandScale(min), bandScale(max) + bandScale.bandwidth()]
-          }
-
-
           const brushed = function(event, d) {
 
-            console.log('d3 event selection', event)
-            
             if (!event.selection && !event.sourceEvent) return;
             const s0 = event.selection ? event.selection : [1, 2].fill(event.sourceEvent.offsetX),
                   d0 = filteredDomain(xScale, s0[0], s0[1]);
             let s1 = s0;
           
             if (event.sourceEvent && event.type === 'end') {
-              s1 = snappedSelection(xScale, d0);
+              s1 = event.selection;//snappedSelection(xScale, d0);
               d3.select(this).transition().call(event.target.move, s1);
+
+              // console.log(xScale.invert(event.selection[0]), xScale.invert(event.selection[1]), activity)
+              setTimeFilter([xScale.invert(event.selection[0]), xScale.invert(event.selection[1])]);
             }
             
             // move handlers
@@ -156,26 +152,32 @@ const TopTimeline = (projectProps:any)=>{
               .text((d, i) => {
                 let year;
                 if (d0.length > 1) {
-                  year = d == 'handle--o' ? d3.min(d0) : d3.max(d0);
+                  year = d == 'handle--o' ? xScale.invert(s1[0]) : xScale.invert(s1[1]);
                 } else {
-                  year = d == 'handle--o' ? d3.min(d0) : '';
+                  year = d == 'handle--o' ? xScale.invert(s1[0]) : '';
                 } 
                 return year;
              })
           
-              // update bars
+              // update circles
               d3.selectAll('circle')
-                .attr('opacity', d => d0.includes(d.year) ? 1 : 0.2);
+                .attr('opacity', (d, i, n) => {
+                  if(d3.select(n[i]).attr('cx') <= event.selection[0] || d3.select(n[i]).attr('cx') >= event.selection[1]){
+                    return .2
+                  }else{
+                    return .5
+                  }
+                });
           }
 
           let bX = d3.brushX()
           .handleSize(8)
-          .extent([[0, 0], [width, height]])
+          .extent([[0, 0], [(width - margin), height]])
           .on('start brush end', brushed)
 
           const gBrush = svg.append('g')
           .call(bX)
-          .call(bX.move, [0, width])
+          .call(bX.move, [0, (width - margin)])
 
             // Custom handlers
           // Handle group
@@ -185,18 +187,18 @@ const TopTimeline = (projectProps:any)=>{
           .attr('class', d => `handles ${d}`)
           .attr('fill', 'red')
           .attr('transform', d => {
-            const x = d == 'handle--o' ? 0 : width;
+            const x = d == 'handle--o' ? 0 : (width - margin);
             return `translate(${x}, 5)`;
           });
 
           // Label
           gHandles.selectAll('text')
             .data(d => [d])
-            .enter()
-            .append('text')
+            .join('text')
             .attr('text-anchor', 'middle')
             .attr('dy', 0)
-            .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()));
+            .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()))
+            
 
           // // Triangle
           // gHandles.selectAll('.triangle')
@@ -214,22 +216,15 @@ const TopTimeline = (projectProps:any)=>{
       // Visible Line
       gHandles.selectAll('.line')
         .data(d => [d])
-          .enter()
-      .append('line')
+        .join('line')
         .attr('class', d => `line ${d}`)
         .attr('x1', 0)
         .attr('y1', -5)
         .attr('x2', 0)
         .attr('y2', height + 5)
-        .attr('stroke', 'red');
+        .attr('stroke', 'black');
 
-
-         
         }
-
-     
-
-
 
       }, [activity]);
 

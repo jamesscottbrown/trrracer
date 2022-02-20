@@ -44,8 +44,8 @@ const LeftSidebar = (projectProps: any) => {
             <span></span>
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
-                {sortedTypes.map(m => (
-                   <Box>{`${m[1].length} ${m[0]} files`}</Box>
+                {sortedTypes.map((m:any, i:any) => (
+                   <Box key={`${m.title}-${i}`}>{`${m[1].length} ${m[0]} files`}</Box>
                 ))}
                <br></br>
            </Box>
@@ -54,8 +54,8 @@ const LeftSidebar = (projectProps: any) => {
             </span><br></br>
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
-                sortedTags.map(st => (
-                    <Box>{`${st.title}  (${st.matches.length})`}</Box>
+                sortedTags.map((st:any, s:any) => (
+                    <Box key={`${st.title}-${s}`}>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
             </Box>
