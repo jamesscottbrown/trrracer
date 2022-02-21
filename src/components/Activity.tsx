@@ -17,10 +17,6 @@ const Activity = (activityProps: any) => {
     const { activity, folderPath, index } = activityProps;
     const [{ projectData, highlightedTag }, dispatch] = useProjectState();
 
-    // console.log('state in project activity', projectData, highlightedTag)
-
-    console.log('activity', activity);
-
     const colorVar = activity.tags.indexOf(highlightedTag) > -1 ? 'red' : 'gray';
 
     return(
