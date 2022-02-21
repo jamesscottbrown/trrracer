@@ -66,8 +66,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         <div style={{height: '100vh', position:'fixed', top:0, bottom:0}}>
         <Box position={"fixed"} left={0} right={0} flexFlow={'row wrap'} zIndex={1000} height={200}>
         <Flex  
-            // bg={useColorModeValue('white', 'gray.800')}
-            // color={useColorModeValue('gray.600', 'white')}
             minH={'60px'}
             py={{ base: 2 }}
             px={{ base: 4 }}

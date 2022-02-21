@@ -55,7 +55,14 @@ const LeftSidebar = (projectProps: any) => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <Box key={`${st.title}-${s}`}>{`${st.title}  (${st.matches.length})`}</Box>
+                    <Box key={`${st.title}-${s}`} onMouseEnter={()=> {
+                        d3.selectAll('.activity').nodes().filter(f => {
+                            console.log('f',f);
+                            return f
+                        });
+                        console.log(st.title, 'test');
+                        
+                    }}>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
             </Box>

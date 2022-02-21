@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Flex,
-  Grid,
-  Wrap,
-  WrapItem
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverArrow,
+  PopoverBody,
+  PopoverHeader
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
 
 import CenterFileRender from './centerFileRender';
 import { getIndexOfMonth } from '../timeHelperFunctions';
+import Activity from "./Activity"
 
 
 const CenterView = (projectProps: any) => {
@@ -54,16 +57,6 @@ const CenterView = (projectProps: any) => {
     return monthDict[activity.month]
   }
 
-  React.useEffect(() => {
-      let fAct = timeFilter != null ? flatActivities.filter(f => f.date >= timeFilter[0] && f.date <= timeFilter[1]) : flatActivities;
-      // if(timeFilter != null){
-      //   console.log('TIMEFILTER CHANGED', timeFilter)
-      //   let  = flatActivities.filter(f => f.date >= timeFilter[0] && f.date <= timeFilter[1])
-      //   console.log(flatActivities)
-      // }
-      
-    }, [timeFilter]);
-
     let fAct = timeFilter != null ? flatActivities.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : flatActivities;
     console.log('fact!!',fAct);
     return(
@@ -72,10 +65,22 @@ const CenterView = (projectProps: any) => {
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
             {fAct.map((fa:any, i:number) => (
               <>
-              { fa.firstMonth ? (<Box key={`first-${fa.title}-${i}`} marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
-              <Box key={`${fa.title}-${i}`} w={50} marginTop={2}>
-                <CenterFileRender key={`cfr-${fa.title}-${i}`} fileArray={fa.files} folderPath={folderPath} ></CenterFileRender>
-              </Box>
+                { fa.firstMonth ? (<Box key={`first-${fa.title}-${i}`} marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
+                <Popover trigger="hover">
+                <PopoverTrigger>
+                <Activity activity={fa} folderPath={folderPath} index={i}></Activity>
+                </PopoverTrigger>
+                <PopoverContent bg='white' color='gray'>
+                    <PopoverArrow bg='white' />
+            
+                  <PopoverBody>
+                  {'HIIIII'}
+                  </PopoverBody>
+                  
+                  </PopoverContent>
+                  </Popover>
+           
+            
               </>
             ))
             }
