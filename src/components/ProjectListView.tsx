@@ -30,7 +30,7 @@ const { ipcRenderer } = require('electron');
 export const openFile = (fileName: string, folderPath: string) => {
   console.log('Open file:', path.join(folderPath, fileName));
   ipcRenderer.send('open-file', path.join(folderPath, fileName));
-  console.log('after ipcRenderer')
+ 
 };
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
@@ -90,7 +90,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
 
   let fAct = timeFilter != null ? filteredEntries.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : filteredEntries;
-  console.log('fact!!',fAct);
+
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));

@@ -38,7 +38,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       
       <div style={{height: '100vh', position:'fixed', top:0, bottom:0}}>
       <TopBar  
-        projectData={projectData}
         folderPath={folderPath}
         viewType={viewType}
         setViewType={setViewType}
@@ -49,7 +48,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setTimeFilter={setTimeFilter}
         />
       <Flex position={'relative'} top={220}>
-      <LeftSidebar projectData={projectData}></LeftSidebar>
+      <LeftSidebar />
       <CenterView projectEntries={projectData.entries} folderPath={folderPath} timeFilter={timeFilter} setTimeFilter={setTimeFilter}></CenterView>
       <Box flex="1.1" h='calc(100vh - 250px)' overflowY={'auto'}>
         <ProjectListView

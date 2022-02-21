@@ -732,6 +732,12 @@ const appStateReducer = (state, action) => {
       return action.newProjectData
     }
 
+    case 'HIGHLIGHT_TAG': {
+      console.log('testing in dispatch', action.highlightedTag)
+      return {...state, highlightedTag: action.highlightedTag }
+
+    }
+
     case 'ADD_URL': {
       let newFiles = state.projectData.entries[action.entryIndex].files;
       newFiles = [

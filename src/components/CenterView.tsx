@@ -58,7 +58,7 @@ const CenterView = (projectProps: any) => {
   }
 
     let fAct = timeFilter != null ? flatActivities.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : flatActivities;
-    console.log('fact!!',fAct);
+   
     return(
         
         <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>

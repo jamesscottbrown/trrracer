@@ -6,7 +6,7 @@ import * as d3 from "d3";
 import path from 'path';
 
 const CenterFileRender = (fileArrayProps: any) => {
-    const {fileArray, folderPath} = fileArrayProps;
+    const {fileArray, folderPath, bgColor} = fileArrayProps;
     
     const svgRef = React.useRef(null);
 
@@ -83,14 +83,14 @@ const CenterFileRender = (fileArrayProps: any) => {
            
         //     let emR = gdocG.selectAll('rect.em').data(d => {
         //         return d.emphasized}).join('rect').classed('em', true);
-        //     console.log('emR', emR)
+        //     
         //     // emR.attr('width', 30).attr('height', 3);
         // }
 
     }, [fileArray]);
 
     return(
-        <div style={{backgroundColor:'#F8F8F8', width:50, borderRightWidth:1, borderRightColor:'black', paddingRight:5}}>
+        <div style={{backgroundColor:bgColor, width:50, borderRightWidth:1, borderRightColor:'black', paddingRight:5}}>
             <svg width={44} height={getSvgHeight()} ref={svgRef}>
             </svg>
         </div> 

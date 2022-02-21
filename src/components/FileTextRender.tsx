@@ -43,7 +43,7 @@ import PopComment from './PopComment';
 
 const FileTextRender = (fileDataProps) => {
     const { fileData, index, keywordArray } = fileDataProps;
-
+    
      const formatConcord = (tf)=>{
         
         let matches =  tf.matches;
@@ -54,7 +54,7 @@ const FileTextRender = (fileDataProps) => {
             return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
         });
         }else{
-        console.log("not there");
+       
         return <p><span>no matches for <b>{tf.key}</b></span></p>
         }
     }

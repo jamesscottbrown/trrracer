@@ -34,14 +34,14 @@ import { useProjectState } from './ProjectContext';
 
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
-  const [, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   const ref = React.useRef();
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
-  const { projectData, folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
+  const { folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
 
   console.log('PROJECT DATA', projectData)
 

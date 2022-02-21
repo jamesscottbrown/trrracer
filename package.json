@@ -248,6 +248,7 @@
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
+    "eml-parser": "^1.0.6",
     "framer-motion": "^4",
     "generate-unique-id": "^2.0.1",
     "googleapis": "^39.2.0",

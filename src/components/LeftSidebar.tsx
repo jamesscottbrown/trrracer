@@ -6,12 +6,13 @@ import {
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
+import { useProjectState } from './ProjectContext';
 
+const LeftSidebar = () => {
 
-const LeftSidebar = (projectProps: any) => {
+    // const {projectData} = projectProps;
+    const [{ projectData }, dispatch] = useProjectState();
 
-    const {projectData} = projectProps;
-    console.log(projectData.entries)
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
@@ -55,14 +56,10 @@ const LeftSidebar = (projectProps: any) => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <Box key={`${st.title}-${s}`} onMouseEnter={()=> {
-                        d3.selectAll('.activity').nodes().filter(f => {
-                            console.log('f',f);
-                            return f
-                        });
-                        console.log(st.title, 'test');
-                        
-                    }}>{`${st.title}  (${st.matches.length})`}</Box>
+                    <Box backgroundColor={'red'} key={`${st.title}-${s}`} onMouseOver={()=> {
+                        console.log('highlight in mousehover', st.title)
+                        dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title}) 
+                    }} onMouseLeave={() => dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})}>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
             </Box>
