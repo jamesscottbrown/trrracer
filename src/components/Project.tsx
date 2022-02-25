@@ -25,8 +25,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
-  const [selectedArtifactIndex, setSelectedArtifactIndex] = useState<any>(null);
-  const [selectedArtifactEntry, setSelectedArtifactEntry] = useState<any>(null);
+  // const [selectedArtifactIndex, setSelectedArtifactIndex] = useState<any>(null);
+  // const [selectedArtifactEntry, setSelectedArtifactEntry] = useState<any>(null);
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
@@ -57,8 +57,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           // viewType={viewType}
           reversedOrder={reversedOrder}
           setViewType={setViewType}
-          setSelectedArtifactIndex={setSelectedArtifactIndex}
-          setSelectedArtifactEntry={setSelectedArtifactEntry}
+          // setSelectedArtifactIndex={setSelectedArtifactIndex}
+          // setSelectedArtifactEntry={setSelectedArtifactEntry}
           timeFilter={timeFilter} 
           setTimeFilter={setTimeFilter}
         />
@@ -82,10 +82,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   if (viewType === 'detail view') {
     return (
       <ArtifactDetailWindow 
-      selectedArtifactIndex={selectedArtifactIndex} 
-      setSelectedArtifactIndex={setSelectedArtifactIndex} 
-      setSelectedArtifactEntry={setSelectedArtifactEntry} 
-      selectedArtifactEntry={selectedArtifactEntry} 
+      // selectedArtifactIndex={selectedArtifactIndex} 
+      // setSelectedArtifactIndex={setSelectedArtifactIndex} 
+      // setSelectedArtifactEntry={setSelectedArtifactEntry} 
+      // selectedArtifactEntry={selectedArtifactEntry} 
       setViewType={setViewType} 
       folderPath={folderPath}
       projectData={projectData}

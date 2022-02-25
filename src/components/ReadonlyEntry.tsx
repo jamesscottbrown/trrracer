@@ -53,8 +53,9 @@ interface EntryPropTypes {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, openFile, makeEditable, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry } = props;
+  const { entryData, openFile, makeEditable, setViewType } = props;
  
+
   const colorBadge = (val)=>{
     if(val > .4){
       return 'gray.400';
@@ -73,8 +74,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const key = entryData.key_txt.flatMap(kt => {
     return kt.keywords.keywords.map(k => k)
   });
-
-  const [{ projectData, folderPath }] = useProjectState();
+ 
+  const [{ projectData, folderPath }, dispatch] = useProjectState();
 
   const getColor = (tagName: string) => {
     const matchingTags = projectData.tags.filter(
@@ -156,8 +157,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                   <PopoverBody>
                       <Button onClick={()=> {
                         setViewType("detail view")
-                        setSelectedArtifactIndex(i);
-                        setSelectedArtifactEntry(entryData)
+                        dispatch({type: 'SELECTED_ARTIFACT', selectedArtifactEntry: entryData, selectedArtifactIndex: i})
                         }}>See artifact in detail.</Button>
                   </PopoverBody>
                   {/* <PopoverFooter><Button>Go to Doc</Button></PopoverFooter> */}

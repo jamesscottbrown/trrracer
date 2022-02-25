@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { ipcRenderer } from 'electron';
 
 import {
-  Image
+  Image,
+  Flex
 } from '@chakra-ui/react';
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im'
+import { useProjectState } from './ProjectContext';
 
 
 interface DetailPreviewPropsType {
@@ -19,6 +21,9 @@ interface DetailPreviewPropsType {
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { folderPath, file, openFile } = props;
+  const [{ selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+
+  console.log('file',file)
   let title = file.title;
   if (
     title.endsWith('.mp4') ||
@@ -64,7 +69,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript"/>
+
+    return <embed style={{height:'90%', width:'80%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript"/>
+    
     // return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
@@ -81,7 +88,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.pdf')) {
     return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="application/pdf"/>
-    // return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
+     
+
+     // return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.HEIC')) {

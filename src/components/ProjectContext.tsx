@@ -735,7 +735,11 @@ const appStateReducer = (state, action) => {
     case 'HIGHLIGHT_TAG': {
       console.log('testing in dispatch', action.highlightedTag)
       return {...state, highlightedTag: action.highlightedTag }
+    }
 
+    case 'SELECTED_ARTIFACT': {
+      console.log('testing in dispatch', action.selectedArtifactEntry, action.selectedArtifactIndex)
+      return {...state, selectedArtifactEntry: action.selectedArtifactEntry, selectedArtifactIndex: action.selectedArtifactIndex}
     }
 
     case 'ADD_URL': {

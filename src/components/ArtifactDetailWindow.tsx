@@ -13,12 +13,13 @@ import ProjectListView, { openFile } from './ProjectListView';
 import TopTimeline from './TopTimeline';
 import ReadonlyEntry from './ReadonlyEntry';
 import DetailPreview from './DetailPreview';
+import { useProjectState } from './ProjectContext';
 
 interface DetailProps {
-    selectedArtifactIndex : any;
-    setSelectedArtifactIndex : (index: any) => void; 
-    selectedArtifactEntry : any;
-    setSelectedArtifactEntry : (entry: any) => void;
+    // selectedArtifactIndex : any;
+    // setSelectedArtifactIndex : (index: any) => void; 
+    // selectedArtifactEntry : any;
+    // setSelectedArtifactEntry : (entry: any) => void;
     setViewType: (view: string) => void;
     folderPath: string;
     projectData: any;
@@ -26,13 +27,15 @@ interface DetailProps {
 
 const ArtifactDetailWindow = (props: DetailProps) => {
 
-    const { selectedArtifactIndex, setSelectedArtifactIndex, selectedArtifactEntry, setSelectedArtifactEntry, setViewType, folderPath, projectData} = props;
+    const { setViewType, folderPath, projectData } = props;
+
+    const [{ selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
 
     const [editable, setEditable] = useState<boolean[]>(
         Array.from(Array(projectData.entries.length), (_, x) => false)
-      );
+    );
 
-    console.log('fffff', selectedArtifactEntry[selectedArtifactIndex])
+    // console.log('fffff', selectedArtifactEntry[selectedArtifactIndex])
     
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
@@ -59,7 +62,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         );
     };
 
-    console.log('SELECTED ARTIFACT', selectedArtifactIndex, selectedArtifactEntry.files[selectedArtifactIndex])
+    // console.log('SELECTED ARTIFACT', selectedArtifactIndex, selectedArtifactEntry.files[selectedArtifactIndex])
 
     return(
 
@@ -77,8 +80,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             >
                 
             <Button onClick={()=>{
-                setSelectedArtifactIndex(null);
-                setSelectedArtifactEntry(null);
+               
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry:null, selectedArtifactIndex:null})
                 setViewType("activity view");
 
             }}>{"<< GO BACK TO OVERVIEW"}</Button>
@@ -109,7 +112,27 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             {selectedArtifactEntry.tags.map((t, i)=> (
                 <Box style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
                     <Flex>
-                    <span>{"<< "}</span><Spacer></Spacer><span style={{alignSelf:'center'}}>{t}</span><Spacer></Spacer><span>{" >>"}</span>
+                    <span onClick={()=> {
+                        let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
+                        let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                        if(indexOfE === 0){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[test.length - 1], selectedArtifactIndex: 0})
+                        }else{
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE - 1], selectedArtifactIndex: 0})
+                        }
+                    }}>{"<< "}</span>
+                    <Spacer></Spacer>
+                    <span style={{alignSelf:'center'}}>{t}</span>
+                    <Spacer></Spacer>
+                    <span onClick={()=> {
+                        let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
+                        let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                        if(indexOfE === (test.length - 1)){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[0], selectedArtifactIndex: 0})
+                        }else{
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE + 1], selectedArtifactIndex: 0})
+                        }
+                    }}>{" >>"}</span>
                     </Flex>
                 </Box>
             ))}
@@ -117,10 +140,50 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
            
         </Box>
-        <Box flex="4">
-           
+        <Box flex="4" >
+        <Flex style={{justifyContent: 'center', alignItems:'center', height:'90%'}}>
+        <span onClick={()=>{ 
+            console.log(selectedArtifactEntry.index)
+            let entryIndex = selectedArtifactEntry.index;
+            if(entryIndex === 0){
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[projectData.entries.length - 1], selectedArtifactIndex: 0})
+            }else{
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex - 1], selectedArtifactIndex: 0})
+            }
+        }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{"<<"}</span>
+        <span onClick={
+        ()=>{
+            if(selectedArtifactIndex > 0){
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
+            }else{
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
+                console.log(selectedArtifactIndex)
+            }
+        }
+        } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
            <DetailPreview folderPath={folderPath} file={selectedArtifactEntry.files[selectedArtifactIndex]} openFile={openFile}></DetailPreview>
-        
+          
+        <span onClick={
+        ()=>{
+          
+            let len = selectedArtifactEntry.files.length;
+            if(selectedArtifactIndex < len - 1){
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex + 1)})
+            }else{
+                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: 0})
+            }
+        }
+        } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{">>"}</span>
+         <span onClick={()=> {
+              console.log(selectedArtifactEntry.index)
+              let entryIndex = selectedArtifactEntry.index;
+              if(entryIndex === (projectData.entries.length - 1)){
+                  dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[0], selectedArtifactIndex: 0})
+              }else{
+                  dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex + 1], selectedArtifactIndex: 0})
+              }
+         }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{">>"}</span>
+         </Flex>
         </Box>
        
         <Box flex="2" h='calc(100vh - 250px)' overflowY={'auto'}>
@@ -130,8 +193,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 entryData={selectedArtifactEntry}
                 openFile={openFile}
                 setViewType={setViewType}
-                setSelectedArtifactIndex={setSelectedArtifactIndex}
-                setSelectedArtifactEntry={setSelectedArtifactEntry}
                 makeEditable={() => setEditableStatus(selectedArtifactEntry.index, true)}
             />
         </Box>

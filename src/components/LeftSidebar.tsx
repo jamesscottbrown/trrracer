@@ -13,6 +13,7 @@ const LeftSidebar = () => {
     // const {projectData} = projectProps;
     const [{ projectData }, dispatch] = useProjectState();
 
+    // const [barColor]
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
@@ -46,7 +47,10 @@ const LeftSidebar = () => {
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
-                   <Box key={`${m.title}-${i}`}>{`${m[1].length} ${m[0]} files`}</Box>
+                   <Box key={`${m.title}-${i}`} onMouseEnter={()=>{
+                    console.log('highlight in filetype mousehover', m.title)
+                    // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title})
+                   }}>{`${m[1].length} ${m[0]} files`}</Box>
                 ))}
                <br></br>
            </Box>
@@ -56,7 +60,7 @@ const LeftSidebar = () => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <Box backgroundColor={'red'} key={`${st.title}-${s}`} onMouseOver={()=> {
+                    <Box key={`${st.title}-${s}`} onMouseOver={()=> {
                         console.log('highlight in mousehover', st.title)
                         dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title}) 
                     }} onMouseLeave={() => dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})}>{`${st.title}  (${st.matches.length})`}</Box>

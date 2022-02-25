@@ -17,7 +17,7 @@ const Activity = (activityProps: any) => {
     const { activity, folderPath, index } = activityProps;
     const [{ projectData, highlightedTag }, dispatch] = useProjectState();
 
-    const colorVar = activity.tags.indexOf(highlightedTag) > -1 ? 'red' : 'gray';
+    const colorVar = activity.tags.indexOf(highlightedTag) > -1 ? '#FFFCBB' : '#F5F5F5';
 
     return(
         <Box key={`${activity.title}-${index}`} w={50} marginTop={2} className={`activity`}>
