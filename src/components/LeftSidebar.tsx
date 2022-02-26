@@ -7,6 +7,7 @@ import {
 
 import * as d3 from "d3";
 import { useProjectState } from './ProjectContext';
+import SidebarButton from './SidebarButton';
 
 const LeftSidebar = () => {
 
@@ -60,10 +61,11 @@ const LeftSidebar = () => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <Box key={`${st.title}-${s}`} onMouseOver={()=> {
-                        console.log('highlight in mousehover', st.title)
-                        dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title}) 
-                    }} onMouseLeave={() => dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})}>{`${st.title}  (${st.matches.length})`}</Box>
+                    <SidebarButton isTag={true} data={st} index={s}/>
+                    // <Box key={`${st.title}-${s}`} onMouseOver={()=> {
+                    //     console.log('highlight in mousehover', st.title)
+                    //     dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title}) 
+                    // }} onMouseLeave={() => dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})}>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
             </Box>
