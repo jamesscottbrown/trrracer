@@ -23,19 +23,13 @@ export function useProjectState() {
 export function addMetaDescrip(projectData, state){
 
   let newProjEntries = projectData.entries.map(( e: EntryType )=>{
-   
     e.files = e.files.map(f => {
-     
-     if(!f.context){
-       f.context = "null";
-     }
-
+      if(!f.context){
+        f.context = "null";
+      }
       return f;
-
     });
-
     return e;
-
   });
 
  
@@ -203,12 +197,9 @@ export async function getGoogleIds(projectData, state){
              
 
               let newProj = {...projectData, 'entries': newProjEntries}
-
               return saveJSON(newProj, state);
-              
-            
-            });
 
+            });
 }
 
 async function copyGoogle(file:any, fileList:any){
@@ -218,7 +209,6 @@ async function copyGoogle(file:any, fileList:any){
             oAuth2Client.setCredentials(JSON.parse(token));
            
             let drive = google.drive({version: 'v3', auth: oAuth2Client});
-         
             let nameF = file.name.split('.');
 
             drive.files.list({
@@ -247,21 +237,10 @@ async function copyGoogle(file:any, fileList:any){
                         // res.send("error");
                         return;
                       }
-                    
-                 
                       // let newFiles = state.projectData.entries[entryIndex].files;
                       let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: "null", fileId: response.data.id }
         
-                      fileList = [...fileList, newFile];
-                
-                      // const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-                      //   entryIndex === i ? { ...d, files: newFiles } : d
-                      // );
-                
-                      // const newProjectData = { ...state.projectData, entries };
-                   
-                      // return saveJSON(newProjectData, state);
-                      
+                      fileList = [...fileList, newFile]; 
                     }
                   );
             
@@ -275,12 +254,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
   const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
   return JSON.parse(fileContents);
 };
-
-
-
-//       return saveJSON(newProjectData, state);
-
-//     }
 
 //     case 'DELETE_CONCEPT':{
     
@@ -299,8 +272,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //        };
  
 //        return saveJSON(newProjectData, state);
- 
-//     }
 
 //     case 'MERGE_CONCEPT':{
        
@@ -312,16 +283,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //         }
 //         return m;
 //       });
-      
-//        const newProjectData = {
-//         ...state.projectData,
-//         concepts: newConcepts
-//       };
-
-//       return saveJSON(newProjectData, state);
-
-      
-//     }
 
 //     case 'CREATE_EDGE':{
   
@@ -402,16 +363,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //       return saveJSON(newProjectData, state);
 //     }
 
-
-
-
-//     case 'ADD_URL': {
-//       let newFiles = state.projectData.entries[action.entryIndex].files;
-//       newFiles = [
-//         ...newFiles,
-//         { title: action.title, url: action.url, fileType: 'url' },
-//       ];
-
 //       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
 //         action.entryIndex === i ? { ...d, files: newFiles } : d
 //       );
@@ -422,8 +373,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 
 //     case 'ADD_FILES': {
 //       const { fileList } = action;
-
-
 
 //     //  if(fileList){
 
@@ -458,21 +407,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //     //       return saveJSON(newProjectData, state);
 //     //     }
 //       const copiedFiles = copyFiles(fileList, state.folderPath);
-
-//       const newEntry: EntryType = {
-//         title: 'New entry',
-//         description: '',
-//         files: copiedFiles,
-//         date: new Date().toISOString(),
-//         tags: [],
-//         urls: [],
-//       };
-//       const newProjectData = {
-//         ...state.projectData,
-//         entries: [...state.projectData.entries, newEntry],
-//       };
-
-
 //      }
    
 //     case 'DELETE_FILE': {
@@ -497,37 +431,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //           break;
 //         }
 //       }
-
-//       if (!otherUses) {
-//         const deleteFile = window.confirm(
-//           `File ${action.fileName} is not attached to any other entries - delete from project directory?`
-//         );
-
-//         if (deleteFile) {
-//           fs.unlinkSync(destination);
-//         }
-//       }
-
-//       if (!otherUses) {
-//         const deleteFile = window.confirm(
-//           `File ${action.fileName} is not attached to any other entries - delete from project directory?`
-//         );
-
-//         if (deleteFile) {
-//           fs.unlinkSync(destination);
-//         }
-//       }
-      
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-//         action.entryIndex === i
-//           ? { ...d, files: d.files.filter((f) => f.title !== action.fileName) }
-//           : d
-//       );
-
-//       const newProjectData = { ...state.projectData, entries };
-//       return saveJSON(newProjectData, state);
-//     }
-
 //     case 'ADD_ENTRY': {
 //       const newEntry: EntryType = {
 //         title: 'New entry',
@@ -552,7 +455,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //       if (!confirmed) {
 //         return state;
 //       }
-
 //       const newProjectData = {
 //         ...state.projectData,
 //         entries: state.projectData.entries.filter(
@@ -563,22 +465,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //       return saveJSON(newProjectData, state);
 //     }
 
-//     case 'ADD_URL': {
-
-
-//       let newFiles = state.projectData.entries[action.entryIndex].files;
-        
-//       newFiles = [...newFiles, { title: action.url, fileType:"url"}];
-
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-//       action.entryIndex === i ? { ...d, files: newFiles } : d
-//       );
-
-//       const newProjectData = { ...state.projectData, entries };
-
-//       return saveJSON(newProjectData, state);
-
-//     }
 
 const appStateReducer = (state, action) => {
   const saveJSON = (newProjectData: any) => {
@@ -618,7 +504,6 @@ const appStateReducer = (state, action) => {
     
         google_data = readProjectFile(baseDir, 'goog_data.json');
 
-
         const text_data = readProjectFile(baseDir, 'text_data.json');
 
         const comment_data = readProjectFile(baseDir, 'goog_comms.json');
@@ -656,13 +541,14 @@ const appStateReducer = (state, action) => {
         concepts: newConcepts,
         entries: newEntries,
         roles: roleData,
-        googleData: google_data,
-        topics,
+       // googleData: google_data,
+        // topics,
       };
 
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
+        googleData: google_data,
         filterTags: [],
       }
     }

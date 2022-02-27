@@ -7,8 +7,9 @@ import {
   Heading,
   ListItem,
   UnorderedList,
-  Flex
+  Flex,
 } from '@chakra-ui/react';
+
 import { DeleteIcon } from '@chakra-ui/icons';
 
 import DatePicker from 'react-datepicker';
@@ -16,6 +17,8 @@ import ReactMde from 'react-mde';
 import {
   FaExternalLinkAlt,
   FaEyeSlash,
+  FaLock,
+  FaLockOpen,
   FaPlus,
   FaTrashAlt,
 } from 'react-icons/fa';
@@ -176,29 +179,6 @@ const Entry = (props: EntryPropTypes) => {
     enter: 13,
   };
 
-  // let url = ''
-
-  // let handleChange = (event) =>{
-  //   url = event.target.value;
-  // }
-
-  // const addURL = () =>{
-  
-  //   //testNat();
-  //   dispatch({ type: 'ADD_URL', url, entryIndex })
-  // }
-
-  // return (
-  //   <div style={{margin:"auto"}}>
-  //     <br />
-  //     <Heading as='h3'>
-  //       <EdiText
-  //         type="text"
-  //         value={entryData.title}
-  //         onSave={(val) => updateEntryField(entryIndex, 'title', val)}
-  //         editOnViewClick
-  //         submitOnUnfocus
-  //       />
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
@@ -217,6 +197,22 @@ const Entry = (props: EntryPropTypes) => {
         style={{display:'inline'}} onClick={makeNonEditable} type="button">
           Hide edit controls
         </Button>
+
+        <Button
+        style={{marginLeft:5}}
+          colorScheme="red"
+          onClick={() =>
+            updateEntryField(entryIndex, 'isPrivate', !entryData.isPrivate)
+          }
+        >
+          {entryData.isPrivate ? (
+            <FaLock title="Entry is currently private; click to make it public." />
+          ) : (
+            <FaLockOpen title="Entry is currently public; click to make it private." />
+          )}
+        </Button>
+
+
         <Button
         style={{display:'inline'}}
         colorScheme="red"

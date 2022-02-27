@@ -4,13 +4,15 @@ import { ipcRenderer } from 'electron';
 
 import {
   Image,
-  Flex
+  Flex,
+  Box
 } from '@chakra-ui/react';
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im'
 import { useProjectState } from './ProjectContext';
+import GoogDriveParagraph from './GoogDriveElements';
 
 
 interface DetailPreviewPropsType {
@@ -19,12 +21,18 @@ interface DetailPreviewPropsType {
   openFile: (title: string, fp: string) => void;
 }
 
+const styleInterpreter = {
+  bold: {fontWeight: 'bold'},
+  italic: {fontStyle: 'italic'},
+  underline: {textDecorationLine: 'underline'}
+}
+
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { folderPath, file, openFile } = props;
-  const [{ selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+  const [{ googleData }, dispatch] = useProjectState();
 
-  console.log('file',file)
   let title = file.title;
+
   if (
     title.endsWith('.mp4') ||
     title.endsWith('.mov') ||
@@ -57,11 +65,25 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    //let string = `https://docs.google.com/document/d/${file.fildId}&embedded=true`
-    let string = `https://docs.google.com/document/d/${file.fileId}`
-    console.log(string)
-    return <iframe src={string} height={'100%'}></iframe>
-   // return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
+    if(Object.keys(googleData).indexOf(file.fileId) > -1){
+
+      let googD = googleData[file.fileId];
+      let gContent = googD["body"]["content"].filter(f => f.startIndex)
+      
+      return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
+        {
+          gContent.map((m:any, i:number)=> (
+            <GoogDriveParagraph parData={m} index={i} />
+          ))
+        }
+      </Box>
+
+    }
+    
+    // let string = `https://docs.google.com/document/d/${file.fileId}`
+  
+    // return <iframe src={string} height={'100%'}></iframe>
+  
   }
 
   if (title.endsWith('.gsheet')) {

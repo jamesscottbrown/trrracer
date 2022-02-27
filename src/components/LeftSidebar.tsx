@@ -11,10 +11,7 @@ import SidebarButton from './SidebarButton';
 
 const LeftSidebar = () => {
 
-    // const {projectData} = projectProps;
     const [{ projectData }, dispatch] = useProjectState();
-
-    // const [barColor]
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 

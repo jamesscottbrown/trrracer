@@ -12,20 +12,20 @@ const SidebarButton = (sidebarProps: any) => {
 
     const {isTag, index, data} = sidebarProps;
     const [{ projectData }, dispatch] = useProjectState();
-    const [barColor, setBarColor] = useState('#ffffff');
+    const [barColor, setBarColor] = useState('#FFFFFF');
 
     return (
-        <Box bg={barColor} key={`${data.title}-${index}`} onMouseOver={()=> {
-            console.log('highlight in mousehover', data.title)
+        <Box style={{cursor:"pointer"}} bg={barColor} key={`${data.title}-${index}`} onMouseOver={()=> {
+            console.log('highlight in mousehover', data.title, isTag)
             if(isTag){
-                setBarColor('red');
+                setBarColor('#D3D3D3');
                 console.log('HOVER BITCHES')
                 dispatch({type: "HIGHLIGHT_TAG", highlightedTag: data.title}) 
             }
             
         }} onMouseLeave={() => {
             if(isTag){
-                setBarColor('#ffffff');
+                setBarColor('#FFFFFF');
                 dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})
             }
             

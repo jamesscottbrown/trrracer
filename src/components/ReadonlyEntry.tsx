@@ -29,7 +29,7 @@ import {
 import AttachmentPreview from './AttachmentPreview';
 
 import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
@@ -97,6 +97,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   return (
     <Box>
       <span style={{fontSize:22, fontWeight:"bold"}}>
+
+      {entryData.isPrivate && (
+          <FaLock
+            title="This entry is private, and will be hidden when the Trrrace is exported."
+            size="0.75em"
+            style={{ display: 'inline', fill: 'lightgrey' }}
+          />
+        )}
+
         {entryData.title}{' '}
         {
           makeEditable ? 

@@ -2,34 +2,23 @@ import React, { useState } from 'react';
 import {
   Box,
   Flex,
-  useColorModeValue,
-  Heading,
-  Spacer,
-  useBreakpointValue,
-  useDisclosure,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button
+  useColorModeValue
 } from '@chakra-ui/react';
-import {
-  Search2Icon,
-  SearchIcon
-} from '@chakra-ui/icons';
-import { EntryType, FileObj, ProjectViewProps } from './types';
+
 import * as d3 from "d3";
 import { getIndexOfMonth, monthDiff } from '../timeHelperFunctions';
+import { useProjectState } from './ProjectContext';
 
-const calcAxis = (axisProps: any) => {
 
-}
+const TopTimeline = (projectProps:any)=> {
 
-const TopTimeline = (projectProps:any)=>{
     const svgRef = React.useRef(null);
    
-
-    const { projectData, defineEvent, timeFilter, setTimeFilter } = projectProps;
+    const { defineEvent, timeFilter, setTimeFilter } = projectProps;
+    const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
     const activity = projectData.entries;
+
+    console.log('ITS HERE!!',selectedArtifactEntry, selectedArtifactIndex)
 
     let width = 1000;
     let height = 100;
@@ -86,7 +75,7 @@ const TopTimeline = (projectProps:any)=>{
 
           circleG.attr('transform', 'translate(0, 20)')
   
-          circleG.selectAll('circle').data(activity).join('circle')
+          let circles = circleG.selectAll('circle').data(activity).join('circle')
           .attr('cx', d=> xScale(new Date(d.date)))
           .attr('cy', ()=> jitter(10))
           .attr('r', 5)
@@ -111,7 +100,6 @@ const TopTimeline = (projectProps:any)=>{
               .attr("font-size", "0.75rem");
 
         if(!defineEvent){
-          console.log("THIS IS FALSE");
 
           const filteredDomain = function (scale:any, min:any, max:any) {
             let dif = scale(d3.min(scale.domain())) - scale.range()[0];
@@ -124,106 +112,105 @@ const TopTimeline = (projectProps:any)=>{
             return scale.domain().slice(iMin, iMax)
           }
 
-          const brushed = function(event, d) {
+          if(!selectedArtifactEntry && !selectedArtifactIndex){
+            const brushed = function(event, d) {
 
-            if (!event.selection && !event.sourceEvent) return;
-            const s0 = event.selection ? event.selection : [1, 2].fill(event.sourceEvent.offsetX),
-                  d0 = filteredDomain(xScale, s0[0], s0[1]);
-            let s1 = s0;
-          
-            if (event.sourceEvent && event.type === 'end') {
-              s1 = event.selection;//snappedSelection(xScale, d0);
-              d3.select(this).transition().call(event.target.move, s1);
-
-              // console.log(xScale.invert(event.selection[0]), xScale.invert(event.selection[1]), activity)
-              setTimeFilter([xScale.invert(event.selection[0]), xScale.invert(event.selection[1])]);
-            }
+              if (!event.selection && !event.sourceEvent) return;
+              const s0 = event.selection ? event.selection : [1, 2].fill(event.sourceEvent.offsetX),
+                    d0 = filteredDomain(xScale, s0[0], s0[1]);
+              let s1 = s0;
             
-            // move handlers
-            d3.selectAll('g.handles')
-              .attr('transform', d => {
-                const x = d == 'handle--o' ? s1[0] : s1[1];
-                return `translate(${x}, 0)`;
-              });
-          
-             // update labels
-             d3.selectAll('g.handles').selectAll('text')
-              .attr('dx', d0.length > 1 ? 0 : 6)
-              .text((d, i) => {
-                let year;
-                if (d0.length > 1) {
-                  year = d == 'handle--o' ? xScale.invert(s1[0]) : xScale.invert(s1[1]);
-                } else {
-                  year = d == 'handle--o' ? xScale.invert(s1[0]) : '';
-                } 
-                return year;
-             })
-          
-              // update circles
-              d3.selectAll('circle')
-                .attr('opacity', (d, i, n) => {
-                  if(d3.select(n[i]).attr('cx') <= event.selection[0] || d3.select(n[i]).attr('cx') >= event.selection[1]){
-                    return .2
-                  }else{
-                    return .5
-                  }
+              if (event.sourceEvent && event.type === 'end') {
+                s1 = event.selection;//snappedSelection(xScale, d0);
+                d3.select(this).transition().call(event.target.move, s1);
+  
+                // console.log(xScale.invert(event.selection[0]), xScale.invert(event.selection[1]), activity)
+                setTimeFilter([xScale.invert(event.selection[0]), xScale.invert(event.selection[1])]);
+              }
+              
+              // move handlers
+              d3.selectAll('g.handles')
+                .attr('transform', d => {
+                  const x = d == 'handle--o' ? s1[0] : s1[1];
+                  return `translate(${x}, 0)`;
                 });
+            
+               // update labels
+               d3.selectAll('g.handles').selectAll('text')
+                .attr('dx', d0.length > 1 ? 0 : 6)
+                .text((d, i) => {
+                  let year;
+                  if (d0.length > 1) {
+                    year = d == 'handle--o' ? xScale.invert(s1[0]) : xScale.invert(s1[1]);
+                  } else {
+                    year = d == 'handle--o' ? xScale.invert(s1[0]) : '';
+                  } 
+                  return year;
+               })
+            
+                // update circles
+                d3.selectAll('circle')
+                  .attr('opacity', (d, i, n) => {
+                    if(d3.select(n[i]).attr('cx') <= event.selection[0] || d3.select(n[i]).attr('cx') >= event.selection[1]){
+                      return .2
+                    }else{
+                      return .5
+                    }
+                  });
+            }
+  
+            let bX = d3.brushX()
+            .handleSize(8)
+            .extent([[0, 0], [(width - margin), height]])
+            .on('start brush end', brushed)
+  
+            const gBrush = svg.append('g')
+            .call(bX)
+            .call(bX.move, [0, (width - margin)])
+  
+              // Custom handlers
+            // Handle group
+            const gHandles = gBrush.selectAll('g.handles')
+            .data(['handle--o', 'handle--e'])
+            .join('g')
+            .attr('class', d => `handles ${d}`)
+            .attr('fill', 'red')
+            .attr('transform', d => {
+              const x = d == 'handle--o' ? 0 : (width - margin);
+              return `translate(${x}, 5)`;
+            });
+  
+            // Label
+            gHandles.selectAll('text')
+              .data(d => [d])
+              .join('text')
+              .attr('text-anchor', 'middle')
+              .attr('dy', 0)
+              .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()))
+                 // Visible Line
+
+            gHandles.selectAll('.line')
+            .data(d => [d])
+            .join('line')
+            .attr('class', d => `line ${d}`)
+            .attr('x1', 0)
+            .attr('y1', -5)
+            .attr('x2', 0)
+            .attr('y2', height + 5)
+            .attr('stroke', 'black');
+
+          }else{
+
+            console.log('selectid', circles, selectedArtifactEntry, selectedArtifactIndex);
+            circles.filter(c=> {
+              console.log('filter, c', c)
+              return c.title === selectedArtifactEntry.title;
+            }).attr('fill', 'red').attr('r', 10)
+
           }
 
-          let bX = d3.brushX()
-          .handleSize(8)
-          .extent([[0, 0], [(width - margin), height]])
-          .on('start brush end', brushed)
 
-          const gBrush = svg.append('g')
-          .call(bX)
-          .call(bX.move, [0, (width - margin)])
-
-            // Custom handlers
-          // Handle group
-          const gHandles = gBrush.selectAll('g.handles')
-          .data(['handle--o', 'handle--e'])
-          .join('g')
-          .attr('class', d => `handles ${d}`)
-          .attr('fill', 'red')
-          .attr('transform', d => {
-            const x = d == 'handle--o' ? 0 : (width - margin);
-            return `translate(${x}, 5)`;
-          });
-
-          // Label
-          gHandles.selectAll('text')
-            .data(d => [d])
-            .join('text')
-            .attr('text-anchor', 'middle')
-            .attr('dy', 0)
-            .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()))
-            
-
-          // // Triangle
-          // gHandles.selectAll('.triangle')
-          //   .data(d => [d])
-          //   .enter()
-          //   .append('path')
-          //   .attr('class', d => `triangle ${d}`)
-          //   .attr('d', triangle)
-          //   .attr('transform', d => {
-          //     const x = d == 'handle--o' ? -6 : 6,
-          //           rot = d == 'handle--o' ? -90 : 90;
-          //     return `translate(${x}, ${size.h / 2}) rotate(${rot})`;
-          //   });
-
-      // Visible Line
-      gHandles.selectAll('.line')
-        .data(d => [d])
-        .join('line')
-        .attr('class', d => `line ${d}`)
-        .attr('x1', 0)
-        .attr('y1', -5)
-        .attr('x2', 0)
-        .attr('y2', height + 5)
-        .attr('stroke', 'black');
-
+ 
         }
 
       }, [activity]);
