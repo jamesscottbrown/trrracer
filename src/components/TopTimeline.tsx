@@ -209,8 +209,6 @@ const TopTimeline = (projectProps:any)=> {
 
           }
 
-
- 
         }
 
       }, [activity]);
