@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { copyFileSync } from 'fs';
 const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
+import {uuid} from 'react-uuid'
 
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
@@ -10,9 +11,6 @@ import { EntryType, File, FileObj, TagType } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
 import DataDisplayer from '../CallFlask';
-
-// import * as collo from '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/entry_collocations.json'
-
 
 export const ProjectContext = createContext();
 
@@ -255,17 +253,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
   return JSON.parse(fileContents);
 };
 
-//     case 'DELETE_CONCEPT':{
-    
-//        const newConcepts  = state.projectData.concepts.map(m => {
-        
-//            if(m.name === action.title.name){
-          
-//              m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
-//            }
-//            return m;
-//          });
-
 //        const newProjectData = {
 //          ...state.projectData,
 //          concepts: newConcepts
@@ -322,33 +309,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 
 //     }
 
-//     case 'UPDATE_TITLE': {
-//       const newProjectData = {
-//         ...state.projectData,
-//         title: action.title,
-//       };
-
-//       return saveJSON(newProjectData);
-//     }
-
-//     case 'ADD_TAG_TO_ENTRY': {
-//       const { newTag, entryIndex } = action;
-
-//       const existingTags = state.projectData.tags.map((k) => k.title);
-
-//       const newColor = pickTagColor(state.projectData.tags);
-
-//       let newTags;
-//       if (!existingTags.includes(newTag.text)) {
-//         newTags = [
-//           ...state.projectData.tags,
-//           // { title: newTag.text, color: 'black', date: new Date().toISOString() },
-//           { title: newTag.text, color: newColor, date: new Date().toISOString() },
-//         ];
-//       } else {
-//         newTags = state.projectData.tags;
-//       }
-
 //       const newEntries = state.projectData.entries.map(
 //         (d: EntryType, i: number) =>
 //           entryIndex === i ? { ...d, tags: [...d.tags, newTag.text] } : d
@@ -370,56 +330,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //       const newProjectData = { ...state.projectData, entries };
 //       return saveJSON(newProjectData);
 //     }
-
-//     case 'ADD_FILES': {
-//       const { fileList } = action;
-
-//     //  if(fileList){
-
-//     //       let copiedFiles: File[] = [];
-
-//     //       for (const file of fileList) {
-
-//     //         try {
-//     //           const destination = path.join(state.folderPath, file.name);
-//     //           copyFileSync(file.path, destination);
-
-//     //           copiedFiles = [...copiedFiles, { title: file.name, format: 'null', id: "" }];
-//     //         } catch (e) {
-
-//     //         }
-//     //       }
-
-//     //       const newProjectData = {
-//     //         ...state.projectData,
-//     //         entries: [
-//     //           ...state.projectData.entries,
-//     //           {
-//     //             title: 'New entry',
-//     //             description: '',
-//     //             files: copiedFiles,
-//     //             date: new Date().toISOString(),
-//     //             tags: [],
-//     //           },
-//     //         ],
-//     //       };
-
-//     //       return saveJSON(newProjectData, state);
-//     //     }
-//       const copiedFiles = copyFiles(fileList, state.folderPath);
-//      }
    
-//     case 'DELETE_FILE': {
-//       const destination = path.join(state.folderPath, action.fileName);
-
-//       const unattachFile = window.confirm(
-//         `Really un-attach file ${action.fileName}?`
-//       );
-
-//       if (!unattachFile) {
-//         return state;
-//       }
-
 //       let otherUses = false;
 //       for (let i = 0; i < state.projectData.entries.length; i += 1) {
 //         const entry = state.projectData.entries[i];
@@ -431,39 +342,6 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 //           break;
 //         }
 //       }
-//     case 'ADD_ENTRY': {
-//       const newEntry: EntryType = {
-//         title: 'New entry',
-//         description: '',
-//         files: [],
-//         date: new Date().toISOString(),
-//         tags: [],
-//         urls: [],
-//       };
-
-//       const newProjectData = {
-//         ...state.projectData,
-//         entries: [...state.projectData.entries, newEntry],
-//       };
-
-//       return saveJSON(newProjectData);
-//     }
-//     case 'DELETE_ENTRY': {
-//       const confirmed = window.confirm(
-//         'Are you sure that you want to delete this entry? This will not delete attached files.'
-//       );
-//       if (!confirmed) {
-//         return state;
-//       }
-//       const newProjectData = {
-//         ...state.projectData,
-//         entries: state.projectData.entries.filter(
-//           (e, i: number) => i !== action.entryIndex
-//         ),
-//       };
-
-//       return saveJSON(newProjectData, state);
-//     }
 
 
 const appStateReducer = (state, action) => {
@@ -491,13 +369,10 @@ const appStateReducer = (state, action) => {
 
       const baseDir = action.folderName;
     
-
-      let topics = [];
-
       let newEntries;
-
       let roleData;
       let google_data;
+      let research_threads;
 
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json');
@@ -510,7 +385,8 @@ const appStateReducer = (state, action) => {
         
         roleData = readProjectFile(baseDir, 'roles.json');
 
-      
+        research_threads = readProjectFile(baseDir, 'research_threads.json');
+
         newEntries = action.projectData.entries.map((e, i) => {
             e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
            
@@ -530,25 +406,20 @@ const appStateReducer = (state, action) => {
       } catch (e) {
         newEntries = action.projectData.entries;
         
-       
         return e;
       }
-      let newConcepts = [];
-    
-
+      
       const newProjectData = {
         ...action.projectData,
-        concepts: newConcepts,
         entries: newEntries,
         roles: roleData,
-       // googleData: google_data,
-        // topics,
       };
 
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
         googleData: google_data,
+        researchThreads: research_threads,
         filterTags: [],
       }
     }
@@ -641,6 +512,25 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, entries };
       return saveJSON(newProjectData);
+    }
+
+    case 'CREATE_THREAD':{
+      
+      let threadOb = {
+        title: action.threadName, 
+        actions:[
+          {action: "created", when: new Date()}
+        ],
+        rt_id: uuid(),
+        description: action.threadDescription,
+        associated_tags: [],
+        color:"red",
+        evidence:[]
+      }
+      let newRT = state.researchThreads;
+      newRT.research_threads.push(threadOb);
+      return { ...state, researchThreads: newRT };
+      
     }
 
     case 'ADD_FILES': {

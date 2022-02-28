@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Flex,
-  Heading
+  Box
 } from '@chakra-ui/react';
+
+import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
 
 import * as d3 from "d3";
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
+import ThreadNav from './ThreadNav';
 
 const LeftSidebar = () => {
 
@@ -15,11 +16,14 @@ const LeftSidebar = () => {
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
-    let types = d3.groups(artifacts, a => a.fileType);
+    console.log('DATE', new Date())
 
-    let sortedTypes = types.sort((a, b)=> b[1].length - a[1].length)
+    let types = d3.groups(artifacts, a => a.fileType).map(ty => {
+        return {title: ty[0], matches: ty[1]}
+    });
+
+    let sortedTypes = types.sort((a, b)=> b.matches.length - a.matches.length)
     
-
     let tags = projectData.tags.map(t => {
         t.matches = projectData.entries.filter(f=> {
             return f.tags.indexOf(t.title) > -1;
@@ -34,22 +38,19 @@ const LeftSidebar = () => {
     return(
         
         <Box margin="8px" p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
+            <ThreadNav />
+            <br />
             <Box>
                 <span style={headerStyle}>
-                    {`${projectData.entries.length} Activities`}
+                    {`${projectData.entries.length} Activities`} 
                 </span><br></br>
                 <span style={headerStyle}>
                     {`${artifacts.length} Artifacts`}
             </span><br></br>
-            <span></span>
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
-                     <SidebarButton isTag={false} data={m} index={i}/>
-                //    <Box key={`${m.title}-${i}`} onMouseEnter={()=>{
-                //     console.log('highlight in filetype mousehover', m.title)
-                //     // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title})
-                //    }}>{`${m[1].length} ${m[0]} files`}</Box>
+                    <SidebarButton isTag={false} data={m} index={i}/>
                 ))}
                <br></br>
            </Box>
@@ -60,10 +61,6 @@ const LeftSidebar = () => {
             {   
                 sortedTags.map((st:any, s:any) => (
                     <SidebarButton isTag={true} data={st} index={s}/>
-                    // <Box key={`${st.title}-${s}`} onMouseOver={()=> {
-                    //     console.log('highlight in mousehover', st.title)
-                    //     dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title}) 
-                    // }} onMouseLeave={() => dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})}>{`${st.title}  (${st.matches.length})`}</Box>
                 ))
             }
             </Box>

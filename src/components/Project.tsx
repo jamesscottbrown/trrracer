@@ -1,19 +1,16 @@
 /* eslint no-console: off */
 
 import React, { useEffect, useState } from 'react';
-// import { StyleSheet, Text, View } from "react-native";
 import {
   Flex,
   Box
 } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
-import ProjectTimelineView from './ProjectTimelineView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
 import CenterView from './CenterView';
 import LeftSidebar from './LeftSidebar';
-import { relative } from 'path/posix';
 import ArtifactDetailWindow from './ArtifactDetailWindow';
 import ThreadView from './TheadView';
 
@@ -26,8 +23,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData }, dispatch] = useProjectState();
   const [viewType, setViewType] = useState<string>('activity view');
-  // const [selectedArtifactIndex, setSelectedArtifactIndex] = useState<any>(null);
-  // const [selectedArtifactEntry, setSelectedArtifactEntry] = useState<any>(null);
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
@@ -55,11 +50,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <ProjectListView
           projectData={projectData}
           folderPath={folderPath}
-          // viewType={viewType}
           reversedOrder={reversedOrder}
           setViewType={setViewType}
-          // setSelectedArtifactIndex={setSelectedArtifactIndex}
-          // setSelectedArtifactEntry={setSelectedArtifactEntry}
           timeFilter={timeFilter} 
           setTimeFilter={setTimeFilter}
         />
@@ -69,7 +61,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     );
   }
 
-  if (viewType === 'research thread') {
+  if (viewType === 'research threads') {
 
     return (
       
@@ -84,21 +76,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
           timeFilter={timeFilter} 
           setTimeFilter={setTimeFilter}
           />
-        <Flex position={'relative'} top={220}>
+        {/* <Flex position={'relative'} top={220}> */}
           <ThreadView />
-        </Flex>
-      </div>
-    );
-  }
-
-  if (viewType === 'tag view') {
-    return (
-      <div>
-      <TopBar  
-        projectData={projectData}
-        folderPath={folderPath}
-        viewType={viewType}
-        setViewType={setViewType}/>
+        {/* </Flex> */}
       </div>
     );
   }
@@ -106,17 +86,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   if (viewType === 'detail view') {
     return (
       <ArtifactDetailWindow 
-      // selectedArtifactIndex={selectedArtifactIndex} 
-      // setSelectedArtifactIndex={setSelectedArtifactIndex} 
-      // setSelectedArtifactEntry={setSelectedArtifactEntry} 
-      // selectedArtifactEntry={selectedArtifactEntry} 
       setViewType={setViewType} 
       folderPath={folderPath}
       projectData={projectData}
       />
-    
-      
-    
     );
   }
 

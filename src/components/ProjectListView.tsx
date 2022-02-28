@@ -3,27 +3,22 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   ButtonGroup,
-  Checkbox,
-  Divider,
-  Heading,
+  Divider
 } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 
 import {
   EntryType,
   EntryTypeWithIndex,
-  FileObj,
   ProjectViewProps,
 } from './types';
 
 import Entry from './Entry';
-import FileUpload from './FileUpload';
-import TagList from './TagList';
+
 import ReadonlyEntry from './ReadonlyEntry';
-import ConceptNav from './Concepts';
-import EdgeControl from './Edges';
+
 
 const { ipcRenderer } = require('electron');
 
@@ -38,7 +33,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry, timeFilter, setTimeFilter} = ProjectPropValues;
 
   const [{ filterTags }, dispatch] = useProjectState();
-  //const [{ filterTags, searchConcept }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -77,7 +71,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
-    
       return filterTags.every((requiredTag: string) =>
         entryData.tags.includes(requiredTag)
       );
@@ -90,7 +83,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
 
   let fAct = timeFilter != null ? filteredEntries.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : filteredEntries;
-
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -154,20 +146,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
         </>
       ))}
 
-      {/* <Button onClick={addEntry} type="button">
-        <FaPlus /> Add entry
-      </Button>
-
-      <FileUpload
-        saveFiles={saveFiles}
-        containerStyle={{}}
-        msg={
-          <>
-            Drag and drop some files here, or <b>click to select files</b>,
-            create a new entry.
-          </>
-        }
-      /> */}
       </div>
     );
 

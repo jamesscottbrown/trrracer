@@ -1,20 +1,19 @@
 import { Heading } from '@chakra-ui/react';
-import path from 'path';
 import React, { useState } from 'react';
 
 
 const GoogDriveSpans = (googProps:any) => {
 
     const { googEl, index } = googProps;
-
     const [bgColor, setBgColor] = useState('#ffffff');
 
     const styleSection = (sectionData:any) => {
+        
         let styleOb = {display: "inline", backgroundColor: bgColor}
         if(sectionData.textRun){
           if(sectionData.textRun.textStyle){
             Object.keys(sectionData.textRun.textStyle).forEach((m, i) => {
-              console.log(m, i);
+              console.log('google', m, i, sectionData);
               if(m === "italic") styleOb.fontStyle = 'italic';
               if(m === "bold") styleOb.fontWeight = 'bold';
               
@@ -37,7 +36,7 @@ const GoogDriveParagraph = (parProps: any)  => {
     const {parData, index} = parProps;
 
     const getHeading = (styling:any, content:any) => {
-        // console.log('HEADING',styling, content);
+       
         if(styling.namedStyleType.includes('1')) return <Heading as={'h1'}>{parData.paragraph.elements[0].textRun.content}</Heading>;
         if(styling.namedStyleType.includes('2')) return <Heading as={'h2'}>{parData.paragraph.elements[0].textRun.content}</Heading>;
         if(styling.namedStyleType.includes('3')) return <Heading as={'h3'}>{parData.paragraph.elements[0].textRun.content}</Heading>;

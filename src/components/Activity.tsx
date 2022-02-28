@@ -25,7 +25,7 @@ const Activity = (activityProps: any) => {
     const [{ projectData, highlightedTag }, dispatch] = useProjectState();
 
     const colorVar = activity.tags.indexOf(highlightedTag) > -1 ? '#FFFCBB' : '#F5F5F5';
-    console.log('activities', activity);
+   
     return(
         <Popover trigger="hover">
             <PopoverTrigger>

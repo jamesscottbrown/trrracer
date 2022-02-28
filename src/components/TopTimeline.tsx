@@ -20,15 +20,15 @@ const TopTimeline = (projectProps:any)=> {
 
     console.log('ITS HERE!!',selectedArtifactEntry, selectedArtifactIndex)
 
-    let width = 1000;
+    let width = 1200;
     let height = 100;
-    let margin = 200
+    let margin = 600;
 
-    const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
+    // const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
 
     let years = d3.groups(activity, y => new Date(y.date).getFullYear())
 
-    let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year, yi) => {
+    let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year:any) => {
   
       let mon = d3.groups(year[1], m => new Date(m.date).getMonth())
   
@@ -69,7 +69,7 @@ const TopTimeline = (projectProps:any)=> {
 
           const svg = svgEl
             .append("g")
-            .attr("transform", `translate(10, 10)`);
+            .attr("transform", `translate(50, 10)`);
 
           let circleG = svg.append('g').classed('circle-group', true);
 
@@ -121,10 +121,8 @@ const TopTimeline = (projectProps:any)=> {
               let s1 = s0;
             
               if (event.sourceEvent && event.type === 'end') {
-                s1 = event.selection;//snappedSelection(xScale, d0);
+                s1 = event.selection;
                 d3.select(this).transition().call(event.target.move, s1);
-  
-                // console.log(xScale.invert(event.selection[0]), xScale.invert(event.selection[1]), activity)
                 setTimeFilter([xScale.invert(event.selection[0]), xScale.invert(event.selection[1])]);
               }
               
@@ -141,9 +139,9 @@ const TopTimeline = (projectProps:any)=> {
                 .text((d, i) => {
                   let year;
                   if (d0.length > 1) {
-                    year = d == 'handle--o' ? xScale.invert(s1[0]) : xScale.invert(s1[1]);
+                    year = d == 'handle--o' ? xScale.invert(s1[0]).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) : xScale.invert(s1[1]).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
                   } else {
-                    year = d == 'handle--o' ? xScale.invert(s1[0]) : '';
+                    year = d == 'handle--o' ? xScale.invert(s1[0]).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) : '';
                   } 
                   return year;
                })
@@ -174,7 +172,7 @@ const TopTimeline = (projectProps:any)=> {
             .data(['handle--o', 'handle--e'])
             .join('g')
             .attr('class', d => `handles ${d}`)
-            .attr('fill', 'red')
+            .attr('fill', 'black')
             .attr('transform', d => {
               const x = d == 'handle--o' ? 0 : (width - margin);
               return `translate(${x}, 5)`;
@@ -185,25 +183,29 @@ const TopTimeline = (projectProps:any)=> {
               .data(d => [d])
               .join('text')
               .attr('text-anchor', 'middle')
-              .attr('dy', 0)
-              .text(d =>  d == 'handle--o' ? d3.min(xScale.domain()) : d3.max(xScale.domain()))
+              .attr('dy', -2)
+              .text(d =>  {
+                if(d == 'handle--o'){
+                  return d3.min(xScale.domain()).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})
+                }else{
+                  return d3.max(xScale.domain()).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})
+                }
+              }).style('font-size', '11px')
                  // Visible Line
 
             gHandles.selectAll('.line')
-            .data(d => [d])
-            .join('line')
-            .attr('class', d => `line ${d}`)
-            .attr('x1', 0)
-            .attr('y1', -5)
-            .attr('x2', 0)
-            .attr('y2', height + 5)
-            .attr('stroke', 'black');
+              .data(d => [d])
+              .join('line')
+              .attr('class', d => `line ${d}`)
+              .attr('x1', 0)
+              .attr('y1', -5)
+              .attr('x2', 0)
+              .attr('y2', height + 5)
+              .attr('stroke', 'black');
 
           }else{
 
-            console.log('selectid', circles, selectedArtifactEntry, selectedArtifactIndex);
-            circles.filter(c=> {
-              console.log('filter, c', c)
+            circles.filter((c:any)=> {
               return c.title === selectedArtifactEntry.title;
             }).attr('fill', 'red').attr('r', 10)
 

@@ -96,7 +96,7 @@ import { format } from 'path/posix';
 
         const formatEmphasisVis = (blob) => {
           
-          let blobOb =  {margin: '2px', width:'5px', height:'100px', backgroundColor: 'gray', display:"inline-block"}
+          let blobOb =  {margin: '2px', width:'5px', height:'50px', backgroundColor: 'gray', display:"inline-block"}
           if(spanType === 'comment'){ 
               blobOb["fontWeight"] = "bold";
               blobOb["backgroundColor"] = "rgb(253,213,145)";

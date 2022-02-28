@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   Box,
   Flex,
@@ -6,31 +7,19 @@ import {
   Heading,
   Spacer,
   Checkbox,
-  Input,
-  InputGroup,
-  InputRightElement,
   Button,
   FormControl,
   FormLabel,
   Switch,
-  SliderFilledTrack,
-  SliderTrack,
-  SliderThumb,
-  Slider,
-  Editable,
-  EditableInput,
-  EditablePreview
 } from '@chakra-ui/react';
-import {
-  Search2Icon,
-  SearchIcon
-} from '@chakra-ui/icons';
-import { EntryType, FileObj, ProjectViewProps } from './types';
+
+import { FileObj, ProjectViewProps } from './types';
 import ViewTypeControl from './ViewTypeControl';
 import TopTimeline from './TopTimeline';
 import FileUpload from './FileUpload';
-import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
+import QueryBar from './QueryBar';
 
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
@@ -52,7 +41,6 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
       height: ref.current.offsetHeight
     });
 
-    console.log('dimensions',dimensions)
   }
   }, []);
 
@@ -98,14 +86,7 @@ return (
       </Heading> */}
       <Heading as="h3">{splitTitle(projectData.title)}</Heading>
       <Spacer/>
-      <InputGroup align={'center'} width={'400px'} marginEnd={'90px'}>
-        <Input variant='flushed' placeholder='Search by term' />
-        <InputRightElement width='4.5rem'>
-          <Button h='1.75rem' size='sm' onClick={console.log("TEST")}>
-            <Search2Icon/>
-          </Button>
-        </InputRightElement>
-      </InputGroup>
+      <QueryBar />
       
       <div style={{float:"right"}}><ViewTypeControl viewType={viewType} setViewType={setViewType} /></div>
     </Flex>
@@ -113,7 +94,7 @@ return (
     <Box backgroundColor={'red.100'} flex={1.1} p={10} bg={useColorModeValue('white', 'gray.800')}
     color={useColorModeValue('gray.600', 'white')}>
 
-      <Button onClick={()=> console.log('BUTTON PUSH')}>Add events to timline</Button>
+      <Button onClick={()=> console.log('BUTTON PUSH')}>Add events to timeline</Button>
 
       <Box>
         <FormControl display='flex' alignItems='center'>

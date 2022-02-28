@@ -7,22 +7,14 @@ import {
   Tag,
   Text,
   UnorderedList,
-  Badge,
-  Flex,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
   Box,
-  FormControl,
-  FormLabel,
-  Image,
-  SimpleGrid,
-  Divider,
+  SimpleGrid
 } from '@chakra-ui/react';
 
 
@@ -38,8 +30,6 @@ import { File, EntryType, TagType } from './types';
 import textColor from '../colors';
 import { useProjectState } from './ProjectContext';
 
-import { Tooltip } from "@chakra-ui/react"
-import PopComment from './PopComment';
 import FileTextRender from './FileTextRender'
 
 
@@ -128,11 +118,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             {entryData.tags.map((t) => 
               <Tag
                 key={t}
-                borderColor={getColor(t)}
-                borderWidth="5px"
-                backgroundColor={getColor(t)}
-                color={textColor(getColor(t))}
-                marginRight="0.25em"
+                // borderColor={getColor(t)}
+                // borderWidth="5px"
+                // backgroundColor={getColor(t)}
+                backgroundColor={'gray.200'}
+                // color={textColor(getColor(t))}
+                marginRight={"0.25em"}
+                marginBottom={"0.25em"}
               >
                 {t}
               </Tag>

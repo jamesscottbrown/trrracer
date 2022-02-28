@@ -1,42 +1,9 @@
 import React from 'react';
 
 import {
-  Button,
-  Heading,
-  ListItem,
-  Tag,
-  Text,
-  UnorderedList,
   Badge,
-  Flex,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
   Box,
-  FormControl,
-  FormLabel,
-  Image,
-  SimpleGrid,
-  Divider,
 } from '@chakra-ui/react';
-
-
-import AttachmentPreview from './AttachmentPreview';
-
-import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt } from 'react-icons/fa';
-
-import { format } from 'date-fns';
-import * as Showdown from 'showdown';
-
-import { File, EntryType, TagType } from './types';
-import textColor from '../colors';
-import { useProjectState } from './ProjectContext';
 
 import { Tooltip } from "@chakra-ui/react"
 import PopComment from './PopComment';
@@ -63,13 +30,14 @@ const FileTextRender = (fileDataProps) => {
         <>
         {fileData.fileType === "gdoc" ? (<Box>
           {
-            fileData.emphasized ? <Box>{fileData.emphasized.map((em, i) => (
+            fileData.emphasized ? <Box>
+              {fileData.emphasized.map((em:any, i:number) => (
                 <PopComment key={`em-${fileData.title}-${i}`} data={em} spanType={"emphasize"} />
-                ))}</Box> : <Box>{""}</Box>
+                ))}</Box> : <Box  style={{display:'inline'}}>{""}</Box>
           }
           {
             (fileData.comments && fileData.comments.comments.length > 0) ? 
-              fileData.comments.comments.map((co, i) => (
+              fileData.comments.comments.map((co:any, i:number) => (
                   
                   <PopComment key={`co-${fileData.title}-${i}`} data={co} spanType={"comment"} />
               )) : <Box></Box>
@@ -77,10 +45,12 @@ const FileTextRender = (fileDataProps) => {
           </Box>) : 
           (<Box>
             {   keywordArray.filter(k => k['file-title'] === fileData.title)[0]  ? 
-                keywordArray.filter(k => k['file-title'] === fileData.title)[0].keywords.keywords.map(m => (
+                keywordArray.filter(k => k['file-title'] === fileData.title)[0].keywords.keywords.map((m:any, i:number) => (
                    
-                  <div style={{'display':'inline'}}>
-                  <Tooltip placement="left" hasArrow label={formatConcord(m)}><Badge style={{margin:'3px'}}>{m.key}</Badge></Tooltip>
+                  <div key={`keyword-${i}`} style={{'display':'inline'}}>
+                    <Tooltip placement="left" hasArrow label={formatConcord(m)}>
+                      <Badge style={{margin:'3px'}}>{m.key}</Badge>
+                    </Tooltip>
                   </div>
                 
                 )) : <div></div>
