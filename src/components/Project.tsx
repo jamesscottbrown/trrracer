@@ -15,6 +15,7 @@ import CenterView from './CenterView';
 import LeftSidebar from './LeftSidebar';
 import { relative } from 'path/posix';
 import ArtifactDetailWindow from './ArtifactDetailWindow';
+import ThreadView from './TheadView';
 
 interface ProjectProps {
   folderPath: string;
@@ -67,6 +68,29 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
+
+  if (viewType === 'research thread') {
+
+    return (
+      
+      <div style={{height: '100vh', position:'fixed', top:0, bottom:0}}>
+        <TopBar  
+          folderPath={folderPath}
+          viewType={viewType}
+          setViewType={setViewType}
+          reversedOrder={reversedOrder}
+          setReversedOrder={setReversedOrder}
+          setNewTitle={setNewTitle}
+          timeFilter={timeFilter} 
+          setTimeFilter={setTimeFilter}
+          />
+        <Flex position={'relative'} top={220}>
+          <ThreadView />
+        </Flex>
+      </div>
+    );
+  }
+
   if (viewType === 'tag view') {
     return (
       <div>

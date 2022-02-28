@@ -45,10 +45,11 @@ const LeftSidebar = () => {
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
-                   <Box key={`${m.title}-${i}`} onMouseEnter={()=>{
-                    console.log('highlight in filetype mousehover', m.title)
-                    // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title})
-                   }}>{`${m[1].length} ${m[0]} files`}</Box>
+                     <SidebarButton isTag={false} data={m} index={i}/>
+                //    <Box key={`${m.title}-${i}`} onMouseEnter={()=>{
+                //     console.log('highlight in filetype mousehover', m.title)
+                //     // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: st.title})
+                //    }}>{`${m[1].length} ${m[0]} files`}</Box>
                 ))}
                <br></br>
            </Box>
