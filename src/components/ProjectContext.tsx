@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { copyFileSync } from 'fs';
 const {google} = require('googleapis');
 import *  as googleCred from '../../assets/google_cred_desktop_app.json';
-import {uuid} from 'react-uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
@@ -252,54 +252,7 @@ const readProjectFile = (folderPath: string, fileName: string) => {
   const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
   return JSON.parse(fileContents);
 };
-
-//        const newProjectData = {
-//          ...state.projectData,
-//          concepts: newConcepts
-//        };
- 
-//        return saveJSON(newProjectData, state);
-
-//     case 'MERGE_CONCEPT':{
-       
-//        const newConcepts  = state.projectData.concepts.map(m => {
-        
-//         if(m.name === action.fromName){
-
-//           m.actions = [...m.actions, { action:'merged', with: action.mergeName, when: new Date().toISOString() }]
-//         }
-//         return m;
-//       });
-
-//     case 'CREATE_EDGE':{
-  
-//       const newEdges  = [
-//         ...state.projectData.edges,
-//         { to: action.to, from: action.from, description: action.description, key: action.key, actions: [ {action: 'created', when: new Date().toISOString() }] },
-//       ];
-
-//       const newProjectData = {
-//         ...state.projectData,
-//         edges: newEdges,
-//       };
-
-//       return saveJSON(newProjectData, state);
-
-//     }
-
-//     case 'DELETE_EDGE':{
-    
-//       const newEdges  = state.projectData.edges.map(m => {
-  
-//           if(m.key === action.key){
-         
-//             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
-//           }
-//           return m;
-//         });
-
-       
-       
+     
 //       const newProjectData = {
 //         ...state.projectData,
 //         edges: newEdges,
@@ -351,21 +304,21 @@ const appStateReducer = (state, action) => {
    * research_threads = readProjectFile(baseDir, 'research_threads.json');
    */
 /////ADD HERE.
-const checkRtFile = (dir:any, folderPath:string) => {
+  const checkRtFile = (dir:any) => {
 
-  try{
-    return readProjectFile(dir, folderPath);
-  }catch (e){
-    let rtOb = {
-      title: action.projectData.title,
-      research_threads: []
+    try{
+      return readProjectFile(dir, 'research_threads.json');
+    }catch (e){
+      let rtOb = {
+        title: action.projectData.title,
+        research_threads: []
+      }
+
+      saveJSONRT(rtOb);
+      return rtOb;
     }
 
-    saveJSONRT(rtOb);
-    return rtOb;
   }
-
-}
 
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
@@ -383,22 +336,22 @@ const checkRtFile = (dir:any, folderPath:string) => {
     return { ...state, ProjectData: newProjectData };
   }
 
-    const saveJSONRT = (RTData: any) => {
-      fs.writeFileSync(
-        path.join(state.folderPath, 'research_threads.json'),
-        JSON.stringify(RTData, null, 4),
-        (err) => {
-          if (err) {
-            console.log(`Error writing file to disk: ${err}`);
-          } else {
-            // parse JSON string to JSON object
-   
-          }
+  const saveJSONRT = (RTData: any) => {
+    fs.writeFileSync(
+      path.join(state.folderPath, 'research_threads.json'),
+      JSON.stringify(RTData, null, 4),
+      (err) => {
+        if (err) {
+          console.log(`Error writing file to disk: ${err}`);
+        } else {
+          // parse JSON string to JSON object
+  
         }
-      );
+      }
+    );
 
-    return { ...state, researchThreads: RTData };
-    };
+  return { ...state, researchThreads: RTData };
+  };
 
 
   switch (action.type) {
@@ -445,7 +398,7 @@ const checkRtFile = (dir:any, folderPath:string) => {
         return e;
       }
      
-      let research_threads = checkRtFile(baseDir, 'research_threads.json');
+      let research_threads = checkRtFile(baseDir);
 
       console.log('research_thread', research_threads);
       
@@ -556,15 +509,15 @@ const checkRtFile = (dir:any, folderPath:string) => {
 
     case 'CREATE_THREAD':{
 
-      let numberRand = (Math.random() * 1000);
-      var randomColor = Math.floor(Math.random()*16777215).toString(16);
+      
+      let randomColor = Math.floor(Math.random()*16777215).toString(16);
 
       let threadOb = {
         title: action.threadName, 
         actions:[
           {action: "created", when: new Date()}
         ],
-        rt_id: numberRand.toString(),
+        rt_id: uuidv4(),
         description: action.threadDescription,
         associated_tags: [],
         color:`#${randomColor}`,
