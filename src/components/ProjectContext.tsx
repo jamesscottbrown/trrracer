@@ -351,6 +351,21 @@ const appStateReducer = (state, action) => {
    * research_threads = readProjectFile(baseDir, 'research_threads.json');
    */
 /////ADD HERE.
+const checkRtFile = (dir:any, folderPath:string) => {
+
+  try{
+    return readProjectFile(dir, folderPath);
+  }catch (e){
+    let rtOb = {
+      title: action.projectData.title,
+      research_threads: []
+    }
+
+    saveJSONRT(rtOb);
+    return rtOb;
+  }
+
+}
 
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
@@ -395,7 +410,7 @@ const appStateReducer = (state, action) => {
       let newEntries;
       let roleData;
       let google_data;
-      let research_threads;
+      
 
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json');
@@ -406,9 +421,7 @@ const appStateReducer = (state, action) => {
 
         const comment_data = readProjectFile(baseDir, 'goog_comms.json');
         
-        roleData = readProjectFile(baseDir, 'roles.json');
-
-      
+        roleData = readProjectFile(baseDir, 'roles.json');       
 
         newEntries = action.projectData.entries.map((e, i) => {
             e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
@@ -431,6 +444,10 @@ const appStateReducer = (state, action) => {
         
         return e;
       }
+     
+      let research_threads = checkRtFile(baseDir, 'research_threads.json');
+
+      console.log('research_thread', research_threads);
       
       const newProjectData = {
         ...action.projectData,
