@@ -12,11 +12,11 @@ const CenterFileRender = (fileArrayProps: any) => {
 
     let getRectHeight = (fileD) => {
         if(fileD.fileType === 'eml'){
-            return 20
+            return 15
         }else if(fileD.fileType === 'url'){
-            return 7
+            return 5
         }else{
-            return 40
+            return 30
         }
     }
 
@@ -51,11 +51,16 @@ const CenterFileRender = (fileArrayProps: any) => {
                 return `translate(0, 0)`;
             }
         });
+        let imageTypes = ['png', 'jpg', 'gif'];
 
-        let images = typeGroups.filter(f => f.fileType === 'png');
-        if(!images.empty()){
+        let imagesPng = typeGroups.filter(f => imageTypes.indexOf(f.fileType) > -1);
+        if(!imagesPng.empty()){
           
-            images.each((im, i, n) => {
+            imagesPng.each((im, i, n) => {
+                let extension = im.fileType;
+                let newName = im.title.split(`.${extension}`);
+               
+                let newPath = `thumbs/${newName[0]}.png`
 
                 let defs = d3.select(n[i])
                     .append("defs")
@@ -64,7 +69,7 @@ const CenterFileRender = (fileArrayProps: any) => {
                     .attr("width", 10)
                     .attr("height", 10)
                     .append("image")
-                    .attr("xlink:href", `file://${path.join(folderPath, im.title)}`)
+                    .attr("xlink:href", `file://${path.join(folderPath, newPath)}`)
                     .attr("width", 50)
                     .attr("height", 50)
 

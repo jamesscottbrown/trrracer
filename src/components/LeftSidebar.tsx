@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import {
-  Box
+  Box,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverTrigger,
+  PopoverContent,
+  Button
 } from '@chakra-ui/react';
 
 import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
@@ -19,7 +25,6 @@ const LeftSidebar = () => {
     let types = d3.groups(artifacts, a => a.fileType).map(ty => {
         return {title: ty[0], matches: ty[1]}
     });
-
     let sortedTypes = types.sort((a, b)=> b.matches.length - a.matches.length)
     
     let tags = projectData.tags.map(t => {
@@ -58,7 +63,22 @@ const LeftSidebar = () => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <SidebarButton key={`tag-${s}`} isTag={true} data={st} index={s}/>
+                    <React.Fragment key={`tag-${s}-frag`}>
+                        {/* <Popover trigger="hover">
+                            <PopoverTrigger> */}
+                                <SidebarButton isTag={true} data={st} index={s}/>
+                            {/* </PopoverTrigger> */}
+                            {/* <PopoverContent bg='white' color='gray'>
+                                <PopoverArrow bg='white' />
+                               
+                                <PopoverBody>
+                                   <Button>{"Add this tag to a thread."}</Button>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover> */}
+                    
+                    </React.Fragment>
+                    
                 ))
             }
             </Box>

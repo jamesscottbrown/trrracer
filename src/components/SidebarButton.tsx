@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import {
   Box,
   Flex,
-  Heading
+  Heading,
+  Popover,
+  PopoverTrigger,
+  PopoverArrow,
+  PopoverContent,
+  PopoverBody,
+  Button
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
@@ -15,21 +21,43 @@ const SidebarButton = (sidebarProps: any) => {
     const [barColor, setBarColor] = useState('#FFFFFF');
 
     return (
-        <Box style={{cursor:"pointer"}} bg={barColor} key={`${data.title}-${index}`} onMouseOver={()=> {
-            console.log('highlight in mousehover', data.title, isTag)
-            if(isTag){
+        isTag ? 
+        <Popover trigger="hover">
+            <PopoverTrigger> 
+
+                <Box style={{cursor:"pointer"}} bg={barColor} key={`${data.title}-${index}`} 
+                    onMouseOver={()=> {
+                    if(isTag){
+                        setBarColor('#D3D3D3');
+                        // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: data.title}) 
+                    }
+                    }} onMouseLeave={() => {
+                        if(isTag){
+                            setBarColor('#FFFFFF');
+                            // dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})
+                        }
+                    }}>{`${data.title}  (${data.matches.length})`}
+                </Box>    
+            
+            </PopoverTrigger> 
+                <PopoverContent bg='white' color='gray'>
+                <PopoverArrow bg='white' />
+                               
+                <PopoverBody>
+                    <Button>{"Add this tag to a thread."}</Button>
+                </PopoverBody>
+            </PopoverContent>
+        </Popover>
+        : 
+        <Box style={{cursor:"pointer"}} bg={barColor} key={`${data.title}-${index}`} 
+            onMouseOver={()=> {
                 setBarColor('#D3D3D3');
-                console.log('HOVER BITCHES')
-                dispatch({type: "HIGHLIGHT_TAG", highlightedTag: data.title}) 
-            }
-            
-        }} onMouseLeave={() => {
-            if(isTag){
+            }} onMouseLeave={() => {
                 setBarColor('#FFFFFF');
-                dispatch({type: "HIGHLIGHT_TAG", highlightedTag: null})
-            }
-            
-        }}>{`${data.title}  (${data.matches.length})`}</Box>
+            }}>{`${data.title}  (${data.matches.length})`}
+        </Box>      
+        
+        
     )
 }
 

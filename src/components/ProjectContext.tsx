@@ -303,7 +303,7 @@ const appStateReducer = (state, action) => {
    *  function for set data that checks to see if the file exists and if not, creates one. 
    * research_threads = readProjectFile(baseDir, 'research_threads.json');
    */
-/////ADD HERE.
+
   const checkRtFile = (dir:any) => {
 
     try{
