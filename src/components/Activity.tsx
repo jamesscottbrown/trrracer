@@ -43,7 +43,7 @@ const Activity = (activityProps: any) => {
                     <UnorderedList>
                         {
                             activity.files.map((f, i)=>(
-                                <ListItem>{f.title}</ListItem>
+                                <ListItem key={`f-${f.title}-${i}`}>{f.title}</ListItem>
                             ))
                         }
                     </UnorderedList>

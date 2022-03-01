@@ -117,7 +117,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       <br />
 
       {fAct.map((entryData: EntryTypeWithIndex, i:number) => (
-        <>
+        <React.Fragment key={`fr-${entryData.title}-${entryData.index}-${i}`}>
           {editable[entryData.index] ? (
             <Entry
               /* eslint-disable-next-line react/no-array-index-key */
@@ -143,7 +143,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           )}
 
           <Divider marginTop="1em" marginBottom="1em" />
-        </>
+        </React.Fragment>
       ))}
 
       </div>

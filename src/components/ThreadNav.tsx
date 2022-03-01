@@ -18,13 +18,11 @@ const ThreadNav = () => {
 
     let handleNameChange = (e) => {
         let inputValue = e.target.value
-        console.log('INPUT VAL', inputValue);
         setName(inputValue)
     }
 
     let handleDescriptionChange = (e) => {
         let inputValue = e.target.value
-        console.log('INPUT VAL', inputValue);
         setDescription(inputValue)
     }
 
@@ -46,7 +44,7 @@ const ThreadNav = () => {
                 <Box  style={{marginTop:10, marginBottom:10}}>
                     {researchThreads.research_threads.map((rt:any, i:number)=>(
                         <div key={`rt-${i}`} style={{borderLeft: '2px solid gray', paddingLeft:3}}>
-                            <span>{`${rt.title} `}<FaFillDrip style={{color:'red', display:"inline"}}/></span>
+                            <span>{`${rt.title} `}<FaFillDrip style={{color: rt.color, display:"inline"}}/></span>
                             <div><svg style={{height:'20px', width:"100%"}}></svg></div>
                             {rt.associated_tags.map((t, i)=>
                                 <div key={`tag-${i}`} style={{backgroundColor:"#d3d3d3", fontSize:'11px', display:"inline-block"}}>{t}</div>
@@ -76,6 +74,9 @@ const ThreadNav = () => {
                         {
                             (threadName && description) && (
                                 <Button onClick={()=>{
+                                    setName(null)
+                                    setDescription(null)
+                                    setShowCreateThread(false)
                                     dispatch({type: 'CREATE_THREAD', threadName: threadName, threadDescription: description})
                                 }}>{"CREATE"}</Button>
                             )

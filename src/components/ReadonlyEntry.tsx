@@ -61,9 +61,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
-  const key = entryData.key_txt.flatMap(kt => {
-    return kt.keywords.keywords.map(k => k)
-  });
+  // const key = entryData.key_txt.flatMap(kt => {
+  //   return kt.keywords.keywords.map(k => k)
+  // });
  
   const [{ projectData, folderPath }, dispatch] = useProjectState();
 
@@ -145,7 +145,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
      
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
-          <>
+          <React.Fragment key={`fr-${f.title}-${i}`}>
           <Box key={`${f.title}-${i}`} p={3}>
 
             <Popover trigger="hover">
@@ -153,7 +153,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 <span style={{fontSize:18, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
               </PopoverTrigger>
               <PopoverContent bg='white' color='gray'>
-                  {/* <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader> */}
+                 
                   <PopoverArrow bg='white' />
                   <PopoverBody>
                       <Button onClick={()=> {
@@ -161,7 +161,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                         dispatch({type: 'SELECTED_ARTIFACT', selectedArtifactEntry: entryData, selectedArtifactIndex: i})
                         }}>See artifact in detail.</Button>
                   </PopoverBody>
-                  {/* <PopoverFooter><Button>Go to Doc</Button></PopoverFooter> */}
+                 
               </PopoverContent>
             </Popover>
 
@@ -181,7 +181,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             }
           </Box>
           
-        </>
+        </React.Fragment>
         ))}
 
       </SimpleGrid>
@@ -191,8 +191,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             URLs
           </Heading>
           <UnorderedList>
-            {urls.map((url) => (
-              <ListItem key={url.url}>
+            {urls.map((url, i) => (
+              <ListItem key={`${url.url}-${i}`}>
                 <a href={url.url}>{url.title} </a>
                 <FaExternalLinkAlt
                   title="Open URL in default web browser"

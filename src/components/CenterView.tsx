@@ -64,24 +64,10 @@ const CenterView = (projectProps: any) => {
         <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
             {fAct.map((fa:any, i:number) => (
-              <>
+              <React.Fragment key={`fr-${fa.title}-${i}`}>
                 { fa.firstMonth ? (<Box key={`first-${fa.title}-${i}`} marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
-                <Popover trigger="hover">
-                <PopoverTrigger>
-                <Activity activity={fa} folderPath={folderPath} index={i}></Activity>
-                </PopoverTrigger>
-                <PopoverContent bg='white' color='gray'>
-                    <PopoverArrow bg='white' />
-            
-                  <PopoverBody>
-                  {'HIIIII'}
-                  </PopoverBody>
-                  
-                  </PopoverContent>
-                  </Popover>
-           
-            
-              </>
+                <Activity key={`${fa.title}-${i}`} activity={fa} folderPath={folderPath} index={i}></Activity>  
+              </React.Fragment>
             ))
             }
             

@@ -16,8 +16,6 @@ const LeftSidebar = () => {
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
-    console.log('DATE', new Date())
-
     let types = d3.groups(artifacts, a => a.fileType).map(ty => {
         return {title: ty[0], matches: ty[1]}
     });
@@ -50,7 +48,7 @@ const LeftSidebar = () => {
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
-                    <SidebarButton isTag={false} data={m} index={i}/>
+                    <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i}/>
                 ))}
                <br></br>
            </Box>
@@ -60,7 +58,7 @@ const LeftSidebar = () => {
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (
-                    <SidebarButton isTag={true} data={st} index={s}/>
+                    <SidebarButton key={`tag-${s}`} isTag={true} data={st} index={s}/>
                 ))
             }
             </Box>

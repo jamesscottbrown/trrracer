@@ -345,6 +345,13 @@ const readProjectFile = (folderPath: string, fileName: string) => {
 
 
 const appStateReducer = (state, action) => {
+
+  /**
+   *  function for set data that checks to see if the file exists and if not, creates one. 
+   * research_threads = readProjectFile(baseDir, 'research_threads.json');
+   */
+/////ADD HERE.
+
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
@@ -358,9 +365,25 @@ const appStateReducer = (state, action) => {
         }
       }
     );
+    return { ...state, ProjectData: newProjectData };
+  }
 
-    return { ...state, projectData: newProjectData };
-  };
+    const saveJSONRT = (RTData: any) => {
+      fs.writeFileSync(
+        path.join(state.folderPath, 'research_threads.json'),
+        JSON.stringify(RTData, null, 4),
+        (err) => {
+          if (err) {
+            console.log(`Error writing file to disk: ${err}`);
+          } else {
+            // parse JSON string to JSON object
+   
+          }
+        }
+      );
+
+    return { ...state, researchThreads: RTData };
+    };
 
 
   switch (action.type) {
@@ -385,7 +408,7 @@ const appStateReducer = (state, action) => {
         
         roleData = readProjectFile(baseDir, 'roles.json');
 
-        research_threads = readProjectFile(baseDir, 'research_threads.json');
+      
 
         newEntries = action.projectData.entries.map((e, i) => {
             e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
@@ -515,21 +538,26 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATE_THREAD':{
-      
+
+      let numberRand = (Math.random() * 1000);
+      var randomColor = Math.floor(Math.random()*16777215).toString(16);
+
       let threadOb = {
         title: action.threadName, 
         actions:[
           {action: "created", when: new Date()}
         ],
-        rt_id: uuid(),
+        rt_id: numberRand.toString(),
         description: action.threadDescription,
         associated_tags: [],
-        color:"red",
+        color:`#${randomColor}`,
         evidence:[]
       }
       let newRT = state.researchThreads;
       newRT.research_threads.push(threadOb);
-      return { ...state, researchThreads: newRT };
+      console.log('NEW RT',newRT)
+      // return { ...state, researchThreads: newRT };
+      return saveJSONRT(newRT);
       
     }
 
