@@ -449,6 +449,25 @@ const appStateReducer = (state, action) => {
       return saveJSONRT(newRT);
     } 
 
+    case 'ADD_ARTIFACT_TO_THREAD': {
+      const {activity, rationale, artifactIndex, threadIndex} = action;
+      let newRT = state.researchThreads;
+      console.log('activity files', activity.files, artifactIndex);
+      let newA =  {
+        type: "artifact",
+        dob: new Date(), 
+        activity_index: activity.index, 
+        artifactIndex: artifactIndex,
+        activityTitle: activity.title,
+        artifactTitle: activity.files[artifactIndex].title,
+        rationale: rationale
+      }
+      newRT.research_threads[threadIndex].evidence.push(newA)
+     
+      return saveJSONRT(newRT);
+
+    }
+
     case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
 

@@ -110,7 +110,7 @@ const Activity = (activityProps: any) => {
                         <Box>
                             <Button onClick={()=> setSeeThreadAssign(false)}>{"cancel"}</Button>
                         </Box> :
-                        <Button onClick={()=> setSeeThreadAssign(true)}>{"Add this tag to a thread."}</Button>
+                        <Button onClick={()=> setSeeThreadAssign(true)}>{"Add this Activity to a thread."}</Button>
                     }
                 </PopoverFooter>
             </PopoverContent>

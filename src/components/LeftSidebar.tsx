@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverTrigger,
-  PopoverContent,
-  Button
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
@@ -23,7 +17,7 @@ const LeftSidebar = () => {
     let types = d3.groups(artifacts, a => a.fileType).map(ty => {
         return {title: ty[0], matches: ty[1]}
     });
-    let sortedTypes = types.sort((a, b)=> b.matches.length - a.matches.length)
+    let sortedTypes = types.sort((a, b)=> b.matches.length - a.matches.length);
     
     let tags = projectData.tags.map(t => {
         t.matches = projectData.entries.filter(f=> {
@@ -37,7 +31,6 @@ const LeftSidebar = () => {
     const headerStyle = {fontSize:'19px', fontWeight:600}
 
     return(
-        
         <Box margin="8px" p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
             <ThreadNav />
             <br />
@@ -51,7 +44,7 @@ const LeftSidebar = () => {
            </Box>
            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
-                    <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i}/>
+                    <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i} />
                 ))}
                <br></br>
            </Box>
@@ -64,7 +57,6 @@ const LeftSidebar = () => {
                     <React.Fragment key={`tag-${s}-frag`}>
                         <SidebarButton isTag={true} data={st} index={s}/>
                     </React.Fragment>
-                    
                 ))
             }
             </Box>

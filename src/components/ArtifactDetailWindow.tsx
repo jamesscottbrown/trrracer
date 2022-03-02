@@ -6,7 +6,11 @@ import {
   Button,
   Image,
   Spacer,
+  Textarea
 } from '@chakra-ui/react';
+
+import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
+
 import { EntryType } from './types';
 import ProjectListView, { openFile } from './ProjectListView';
 
@@ -16,13 +20,154 @@ import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 
 interface DetailProps {
-    // selectedArtifactIndex : any;
-    // setSelectedArtifactIndex : (index: any) => void; 
-    // selectedArtifactEntry : any;
-    // setSelectedArtifactEntry : (entry: any) => void;
     setViewType: (view: string) => void;
     folderPath: string;
     projectData: any;
+}
+
+const ArtifactToThread = (props:any) => {
+
+    const [{ }, dispatch] = useProjectState();
+
+    const {thread, threadIndex, activity, artifactIndex} = props;
+
+    const [showDesc, setShowDesc] = useState(false);
+    const [threadRat, setThreadRat] = useState(null);
+
+    let handleDescriptionChange = (e) => {
+        let inputValue = e.target.value
+        setThreadRat(inputValue)
+    }
+
+    return(
+        <Box key={`t-${threadIndex}`} 
+            style={{border:"1px solid gray", borderRadius:"5px", cursor:"pointer", textAlign:"center"}}>
+            <div onClick={()=> showDesc ? setShowDesc(false) : setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
+            {
+                showDesc && (
+                    <>
+                    <Textarea
+                        placeholder='Why are you including this?'
+                        onChange={handleDescriptionChange}
+                    ></Textarea>
+                    <Button
+                    onClick={()=> {
+                        setShowDesc(false);
+                        dispatch({type: "ADD_ARTIFACT_TO_THREAD", activity: activity, rationale:threadRat, artifactIndex: artifactIndex, threadIndex: threadIndex})}}
+                    >{"Add"}</Button>
+                    </>
+                )
+            }
+        </Box>
+    )
+}
+
+const DetailSidebar = (props:any) => {
+
+    const {selectedArtifactEntry, selectedArtifactIndex} = props;
+    const [{ projectData, researchThreads }, dispatch] = useProjectState();
+
+    const [showThreadAdd, setShowThreadAdd] = useState(false);
+
+    let isArtifactInThread = researchThreads.research_threads.filter((f)=>{
+        let temp = f.evidence.filter(e=> e.type === 'artifact');
+        temp = temp.length > 0 ? temp.filter(tm => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
+        return temp.length > 0;
+    });
+    console.log('researchthread TEST THAT THIS', isArtifactInThread);
+
+    return(
+        <Box margin="8px" p={5} flex='2' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
+        <Box>
+        <div><span style={{fontSize:20, fontWeight:700}} >{selectedArtifactEntry.title}</span></div>
+        <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
+            {selectedArtifactEntry.files.map((f:any, i:number)=> (
+                <React.Fragment key={`fi-${f.title}-${i}`}>
+                {
+                (i === selectedArtifactIndex) ?
+                <div style={{backgroundColor:'#FFFBC8', fontWeight:600}}>{selectedArtifactEntry.files[i].title}</div>
+                : <div>{selectedArtifactEntry.files[i].title}</div>
+                }
+                </React.Fragment>
+            ))}
+        </Box>
+    </Box>
+
+    <Box>
+    <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
+    {selectedArtifactEntry.tags.map((t:any, i:number)=> (
+        <Box key={`tag-sel-${i}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
+            <Flex>
+            <span onClick={()=> {
+                let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
+                let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                if(indexOfE === 0){
+                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[test.length - 1], selectedArtifactIndex: 0})
+                }else{
+                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE - 1], selectedArtifactIndex: 0})
+                }
+            }}>{"<< "}</span>
+            <Spacer></Spacer>
+            <span style={{alignSelf:'center'}}>{t}</span>
+            <Spacer></Spacer>
+            <span onClick={()=> {
+                let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
+                let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                if(indexOfE === (test.length - 1)){
+                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[0], selectedArtifactIndex: 0})
+                }else{
+                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE + 1], selectedArtifactIndex: 0})
+                }
+            }}>{" >>"}</span>
+            </Flex>
+        </Box>
+    ))}
+    </Box>
+
+    <Box style={{backgroundColor:'#D3D3D3', borderRadius:5, marginTop:15, marginBottom:15}}>
+        <span style={{fontSize:17, fontWeight:700, cursor:'pointer', padding:3, textAlign:'center'}} onClick={()=> {
+            showThreadAdd ? setShowThreadAdd(false) : setShowThreadAdd(true)}}>{'Add this artifact to a thread +'}</span>
+            <div>
+        {showThreadAdd && (
+            <>{(researchThreads && researchThreads.research_threads.length > 0) ? 
+            <div>{
+                researchThreads.research_threads.map((thread:any, ti:number)=>(
+                    <ArtifactToThread key={`tr-${ti}`} thread={thread} threadIndex={ti} activity={selectedArtifactEntry} artifactIndex={selectedArtifactIndex}/>
+                ))
+            }</div>
+            :<div>{"No research threads yet."}</div>}
+            </> 
+        )}  </div>
+    </Box>
+
+    <Box>
+        {
+            isArtifactInThread.length > 0 && (
+                <div>
+                    <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
+                {isArtifactInThread.map((at, i)=> (
+                    <Box key={`in-thread-${i}`}>
+                        <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
+                        <div style={{padding:5, borderLeft: "1px solid gray"}}>{
+                            at.evidence.map((e:any, j:number)=>(
+                                <React.Fragment key={`evid-${j}`}>{
+                                e.artifactIndex === selectedArtifactIndex ? 
+                                <div><span style={{fontWeight:600, display:"block"}}>{e.artifactTitle}</span>{e.rationale}</div> 
+                                :<div><span style={{fontSize:11, color:'gray'}}>{e.type}</span></div>}
+                                </React.Fragment>
+                            ))
+                        }</div>
+                    </Box>
+                ))}
+                </div>
+            )
+        }
+    </Box>
+    
+
+   
+    </Box>
+    )
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
@@ -34,8 +179,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     const [editable, setEditable] = useState<boolean[]>(
         Array.from(Array(projectData.entries.length), (_, x) => false)
     );
-
-    // console.log('fffff', selectedArtifactEntry[selectedArtifactIndex])
     
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
@@ -47,14 +190,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           );
         }
     }, [projectData]);
-
-    const makeAllEditable = () => {
-        setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
-    };
-    
-    const makeAllNonEditable = () => {
-        setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
-    };
     
     const setEditableStatus = (index: number, isEditable: boolean) => {
         setEditable((oldEditable) =>
@@ -92,88 +227,39 @@ const ArtifactDetailWindow = (props: DetailProps) => {
        
 
         <Flex position={'relative'} top={220}>
-
-        <Box margin="8px" p={5} flex='2' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
-            <Box>
-                <div><span style={{fontSize:20, fontWeight:700}} >{selectedArtifactEntry.title}</span></div>
-                <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
-                    {selectedArtifactEntry.files.map((f, i)=> (
-                        
-                        (i === selectedArtifactIndex) ?
-                        <div style={{backgroundColor:'#RRGGBB'}}>{selectedArtifactEntry.files[i].title}</div>
-                        : <div>{selectedArtifactEntry.files[i].title}</div>
-                        
-                    ))}
-                </Box>
-            </Box>
-
-            <Box>
-            <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
-            {selectedArtifactEntry.tags.map((t, i)=> (
-                <Box style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
-                    <Flex>
-                    <span onClick={()=> {
-                        let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
-                        let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-                        if(indexOfE === 0){
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[test.length - 1], selectedArtifactIndex: 0})
+            <DetailSidebar selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
+            <Box flex="4" >
+                <Flex style={{justifyContent: 'center', alignItems:'center', height:'90%'}}>
+                    <span onClick={()=>{ 
+                        console.log(selectedArtifactEntry.index)
+                        let entryIndex = selectedArtifactEntry.index;
+                        if(entryIndex === 0){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[projectData.entries.length - 1], selectedArtifactIndex: 0})
                         }else{
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE - 1], selectedArtifactIndex: 0})
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex - 1], selectedArtifactIndex: 0})
                         }
-                    }}>{"<< "}</span>
-                    <Spacer></Spacer>
-                    <span style={{alignSelf:'center'}}>{t}</span>
-                    <Spacer></Spacer>
-                    <span onClick={()=> {
-                        let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
-                        let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-                        if(indexOfE === (test.length - 1)){
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[0], selectedArtifactIndex: 0})
+                    }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{"<<"}</span>
+                    <span onClick={
+                    ()=>{
+                        if(selectedArtifactIndex > 0){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
                         }else{
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE + 1], selectedArtifactIndex: 0})
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
+                            console.log(selectedArtifactIndex)
                         }
-                    }}>{" >>"}</span>
-                    </Flex>
-                </Box>
-            ))}
-            </Box>
-
-           
-        </Box>
-        <Box flex="4" >
-        <Flex style={{justifyContent: 'center', alignItems:'center', height:'90%'}}>
-        <span onClick={()=>{ 
-            console.log(selectedArtifactEntry.index)
-            let entryIndex = selectedArtifactEntry.index;
-            if(entryIndex === 0){
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[projectData.entries.length - 1], selectedArtifactIndex: 0})
-            }else{
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex - 1], selectedArtifactIndex: 0})
-            }
-        }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{"<<"}</span>
-        <span onClick={
-        ()=>{
-            if(selectedArtifactIndex > 0){
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
-            }else{
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
-                console.log(selectedArtifactIndex)
-            }
-        }
-        } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
-           <DetailPreview folderPath={folderPath} file={selectedArtifactEntry.files[selectedArtifactIndex]} openFile={openFile}></DetailPreview>
+                    }
+                    } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
+                    <DetailPreview folderPath={folderPath} file={selectedArtifactEntry.files[selectedArtifactIndex]} openFile={openFile}></DetailPreview>
           
         <span onClick={
         ()=>{
-          
             let len = selectedArtifactEntry.files.length;
             if(selectedArtifactIndex < len - 1){
                 dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex + 1)})
             }else{
                 dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: 0})
             }
-        }
-        } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{">>"}</span>
+        }} style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{">>"}</span>
          <span onClick={()=> {
               console.log(selectedArtifactEntry.index)
               let entryIndex = selectedArtifactEntry.index;
