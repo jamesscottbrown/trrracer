@@ -364,7 +364,6 @@ const appStateReducer = (state, action) => {
       let roleData;
       let google_data;
       
-
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json');
     
@@ -399,8 +398,6 @@ const appStateReducer = (state, action) => {
       }
      
       let research_threads = checkRtFile(baseDir);
-
-      console.log('research_thread', research_threads);
       
       const newProjectData = {
         ...action.projectData,
@@ -427,14 +424,30 @@ const appStateReducer = (state, action) => {
     }
     case 'ADD_TAG_TO_THREAD':{
       const { tag, threadIndex } = action;
-      // console.log('testt', tag, threadIndex, state.researchThreads.research_threads[threadIndex].associated_tags);
+     
       let newRT = {...state.researchThreads}
       console.log('NEW RT',newRT)
       newRT.research_threads[threadIndex].associated_tags.push(tag);
-      // return {...state,  }
+      
       return saveJSONRT(newRT);
-
     }
+
+    case 'ADD_ACTIVITY_TO_THREAD':{
+      const {activity, rationale, activityIndex, threadIndex} = action;
+      
+      let newRT = state.researchThreads;
+      
+      let newA =  {
+        type: "activity",
+        dob: new Date(), 
+        activity_index: activityIndex, 
+        title: activity.title,
+        rationale: rationale
+      }
+      newRT.research_threads[threadIndex].evidence.push(newA)
+
+      return saveJSONRT(newRT);
+    } 
 
     case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
@@ -448,7 +461,6 @@ const appStateReducer = (state, action) => {
         newTags = [
           ...state.projectData.tags,
           { title: newTag.text, color: newColor, date: new Date().toISOString() },
-          // { title: newTag.text, color: newColor },
         ];
       } else {
         newTags = state.projectData.tags;
@@ -532,10 +544,8 @@ const appStateReducer = (state, action) => {
       }
       let newRT = state.researchThreads;
       newRT.research_threads.push(threadOb);
-      console.log('NEW RT',newRT)
-      // return { ...state, researchThreads: newRT };
+     
       return saveJSONRT(newRT);
-      
     }
 
     case 'ADD_FILES': {

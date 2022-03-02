@@ -9,8 +9,6 @@ import {
   Button
 } from '@chakra-ui/react';
 
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
-
 import * as d3 from "d3";
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
@@ -64,19 +62,7 @@ const LeftSidebar = () => {
             {   
                 sortedTags.map((st:any, s:any) => (
                     <React.Fragment key={`tag-${s}-frag`}>
-                        {/* <Popover trigger="hover">
-                            <PopoverTrigger> */}
-                                <SidebarButton isTag={true} data={st} index={s}/>
-                            {/* </PopoverTrigger> */}
-                            {/* <PopoverContent bg='white' color='gray'>
-                                <PopoverArrow bg='white' />
-                               
-                                <PopoverBody>
-                                   <Button>{"Add this tag to a thread."}</Button>
-                                </PopoverBody>
-                            </PopoverContent>
-                        </Popover> */}
-                    
+                        <SidebarButton isTag={true} data={st} index={s}/>
                     </React.Fragment>
                     
                 ))
