@@ -425,6 +425,16 @@ const appStateReducer = (state, action) => {
 
       return saveJSON(newProjectData);
     }
+    case 'ADD_TAG_TO_THREAD':{
+      const { tag, threadIndex } = action;
+      // console.log('testt', tag, threadIndex, state.researchThreads.research_threads[threadIndex].associated_tags);
+      let newRT = {...state.researchThreads}
+      console.log('NEW RT',newRT)
+      newRT.research_threads[threadIndex].associated_tags.push(tag);
+      // return {...state,  }
+      return saveJSONRT(newRT);
+
+    }
 
     case 'ADD_TAG_TO_ENTRY': {
       const { newTag, entryIndex } = action;
@@ -461,8 +471,6 @@ const appStateReducer = (state, action) => {
 
     case 'ADD_FILES_TO_ENTRY': {
       const { fileList, entryIndex } = action;
-
-    
       const currentFiles = state.projectData.entries[entryIndex].files;
       const newFiles = [
         ...currentFiles,
@@ -509,7 +517,6 @@ const appStateReducer = (state, action) => {
 
     case 'CREATE_THREAD':{
 
-      
       let randomColor = Math.floor(Math.random()*16777215).toString(16);
 
       let threadOb = {
