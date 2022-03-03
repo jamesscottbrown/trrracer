@@ -11,13 +11,14 @@ import {
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im'
-import { useProjectState } from './ProjectContext';
+import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 
 
 interface DetailPreviewPropsType {
   folderPath: string;
-  file: any;
+  artifact: any;
+  activity: any;
   openFile: (title: string, fp: string) => void;
 }
 
@@ -28,10 +29,10 @@ const styleInterpreter = {
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { folderPath, file, openFile } = props;
-  const [{ googleData }, dispatch] = useProjectState();
+  const { folderPath, artifact, activity, openFile } = props;
+  const [{ googleData, txtData }, dispatch] = useProjectState();
 
-  let title = file.title;
+  let title = artifact.title;
 
   if (
     title.endsWith('.mp4') ||
@@ -65,9 +66,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    if(Object.keys(googleData).indexOf(file.fileId) > -1){
+    if(Object.keys(googleData).indexOf(artifact.fileId) > -1){
 
-      let googD = googleData[file.fileId];
+      let googD = googleData[artifact.fileId];
       let gContent = googD["body"]["content"].filter(f => f.startIndex)
       
       return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
@@ -79,11 +80,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       </Box>
 
     }
-    
-    // let string = `https://docs.google.com/document/d/${file.fileId}`
-  
-    // return <iframe src={string} height={'100%'}></iframe>
-  
   }
 
   if (title.endsWith('.gsheet')) {
@@ -91,8 +87,15 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
+    
+    let temp = txtData['text-data'].filter(f=> {
+      console.log('F', f['entry-title']);
+      return f['entry-title'] === activity.title})
 
-    return <embed style={{height:'90%', width:'80%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript"/>
+    return <div onClick={()=> console.log("this is working")} style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
+      {temp[0].text}
+              {/* <embed style={{height:'90%', width:'80%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript" /> */}
+            </div>
     
     // return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
   }

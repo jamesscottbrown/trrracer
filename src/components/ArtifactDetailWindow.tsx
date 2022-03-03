@@ -225,65 +225,70 @@ const ArtifactDetailWindow = (props: DetailProps) => {
        
         </Box>
        
-
-        <Flex position={'relative'} top={220}>
-            <DetailSidebar selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
-            <Box flex="4" >
-                <Flex style={{justifyContent: 'center', alignItems:'center', height:'90%'}}>
-                    <span onClick={()=>{ 
-                        console.log(selectedArtifactEntry.index)
-                        let entryIndex = selectedArtifactEntry.index;
-                        if(entryIndex === 0){
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[projectData.entries.length - 1], selectedArtifactIndex: 0})
-                        }else{
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex - 1], selectedArtifactIndex: 0})
-                        }
-                    }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{"<<"}</span>
-                    <span onClick={
-                    ()=>{
-                        if(selectedArtifactIndex > 0){
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
-                        }else{
-                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
-                            console.log(selectedArtifactIndex)
-                        }
-                    }
-                    } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
-                    <DetailPreview folderPath={folderPath} file={selectedArtifactEntry.files[selectedArtifactIndex]} openFile={openFile}></DetailPreview>
-          
-        <span onClick={
-        ()=>{
-            let len = selectedArtifactEntry.files.length;
-            if(selectedArtifactIndex < len - 1){
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex + 1)})
-            }else{
-                dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: 0})
-            }
-        }} style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{">>"}</span>
-         <span onClick={()=> {
-              console.log(selectedArtifactEntry.index)
-              let entryIndex = selectedArtifactEntry.index;
-              if(entryIndex === (projectData.entries.length - 1)){
-                  dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[0], selectedArtifactIndex: 0})
-              }else{
-                  dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex + 1], selectedArtifactIndex: 0})
-              }
-         }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{">>"}</span>
-         </Flex>
-        </Box>
-       
-        <Box flex="2" h='calc(100vh - 250px)' overflowY={'auto'}>
-            <ReadonlyEntry
-                /* eslint-disable-next-line react/no-array-index-key */
-                key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
-                entryData={selectedArtifactEntry}
-                openFile={openFile}
-                setViewType={setViewType}
-                makeEditable={() => setEditableStatus(selectedArtifactEntry.index, true)}
-            />
-        </Box>
-        </Flex>
+        {/* <div style={{display:'relative', top:'200px'}}> */}
+            <Flex position={'relative'} top={220} bottom={0} height={'calc(100% - 150px)'}>
+                <DetailSidebar selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
+                <Box flex="4" >
+                    <Box bg={'blue'} p={5} width={'100%'} alignContent={'center'}>{'SEARCH BAR HERE'}</Box>
+                    <Flex style={{backgroundColor:'yellow', justifyContent: 'center', alignItems:'stretch', height:'90%'}}>
+                        <Flex style={{alignItems:'center'}}>
+                            <span onClick={()=>{ 
+                                let entryIndex = selectedArtifactEntry.index;
+                                if(entryIndex === 0){
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[projectData.entries.length - 1], selectedArtifactIndex: 0})
+                                }else{
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex - 1], selectedArtifactIndex: 0})
+                                }
+                            }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{"<<"}</span>
+                            <span onClick={
+                            ()=>{
+                                if(selectedArtifactIndex > 0){
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
+                                }else{
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
+                                    console.log(selectedArtifactIndex)
+                                }
+                            }
+                            } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
+                        </Flex>
+                    
+                        <DetailPreview folderPath={folderPath} artifact={selectedArtifactEntry.files[selectedArtifactIndex]} activity={selectedArtifactEntry} openFile={openFile}></DetailPreview>
+                        <Flex style={{alignItems:'center'}}>
+                            <span onClick={
+                            ()=>{
+                                let len = selectedArtifactEntry.files.length;
+                                if(selectedArtifactIndex < len - 1){
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex + 1)})
+                                }else{
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: 0})
+                                }
+                            }} style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{">>"}</span>
+                            <span onClick={()=> {
+                                console.log(selectedArtifactEntry.index)
+                                let entryIndex = selectedArtifactEntry.index;
+                                if(entryIndex === (projectData.entries.length - 1)){
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[0], selectedArtifactIndex: 0})
+                                }else{
+                                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: projectData.entries[entryIndex + 1], selectedArtifactIndex: 0})
+                                }
+                            }} style={{fontWeight:700, fontSize:'24px', padding:'3px'}}>{">>"}</span>
+                        </Flex>
+            </Flex>
+            </Box>
+        
+            <Box flex="2" h='calc(100vh - 250px)' overflowY={'auto'}>
+                <ReadonlyEntry
+                    /* eslint-disable-next-line react/no-array-index-key */
+                    key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
+                    entryData={selectedArtifactEntry}
+                    openFile={openFile}
+                    setViewType={setViewType}
+                    makeEditable={() => setEditableStatus(selectedArtifactEntry.index, true)}
+                />
+            </Box>
+            </Flex>
         </div>
+        // </div>
     )
 }
 
