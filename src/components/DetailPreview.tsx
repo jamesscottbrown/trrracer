@@ -19,7 +19,6 @@ interface DetailPreviewPropsType {
   folderPath: string;
   artifact: any;
   activity: any;
-  // setFragSelected: (frag: any) => void;
   openFile: (title: string, fp: string) => void;
 }
 
@@ -73,11 +72,18 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       let gContent = googD["body"]["content"].filter(f => f.startIndex)
       
       return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
-        {
+        <div
+         onMouseUp={()=> {
+             
+          let selObj = window.getSelection();
+          console.log(selObj?.toString())
+          setFragSelected(selObj?.toString())
+        }}
+        >{
           gContent.map((m:any, i:number)=> (
-            <GoogDriveParagraph parData={m} index={i} />
-          ))
-        }
+            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
+          ))}
+        </div>
       </Box>
 
     }
@@ -96,10 +102,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
              
               let selObj = window.getSelection();
               
-              var selRange = selObj.getRangeAt(0);
-              
-              console.log('is this working on drag end', selRange)
-              console.log(selObj.toString());
               setFragSelected(selObj?.toString())
             }}
             style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
