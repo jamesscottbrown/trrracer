@@ -19,6 +19,7 @@ interface DetailPreviewPropsType {
   folderPath: string;
   artifact: any;
   activity: any;
+  // setFragSelected: (frag: any) => void;
   openFile: (title: string, fp: string) => void;
 }
 
@@ -29,7 +30,7 @@ const styleInterpreter = {
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { folderPath, artifact, activity, openFile } = props;
+  const { setFragSelected, folderPath, artifact, activity, openFile } = props;
   const [{ googleData, txtData }, dispatch] = useProjectState();
 
   let title = artifact.title;
@@ -88,13 +89,22 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
     
-    let temp = txtData['text-data'].filter(f=> {
-      console.log('F', f['entry-title']);
-      return f['entry-title'] === activity.title})
+    let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title);
 
-    return <div onClick={()=> console.log("this is working")} style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
-      {temp[0].text}
-              {/* <embed style={{height:'90%', width:'80%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript" /> */}
+    return <div 
+            onMouseUp={()=> {
+             
+              let selObj = window.getSelection();
+              
+              var selRange = selObj.getRangeAt(0);
+              
+              console.log('is this working on drag end', selRange)
+              console.log(selObj.toString());
+              setFragSelected(selObj?.toString())
+            }}
+            style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
+            {temp[0].text}
+             
             </div>
     
     // return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
@@ -113,9 +123,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.pdf')) {
     return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="application/pdf"/>
-     
-
-     // return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.HEIC')) {

@@ -429,10 +429,27 @@ const appStateReducer = (state, action) => {
         artifactTitle: activity.files[artifactIndex].title,
         rationale: rationale
       }
-      newRT.research_threads[threadIndex].evidence.push(newA)
+      newRT.research_threads[threadIndex].evidence.push(newA);
      
       return saveJSONRT(newRT);
 
+    }
+
+    case "ADD_FRAGMENT_TO_THREAD":{
+      const {activity, rationale, artifactIndex, threadIndex, fragment, fragmentType} = action;
+      let newRT = state.researchThreads;
+      let newA =  {
+        type: "fragment",
+        dob: activity.date, 
+        activity_index: activity.index, 
+        artifactIndex: artifactIndex,
+        activityTitle: activity.title,
+        artifactTitle: activity.files[artifactIndex].title,
+        rationale: rationale,
+        anchors:[{anchor_type: fragmentType, frag_type: fragment}]
+      }
+      newRT.research_threads[threadIndex].evidence.push(newA);
+      return saveJSONRT(newRT);;
     }
 
     case 'ADD_TAG_TO_ENTRY': {

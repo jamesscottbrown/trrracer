@@ -4,15 +4,12 @@ import {
   Flex,
   Box,
   Button,
-  Image,
   Spacer,
   Textarea
 } from '@chakra-ui/react';
 
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
-
-import { EntryType } from './types';
-import ProjectListView, { openFile } from './ProjectListView';
+import { FaFill } from 'react-icons/fa';
+import { openFile } from './ProjectListView';
 
 import TopTimeline from './TopTimeline';
 import ReadonlyEntry from './ReadonlyEntry';
@@ -62,19 +59,60 @@ const ArtifactToThread = (props:any) => {
     )
 }
 
+const FragmentToThread = (props:any) => {
+    const [{ }, dispatch] = useProjectState();
+
+    const {thread, threadIndex, activity, artifactIndex, fragSelected, setFragSelected} = props;
+
+    const [showDesc, setShowDesc] = useState(false);
+    const [threadRat, setThreadRat] = useState(null);
+
+    let handleDescriptionChange = (e) => {
+        let inputValue = e.target.value
+        setThreadRat(inputValue)
+    }
+
+    return(
+        <Box key={`t-${threadIndex}`} 
+            style={{border:"1px solid gray", borderRadius:"5px", cursor:"pointer", textAlign:"center"}}>
+            <div onClick={()=> showDesc ? setShowDesc(false) : setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
+            {
+                showDesc && (
+                    <>
+                    <Textarea
+                        placeholder='Why are you including this?'
+                        onChange={handleDescriptionChange}
+                    ></Textarea>
+                    <Button
+                    onClick={()=> {
+                        console.log(fragSelected)
+                        setShowDesc(false);
+                        dispatch({type: "ADD_FRAGMENT_TO_THREAD", activity: activity, rationale:threadRat, artifactIndex: artifactIndex, threadIndex: threadIndex, fragment:fragSelected, fragmentType:'text'})
+                        setFragSelected(null)
+                    }}
+                        
+                    >{"Add"}</Button>
+                    </>
+                )
+            }
+        </Box>
+    )
+}
+
 const DetailSidebar = (props:any) => {
 
-    const {selectedArtifactEntry, selectedArtifactIndex} = props;
+    const {fragSelected, setFragSelected, selectedArtifactEntry, selectedArtifactIndex} = props;
     const [{ projectData, researchThreads }, dispatch] = useProjectState();
 
     const [showThreadAdd, setShowThreadAdd] = useState(false);
+
+    console.log('FRAG SELETEDDD', fragSelected);
 
     let isArtifactInThread = researchThreads.research_threads.filter((f)=>{
         let temp = f.evidence.filter(e=> e.type === 'artifact');
         temp = temp.length > 0 ? temp.filter(tm => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
         return temp.length > 0;
     });
-    console.log('researchthread TEST THAT THIS', isArtifactInThread);
 
     return(
         <Box margin="8px" p={5} flex='2' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
@@ -123,16 +161,31 @@ const DetailSidebar = (props:any) => {
         </Box>
     ))}
     </Box>
-
+    {
+        fragSelected && (
+            <div style={{padding:'5px'}}>
+                <span style={{backgroundColor: '#FFFBC8'}}>{fragSelected}</span>
+            </div>
+        )
+    }
     <Box style={{backgroundColor:'#D3D3D3', borderRadius:5, marginTop:15, marginBottom:15}}>
         <span style={{fontSize:17, fontWeight:700, cursor:'pointer', padding:3, textAlign:'center'}} onClick={()=> {
-            showThreadAdd ? setShowThreadAdd(false) : setShowThreadAdd(true)}}>{'Add this artifact to a thread +'}</span>
+            showThreadAdd ? 
+            setShowThreadAdd(false) 
+            : setShowThreadAdd(true)}}>{fragSelected ? 'Add this fragment to a thread +': 'Add this artifact to a thread +'}
+        </span>
             <div>
         {showThreadAdd && (
             <>{(researchThreads && researchThreads.research_threads.length > 0) ? 
             <div>{
                 researchThreads.research_threads.map((thread:any, ti:number)=>(
-                    <ArtifactToThread key={`tr-${ti}`} thread={thread} threadIndex={ti} activity={selectedArtifactEntry} artifactIndex={selectedArtifactIndex}/>
+                    <React.Fragment key={`tr-${ti}`}>
+                    {
+                        fragSelected ?
+                        <FragmentToThread thread={thread} threadIndex={ti} activity={selectedArtifactEntry} artifactIndex={selectedArtifactIndex} fragSelected={fragSelected} setFragSelected={setFragSelected}/>:
+                        <ArtifactToThread thread={thread} threadIndex={ti} activity={selectedArtifactEntry} artifactIndex={selectedArtifactIndex}/>
+                    }
+                   </React.Fragment>
                 ))
             }</div>
             :<div>{"No research threads yet."}</div>}
@@ -163,9 +216,6 @@ const DetailSidebar = (props:any) => {
             )
         }
     </Box>
-    
-
-   
     </Box>
     )
 }
@@ -179,6 +229,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     const [editable, setEditable] = useState<boolean[]>(
         Array.from(Array(projectData.entries.length), (_, x) => false)
     );
+
+    const [fragSelected, setFragSelected] = useState(null);
     
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
@@ -196,8 +248,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           oldEditable.map((d, i) => (i === index ? isEditable : d))
         );
     };
-
-    // console.log('SELECTED ARTIFACT', selectedArtifactIndex, selectedArtifactEntry.files[selectedArtifactIndex])
 
     return(
 
@@ -225,9 +275,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
        
         </Box>
        
-        {/* <div style={{display:'relative', top:'200px'}}> */}
             <Flex position={'relative'} top={220} bottom={0} height={'calc(100% - 150px)'}>
-                <DetailSidebar selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
+                <DetailSidebar fragSelected={fragSelected} setFragSelected={setFragSelected} selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
                 <Box flex="4" >
                     <Box bg={'blue'} p={5} width={'100%'} alignContent={'center'}>{'SEARCH BAR HERE'}</Box>
                     <Flex style={{backgroundColor:'yellow', justifyContent: 'center', alignItems:'stretch', height:'90%'}}>
@@ -252,7 +301,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                             } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
                         </Flex>
                     
-                        <DetailPreview folderPath={folderPath} artifact={selectedArtifactEntry.files[selectedArtifactIndex]} activity={selectedArtifactEntry} openFile={openFile}></DetailPreview>
+                        <DetailPreview setFragSelected={setFragSelected} folderPath={folderPath} artifact={selectedArtifactEntry.files[selectedArtifactIndex]} activity={selectedArtifactEntry} openFile={openFile}></DetailPreview>
+                        
                         <Flex style={{alignItems:'center'}}>
                             <span onClick={
                             ()=>{
