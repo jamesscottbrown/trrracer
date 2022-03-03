@@ -247,54 +247,18 @@ async function copyGoogle(file:any, fileList:any){
             return fileList;
 }
 
-const readProjectFile = (folderPath: string, fileName: string) => {
+export const readProjectFile = (folderPath: string, fileName: string, fileType:any) => {
+
   const filePath = path.join(folderPath, fileName);
   const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
-  return JSON.parse(fileContents);
+  if(!fileType){
+    return JSON.parse(fileContents);
+  }else{
+    console.log('this is a text file', fileContents)
+  }
+  
 };
-     
-//       const newProjectData = {
-//         ...state.projectData,
-//         edges: newEdges,
-//       };
-
-//       return saveJSON(newProjectData, state);
-
-//     }
-
-//       const newEntries = state.projectData.entries.map(
-//         (d: EntryType, i: number) =>
-//           entryIndex === i ? { ...d, tags: [...d.tags, newTag.text] } : d
-//       );
-
-//       const newProjectData = {
-//         ...state.projectData,
-//         tags: newTags,
-//         entries: newEntries,
-//       };
-
-//       return saveJSON(newProjectData, state);
-//     }
-
-//       const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-//         action.entryIndex === i ? { ...d, files: newFiles } : d
-//       );
-
-//       const newProjectData = { ...state.projectData, entries };
-//       return saveJSON(newProjectData);
-//     }
-   
-//       let otherUses = false;
-//       for (let i = 0; i < state.projectData.entries.length; i += 1) {
-//         const entry = state.projectData.entries[i];
-
-//         const fileNames = entry.files.map((f: File) => f.title);
-
-//         if (i !== action.entryIndex && fileNames.includes(action.fileName)) {
-//           otherUses = true;
-//           break;
-//         }
-//       }
+        
 
 
 const appStateReducer = (state, action) => {
@@ -307,7 +271,7 @@ const appStateReducer = (state, action) => {
   const checkRtFile = (dir:any) => {
 
     try{
-      return readProjectFile(dir, 'research_threads.json');
+      return readProjectFile(dir, 'research_threads.json', null);
     }catch (e){
       let rtOb = {
         title: action.projectData.title,
@@ -363,17 +327,19 @@ const appStateReducer = (state, action) => {
       let newEntries;
       let roleData;
       let google_data;
+      let txtData;
       
       try {
-        const google_em = readProjectFile(baseDir, 'goog_em.json');
+        const google_em = readProjectFile(baseDir, 'goog_em.json', null);
     
-        google_data = readProjectFile(baseDir, 'goog_data.json');
+        google_data = readProjectFile(baseDir, 'goog_data.json', null);
 
-        const text_data = readProjectFile(baseDir, 'text_data.json');
+        const text_data = readProjectFile(baseDir, 'text_data.json', null);
+        txtData = text_data;
 
-        const comment_data = readProjectFile(baseDir, 'goog_comms.json');
+        const comment_data = readProjectFile(baseDir, 'goog_comms.json', null);
         
-        roleData = readProjectFile(baseDir, 'roles.json');       
+        roleData = readProjectFile(baseDir, 'roles.json', null);       
 
         newEntries = action.projectData.entries.map((e, i) => {
             e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
@@ -409,6 +375,7 @@ const appStateReducer = (state, action) => {
         folderPath: action.folderName,
         projectData: newProjectData,
         googleData: google_data,
+        txtData: txtData,
         researchThreads: research_threads,
         filterTags: [],
       }
@@ -462,10 +429,27 @@ const appStateReducer = (state, action) => {
         artifactTitle: activity.files[artifactIndex].title,
         rationale: rationale
       }
-      newRT.research_threads[threadIndex].evidence.push(newA)
+      newRT.research_threads[threadIndex].evidence.push(newA);
      
       return saveJSONRT(newRT);
 
+    }
+
+    case "ADD_FRAGMENT_TO_THREAD":{
+      const {activity, rationale, artifactIndex, threadIndex, fragment, fragmentType} = action;
+      let newRT = state.researchThreads;
+      let newA =  {
+        type: "fragment",
+        dob: activity.date, 
+        activity_index: activity.index, 
+        artifactIndex: artifactIndex,
+        activityTitle: activity.title,
+        artifactTitle: activity.files[artifactIndex].title,
+        rationale: rationale,
+        anchors:[{anchor_type: fragmentType, frag_type: fragment}]
+      }
+      newRT.research_threads[threadIndex].evidence.push(newA);
+      return saveJSONRT(newRT);;
     }
 
     case 'ADD_TAG_TO_ENTRY': {

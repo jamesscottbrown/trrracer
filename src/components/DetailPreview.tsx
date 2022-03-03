@@ -11,13 +11,15 @@ import {
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im'
-import { useProjectState } from './ProjectContext';
+import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 
 
 interface DetailPreviewPropsType {
   folderPath: string;
-  file: any;
+  artifact: any;
+  activity: any;
+  // setFragSelected: (frag: any) => void;
   openFile: (title: string, fp: string) => void;
 }
 
@@ -28,10 +30,10 @@ const styleInterpreter = {
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { folderPath, file, openFile } = props;
-  const [{ googleData }, dispatch] = useProjectState();
+  const { setFragSelected, folderPath, artifact, activity, openFile } = props;
+  const [{ googleData, txtData }, dispatch] = useProjectState();
 
-  let title = file.title;
+  let title = artifact.title;
 
   if (
     title.endsWith('.mp4') ||
@@ -65,9 +67,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    if(Object.keys(googleData).indexOf(file.fileId) > -1){
+    if(Object.keys(googleData).indexOf(artifact.fileId) > -1){
 
-      let googD = googleData[file.fileId];
+      let googD = googleData[artifact.fileId];
       let gContent = googD["body"]["content"].filter(f => f.startIndex)
       
       return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
@@ -79,11 +81,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       </Box>
 
     }
-    
-    // let string = `https://docs.google.com/document/d/${file.fileId}`
-  
-    // return <iframe src={string} height={'100%'}></iframe>
-  
   }
 
   if (title.endsWith('.gsheet')) {
@@ -91,8 +88,24 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
+    
+    let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title);
 
-    return <embed style={{height:'90%', width:'80%'}} src={`file://${path.join(folderPath, title)}`} type="text/javascript"/>
+    return <div 
+            onMouseUp={()=> {
+             
+              let selObj = window.getSelection();
+              
+              var selRange = selObj.getRangeAt(0);
+              
+              console.log('is this working on drag end', selRange)
+              console.log(selObj.toString());
+              setFragSelected(selObj?.toString())
+            }}
+            style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
+            {temp[0].text}
+             
+            </div>
     
     // return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
   }
@@ -110,9 +123,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.pdf')) {
     return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="application/pdf"/>
-     
-
-     // return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
   if (title.endsWith('.HEIC')) {
