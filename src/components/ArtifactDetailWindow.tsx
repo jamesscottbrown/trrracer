@@ -5,7 +5,12 @@ import {
   Box,
   Button,
   Spacer,
-  Textarea
+  Textarea,
+  Popover,
+  PopoverTrigger,
+  PopoverArrow,
+  PopoverContent,
+  PopoverBody
 } from '@chakra-ui/react';
 
 import { FaFill } from 'react-icons/fa';
@@ -15,6 +20,7 @@ import TopTimeline from './TopTimeline';
 import ReadonlyEntry from './ReadonlyEntry';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
+import QueryBar from './QueryBar';
 
 interface DetailProps {
     setViewType: (view: string) => void;
@@ -98,7 +104,59 @@ const FragmentToThread = (props:any) => {
         </Box>
     )
 }
+const InteractiveActivityTag = (props:any) => {
+    const {selectedArtifactEntry, selectedArtifactIndex, index, tag} = props;
+    const [{ projectData }, dispatch] = useProjectState();
+    const [expandedTag, setExpandedTag] = useState(false);
 
+    let tagMatches = projectData.entries.filter(f => f.tags.indexOf(tag) > -1);
+    console.log('tagmatches', tagMatches);
+    let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+    console.log('index of e', indexOfE);
+    return (
+ 
+            <Box key={`tag-sel-${index}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
+                <Flex>
+                <span onClick={()=> {
+                    let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                  
+                    if(indexOfE === 0){
+                        dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[tagMatches.length - 1], selectedArtifactIndex: 0})
+                    }else{
+                        dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[indexOfE - 1], selectedArtifactIndex: 0})
+                    }
+                }}>{"<< "}</span>
+                <Spacer></Spacer>
+                <span onClick={()=> expandedTag ? setExpandedTag(false) : setExpandedTag(true)} style={{alignSelf:'center'}}>{tag}</span>
+                <Spacer></Spacer>
+            
+                    <span style={{pointer:'cursor'}} onClick={()=> {
+                        let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                        if(indexOfE === (tagMatches.length - 1)){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[0], selectedArtifactIndex: 0})
+                        }else{
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[indexOfE + 1], selectedArtifactIndex: 0})
+                        }
+                    }}>{" >>"}</span>
+           
+               
+                </Flex>
+                {
+                    expandedTag && (
+                        <div>{tagMatches.map((t, i)=>(
+                            <React.Fragment key={`tag-match-${i}`}>{
+                                t.title === selectedArtifactEntry.title ?
+                                <div style={{fontSize:11, fontWeight:900, borderBottom:'1px solid black', padding:3}} key={`match-${i}`}>{t.title}</div>
+                                : <div style={{fontSize:10, borderBottom:'1px solid black', padding:3}} key={`match-${i}`}>{t.title}</div>}
+                            </React.Fragment>
+                            
+                        ))}</div>
+                    )
+                }
+            </Box>
+        
+    )
+}
 const DetailSidebar = (props:any) => {
 
     const {fragSelected, setFragSelected, selectedArtifactEntry, selectedArtifactIndex} = props;
@@ -130,37 +188,15 @@ const DetailSidebar = (props:any) => {
             ))}
         </Box>
     </Box>
-
-    <Box>
-    <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
-    {selectedArtifactEntry.tags.map((t:any, i:number)=> (
-        <Box key={`tag-sel-${i}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
-            <Flex>
-            <span onClick={()=> {
-                let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
-                let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-                if(indexOfE === 0){
-                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[test.length - 1], selectedArtifactIndex: 0})
-                }else{
-                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE - 1], selectedArtifactIndex: 0})
-                }
-            }}>{"<< "}</span>
-            <Spacer></Spacer>
-            <span style={{alignSelf:'center'}}>{t}</span>
-            <Spacer></Spacer>
-            <span onClick={()=> {
-                let test = projectData.entries.filter(f => f.tags.indexOf(t) > -1)
-                let indexOfE = test.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-                if(indexOfE === (test.length - 1)){
-                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[0], selectedArtifactIndex: 0})
-                }else{
-                    dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: test[indexOfE + 1], selectedArtifactIndex: 0})
-                }
-            }}>{" >>"}</span>
-            </Flex>
-        </Box>
-    ))}
-    </Box>
+        {
+            <Box>
+                <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
+                {selectedArtifactEntry.tags.map((t:any, i:number)=> ( 
+                    <InteractiveActivityTag selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} tag={t} index={i}/>
+                ))
+            }</Box>
+        }
+   
     {
         fragSelected && (
             <div style={{padding:'5px'}}>
@@ -231,7 +267,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     );
 
     const [fragSelected, setFragSelected] = useState(null);
-    
+    console.log('testing', selectedArtifactEntry.files[selectedArtifactIndex])
+
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
           // one more entry was added
@@ -272,14 +309,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             }}>{"<< GO BACK TO OVERVIEW"}</Button>
          </Flex>
          <Flex><Spacer></Spacer><TopTimeline projectData={projectData}/><Spacer></Spacer></Flex>
-       
         </Box>
-       
             <Flex position={'relative'} top={220} bottom={0} height={'calc(100% - 150px)'}>
                 <DetailSidebar fragSelected={fragSelected} setFragSelected={setFragSelected} selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
                 <Box flex="4" >
-                    <Box bg={'blue'} p={5} width={'100%'} alignContent={'center'}>{'SEARCH BAR HERE'}</Box>
-                    <Flex style={{backgroundColor:'yellow', justifyContent: 'center', alignItems:'stretch', height:'90%'}}>
+                    {
+                        (selectedArtifactEntry.files[selectedArtifactIndex].fileType === 'txt' || selectedArtifactEntry.files[selectedArtifactIndex].fileType === 'gdoc') && (
+                            <Box p={5} width={'100%'} alignContent={'center'}>
+                                <QueryBar artifactData={selectedArtifactEntry.files[selectedArtifactIndex]}/>
+                            </Box>
+                        )
+                    }
+                    
+                    <Flex style={{justifyContent: 'center', alignItems:'stretch', height:'90%'}}>
                         <Flex style={{alignItems:'center'}}>
                             <span onClick={()=>{ 
                                 let entryIndex = selectedArtifactEntry.index;

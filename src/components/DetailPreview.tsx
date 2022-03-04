@@ -79,7 +79,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           console.log(selObj?.toString())
           setFragSelected(selObj?.toString())
         }}
-        >{
+        style={{ height:'90%', overflow:'auto'}}>
+          {
           gContent.map((m:any, i:number)=> (
             <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
           ))}
@@ -99,17 +100,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     return <div 
             onMouseUp={()=> {
-             
               let selObj = window.getSelection();
-              
               setFragSelected(selObj?.toString())
             }}
-            style={{ backgroundColor:'red', height:'90%', overflow:'auto'}}>
+            style={{ height:'90%', overflow:'auto'}}>
             {temp[0].text}
              
             </div>
-    
-    // return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
   }
 
     if (title.endsWith('.phy') || title.endsWith('.nex')) {

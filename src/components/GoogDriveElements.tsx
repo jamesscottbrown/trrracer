@@ -48,7 +48,8 @@ const GoogDriveParagraph = (parProps: any)  => {
         <div key={`sections-${index}`}>
             {
                 parData.paragraph.elements ? parData.paragraph.elements.map((elem:any, j:number) => (
-                  <GoogDriveSpans googEl={elem} index={j}/>
+
+                  <GoogDriveSpans key={`span-${j}`} googEl={elem} index={j}/>
                 )) : "no words"
             }
         </div>
