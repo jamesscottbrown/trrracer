@@ -13,7 +13,7 @@ import { useProjectState } from './ProjectContext';
 
 const SidebarButton = (sidebarProps: any) => {
   const { isTag, index, data } = sidebarProps;
-  const [{ researchThreads }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, filterTags }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
@@ -37,6 +37,15 @@ const SidebarButton = (sidebarProps: any) => {
         }}
         onMouseLeave={() => {
           setBarColor('#FFFFFF');
+        }}
+        onClick={()=> {
+          console.log('tags filter check', filterTags);
+          //nee to make a tag filter function
+          if(filterTags.includes(data.title)){
+            alert('tag filter already exists');
+          }else{
+            dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: [...filterTags, data.title] });
+          } 
         }}
       >
         {`${data.title}  (${data.matches.length})`}
@@ -63,6 +72,16 @@ const SidebarButton = (sidebarProps: any) => {
             setBarColor('#FFFFFF');
             dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
           }
+        }}
+
+        onClick={()=> {
+          console.log('tags filter check', filterTags);
+          //nee to make a tag filter function
+          if(filterTags.includes(data.title)){
+            alert('tag filter already exists');
+          }else{
+            dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: [...filterTags, data.title] });
+          } 
         }}
       >
         {`${data.title}  (${data.matches.length})`}

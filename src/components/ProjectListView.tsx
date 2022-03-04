@@ -68,7 +68,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-
   const filteredEntries = projectData.entries
     .filter((entryData: EntryType) => {
       return filterTags.every((requiredTag: string) =>
@@ -76,6 +75,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       );
     })
     .map((e, index) => ({ ...e, index }));
+
   filteredEntries.sort(
     (a, b) =>
       (reversedOrder ? -1 : +1) *

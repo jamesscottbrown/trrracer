@@ -117,21 +117,23 @@ const InteractiveActivityTag = (props:any) => {
  
             <Box key={`tag-sel-${index}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
                 <Flex>
-                <span onClick={()=> {
-                    let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-                  
-                    if(indexOfE === 0){
-                        dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[tagMatches.length - 1], selectedArtifactIndex: 0})
-                    }else{
-                        dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[indexOfE - 1], selectedArtifactIndex: 0})
-                    }
+                <span 
+                    style={{cursor:'pointer'}} 
+                    onClick={()=> {
+                        let indexOfE = tagMatches.map((m:any)=> m.title).indexOf(selectedArtifactEntry.title)
+                    
+                        if(indexOfE === 0){
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[tagMatches.length - 1], selectedArtifactIndex: 0})
+                        }else{
+                            dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[indexOfE - 1], selectedArtifactIndex: 0})
+                        }
                 }}>{"<< "}</span>
                 <Spacer></Spacer>
-                <span onClick={()=> expandedTag ? setExpandedTag(false) : setExpandedTag(true)} style={{alignSelf:'center'}}>{tag}</span>
+                <span onClick={()=> expandedTag ? setExpandedTag(false) : setExpandedTag(true)} style={{alignSelf:'center', cursor:'pointer'}}>{tag}</span>
                 <Spacer></Spacer>
             
-                    <span style={{pointer:'cursor'}} onClick={()=> {
-                        let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
+                    <span style={{cursor:'pointer'}} onClick={()=> {
+                        let indexOfE = tagMatches.map((m:any)=> m.title).indexOf(selectedArtifactEntry.title)
                         if(indexOfE === (tagMatches.length - 1)){
                             dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: tagMatches[0], selectedArtifactIndex: 0})
                         }else{
@@ -143,7 +145,7 @@ const InteractiveActivityTag = (props:any) => {
                 </Flex>
                 {
                     expandedTag && (
-                        <div>{tagMatches.map((t, i)=>(
+                        <div>{tagMatches.map((t:any, i:number)=>(
                             <React.Fragment key={`tag-match-${i}`}>{
                                 t.title === selectedArtifactEntry.title ?
                                 <div style={{fontSize:11, fontWeight:900, borderBottom:'1px solid black', padding:3}} key={`match-${i}`}>{t.title}</div>
@@ -167,8 +169,8 @@ const DetailSidebar = (props:any) => {
     console.log('FRAG SELETEDDD', fragSelected);
 
     let isArtifactInThread = researchThreads.research_threads.filter((f)=>{
-        let temp = f.evidence.filter(e=> e.type === 'artifact');
-        temp = temp.length > 0 ? temp.filter(tm => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
+        let temp = f.evidence.filter((e:any)=> e.type === 'artifact');
+        temp = temp.length > 0 ? temp.filter((tm:any) => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
         return temp.length > 0;
     });
 
@@ -190,7 +192,7 @@ const DetailSidebar = (props:any) => {
     </Box>
         {
             <Box>
-                <span style={{fontSize:20, fontWeight:700, fontColor:'red'}}>Activity Tags</span>
+                <span style={{fontSize:20, fontWeight:700}}>Activity Tags</span>
                 {selectedArtifactEntry.tags.map((t:any, i:number)=> ( 
                     <InteractiveActivityTag selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} tag={t} index={i}/>
                 ))
@@ -234,7 +236,7 @@ const DetailSidebar = (props:any) => {
             isArtifactInThread.length > 0 && (
                 <div>
                     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
-                {isArtifactInThread.map((at, i)=> (
+                {isArtifactInThread.map((at:any, i:number)=> (
                     <Box key={`in-thread-${i}`}>
                         <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
                         <div style={{padding:5, borderLeft: "1px solid gray"}}>{

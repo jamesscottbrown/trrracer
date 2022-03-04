@@ -216,7 +216,8 @@ const TopTimeline = (projectProps:any)=> {
       }, [activity]);
 
     return(
-        <Flex flex={4} 
+        <Flex 
+        // flex={4} 
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         h={height}

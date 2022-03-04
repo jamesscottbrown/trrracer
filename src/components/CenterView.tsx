@@ -14,12 +14,24 @@ import * as d3 from "d3";
 import CenterFileRender from './centerFileRender';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import Activity from "./Activity"
+import { useProjectState } from './ProjectContext';
 
 
 const CenterView = (projectProps: any) => {
   const {projectEntries, folderPath, timeFilter, setTimeFilter} = projectProps;
+
+  const [{projectData, filterTags}, dispatch] = useProjectState()
   
-  let years = d3.groups(projectEntries, y => new Date(y.date).getFullYear())
+  //SWITCH THIS TO THE PROJECTDATA
+  const filteredEntries = projectEntries
+  .filter((entryData: EntryType) => {
+    return filterTags.every((requiredTag: string) =>
+      entryData.tags.includes(requiredTag)
+    );
+  })
+  .map((e, index) => ({ ...e, index }));
+  
+  let years = d3.groups(filteredEntries, y => new Date(y.date).getFullYear())
 
   let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year, yi) => {
 

@@ -704,6 +704,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TAGS': {
+      console.log('tags', action.filterTags);
       return { ...state, filterTags: action.filterTags };
     }
 

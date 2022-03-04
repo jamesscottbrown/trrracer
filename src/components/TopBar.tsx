@@ -23,7 +23,7 @@ import QueryBar from './QueryBar';
 
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ projectData, filterTags }, dispatch] = useProjectState();
 
   const ref = React.useRef();
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
@@ -122,9 +122,21 @@ return (
 
     </Box>
     </Box>
-
+    <Flex flex={4} flexDirection={'column'} bg={'red'}>
     <TopTimeline projectData={projectData} defineEvent={defineEvent} timeFilter={timeFilter} setTimeFilter={setTimeFilter} />
-
+    <Box style={{width:'100%', backgroundColor:'yellow', display:'block'}}>
+      {
+        filterTags.length > 0 && (
+          filterTags.map((t, i)=> <div key={`tags-${i}`}>
+            <span>{`${t}`}</span>
+            <span onClick={()=> {
+              dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: filterTags.filter(f => f != t) });
+            }} style={{padding:5}}>{'x'}</span>
+            </div>)
+        )
+      }
+    </Box>
+    </Flex>
     <Box flex="1.8" maxWidth='25%'>
       <Flex flexFlow={'row wrap'} p={5}>
         
