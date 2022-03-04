@@ -122,17 +122,18 @@ return (
 
     </Box>
     </Box>
-    <Flex flex={4} flexDirection={'column'} bg={'red'}>
+    <Flex flex={4} flexDirection={'column'} >
     <TopTimeline projectData={projectData} defineEvent={defineEvent} timeFilter={timeFilter} setTimeFilter={setTimeFilter} />
-    <Box style={{width:'100%', backgroundColor:'yellow', display:'block'}}>
+    <Box style={{width:'100%', display:'block'}}>
       {
         filterTags.length > 0 && (
-          filterTags.map((t, i)=> <div key={`tags-${i}`}>
+          filterTags.map((t, i)=> 
+          <div key={`tags-${i}`} style={{display:'inline-block', margin:5, backgroundColor:'gray', color:'#ffffff', borderRadius:5, padding:5}}>
             <span>{`${t}`}</span>
             <span onClick={()=> {
               dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: filterTags.filter(f => f != t) });
-            }} style={{padding:5}}>{'x'}</span>
-            </div>)
+            }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
+          </div>)
         )
       }
     </Box>

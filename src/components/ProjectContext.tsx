@@ -378,6 +378,7 @@ const appStateReducer = (state, action) => {
         txtData: txtData,
         researchThreads: research_threads,
         filterTags: [],
+        filterTypes: []
       }
     }
 
@@ -708,6 +709,11 @@ const appStateReducer = (state, action) => {
       return { ...state, filterTags: action.filterTags };
     }
 
+    case 'UPDATE_FILTER_TYPES': {
+      console.log('types', action.filterTypes);
+      return { ...state, filterTypes: action.filterTypes };
+    }
+
     case 'CREATE_CONCEPT':{
       
       const newConcepts  = [
@@ -777,6 +783,7 @@ const initialState = {
   //projectData: getEmptyProject('null'),
   folderPath: null,
   filterTags: [],
+  filterTypes: []
 };
 
 export function ProjectStateProvider({ children }) {

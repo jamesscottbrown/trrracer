@@ -13,7 +13,7 @@ import { useProjectState } from './ProjectContext';
 
 const SidebarButton = (sidebarProps: any) => {
   const { isTag, index, data } = sidebarProps;
-  const [{ researchThreads, projectData, filterTags }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, filterTags, filterTypes }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
@@ -39,13 +39,14 @@ const SidebarButton = (sidebarProps: any) => {
           setBarColor('#FFFFFF');
         }}
         onClick={()=> {
-          console.log('tags filter check', filterTags);
+          console.log('tags filter check', filterTypes, data);
           //nee to make a tag filter function
-          if(filterTags.includes(data.title)){
-            alert('tag filter already exists');
-          }else{
-            dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: [...filterTags, data.title] });
-          } 
+          // if(filterTags.includes(data.title)){
+          //   alert('tag filter already exists');
+          // }else{
+
+          //   // dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, data.title] });
+          // } 
         }}
       >
         {`${data.title}  (${data.matches.length})`}
