@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   Button,
@@ -42,9 +42,21 @@ interface EntryPropTypes {
   setSelectedArtifactEntry: (ent: any) => void;
 }
 
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
+
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable, setViewType } = props;
- 
+  const [showPopover, setShowPopover] = useState(false);
+
+  const closePopover = () => {
+    setShowPopover(false);
+  };
+
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -77,12 +89,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return matchingTags[0].color;
   };
 
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
-  });
+  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
+  const descriptionHTML = useMemo(() => {
+    converter.makeHtml(entryData.description);
+  }, [entryData.description]);
+
 
   return (
     <Box>
@@ -137,42 +148,58 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       {entryData.description && (
         <div
           className="readonlyEntryMarkdownPreview"
-          dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(entryData.description),
-          }}
+          dangerouslySetInnerHTML={{  __html: descriptionHTML }}
         />
       )}
      
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
           <React.Fragment key={`fr-${f.title}-${i}`}>
-          <Box key={`${f.title}-${i}`} p={3}>
+            <Box key={`${f.title}-${i}`} p={3}>
+              {showPopover ? (
+                <Popover isOpen={showPopover} onClose={closePopover}>
+                  <PopoverTrigger>
+                    <span
+                      style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+                    >
+                      {f.title}{' '}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent bg="white" color="gray">
+                    <PopoverArrow bg="white" />
+                    <PopoverBody>
+                      <Button
+                        onClick={() => {
+                          setViewType('detail view');
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            selectedArtifactEntry: entryData,
+                            selectedArtifactIndex: i,
+                          });
+                        }}
+                      >
+                        See artifact in detail.
+                      </Button>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <span
+                  style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+                  onMouseEnter={() => setShowPopover(true)}
+                >
+                  {' '}
+                  {f.title}{' '}
+                </span>
+              )}
 
-            <Popover trigger="hover">
-              <PopoverTrigger>
-                <span style={{fontSize:18, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
-              </PopoverTrigger>
-              <PopoverContent bg='white' color='gray'>
-                 
-                  <PopoverArrow bg='white' />
-                  <PopoverBody>
-                      <Button onClick={()=> {
-                        setViewType("detail view")
-                        dispatch({type: 'SELECTED_ARTIFACT', selectedArtifactEntry: entryData, selectedArtifactIndex: i})
-                        }}>See artifact in detail.</Button>
-                  </PopoverBody>
-                 
-              </PopoverContent>
-            </Popover>
-
-            <FaExternalLinkAlt
-              onClick={() => openFile(f.title, folderPath)}
-              title="Open file externally"
-              size="13px"
-              style={{ display: 'inline' }}
-            />
-            {
-              (f.fileType != 'gdoc' && f.fileType != 'txt') ? 
+              <FaExternalLinkAlt
+                onClick={() => openFile(f.title, folderPath)}
+                title="Open file externally"
+                size="13px"
+                style={{ display: 'inline' }}
+              />
+              {f.fileType != 'gdoc' && f.fileType != 'txt' ? (
                 <AttachmentPreview
                   folderPath={folderPath}
                   title={f.title}
