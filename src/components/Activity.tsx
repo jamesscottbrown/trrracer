@@ -67,7 +67,7 @@ const ActivitytoThread = (props: any) => {
 };
 
 const Activity = (activityProps: any) => {
-  console.log('Rendering activity');
+  // console.log('Rendering activity');
 
   const { activity, folderPath, index } = activityProps;
   const [{ highlightedTag, researchThreads }, dispatch] = useProjectState();

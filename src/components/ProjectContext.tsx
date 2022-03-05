@@ -407,7 +407,7 @@ const appStateReducer = (state, action) => {
       
       let newA =  {
         type: "activity",
-        dob: new Date(), 
+        dob: activity.date, 
         activity_index: activityIndex, 
         title: activity.title,
         rationale: rationale
@@ -423,7 +423,7 @@ const appStateReducer = (state, action) => {
       console.log('activity files', activity.files, artifactIndex);
       let newA =  {
         type: "artifact",
-        dob: new Date(), 
+        dob: activity.date, 
         activity_index: activity.index, 
         artifactIndex: artifactIndex,
         activityTitle: activity.title,

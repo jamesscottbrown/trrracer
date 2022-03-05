@@ -47,13 +47,12 @@ const ThreadNav = () => {
                             <span>{`${rt.title} `}<FaFillDrip style={{color: rt.color, display:"inline"}}/></span>
                             <div><svg style={{height:'20px', width:"100%"}}></svg></div>
                             {rt.associated_tags.map((t, i)=>
-                                <div key={`tag-${i}`} style={{backgroundColor:"#d3d3d3", fontSize:'11px', display:"inline-block"}}>{t}</div>
+                                <div key={`tag-${i}`} style={{backgroundColor:"#d3d3d3", fontSize:'11px', display:"inline-block", margin:3, padding:2}}>{t}</div>
                             )}
                         </div>
                     ))
                     }
                 </Box>
-
                 ) : <span style={{marginTop:5, marginBottom:5}}>{"No research threads yet."}</span>}
             </Box>
 

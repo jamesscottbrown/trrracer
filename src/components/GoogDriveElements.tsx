@@ -13,7 +13,7 @@ const GoogDriveSpans = (googProps:any) => {
         if(sectionData.textRun){
           if(sectionData.textRun.textStyle){
             Object.keys(sectionData.textRun.textStyle).forEach((m, i) => {
-              console.log('google', m, i, sectionData);
+             
               if(m === "italic") styleOb.fontStyle = 'italic';
               if(m === "bold") styleOb.fontWeight = 'bold';
               

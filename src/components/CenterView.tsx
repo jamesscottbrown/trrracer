@@ -20,13 +20,22 @@ import { useProjectState } from './ProjectContext';
 const CenterView = (projectProps: any) => {
   const {projectEntries, folderPath, timeFilter, setTimeFilter} = projectProps;
 
-  const [{projectData, filterTags}, dispatch] = useProjectState()
+  const [{projectData, filterTags, filterTypes}, dispatch] = useProjectState()
   
+  console.log(filterTags, filterTypes)
   //SWITCH THIS TO THE PROJECTDATA
-  const filteredEntries = projectEntries
-  .filter((entryData: EntryType) => {
+  const tagFilteredEntries = projectEntries
+  .filter((entryData: any) => {
     return filterTags.every((requiredTag: string) =>
       entryData.tags.includes(requiredTag)
+    );
+  })
+  .map((e, index) => ({ ...e, index }));
+
+  const filteredEntries = tagFilteredEntries
+  .filter((entryData: any) => {
+    return filterTypes.every((requiredType: string) =>
+      entryData.files.map((m: any)=> m.fileType).includes(requiredType)
     );
   })
   .map((e, index) => ({ ...e, index }));

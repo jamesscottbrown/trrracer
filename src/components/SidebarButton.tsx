@@ -40,13 +40,13 @@ const SidebarButton = (sidebarProps: any) => {
         }}
         onClick={()=> {
           console.log('tags filter check', filterTypes, data);
-          //nee to make a tag filter function
-          // if(filterTags.includes(data.title)){
-          //   alert('tag filter already exists');
-          // }else{
+          // nee to make a tag filter function
+          if(filterTypes.includes(data.title)){
+            alert('tag filter already exists');
+          }else{
 
-          //   // dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, data.title] });
-          // } 
+            dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, data.title] });
+          } 
         }}
       >
         {`${data.title}  (${data.matches.length})`}

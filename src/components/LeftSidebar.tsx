@@ -40,17 +40,17 @@ const LeftSidebar = () => {
                 </span><br></br>
                 <span style={headerStyle}>
                     {`${artifacts.length} Artifacts`}
-            </span><br></br>
-           </Box>
-           <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
+                </span><br></br>
+            </Box>
+            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {sortedTypes.map((m:any, i:any) => (
                     <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i} />
                 ))}
-               <br></br>
-           </Box>
-           <span style={headerStyle}>
-              {`${tags.length} Tags`}
-            </span><br></br>
+                <br></br>
+            </Box>
+            <span style={headerStyle}>
+                {`${tags.length} Tags`}
+                </span><br></br>
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
             {   
                 sortedTags.map((st:any, s:any) => (

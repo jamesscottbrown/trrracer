@@ -23,7 +23,7 @@ import QueryBar from './QueryBar';
 
 const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
-  const [{ projectData, filterTags }, dispatch] = useProjectState();
+  const [{ projectData, filterTags, filterTypes }, dispatch] = useProjectState();
 
   const ref = React.useRef();
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
@@ -44,7 +44,7 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
   }
   }, []);
 
-  let splitTitle = (title)=>{
+  let splitTitle = (title:string)=>{
     let t = title.split('/');
     return t[t.length - 1];
   }
@@ -132,6 +132,17 @@ return (
             <span>{`${t}`}</span>
             <span onClick={()=> {
               dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: filterTags.filter(f => f != t) });
+            }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
+          </div>)
+        )
+      }
+            {
+        filterTypes.length > 0 && (
+          filterTypes.map((t, i)=> 
+          <div key={`tags-${i}`} style={{display:'inline-block', margin:5, backgroundColor:'gray', color:'#ffffff', borderRadius:5, padding:5}}>
+            <span>{`${t}`}</span>
+            <span onClick={()=> {
+              dispatch({ type: 'UPDATE_FILTER_TYPES', filterTags: filterTags.filter(f => f != t) });
             }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
           </div>)
         )

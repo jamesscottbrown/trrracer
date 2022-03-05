@@ -32,7 +32,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     return (
       
-      <div style={{height: '100vh', position:'fixed', top:0, bottom:0}}>
+      <div style={{height: '100vh', position:'fixed', top:0, bottom:0, width:'100%'}}>
       <TopBar  
         folderPath={folderPath}
         viewType={viewType}
@@ -65,7 +65,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     return (
       
-      <div style={{height: '100vh', position:'fixed', top:0, bottom:0}}>
+      <div style={{height: '100vh', position:'fixed', top:0, bottom:0, width: '100%'}}>
         <TopBar  
           folderPath={folderPath}
           viewType={viewType}
