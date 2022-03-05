@@ -74,9 +74,10 @@ const Activity = (activityProps: any) => {
 
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
+  const [activitySelected, setActivitySelected] = useState(false);
 
   const colorVar =
-    activity.tags.indexOf(highlightedTag) > -1 ? '#FFFCBB' : '#F5F5F5';
+    (activitySelected || activity.tags.indexOf(highlightedTag) > -1) ? '#FFFCBB' : '#F5F5F5';
 
   const closePopover = () => {
     setShowPopover(false);
@@ -89,7 +90,9 @@ const Activity = (activityProps: any) => {
         w={50}
         marginTop={2}
         className={`activity`}
-        onMouseEnter={() => setShowPopover(true)}
+        onMouseEnter={() => {
+          setActivitySelected(true)
+          setShowPopover(true)}}
       >
         <CenterFileRender
           key={`cfr-${activity.title}-${index}`}
@@ -113,7 +116,9 @@ const Activity = (activityProps: any) => {
           w={50}
           marginTop={2}
           className={`activity`}
-          onMouseLeave={closePopover}
+          onMouseLeave={()=> {
+            setActivitySelected(false)
+            closePopover}}
         >
           <CenterFileRender
             key={`cfr-${activity.title}-${index}`}

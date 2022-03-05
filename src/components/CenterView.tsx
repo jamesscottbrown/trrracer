@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Box,
+  Flex,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -22,7 +23,7 @@ const CenterView = (projectProps: any) => {
 
   const [{projectData, filterTags, filterTypes}, dispatch] = useProjectState()
   
-  console.log(filterTags, filterTypes)
+
   //SWITCH THIS TO THE PROJECTDATA
   const tagFilteredEntries = projectEntries
   .filter((entryData: any) => {
@@ -82,7 +83,8 @@ const CenterView = (projectProps: any) => {
    
     return(
         
-        <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'>
+        <Flex flex='3' h='calc(100vh - 150px)' overflowY='auto'>
+          {/* <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'></Box> */}
           <div style={{display: 'flex', flexFlow: 'column wrap', height: 'calc(100vh - 250px)'}}>
             {fAct.map((fa:any, i:number) => (
               <React.Fragment key={`fr-${fa.title}-${i}`}>
@@ -93,7 +95,8 @@ const CenterView = (projectProps: any) => {
             }
             
           </div>
-        </Box>
+        {/* </Box> */}
+        </Flex>
     )
 }
 

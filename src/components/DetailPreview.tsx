@@ -76,7 +76,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
          onMouseUp={()=> {
              
           let selObj = window.getSelection();
-          console.log(selObj?.toString())
           setFragSelected(selObj?.toString())
         }}
         style={{ height:'90%', overflow:'auto'}}>
@@ -105,7 +104,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             }}
             style={{ height:'90%', overflow:'auto'}}>
             {temp[0].text}
-             
             </div>
   }
 
