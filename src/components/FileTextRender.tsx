@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 
 import {
   Badge,
@@ -8,23 +8,37 @@ import {
 import { Tooltip } from "@chakra-ui/react"
 import PopComment from './PopComment';
 
-const FileTextRender = (fileDataProps) => {
-    const { fileData, index, keywordArray } = fileDataProps;
-    
-     const formatConcord = (tf)=>{
-        
-        let matches =  tf.matches;
-   
-        if(matches  && matches.length > 0){
-        return matches.map(m => {
-            let arr = m.split(tf.key);
-            return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
-        });
-        }else{
-       
-        return <p><span>no matches for <b>{tf.key}</b></span></p>
-        }
+ const formatConcord = (tf)=>{
+
+    let matches =  tf.matches;
+
+    if(matches  && matches.length > 0){
+    return matches.map(m => {
+        let arr = m.split(tf.key);
+        return <p><span>{arr[0] + " "}<b>{tf.key}</b>{" " + arr[1]}</span><br /><br/></p>
+    });
+    }else{
+
+    return <p><span>no matches for <b>{tf.key}</b></span></p>
     }
+}
+
+const FileTextRender = (fileDataProps) => {
+  return null;
+
+    const { fileData, index, keywordArray } = fileDataProps;
+
+  const labelledKeywords = useMemo(
+    () =>
+      keywordArray
+        .filter((k: any) => k['file-title'] === fileData.title)[0]
+        .keywords.keywords.map((m) => ({
+          key: m.key,
+          label: formatConcord(m),
+        })),
+    [keywordArray]
+  );
+
 
     return (
         <>
@@ -44,9 +58,9 @@ const FileTextRender = (fileDataProps) => {
           }
           </Box>) : 
           (<Box>
-            {   keywordArray.filter(k => k['file-title'] === fileData.title)[0]  ? 
-                keywordArray.filter(k => k['file-title'] === fileData.title)[0].keywords.keywords.map((m:any, i:number) => (
-                   
+            {   keywordArray.filter(k => k['file-title'] === fileData.title)[0]  ?
+                labelledKeywords.map((k:any, i:number) => (
+
                   <div key={`keyword-${i}`} style={{'display':'inline'}}>
                     <Tooltip placement="left" hasArrow label={formatConcord(m)}>
                       <Badge style={{margin:'3px'}}>{m.key}</Badge>
