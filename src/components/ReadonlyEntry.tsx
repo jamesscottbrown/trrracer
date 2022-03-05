@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   Button,
@@ -42,6 +42,13 @@ interface EntryPropTypes {
   setSelectedArtifactEntry: (ent: any) => void;
 }
 
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
+
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable, setViewType } = props;
  
@@ -77,12 +84,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return matchingTags[0].color;
   };
 
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
-  });
+  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
+  const descriptionHTML = useMemo(() => {
+    converter.makeHtml(entryData.description);
+  }, [entryData.description]);
+
 
   return (
     <Box>
@@ -137,9 +143,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       {entryData.description && (
         <div
           className="readonlyEntryMarkdownPreview"
-          dangerouslySetInnerHTML={{
-            __html: converter.makeHtml(entryData.description),
-          }}
+          dangerouslySetInnerHTML={{  __html: descriptionHTML }}
         />
       )}
      
