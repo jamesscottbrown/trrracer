@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import {
   Badge,
@@ -23,20 +23,47 @@ import PopComment from './PopComment';
     }
 }
 
-const FileTextRender = (fileDataProps) => {
-  return null;
 
+type CustomTooltipProps = {
+  badgeText: string;
+  hoverText: string;
+};
+const CustomTooltip = (props: CustomTooltipProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { badgeText, hoverText } = props;
+
+  if (isOpen) {
+    return (
+      <Tooltip placement="left" hasArrow label={hoverText} isOpen={isOpen}>
+        <Badge style={{ margin: '3px' }} onMouseOut={() => setIsOpen(false)} onMouseLeave={() => setIsOpen(false)}>
+          {badgeText}
+        </Badge>
+      </Tooltip>
+    );
+  } else {
+    return (
+      <Badge style={{ margin: '3px' }} onMouseOver={() => setIsOpen(true)}>
+        {badgeText}
+      </Badge>
+    );
+  }
+};
+
+const FileTextRender = (fileDataProps) => {
     const { fileData, index, keywordArray } = fileDataProps;
 
-  const labelledKeywords = useMemo(
-    () =>
-      keywordArray
-        .filter((k: any) => k['file-title'] === fileData.title)[0]
-        .keywords.keywords.map((m) => ({
-          key: m.key,
-          label: formatConcord(m),
-        })),
-    [keywordArray]
+    const labelledKeywords = useMemo(
+      () => {
+
+        const ks = keywordArray.filter((k: any) => k['file-title'] === fileData.title);
+
+        return (ks.length > 0) ? ks[0].keywords.keywords.map((m: any) => ({
+            key: m.key,
+            label: formatConcord(m)
+          }))
+          : [];
+      },
+  [keywordArray]
   );
 
 
@@ -50,24 +77,19 @@ const FileTextRender = (fileDataProps) => {
                 ))}</Box> : <Box  style={{display:'inline'}}>{""}</Box>
           }
           {
-            (fileData.comments && fileData.comments.comments.length > 0) ? 
+            (fileData.comments && fileData.comments.comments.length > 0) ?
               fileData.comments.comments.map((co:any, i:number) => (
-                  
+
                   <PopComment key={`co-${fileData.title}-${i}`} data={co} spanType={"comment"} />
               )) : <Box></Box>
           }
-          </Box>) : 
+          </Box>) :
           (<Box>
-            {   keywordArray.filter(k => k['file-title'] === fileData.title)[0]  ?
-                labelledKeywords.map((k:any, i:number) => (
-
+            {  labelledKeywords.map((k:any, i:number) => (
                   <div key={`keyword-${i}`} style={{'display':'inline'}}>
-                    <Tooltip placement="left" hasArrow label={formatConcord(m)}>
-                      <Badge style={{margin:'3px'}}>{m.key}</Badge>
-                    </Tooltip>
+                    <CustomTooltip badgeText={k.key} hoverText={k.label} />
                   </div>
-                
-                )) : <div></div>
+                ))
             }
           </Box>)}
         </>
