@@ -51,7 +51,12 @@ interface EntryPropTypes {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable, setViewType } = props;
- 
+  const [showPopover, setShowPopover] = useState(false);
+
+  const closePopover = () => {
+    setShowPopover(false);
+  };
+
 
   const colorBadge = (val)=>{
     if(val > .4){
@@ -150,33 +155,51 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
           <React.Fragment key={`fr-${f.title}-${i}`}>
-          <Box key={`${f.title}-${i}`} p={3}>
+            <Box key={`${f.title}-${i}`} p={3}>
+              {showPopover ? (
+                <Popover isOpen={showPopover} onClose={closePopover}>
+                  <PopoverTrigger>
+                    <span
+                      style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+                    >
+                      {f.title}{' '}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent bg="white" color="gray">
+                    <PopoverArrow bg="white" />
+                    <PopoverBody>
+                      <Button
+                        onClick={() => {
+                          setViewType('detail view');
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            selectedArtifactEntry: entryData,
+                            selectedArtifactIndex: i,
+                          });
+                        }}
+                      >
+                        See artifact in detail.
+                      </Button>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <span
+                  style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+                  onMouseEnter={() => setShowPopover(true)}
+                >
+                  {' '}
+                  {f.title}{' '}
+                </span>
+              )}
 
-            <Popover trigger="hover">
-              <PopoverTrigger>
-                <span style={{fontSize:18, fontWeight:500, marginBottom:5}}>{f.title}{' '}</span>
-              </PopoverTrigger>
-              <PopoverContent bg='white' color='gray'>
-                 
-                  <PopoverArrow bg='white' />
-                  <PopoverBody>
-                      <Button onClick={()=> {
-                        setViewType("detail view")
-                        dispatch({type: 'SELECTED_ARTIFACT', selectedArtifactEntry: entryData, selectedArtifactIndex: i})
-                        }}>See artifact in detail.</Button>
-                  </PopoverBody>
-                 
-              </PopoverContent>
-            </Popover>
-
-            <FaExternalLinkAlt
-              onClick={() => openFile(f.title, folderPath)}
-              title="Open file externally"
-              size="13px"
-              style={{ display: 'inline' }}
-            />
-            {
-              (f.fileType != 'gdoc' && f.fileType != 'txt') ? 
+              <FaExternalLinkAlt
+                onClick={() => openFile(f.title, folderPath)}
+                title="Open file externally"
+                size="13px"
+                style={{ display: 'inline' }}
+              />
+              {f.fileType != 'gdoc' && f.fileType != 'txt' ? (
                 <AttachmentPreview
                   folderPath={folderPath}
                   title={f.title}
