@@ -15,8 +15,14 @@ import { format } from 'path/posix';
   import React, { useState, useEffect } from 'react';
   import { useProjectState } from './ProjectContext';
 
-  const PopComment = (props) => { 
-  
+  const PopComment = (props) => {
+
+    const [showPopover, setShowPopover] = useState(false);
+
+    const closePopover = () => {
+      setShowPopover(false);
+    };
+
       const {data, spanType} = props;
       const [state, dispatch] = useProjectState();
 
@@ -121,38 +127,48 @@ import { format } from 'path/posix';
           }
           return blobOb
         }
-  
-      return(
 
-        <Popover trigger="hover">
-        <PopoverTrigger>
-          <div style={formatEmphasisVis(data)}>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent bg='white' color='gray'>
-            <PopoverHeader fontWeight='semibold'>{data.createdTime}</PopoverHeader>
-            <PopoverArrow bg='white' />
-            
+        if (!showPopover){
+          return (
+            <Box onMouseEnter={() => setShowPopover(true)}>
+              { spanType === 'comment' ?  renderPop(data)   :   <>
+                  <span>{formatContext(data, 'before')}</span>
+                  <span style={formatEmphasis(data)}>{formatText(data)}</span>
+                  <span>{formatContext(data, 'after')}</span>
+                </> }
+            </Box>
+          );
+        }
+
+      return (
+        <Popover isOpen={showPopover} onClose={closePopover}>
+          <PopoverTrigger>
+            <div style={formatEmphasisVis(data)}></div>
+          </PopoverTrigger>
+          <PopoverContent bg="white" color="gray">
+            <PopoverHeader fontWeight="semibold">
+              {data.createdTime}
+            </PopoverHeader>
+            <PopoverArrow bg="white" />
+
             <PopoverBody>
-              {
-                spanType === "comment" ? 
-
-                <Box>{renderPop(data)}</Box> :
-
+              {spanType === 'comment' ? (
+                <Box>{renderPop(data)}</Box>
+              ) : (
                 <Box>
-                <span>{formatContext(data, 'before')}</span>
-                <span style={formatEmphasis(data)}>{formatText(data)}</span>
-                <span>{formatContext(data, 'after')}</span>
+                  <span>{formatContext(data, 'before')}</span>
+                  <span style={formatEmphasis(data)}>{formatText(data)}</span>
+                  <span>{formatContext(data, 'after')}</span>
                 </Box>
-              }
-           
+              )}
             </PopoverBody>
-            <PopoverFooter><Button>Go to Doc</Button></PopoverFooter>
-        </PopoverContent>
+            <PopoverFooter>
+              <Button>Go to Doc</Button>
+            </PopoverFooter>
+          </PopoverContent>
         </Popover>
-          
-      )
-  
+      );
+
   }
   
   export default PopComment;
