@@ -199,7 +199,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 size="13px"
                 style={{ display: 'inline' }}
               />
-              {f.fileType != 'gdoc' && f.fileType != 'txt' ? (
+              {f.fileType != 'gdoc' && f.fileType != 'txt' ? 
                 <AttachmentPreview
                   folderPath={folderPath}
                   title={f.title}

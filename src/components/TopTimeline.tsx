@@ -17,12 +17,15 @@ const TopTimeline = (projectProps:any)=> {
     const { defineEvent, timeFilter, setTimeFilter } = projectProps;
     const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
     const activity = projectData.entries;
+    const [ newWidth, setNewWidth ] = useState('1200px');
 
     console.log('ITS HERE!!',selectedArtifactEntry, selectedArtifactIndex)
 
-    let width = 1200;
+    let width = +newWidth.split('px')[0];
     let height = 100;
-    let margin = 600;
+    let margin = 10;
+
+    console.log('WIDTHHHHHH',width)
 
     // const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
 
@@ -55,6 +58,14 @@ const TopTimeline = (projectProps:any)=> {
     yearMonth[yearMonth.length - 1].months = yearMonth[yearMonth.length - 1].months.filter((f, i)=> i < endIndex)
   
     let jitter = (val:any) => Math.random() * val;
+
+    React.useLayoutEffect(() => {
+      // I don't think it can be null at this point, but better safe than sorry
+       if (svgRef.current) {
+         console.log('WINDOW WIDTH',window.getComputedStyle(svgRef.current).width)
+          setNewWidth(window.getComputedStyle(svgRef.current).width);
+       }
+     });
     
     React.useEffect(() => {
 
@@ -204,13 +215,10 @@ const TopTimeline = (projectProps:any)=> {
               .attr('stroke', 'black');
 
           }else{
-
             circles.filter((c:any)=> {
               return c.title === selectedArtifactEntry.title;
             }).attr('fill', 'red').attr('r', 10)
-
           }
-
         }
 
       }, [activity]);
