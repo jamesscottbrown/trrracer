@@ -507,8 +507,13 @@ const appStateReducer = (state, action) => {
     }
 
     case 'HIGHLIGHT_TAG': {
-      console.log('testing in dispatch', action.highlightedTag)
+     
       return {...state, highlightedTag: action.highlightedTag }
+    }
+
+    case 'HIGHLIGHT_TYPE': {
+     
+      return {...state, highlightedType: action.highlightedType }
     }
 
     case 'SELECTED_ARTIFACT': {

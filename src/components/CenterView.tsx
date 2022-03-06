@@ -40,6 +40,8 @@ const CenterView = (projectProps: any) => {
     );
   })
   .map((e, index) => ({ ...e, index }));
+
+  console.group('FILTERED ENTRIES LENGTH', filteredEntries.length)
   
   let years = d3.groups(filteredEntries, y => new Date(y.date).getFullYear())
 
@@ -89,7 +91,7 @@ const CenterView = (projectProps: any) => {
             {fAct.map((fa:any, i:number) => (
               <React.Fragment key={`fr-${fa.title}-${i}`}>
                 { fa.firstMonth ? (<Box key={`first-${fa.title}-${i}`} marginTop={7} textAlign={'right'} paddingRight={2}>{`${getMonth(fa)}`}</Box>) : ("") }
-                <Activity key={`${fa.title}-${i}`} activity={fa} folderPath={folderPath} index={i}></Activity>  
+                <Activity key={`${fa.title}-${i}`} activity={fa} folderPath={folderPath} index={i} numRendered={filteredEntries.length}></Activity>  
               </React.Fragment>
             ))
             }

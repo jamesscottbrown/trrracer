@@ -34,9 +34,11 @@ const SidebarButton = (sidebarProps: any) => {
         key={`${data.title}-${index}`}
         onMouseOver={() => {
           setBarColor('#D3D3D3');
+          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedType: data.title });
         }}
         onMouseLeave={() => {
           setBarColor('#FFFFFF');
+          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedTag: null });
         }}
         onClick={()=> {
           console.log('tags filter check', filterTypes, data);

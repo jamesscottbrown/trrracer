@@ -142,7 +142,7 @@ return (
           <div key={`tags-${i}`} style={{display:'inline-block', margin:5, backgroundColor:'gray', color:'#ffffff', borderRadius:5, padding:5}}>
             <span>{`${t}`}</span>
             <span onClick={()=> {
-              dispatch({ type: 'UPDATE_FILTER_TYPES', filterTags: filterTags.filter(f => f != t) });
+              dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: filterTypes.filter(f => f != t) });
             }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
           </div>)
         )

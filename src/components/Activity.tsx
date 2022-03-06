@@ -69,15 +69,15 @@ const ActivitytoThread = (props: any) => {
 const Activity = (activityProps: any) => {
   // console.log('Rendering activity');
 
-  const { activity, folderPath, index } = activityProps;
-  const [{ highlightedTag, researchThreads }, dispatch] = useProjectState();
+  const { activity, folderPath, index, numRendered } = activityProps;
+  const [{ highlightedTag, highlightedType, researchThreads }, dispatch] = useProjectState();
 
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [activitySelected, setActivitySelected] = useState(false);
 
   const colorVar =
-    (activitySelected || activity.tags.indexOf(highlightedTag) > -1) ? '#FFFCBB' : '#F5F5F5';
+    (activitySelected || activity.tags.indexOf(highlightedTag) > -1 || activity.files.map(m => m.fileType).indexOf(highlightedType) > -1) ? '#FFFCBB' : '#F5F5F5';
 
   const closePopover = () => {
     setShowPopover(false);
@@ -89,6 +89,7 @@ const Activity = (activityProps: any) => {
         key={`${activity.title}-${index}`}
         w={50}
         marginTop={2}
+        marginLeft={4}
         className={`activity`}
         onMouseEnter={() => {
           setActivitySelected(true)
@@ -99,6 +100,7 @@ const Activity = (activityProps: any) => {
           fileArray={activity.files}
           folderPath={folderPath}
           bgColor={colorVar}
+          numRendered={numRendered}
         ></CenterFileRender>
       </Box>
     );
@@ -115,6 +117,7 @@ const Activity = (activityProps: any) => {
           key={`${activity.title}-${index}`}
           w={50}
           marginTop={2}
+          marginLeft={4}
           className={`activity`}
           onMouseLeave={()=> {
             setActivitySelected(false)
@@ -125,6 +128,7 @@ const Activity = (activityProps: any) => {
             fileArray={activity.files}
             folderPath={folderPath}
             bgColor={colorVar}
+            numRendered={numRendered}
           ></CenterFileRender>
         </Box>
       </PopoverTrigger>

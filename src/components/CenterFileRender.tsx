@@ -6,11 +6,29 @@ import * as d3 from "d3";
 import path from 'path';
 
 const CenterFileRender = (fileArrayProps: any) => {
-    const {fileArray, folderPath, bgColor} = fileArrayProps;
+    const {fileArray, folderPath, bgColor, numRendered} = fileArrayProps;
+
+    let dimensionCheck = (dim:string, fType:string) => {
+        if(dim === 'width'){
+            if(fType === 'url'){
+                return numRendered > 60 ? 45 : 67;
+            }else{
+                return numRendered > 60 ? 40 : 60;
+            }
+        }else{
+            if(fType === 'eml'){
+                return numRendered > 60 ? 15 : 22
+            }else if(fType === 'url'){
+                return numRendered > 60 ? 5 : 7
+            }else{
+                return numRendered > 60 ? 30 : 45
+            }
+        }
+    }
     
     const svgRef = React.useRef(null);
 
-    let getRectHeight = (fileD) => {
+    let getRectHeight = (fileD:any) => {
         if(fileD.fileType === 'eml'){
             return 15
         }else if(fileD.fileType === 'url'){
@@ -23,7 +41,8 @@ const CenterFileRender = (fileArrayProps: any) => {
     const getHeight = (previousValue, currentValue) => ++previousValue + ++currentValue;
 
     let getSvgHeight = () => {
-        let fileH = fileArray.map(m => getRectHeight(m))
+        //let fileH = fileArray.map(m => getRectHeight(m))
+        let fileH = fileArray.map(m => dimensionCheck('height', m.fileType))
         let fa = fileH.reduce(getHeight, 0)
         return fa
     }
@@ -38,7 +57,7 @@ const CenterFileRender = (fileArrayProps: any) => {
         let typeGroups = svgEl.selectAll('g').data(typeData).enter().append('g').attr('class', c => c.fileType)
 
         let rects = typeGroups.selectAll('rect').data(d => [d]).join('rect');
-        rects.attr('width', (d)=> d.fileType === 'url' ? 45 : 40).attr('height', h => getRectHeight(h))
+        rects.attr('width', (d)=> dimensionCheck('width', d.fileType)).attr('height', h => dimensionCheck('height', h.fileType))
         
         rects.attr('fill', (d)=> d.fileType === 'url' ? "#3A9BDC" : "#AAAAAA");
         rects.attr('x', (d) => d.fileType === 'url' ? 0 : 20);
@@ -70,8 +89,8 @@ const CenterFileRender = (fileArrayProps: any) => {
                     .attr("height", 10)
                     .append("image")
                     .attr("xlink:href", `file://${path.join(folderPath, newPath)}`)
-                    .attr("width", 50)
-                    .attr("height", 50)
+                    .attr("width", 30)
+                    .attr("height", 30)
 
 
                 d3.select(n[i]).select("rect")
