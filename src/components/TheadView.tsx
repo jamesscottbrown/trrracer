@@ -3,22 +3,59 @@ import {
   Box,
   Flex,
   Heading,
-  Spacer
+  Spacer,
+  SimpleGrid,
+  PopoverTrigger,
 } from '@chakra-ui/react';
-import * as d3 from "d3";
+
+import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
+
 import { useProjectState } from './ProjectContext';
 import ThreadNav from './ThreadNav';
 import GoogDriveParagraph from './GoogDriveElements';
+import FileTextRender from './FileTextRender';
+import AttachmentPreview from './AttachmentPreview';
+import { openFile } from './ProjectListView';
+
 
 const ThreadedActivity = (props:any) => {
-  const {projectData, evidence} = props;
+  const {projectData, evidence, folderPath} = props;
  
   let activity = projectData.entries.filter(f=> f.title === evidence.title)[0];
 
-  console.log('activity threaded', activity, evidence);
+  console.log('activity threaded', activity, evidence, folderPath);
   return (
     <div>
-      {'activity threaded'}
+      <SimpleGrid columns={1} spacing={3}>
+        {activity.files.map((f, i) => (
+          <React.Fragment key={`fr-${f.title}-${i}`}>
+            <Box key={`${f.title}-${i}`} p={3}>
+                <span
+                  style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+                >
+                  {' '}
+                  {f.title}{' '}
+                </span>
+
+              <FaExternalLinkAlt
+                // onClick={() => openFile(f.title, folderPath)}
+                title="Open file externally"
+                size="13px"
+                style={{ display: 'inline' }}
+              />
+              {f.fileType != 'gdoc' && f.fileType != 'txt' ? 
+                <AttachmentPreview
+                  folderPath={folderPath}
+                  title={f.title}
+                  openFile={openFile}
+                /> : <FileTextRender fileData={f} index={i} keywordArray={activity.key_txt} />
+            }
+          </Box>
+          
+        </React.Fragment>
+        ))}
+
+      </SimpleGrid>
     </div>
   )
 }
@@ -119,7 +156,7 @@ const ThreadedFragment = (props:any) => {
 
 const ThreadView = () => {
 
-  const [{projectData, researchThreads, googleData, txtData}, dispatch] = useProjectState();
+  const [{projectData, folderPath, researchThreads, googleData, txtData}, dispatch] = useProjectState();
   const [selectedThread, setSelectedThread] = useState(0);
 
     const headerStyle = {fontSize:'19px', fontWeight:600}
@@ -152,7 +189,7 @@ const ThreadView = () => {
                   
                   <div>
                     { e.type === 'activity' && (
-                      <ThreadedActivity projectData={projectData} evidence={e} />
+                      <ThreadedActivity projectData={projectData} evidence={e} folderPath={folderPath} />
                     )}
                     {
                       e.type === 'artifact' && (

@@ -38,7 +38,7 @@ const SidebarButton = (sidebarProps: any) => {
         }}
         onMouseLeave={() => {
           setBarColor('#FFFFFF');
-          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedTag: null });
+          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedType: null });
         }}
         onClick={()=> {
           console.log('tags filter check', filterTypes, data);
