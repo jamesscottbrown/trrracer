@@ -57,7 +57,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     setShowPopover(false);
   };
 
-
   const colorBadge = (val)=>{
     if(val > .4){
       return 'gray.400';
@@ -199,13 +198,19 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 size="13px"
                 style={{ display: 'inline' }}
               />
-              {f.fileType != 'gdoc' && f.fileType != 'txt' ? 
+               <AttachmentPreview
+                  folderPath={folderPath}
+                  title={f.title}
+                  openFile={openFile}
+                  size={60}
+                /> 
+              {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ? 
                 <AttachmentPreview
                   folderPath={folderPath}
                   title={f.title}
                   openFile={openFile}
                 /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
-            }
+            } */}
           </Box>
           
         </React.Fragment>

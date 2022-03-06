@@ -43,13 +43,12 @@ const ThreadedActivity = (props:any) => {
                 size="13px"
                 style={{ display: 'inline' }}
               />
-              {f.fileType != 'gdoc' && f.fileType != 'txt' ? 
-                <AttachmentPreview
+              <AttachmentPreview
                   folderPath={folderPath}
                   title={f.title}
                   openFile={openFile}
-                /> : <FileTextRender fileData={f} index={i} keywordArray={activity.key_txt} />
-            }
+                  size={100}
+                /> 
           </Box>
           
         </React.Fragment>
