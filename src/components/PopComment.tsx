@@ -137,7 +137,7 @@ const formatEmphasis = (blob, spanType) => {
       return (
         <Popover isOpen={showPopover} onClose={closePopover}>
           <PopoverTrigger>
-            <div style={formatEmphasisVis(data, spanType)}></div>
+            <div style={formatEmphasisVis(data, spanType)} onMouseLeave={() => setShowPopover(false)}></div>
           </PopoverTrigger>
           <PopoverContent bg="white" color="gray">
             <PopoverHeader fontWeight="semibold">
