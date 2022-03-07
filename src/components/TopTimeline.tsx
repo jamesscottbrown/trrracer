@@ -9,6 +9,32 @@ import * as d3 from "d3";
 import { getIndexOfMonth, monthDiff } from '../timeHelperFunctions';
 import { useProjectState } from './ProjectContext';
 
+export const dataStructureForTimeline = (activityData:any) => {
+  let years = d3.groups(activityData, (y:any) => new Date(y.date).getFullYear())
+
+  return years.sort((a:any, b:any) => a[0] - b[0]).map((year:any) => {
+
+    let mon = d3.groups(year[1], (m:any) => new Date(m.date).getMonth())
+
+    let wrapper = new Array(12).fill({}).map((m, i)=> {
+      let activ = mon.filter((f:any) => f[0] === i);
+      let activity = activ.length > 0 ? activ.flatMap((f:any) => {
+        f[1] = f[1].map((a:any) => {
+          a.month = i
+          a.year = year[0]
+        return a})
+        return f[1]}) : [];
+      if(activity.length > 0){ 
+        activity[0].firstMonth = true;
+      }
+      return { month: i, year: year[0], activities: activity }
+    });
+
+    return {year: year[0], months: wrapper}
+  });
+}
+
+export const jitter = (val:any) => Math.random() * val;
 
 const TopTimeline = (projectProps:any)=> {
 
@@ -19,50 +45,20 @@ const TopTimeline = (projectProps:any)=> {
     const activity = projectData.entries;
     const [ newWidth, setNewWidth ] = useState('1200px');
 
-    console.log('ITS HERE!!',selectedArtifactEntry, selectedArtifactIndex)
-
     let width = +newWidth.split('px')[0];
     let height = 100;
     let margin = 10;
 
-    console.log('WIDTHHHHHH',width)
-
-    // const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
-
-    let years = d3.groups(activity, y => new Date(y.date).getFullYear())
-
-    let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year:any) => {
-  
-      let mon = d3.groups(year[1], m => new Date(m.date).getMonth())
-  
-      let wrapper = new Array(12).fill({}).map((m, i)=> {
-        let activ = mon.filter(f => f[0] === i);
-        let activity = activ.length > 0 ? activ.flatMap(f => {
-          f[1] = f[1].map(a => {
-            a.month = i
-            a.year = year[0]
-          return a})
-          return f[1]}) : [];
-        if(activity.length > 0){ 
-          activity[0].firstMonth = true;
-        }
-        return { month: i, year: year[0], activities: activity }
-      });
-  
-      return {year: year[0], months: wrapper}
-    });
+    const yearMonth = dataStructureForTimeline(activity);
 
     let startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
     let endIndex = getIndexOfMonth(yearMonth[yearMonth.length - 1].months, 'last')
     yearMonth[0].months = yearMonth[0].months.filter((f, i)=> i > startIndex - 1)
     yearMonth[yearMonth.length - 1].months = yearMonth[yearMonth.length - 1].months.filter((f, i)=> i < endIndex)
-  
-    let jitter = (val:any) => Math.random() * val;
-
+ 
     React.useLayoutEffect(() => {
       // I don't think it can be null at this point, but better safe than sorry
        if (svgRef.current) {
-         console.log('WINDOW WIDTH',window.getComputedStyle(svgRef.current).width)
           setNewWidth(window.getComputedStyle(svgRef.current).width);
        }
      });

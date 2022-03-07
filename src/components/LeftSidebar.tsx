@@ -10,7 +10,7 @@ import ThreadNav from './ThreadNav';
 
 const LeftSidebar = () => {
 
-    const [{ projectData }, dispatch] = useProjectState();
+    const [{ projectData, researchThreads }, dispatch] = useProjectState();
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
@@ -32,7 +32,7 @@ const LeftSidebar = () => {
 
     return(
         <Box margin="8px" p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
-            <ThreadNav />
+            <ThreadNav researchTs={researchThreads ? researchThreads.research_threads : null} viewType={'overview'}/>
             <br />
             <Box>
                 <span style={headerStyle}>

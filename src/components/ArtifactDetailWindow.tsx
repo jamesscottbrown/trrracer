@@ -21,6 +21,7 @@ import ReadonlyEntry from './ReadonlyEntry';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
+import ThreadNav from './ThreadNav';
 
 interface DetailProps {
     setViewType: (view: string) => void;
@@ -166,8 +167,6 @@ const DetailSidebar = (props:any) => {
 
     const [showThreadAdd, setShowThreadAdd] = useState(false);
 
-    console.log('FRAG SELETEDDD', fragSelected);
-
     let isArtifactInThread = researchThreads.research_threads.filter((f)=>{
         let temp = f.evidence.filter((e:any)=> e.type === 'artifact');
         temp = temp.length > 0 ? temp.filter((tm:any) => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
@@ -206,7 +205,7 @@ const DetailSidebar = (props:any) => {
             </div>
         )
     }
-    <Box style={{backgroundColor:'#D3D3D3', borderRadius:5, marginTop:15, marginBottom:15}}>
+    <Box style={{backgroundColor:'#ececec', borderRadius:5, marginTop:15, marginBottom:15}}>
         <span style={{fontSize:17, fontWeight:700, cursor:'pointer', padding:3, textAlign:'center'}} onClick={()=> {
             showThreadAdd ? 
             setShowThreadAdd(false) 
@@ -236,21 +235,26 @@ const DetailSidebar = (props:any) => {
             isArtifactInThread.length > 0 && (
                 <div>
                     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
-                {isArtifactInThread.map((at:any, i:number)=> (
-                    <Box key={`in-thread-${i}`}>
-                        <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
-                        <div style={{padding:5, borderLeft: "1px solid gray"}}>{
-                            at.evidence.map((e:any, j:number)=>(
-                                <React.Fragment key={`evid-${j}`}>{
-                                e.artifactIndex === selectedArtifactIndex ? 
-                                <div><span style={{fontWeight:600, display:"block"}}>{e.artifactTitle}</span>{e.rationale}</div> 
-                                :<div><span style={{fontSize:11, color:'gray'}}>{e.type}</span></div>}
-                                </React.Fragment>
-                            ))
-                        }</div>
-                    </Box>
-                ))}
+                    <ThreadNav researchTs={isArtifactInThread} view={'detail'} />
                 </div>
+               
+                // <div>
+                //     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
+                // {isArtifactInThread.map((at:any, i:number)=> (
+                //     <Box key={`in-thread-${i}`}>
+                //         <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
+                //         <div style={{padding:5, borderLeft: "1px solid gray"}}>{
+                //             at.evidence.map((e:any, j:number)=>(
+                //                 <React.Fragment key={`evid-${j}`}>{
+                //                 e.artifactIndex === selectedArtifactIndex ? 
+                //                 <div><span style={{fontWeight:600, display:"block"}}>{e.artifactTitle}</span>{e.rationale}</div> 
+                //                 :<div><span style={{fontSize:11, color:'gray'}}>{e.type}</span></div>}
+                //                 </React.Fragment>
+                //             ))
+                //         }</div>
+                //     </Box>
+                // ))}
+                // </div>
             )
         }
     </Box>

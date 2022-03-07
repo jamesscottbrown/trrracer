@@ -52,21 +52,19 @@ interface EntryPropTypes {
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, openFile, makeEditable, setViewType } = props;
   const [showPopover, setShowPopover] = useState(false);
+  const [{ projectData, folderPath, researchThreads }, dispatch] = useProjectState();
+
 
   const closePopover = () => {
     setShowPopover(false);
   };
 
-  const colorBadge = (val)=>{
-    if(val > .4){
-      return 'gray.400';
-    }else if(val <= .4 && val > .3){
-      return 'gray.300';
-    }else if(val <= .3 && val > .2){
-      return 'gray.200';
-    }else{
-      return 'gray.100'
-    }
+  const checkTagColor = (tagName:string) => {
+    let tagFil = researchThreads.research_threads.filter(f => {
+      return f.associated_tags.indexOf(tagName) > -1;
+    });
+    if(tagFil.length > 0) return tagFil[tagFil.length - 1].color;
+    return '#D4D4D4';
   }
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
@@ -76,8 +74,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   //   return kt.keywords.keywords.map(k => k)
   // });
  
-  const [{ projectData, folderPath }, dispatch] = useProjectState();
-
   const getColor = (tagName: string) => {
     const matchingTags = projectData.tags.filter(
       (t: TagType) => t.title === tagName
@@ -114,7 +110,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </Button>
           : ""
         }
-        
       </span>
     
       <Text style={{fontSize:15, fontWeight:"bold"}}>
@@ -128,11 +123,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             {entryData.tags.map((t) => 
               <Tag
                 key={t}
-                // borderColor={getColor(t)}
-                // borderWidth="5px"
-                // backgroundColor={getColor(t)}
-                backgroundColor={'gray.200'}
-                // color={textColor(getColor(t))}
+                backgroundColor={checkTagColor(t)}
                 marginRight={"0.25em"}
                 marginBottom={"0.25em"}
               >
@@ -154,7 +145,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
           <React.Fragment key={`fr-${f.title}-${i}`}>
-            <Box key={`${f.title}-${i}`} p={3}>
+            <Box bg={'#ececec'} key={`${f.title}-${i}`} p={3}>
               {showPopover ? (
                 <Popover isOpen={showPopover} onClose={closePopover}>
                   <PopoverTrigger>

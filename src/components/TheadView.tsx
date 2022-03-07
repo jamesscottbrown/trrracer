@@ -163,7 +163,7 @@ const ThreadView = () => {
     return(
       <Flex position={'relative'} top={220} >
           <Box margin="8px" p={5} flex={1} flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
-        <ThreadNav/>
+        <ThreadNav researchTs={researchThreads ? researchThreads.research_threads : null} view={'thread'}/>
         </Box>
         <Box flex={3} h='calc(100vh - 250px)' overflowY='auto' marginTop={15}>
           {researchThreads && (
