@@ -155,15 +155,16 @@ const ThreadedFragment = (props:any) => {
 
 const ThreadView = () => {
 
-  const [{projectData, folderPath, researchThreads, googleData, txtData}, dispatch] = useProjectState();
-  const [selectedThread, setSelectedThread] = useState(0);
+  const [{projectData, folderPath, researchThreads, selectedThread, googleData, txtData}, dispatch] = useProjectState();
+  
+
 
     const headerStyle = {fontSize:'19px', fontWeight:600}
 
     return(
       <Flex position={'relative'} top={220} >
           <Box margin="8px" p={5} flex={1} flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
-        <ThreadNav researchTs={researchThreads ? researchThreads.research_threads : null} view={'thread'}/>
+        <ThreadNav researchTs={researchThreads ? researchThreads.research_threads : null} viewType={'research threads'}/>
         </Box>
         <Box flex={3} h='calc(100vh - 250px)' overflowY='auto' marginTop={15}>
           {researchThreads && (

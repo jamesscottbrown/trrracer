@@ -377,6 +377,7 @@ const appStateReducer = (state, action) => {
         googleData: google_data,
         txtData: txtData,
         researchThreads: research_threads,
+        selectedThread: 0,
         filterTags: [],
         filterTypes: []
       }
@@ -519,6 +520,10 @@ const appStateReducer = (state, action) => {
     case 'SELECTED_ARTIFACT': {
       console.log('testing in dispatch', action.selectedArtifactEntry, action.selectedArtifactIndex)
       return {...state, selectedArtifactEntry: action.selectedArtifactEntry, selectedArtifactIndex: action.selectedArtifactIndex}
+    }
+
+    case 'SELECTED_THREAD':{
+      return {...state, selectedThread: action.selectedThread }
     }
 
     case 'ADD_URL': {

@@ -25,24 +25,24 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
   const [{ projectData, filterTags, filterTypes }, dispatch] = useProjectState();
 
-  const ref = React.useRef();
-  const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+  // const ref = React.useRef();
+  // const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
-  const { folderPath, viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
+  const { viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
 
-  console.log('PROJECT DATA', projectData)
+  console.log('PROJECT DATA VIEW', viewType)
 
-  React.useEffect(() => {
-  if (ref.current) {
-    setDimensions({
-      width: ref.current.offsetWidth,
-      height: ref.current.offsetHeight
-    });
+  // React.useEffect(() => {
+  // if (ref.current) {
+  //   setDimensions({
+  //     width: ref.current.offsetWidth,
+  //     height: ref.current.offsetHeight
+  //   });
 
-  }
-  }, []);
+  // }
+  // }, []);
 
   let splitTitle = (title:string)=>{
     let t = title.split('/');
@@ -94,6 +94,8 @@ return (
     <Box backgroundColor={'red.100'} flex={1.1} p={10} bg={useColorModeValue('white', 'gray.800')}
     color={useColorModeValue('gray.600', 'white')}>
 
+    {  viewType === 'activity view' && (
+    <> 
       <Button onClick={()=> console.log('BUTTON PUSH')}>Add events to timeline</Button>
 
       <Box>
@@ -106,7 +108,6 @@ return (
       </Box>
 
       <Box>
-     
       <FormControl display='flex' alignItems='center'>
       <FormLabel>{`Old ---> New`}</FormLabel>
         <Checkbox
@@ -116,14 +117,11 @@ return (
         </Checkbox>
         </FormControl>
       </Box>
-
-      <Box>
-
-
-    </Box>
+    </>
+    )}
     </Box>
     <Flex flex={4} flexDirection={'column'} >
-    <TopTimeline projectData={projectData} defineEvent={defineEvent} timeFilter={timeFilter} setTimeFilter={setTimeFilter} />
+    <TopTimeline defineEvent={defineEvent} timeFilter={timeFilter} setTimeFilter={setTimeFilter} viewType={viewType}/>
     <Box style={{width:'100%', display:'block'}}>
       {
         filterTags.length > 0 && (
@@ -149,26 +147,30 @@ return (
       }
     </Box>
     </Flex>
-    <Box flex="1.8" maxWidth='25%'>
-      <Flex flexFlow={'row wrap'} p={5}>
-        
-        <Button alignSelf={"center"} onClick={addEntry} type="button">
-          <FaPlus /> Add activity
-        </Button>
-  
-        <FileUpload
-          saveFiles={saveFiles}
-          containerStyle={{}}
-          msg={
-            <span style={{fontSize:'11px'}}>
-              Drag and drop some files here, or <b>click to select files</b>,
-              create a new entry.
-            </span>
-          }
-        />
-      </Flex>
+    {
+      viewType === 'activity view' && (
+        <Box flex="1.8" maxWidth='25%'>
+        <Flex flexFlow={'row wrap'} p={5}>
+          
+          <Button alignSelf={"center"} onClick={addEntry} type="button">
+            <FaPlus /> Add activity
+          </Button>
+    
+          <FileUpload
+            saveFiles={saveFiles}
+            containerStyle={{}}
+            msg={
+              <span style={{fontSize:'11px'}}>
+                Drag and drop some files here, or <b>click to select files</b>,
+                create a new entry.
+              </span>
+            }
+          />
+        </Flex>
+        </Box>
+      )
+    }
 
-    </Box>
     </Flex>
    
 </Box>

@@ -40,7 +40,7 @@ const TopTimeline = (projectProps:any)=> {
 
     const svgRef = React.useRef(null);
    
-    const { defineEvent, timeFilter, setTimeFilter } = projectProps;
+    const { defineEvent, setTimeFilter, viewType } = projectProps;
     const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
     const activity = projectData.entries;
     const [ newWidth, setNewWidth ] = useState('1000px');
@@ -48,6 +48,8 @@ const TopTimeline = (projectProps:any)=> {
     let width = +newWidth.split('px')[0];
     let height = 100;
     let margin = (width * .25);
+
+    console.log('VIEW TYPE', viewType);
 
     const yearMonth = dataStructureForTimeline(activity);
 
@@ -122,7 +124,7 @@ const TopTimeline = (projectProps:any)=> {
             return scale.domain().slice(iMin, iMax)
           }
 
-          if(!selectedArtifactEntry && !selectedArtifactIndex){
+          if(viewType === 'activity view'){
             const triangle = d3.symbol()
             .size(100)
             .type(d3.symbolTriangle)

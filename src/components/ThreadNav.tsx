@@ -58,7 +58,7 @@ const MiniTimline = (props:any) => {
 }
 const ThreadNav = (threadProps:any) => {
     const {researchTs, viewType} = threadProps;
-    const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+    const [{ projectData, selectedArtifactEntry, selectedArtifactIndex, selectedThread }, dispatch] = useProjectState();
     
     const [showThreads, setShowThreads] = useState(false);
     const [showCreateThread, setShowCreateThread] = useState(false);
@@ -81,7 +81,7 @@ const ThreadNav = (threadProps:any) => {
     return(
         <Box>
             {
-                viewType != 'detail' && (
+                viewType === 'activity view' && (
                     <div style={headerStyle} onClick={()=>{
                         showThreads ? setShowThreads(false) : setShowThreads(true);
                     }}>
@@ -97,8 +97,13 @@ const ThreadNav = (threadProps:any) => {
 
                 <Box  style={{marginTop:10, marginBottom:10}}>
                     {researchTs.map((rt:any, i:number)=>(
-                        <div key={`rt-${i}`} style={{borderLeft: '2px solid gray', paddingLeft:3}}>
-                            <span>{`${rt.title} `}<FaFillDrip style={{color: rt.color, display:"inline"}}/></span>
+
+                        <div key={`rt-${i}`} style={{borderLeft: '2px solid gray', paddingLeft:3, opacity: (viewType === 'research threads' && i != selectedThread) ? .5 : 1}}>
+                            <span 
+                            style={{cursor:'pointer'}}
+                            onClick={()=> {
+                                dispatch({type: 'SELECTED_THREAD', selectedThread:i})
+                            }}>{`${rt.title} `}<FaFillDrip style={{color: rt.color, display:"inline"}}/></span>
                             <MiniTimline researchT={rt} activities={projectData.entries}/>
                             {rt.associated_tags.map((t, i)=>
                                 <div key={`tag-${i}`} style={{backgroundColor:rt.color, fontSize:'11px', display:"inline-block", margin:3, padding:2, borderRadius:5, color:rt.color === "#3932a3" ? 'white':'black'}}>{t}</div>

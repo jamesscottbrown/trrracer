@@ -315,7 +315,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             }}>{"<< GO BACK TO OVERVIEW"}</Button>
          </Flex>
          <Flex alignContent={'center'}>
-         <Spacer></Spacer><Box flexGrow={4} minWidth={'50%'}><TopTimeline projectData={projectData}/></Box><Spacer></Spacer>
+         <Spacer></Spacer><Box flexGrow={4} minWidth={'50%'}><TopTimeline viewType={'detail'}/></Box><Spacer></Spacer>
          </Flex>
          
         </Box>

@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   Flex,
-  Box
+  Box,
+  Spacer,
+  Button
 } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
@@ -62,7 +64,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   }
 
   if (viewType === 'research threads') {
-
+   
     return (
       
       <div style={{height: '100vh', position:'fixed', top:0, bottom:0, width: '100%'}}>
@@ -76,9 +78,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
           timeFilter={timeFilter} 
           setTimeFilter={setTimeFilter}
           />
-        {/* <Flex position={'relative'} top={220}> */}
-          <ThreadView />
-        {/* </Flex> */}
+
+    
+        <ThreadView />
+        
       </div>
     );
   }
