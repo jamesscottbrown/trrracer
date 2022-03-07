@@ -144,17 +144,17 @@ const ThreadedFragment = (props:any) => {
                 <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
               ))}
           </div>
-          <div>
-            <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-            <span>{evidence.rationale}</span>
-          </div>
+          <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+        <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
+        <span>{evidence.rationale}</span>
+        </div>
         </Flex>
   }
   if(artifactChosen.fileType === 'txt'){
     let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title)[0];
     console.log('evidence',evidence.anchors[0].frag_type);
 
-    console.log(temp.text.split(evidence.anchors[0].frag_type));
+    
     let txtArray = temp.text.split(evidence.anchors[0].frag_type);
 
     return <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
@@ -164,10 +164,10 @@ const ThreadedFragment = (props:any) => {
                 <span style={{fontWeight:800}}>{evidence.anchors[0].frag_type}</span>
                 <span>{txtArray[1]}</span>
               </div>
-              <div>
-            <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-            <span>{evidence.rationale}</span>
-            </div>
+              <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+      <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
+      <span>{evidence.rationale}</span>
+      </div>
            </Flex>
   }
   return (
