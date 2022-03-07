@@ -5,7 +5,7 @@ import {
   Input,
   Textarea
 } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
 import { jitter } from './TopTimeline';
 import * as d3 from "d3";
@@ -46,7 +46,7 @@ const MiniTimline = (props:any) => {
       .attr('cy', ()=> jitter(10))
       .attr('r', 4.5)
       .attr('fill', researchT.color)
-      .attr('fill-opacity', .8)
+      .attr('fill-opacity', 1)
       .attr('stroke', '#ffffff')
 
 
@@ -56,10 +56,10 @@ const MiniTimline = (props:any) => {
         <div><svg ref={lilSVG} style={{height:'20px', width:"100%"}} /></div>
     )
 }
-
 const ThreadNav = (threadProps:any) => {
     const {researchTs, viewType} = threadProps;
-    const [{ projectData }, dispatch] = useProjectState();
+    const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+    
     const [showThreads, setShowThreads] = useState(false);
     const [showCreateThread, setShowCreateThread] = useState(false);
 
@@ -80,13 +80,18 @@ const ThreadNav = (threadProps:any) => {
 
     return(
         <Box>
-            <div style={headerStyle} onClick={()=>{
-                showThreads ? setShowThreads(false) : setShowThreads(true);
-            }}>
-            <span style={{display:'inline'}}>{"Research Threads"}</span>
-            <span style={{display:'inline'}}>
-                {showThreads ? <FaEye /> : <FaEyeSlash />}</span>
-            </div>
+            {
+                viewType != 'detail' && (
+                    <div style={headerStyle} onClick={()=>{
+                        showThreads ? setShowThreads(false) : setShowThreads(true);
+                    }}>
+                    <span style={{display:'inline'}}>{"Research Threads"}</span>
+                    <span style={{display:'inline'}}>
+                        {showThreads ? <FaEye /> : <FaEyeSlash />}</span>
+                    </div>
+                )
+            }
+          
             <Box>
             { researchTs ? (
 
@@ -98,41 +103,65 @@ const ThreadNav = (threadProps:any) => {
                             {rt.associated_tags.map((t, i)=>
                                 <div key={`tag-${i}`} style={{backgroundColor:rt.color, fontSize:'11px', display:"inline-block", margin:3, padding:2, borderRadius:5, color:rt.color === "#3932a3" ? 'white':'black'}}>{t}</div>
                             )}
+                            {
+                                viewType === 'detail' && (
+                                    <div>
+                                        <Box key={`in-thread-${i}`}>
+                                            {/* <span>{rt.title}<FaFill style={{color: rt.color, display:"inline", marginLeft:5}}/></span> */}
+                                            <div style={{padding:5, borderLeft: "1px solid gray"}}>{
+                                            rt.evidence.map((e:any, j:number)=>(
+                                                    <React.Fragment key={`evid-${j}`}>{
+                                                    e.artifactIndex === selectedArtifactIndex ? 
+                                                    <div><span style={{fontWeight:600, display:"block", backgroundColor:'#FFFBC8'}}>{e.artifactTitle}</span>{e.rationale}</div> 
+                                                    :<div><span style={{fontSize:'10px', color:'gray'}}>{e.type}</span></div>}
+                                                    </React.Fragment>
+                                                ))
+                                            }</div>
+                                        </Box>
+                                    </div>
+                                )
+                            }
                         </div>
                     ))
                     }
                 </Box>
                 ) : <span style={{marginTop:5, marginBottom:5}}>{"No research threads yet."}</span>}
             </Box>
-
-            <Button style={{fontSize:'11px', borderRadius:5, padding:5, border:'1px solid gray'}} onClick={()=> showCreateThread ? setShowCreateThread(false) : setShowCreateThread(true)}>{showCreateThread ? "Cancel thread" : `Start a thread `}{<FaPlus style={{paddingLeft:5}}/>}</Button>
             {
-                showCreateThread && (
-                    <Box style={{marginTop:10}}>
-
-                        <span style={{fontSize:14, fontWeight:600}}>
-                            <Input placeholder='Name your thread.' onChange={handleNameChange} />
-                        </span>
-
-                        <Textarea
-                        placeholder='Describe what this thread is.'
-                        onChange={handleDescriptionChange}
-                        ></Textarea>
-
+                viewType != 'detail' && (
+                    <React.Fragment>
+                        <Button style={{fontSize:'11px', borderRadius:5, padding:5, border:'1px solid gray'}} onClick={()=> showCreateThread ? setShowCreateThread(false) : setShowCreateThread(true)}>{showCreateThread ? "Cancel thread" : `Start a thread `}{<FaPlus style={{paddingLeft:5}}/>}</Button>
                         {
-                            (threadName && description) && (
-                                <Button onClick={()=>{
-                                    setName(null)
-                                    setDescription(null)
-                                    setShowCreateThread(false)
-                                    dispatch({type: 'CREATE_THREAD', threadName: threadName, threadDescription: description})
-                                }}>{"CREATE"}</Button>
+                        showCreateThread && (
+                            <Box style={{marginTop:10}}>
+
+                                <span style={{fontSize:14, fontWeight:600}}>
+                                    <Input placeholder='Name your thread.' onChange={handleNameChange} />
+                                </span>
+
+                                <Textarea
+                                placeholder='Describe what this thread is.'
+                                onChange={handleDescriptionChange}
+                                ></Textarea>
+
+                                {
+                                    (threadName && description) && (
+                                        <Button onClick={()=>{
+                                            setName(null)
+                                            setDescription(null)
+                                            setShowCreateThread(false)
+                                            dispatch({type: 'CREATE_THREAD', threadName: threadName, threadDescription: description})
+                                        }}>{"CREATE"}</Button>
+                                    )
+                                }
+
+                                </Box> 
                             )
                         }
-
-                    </Box> 
+                    </React.Fragment>
                 )
             }
+           
         </Box>
     )
 }

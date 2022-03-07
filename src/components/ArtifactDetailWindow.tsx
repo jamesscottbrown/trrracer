@@ -235,7 +235,7 @@ const DetailSidebar = (props:any) => {
             isArtifactInThread.length > 0 && (
                 <div>
                     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
-                    <ThreadNav researchTs={isArtifactInThread} view={'detail'} />
+                    <ThreadNav researchTs={isArtifactInThread} viewType={'detail'} />
                 </div>
                
                 // <div>
