@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import {
   Box,
   Flex,
-  Heading,
   Spacer,
   SimpleGrid,
-  PopoverTrigger,
+  Image
 } from '@chakra-ui/react';
+import path from 'path';
 
-import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 import ThreadNav from './ThreadNav';
@@ -60,10 +60,11 @@ const ThreadedActivity = (props:any) => {
 }
 
 const ThreadedArtifact = (props:any) => {
-  const {projectData, evidence, googleData, txtData} = props;
+  const {projectData, evidence, googleData, txtData, folderPath} = props;
   let activity = projectData.entries.filter(f=> f.title === evidence.activityTitle)[0];
   let artifactChosen = activity.files.filter(a=> a.title === evidence.artifactTitle)[0];
 
+  console.log('artifact chosen', artifactChosen);
 
   if(artifactChosen.fileType === 'gdoc'){
 
@@ -77,29 +78,52 @@ const ThreadedArtifact = (props:any) => {
                 <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
               ))}
           </div>
-          <div>
+          <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
             <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
             <span>{evidence.rationale}</span>
           </div>
         </Flex>
   }
   
-  if(artifactChosen.filetType === 'txt'){
+  if(artifactChosen.fileType === 'txt'){
     let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title);
 
     return <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
               <div style={{ height:'90%', overflow:'auto'}}>
               {temp[0].text}
               </div>
-              <div>
-            <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-            <span>{evidence.rationale}</span>
+              <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+              <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
+              <span>{evidence.rationale}</span>
             </div>
            </Flex>
   }
 
+  if(artifactChosen.fileType === 'pdf'){
+    return  <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
+     <div style={{ height:'500px', overflow:'auto'}}>
+      <embed style={{height:'90%'}} src={`file://${path.join(folderPath, artifactChosen.title)}`} type="application/pdf"/>
+    </div>
+    <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+      <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
+      <span>{evidence.rationale}</span>
+    </div>
+    </Flex>
+  }
+
   return (
-    <div>{'FILE NOT FOUND'}</div>
+    <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
+      <Image 
+      style={{maxWidth:'400px', height:'auto'}}
+      src={`file://${path.join(folderPath, artifactChosen.title)}`}
+      onClick={() => openFile(artifactChosen.title, folderPath)}
+      />
+      <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+      <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
+      <span>{evidence.rationale}</span>
+      </div>
+    </Flex>
+
   )
 
   
@@ -157,9 +181,7 @@ const ThreadView = () => {
 
   const [{projectData, folderPath, researchThreads, selectedThread, googleData, txtData}, dispatch] = useProjectState();
   
-
-
-    const headerStyle = {fontSize:'19px', fontWeight:600}
+  const headerStyle = {fontSize:'19px', fontWeight:600}
 
     return(
       <Flex position={'relative'} top={220} >
@@ -178,27 +200,29 @@ const ThreadView = () => {
                     {e.type === 'activity' ? 
                     <span style={{fontWeight: 700}}>{e.title}</span> : 
                     <span><span style={{fontWeight: 700}}>{e.artifactTitle}</span>{` (from ${e.activityTitle})`}</span>}
+                    <span onClick={()=>{
+                      let newEv = researchThreads.research_threads[selectedThread].evidence.filter((f, j) => j != i);
+                      researchThreads.research_threads[selectedThread].evidence = newEv;
+                      dispatch({ type: 'DELETE_EVIDENCE_FROM_THREAD', researchThreads });
+
+                    }}><FaTrash style={{cursor:'pointer',fill:'red', display:'inline', float:'inline-end', marginRight:10, marginLeft:10}}/></span>
                     <Spacer/>
                     <span style={{fontSize:'12px', color:'gray', textAlign:'right'}}>{e.dob}</span>
-                  </div>
-                  {
-                    e.type === 'activity' ? 
-                    <span>{e.type}</span> :
-                    <span>{`${'test'} ${e.type}`}</span>
-                  }
                   
-                  <div>
+                  </div>
+                  
+                  <div style={{marginTop:20}}>
                     { e.type === 'activity' && (
                       <ThreadedActivity projectData={projectData} evidence={e} folderPath={folderPath} />
                     )}
                     {
                       e.type === 'artifact' && (
-                        <ThreadedArtifact projectData={projectData} evidence={e} googleData={googleData} txtData={txtData}/>
+                        <ThreadedArtifact projectData={projectData} evidence={e} googleData={googleData} txtData={txtData} folderPath={folderPath}/>
                       )
                     }
                     {
                       e.type === 'fragment' && (
-                        <ThreadedFragment projectData={projectData} evidence={e} googleData={googleData} txtData={txtData} />
+                        <ThreadedFragment projectData={projectData} evidence={e} googleData={googleData} txtData={txtData} folderPath={folderPath}/>
                       )
                     }
                   </div>

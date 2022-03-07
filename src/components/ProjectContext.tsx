@@ -526,6 +526,10 @@ const appStateReducer = (state, action) => {
       return {...state, selectedThread: action.selectedThread }
     }
 
+    case 'DELETE_EVIDENCE_FROM_THREAD':{
+      return {...state, researchThreads: action.researchThreads}
+    }
+
     case 'ADD_URL': {
       let newFiles = state.projectData.entries[action.entryIndex].files;
       newFiles = [
