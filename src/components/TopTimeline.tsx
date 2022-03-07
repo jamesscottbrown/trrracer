@@ -41,7 +41,7 @@ const TopTimeline = (projectProps:any)=> {
     const svgRef = React.useRef(null);
    
     const { defineEvent, setTimeFilter, viewType } = projectProps;
-    const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+    const [{ projectData, selectedArtifactEntry, researchThreads, selectedThread }, dispatch] = useProjectState();
     const activity = projectData.entries;
     const [ newWidth, setNewWidth ] = useState('1000px');
 
@@ -238,10 +238,42 @@ const TopTimeline = (projectProps:any)=> {
             circles.filter((c:any)=> {
               return c.title === selectedArtifactEntry.title;
             }).attr('fill', 'red').attr('r', 10).attr('fill-opacity', 1)
+          }else if(viewType === 'research threads'){
+            console.log('selected thread',researchThreads.research_threads[selectedThread])
+
+            let threadG = circleG.selectAll('g.thread')
+            .data(researchThreads.research_threads[selectedThread].evidence)
+            .join('g').classed('thread', true);
+
+
+            let tCirc = threadG.append('circle').attr('cx', d=> xScale(new Date(d.dob)))
+            .attr('cy', 5)
+            .attr('r', 6)
+            .attr('fill', researchThreads.research_threads[selectedThread].color)
+            .attr('fill-opacity', 1)
+            .attr('stroke', '#FFFFFF');
+
+            threadG.each((d, i, n)=> {
+              if(i > 0){
+                let prev = d3.select(n[i - 1]).data()[0]
+                console.log('prev',prev);
+                d3.select(n[i]).append('line')
+                .attr('x1', xScale(new Date(prev.dob)))
+                .attr('y1', 5)
+                .attr('x2', d=> xScale(new Date(d.dob)))
+                .attr('y2', 5)
+                .attr('stroke', researchThreads.research_threads[selectedThread].color)
+                .attr('stroke-width', '1px');
+                
+              }
+              
+            })
+
+
           }
         }
 
-      }, [activity, selectedArtifactEntry]);
+      }, [activity, selectedArtifactEntry, viewType, selectedThread]);
 
     return(
         <Flex 
