@@ -314,16 +314,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
             }}>{"<< GO BACK TO OVERVIEW"}</Button>
          </Flex>
-         <Flex><Spacer></Spacer><TopTimeline projectData={projectData}/><Spacer></Spacer></Flex>
+         <Flex alignContent={'center'}>
+         <Spacer></Spacer><Box flexGrow={4} minWidth={'50%'}><TopTimeline projectData={projectData}/></Box><Spacer></Spacer>
+         </Flex>
+         
         </Box>
             <Flex position={'relative'} top={220} bottom={0} height={'calc(100% - 150px)'}>
                 <DetailSidebar fragSelected={fragSelected} setFragSelected={setFragSelected} selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} />
                 <Box flex="4" >
                     {
                         (selectedArtifactEntry.files[selectedArtifactIndex].fileType === 'txt' || selectedArtifactEntry.files[selectedArtifactIndex].fileType === 'gdoc') && (
-                            <Box p={5} width={'100%'} alignContent={'center'}>
-                                <QueryBar artifactData={selectedArtifactEntry.files[selectedArtifactIndex]}/>
-                            </Box>
+                            <Flex p={5} width={'100%'} alignItems={'center'} alignContent={'center'}>
+                                <QueryBar marginLeft={60} artifactData={selectedArtifactEntry.files[selectedArtifactIndex]}/>
+                            </Flex>
                         )
                     }
                     

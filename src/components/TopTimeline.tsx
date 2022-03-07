@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react';
 
 import * as d3 from "d3";
-import { getIndexOfMonth, monthDiff } from '../timeHelperFunctions';
+import { getIndexOfMonth } from '../timeHelperFunctions';
 import { useProjectState } from './ProjectContext';
 
 export const dataStructureForTimeline = (activityData:any) => {
@@ -43,11 +43,11 @@ const TopTimeline = (projectProps:any)=> {
     const { defineEvent, timeFilter, setTimeFilter } = projectProps;
     const [{ projectData, selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
     const activity = projectData.entries;
-    const [ newWidth, setNewWidth ] = useState('1200px');
+    const [ newWidth, setNewWidth ] = useState('1000px');
 
     let width = +newWidth.split('px')[0];
     let height = 100;
-    let margin = 10;
+    let margin = (width * .25);
 
     const yearMonth = dataStructureForTimeline(activity);
 
@@ -86,7 +86,6 @@ const TopTimeline = (projectProps:any)=> {
           .attr('cx', d=> xScale(new Date(d.date)))
           .attr('cy', ()=> jitter(10))
           .attr('r', 5)
-      
           .attr('fill', 'gray')
           .attr('fill-opacity', .4)
   
@@ -101,10 +100,14 @@ const TopTimeline = (projectProps:any)=> {
           xAxisGroup.select(".domain").remove();
           xAxisGroup.selectAll("line").enter().append('line').attr("stroke", 'gray.900');
    
-          xAxisGroup.selectAll("text").join('text')
-              .attr("opacity", 0.5)
-              .attr("color", "gray.900")
-              .attr("font-size", "0.75rem");
+          xAxisGroup.selectAll("text")
+              .join('text')
+              .attr("opacity", 0.9)
+              .attr("font-size", "0.55rem")
+              .style("text-anchor", "end")
+              .attr("dx", "-1em")
+              .attr("dy", "-.2em")
+              .attr("transform", "rotate(-65)");
 
         if(!defineEvent){
 
@@ -120,6 +123,10 @@ const TopTimeline = (projectProps:any)=> {
           }
 
           if(!selectedArtifactEntry && !selectedArtifactIndex){
+            const triangle = d3.symbol()
+            .size(100)
+            .type(d3.symbolTriangle)
+
             const brushed = function(event, d) {
 
               if (!event.selection && !event.sourceEvent) return;
@@ -152,7 +159,7 @@ const TopTimeline = (projectProps:any)=> {
                   } 
                   return year;
                })
-            
+
                 // update circles
                 d3.selectAll('circle')
                   .attr('opacity', (d, i, n) => {
@@ -172,6 +179,8 @@ const TopTimeline = (projectProps:any)=> {
             const gBrush = svg.append('g')
             .call(bX)
             .call(bX.move, [0, (width - margin)])
+
+            gBrush.style('opacity', .5)
   
               // Custom handlers
             // Handle group
@@ -200,6 +209,19 @@ const TopTimeline = (projectProps:any)=> {
               }).style('font-size', '11px')
                  // Visible Line
 
+            // Triangle
+            gHandles.selectAll('.triangle')
+            .data(d => [d])
+            .enter()
+            .append('path')
+            .attr('class', d => `triangle ${d}`)
+            .attr('d', triangle)
+            .attr('transform', d => {
+              const x = d == 'handle--o' ? -6 : 6,
+                    rot = d == 'handle--o' ? -90 : 90;
+              return `translate(${x}, ${height / 2}) rotate(${rot})`;
+            });
+
             gHandles.selectAll('.line')
               .data(d => [d])
               .join('line')
@@ -210,18 +232,17 @@ const TopTimeline = (projectProps:any)=> {
               .attr('y2', height + 5)
               .attr('stroke', 'black');
 
-          }else{
+          }else if(selectedArtifactEntry){
             circles.filter((c:any)=> {
               return c.title === selectedArtifactEntry.title;
-            }).attr('fill', 'red').attr('r', 10)
+            }).attr('fill', 'red').attr('r', 10).attr('fill-opacity', 1)
           }
         }
 
-      }, [activity]);
+      }, [activity, selectedArtifactEntry]);
 
     return(
         <Flex 
-        // flex={4} 
         bg={useColorModeValue('white', 'gray.800')}
         color={useColorModeValue('gray.600', 'white')}
         h={height}
