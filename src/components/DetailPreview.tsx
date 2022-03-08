@@ -1,6 +1,7 @@
 import path from 'path';
 import React, { useState } from 'react';
-import { ipcRenderer } from 'electron';
+// const  EmlParser = require('eml-parser');
+// import EmlParser from 'eml-parser';
 
 import {
   Image,
@@ -10,11 +11,8 @@ import {
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
-import { ImFilePdf } from 'react-icons/im'
 import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
-
-
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -35,6 +33,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   const [{ googleData, txtData }, dispatch] = useProjectState();
 
   let title = artifact.title;
+
+  console.log('TEST EML', EmlParser)
 
   if (
     title.endsWith('.mp4') ||

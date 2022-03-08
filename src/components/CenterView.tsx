@@ -23,7 +23,6 @@ const CenterView = (projectProps: any) => {
 
   const [{projectData, filterTags, filterTypes}, dispatch] = useProjectState()
   
-
   //SWITCH THIS TO THE PROJECTDATA
   const tagFilteredEntries = projectEntries
   .filter((entryData: any) => {
