@@ -16,7 +16,6 @@ import {
 } from './types';
 
 import Entry from './Entry';
-
 import ReadonlyEntry from './ReadonlyEntry';
 
 

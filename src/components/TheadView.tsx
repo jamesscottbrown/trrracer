@@ -16,6 +16,8 @@ import GoogDriveParagraph from './GoogDriveElements';
 import FileTextRender from './FileTextRender';
 import AttachmentPreview from './AttachmentPreview';
 import { openFile } from './ProjectListView';
+import DetailPreview from './DetailPreview';
+
 
 
 const ThreadedActivity = (props:any) => {
@@ -60,73 +62,25 @@ const ThreadedActivity = (props:any) => {
 }
 
 const ThreadedArtifact = (props:any) => {
-  const {projectData, evidence, googleData, txtData, folderPath} = props;
+  const {projectData, evidence, folderPath} = props;
+ 
   let activity = projectData.entries.filter(f=> f.title === evidence.activityTitle)[0];
   let artifactChosen = activity.files.filter(a=> a.title === evidence.artifactTitle)[0];
 
   console.log('artifact chosen', artifactChosen);
-
-  if(artifactChosen.fileType === 'gdoc'){
-
-    let goog = googleData[artifactChosen.fileId];
-    let gContent = goog["body"]["content"].filter(f => f.startIndex);
-   
-    return <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
-            <div style={{ height:'400px', overflow:'auto', fontSize:'11px', width:'60%'}}>
-            {
-              gContent.map((m:any, i:number)=> (
-                <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
-              ))}
-          </div>
-          <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
-            <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-            <span>{evidence.rationale}</span>
-          </div>
-        </Flex>
-  }
   
-  if(artifactChosen.fileType === 'txt'){
-    let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title);
-
-    return <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
-              <div style={{ height:'90%', overflow:'auto'}}>
-              {temp[0].text}
-              </div>
-              <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
-              <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-              <span>{evidence.rationale}</span>
-            </div>
-           </Flex>
-  }
-
-  if(artifactChosen.fileType === 'pdf'){
-    return  <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
-     <div style={{ height:'500px', overflow:'auto'}}>
-      <embed style={{height:'90%'}} src={`file://${path.join(folderPath, artifactChosen.title)}`} type="application/pdf"/>
-    </div>
-    <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
-      <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
-      <span>{evidence.rationale}</span>
-    </div>
-    </Flex>
-  }
-
   return (
     <Flex flexDirection={'row'} alignItems={'center'} justifyContent={'space-around'}>
-      <Image 
-      style={{maxWidth:'400px', height:'auto'}}
-      src={`file://${path.join(folderPath, artifactChosen.title)}`}
-      onClick={() => openFile(artifactChosen.title, folderPath)}
-      />
-      <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:5}}>
+      <div style={{width:'60%', maxHeight:'600px', overflow:'auto'}}>
+      <DetailPreview setFragSelected={null} folderPath={folderPath} artifact={artifactChosen} activity={activity} openFile={openFile}/>
+      </div>
+      <div style={{maxWidth:200, borderRadius:5, backgroundColor:'#ececec', padding:10}}>
       <span style={{display:'block', fontWeight:700}}>{'Why was this included:'}</span>
       <span>{evidence.rationale}</span>
       </div>
     </Flex>
 
-  )
-
-  
+  )  
 }
 
 const ThreadedFragment = (props:any) => {
@@ -217,7 +171,7 @@ const ThreadView = () => {
                     )}
                     {
                       e.type === 'artifact' && (
-                        <ThreadedArtifact projectData={projectData} evidence={e} googleData={googleData} txtData={txtData} folderPath={folderPath}/>
+                        <ThreadedArtifact projectData={projectData} evidence={e} folderPath={folderPath}/>
                       )
                     }
                     {

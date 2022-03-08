@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import path from 'path';
+
 import {
   Flex,
   Box,
   Button,
   Spacer,
-  Textarea,
-  Popover,
-  PopoverTrigger,
-  PopoverArrow,
-  PopoverContent,
-  PopoverBody
+  Textarea
 } from '@chakra-ui/react';
 
-import { FaFill } from 'react-icons/fa';
 import { openFile } from './ProjectListView';
 
 import TopTimeline from './TopTimeline';
@@ -38,7 +32,7 @@ const ArtifactToThread = (props:any) => {
     const [showDesc, setShowDesc] = useState(false);
     const [threadRat, setThreadRat] = useState(null);
 
-    let handleDescriptionChange = (e) => {
+    let handleDescriptionChange = (e:any) => {
         let inputValue = e.target.value
         setThreadRat(inputValue)
     }
@@ -74,7 +68,7 @@ const FragmentToThread = (props:any) => {
     const [showDesc, setShowDesc] = useState(false);
     const [threadRat, setThreadRat] = useState(null);
 
-    let handleDescriptionChange = (e) => {
+    let handleDescriptionChange = (e:any) => {
         let inputValue = e.target.value
         setThreadRat(inputValue)
     }
@@ -92,7 +86,7 @@ const FragmentToThread = (props:any) => {
                     ></Textarea>
                     <Button
                     onClick={()=> {
-                        console.log(fragSelected)
+                      
                         setShowDesc(false);
                         dispatch({type: "ADD_FRAGMENT_TO_THREAD", activity: activity, rationale:threadRat, artifactIndex: artifactIndex, threadIndex: threadIndex, fragment:fragSelected, fragmentType:'text'})
                         setFragSelected(null)
@@ -110,10 +104,10 @@ const InteractiveActivityTag = (props:any) => {
     const [{ projectData }, dispatch] = useProjectState();
     const [expandedTag, setExpandedTag] = useState(false);
 
-    let tagMatches = projectData.entries.filter(f => f.tags.indexOf(tag) > -1);
-    console.log('tagmatches', tagMatches);
-    let indexOfE = tagMatches.map(m=> m.title).indexOf(selectedArtifactEntry.title)
-    console.log('index of e', indexOfE);
+    let tagMatches = projectData.entries.filter((f:any) => f.tags.indexOf(tag) > -1);
+
+    let indexOfE = tagMatches.map((m:any)=> m.title).indexOf(selectedArtifactEntry.title)
+
     return (
  
             <Box key={`tag-sel-${index}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
@@ -167,7 +161,7 @@ const DetailSidebar = (props:any) => {
 
     const [showThreadAdd, setShowThreadAdd] = useState(false);
 
-    let isArtifactInThread = researchThreads.research_threads.filter((f)=>{
+    let isArtifactInThread = researchThreads.research_threads.filter((f:any)=>{
         let temp = f.evidence.filter((e:any)=> e.type === 'artifact');
         temp = temp.length > 0 ? temp.filter((tm:any) => tm.activityTitle === selectedArtifactEntry.title && tm.artifactIndex === selectedArtifactIndex) : [];
         return temp.length > 0;
@@ -273,7 +267,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     );
 
     const [fragSelected, setFragSelected] = useState(null);
-    console.log('testing', selectedArtifactEntry.files[selectedArtifactIndex])
+  
 
     useEffect(() => {
         if (editable.length === projectData.entries.length - 1) {
@@ -346,7 +340,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                                     dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactIndex - 1)})
                                 }else{
                                     dispatch({type:'SELECTED_ARTIFACT', selectedArtifactEntry: selectedArtifactEntry, selectedArtifactIndex: (selectedArtifactEntry.files.length - 1)})
-                                    console.log(selectedArtifactIndex)
+                                  
                                 }
                             }
                             } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>

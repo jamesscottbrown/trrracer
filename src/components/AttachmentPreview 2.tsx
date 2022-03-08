@@ -15,10 +15,11 @@ interface AttachmentPreviewPropsType {
   folderPath: string;
   title: string;
   openFile: (title: string, fp: string) => void;
+  size:number;
 }
 
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
-  const { folderPath, title, openFile } = props;
+  const { folderPath, title, openFile, size } = props;
 
   if (
     title.endsWith('.mp4') ||
@@ -36,7 +37,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <audio src={`file://${path.join(folderPath, title)}`} controls />;
   }
 
-  const size = '65%';
+  // const size = '65%';
 
   if (title.endsWith('.csv')) {
     return <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />;

@@ -15,11 +15,13 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 
 
+
 interface DetailPreviewPropsType {
   folderPath: string;
   artifact: any;
   activity: any;
   openFile: (title: string, fp: string) => void;
+  setFragSelected: any;
 }
 
 const styleInterpreter = {
@@ -69,21 +71,30 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     if(Object.keys(googleData).indexOf(artifact.fileId) > -1){
 
       let googD = googleData[artifact.fileId];
-      let gContent = googD["body"]["content"].filter(f => f.startIndex)
+
+      console.log('artifact comments', artifact.comments.comments, googD);
+
+      let gContent = googD["body"]["content"].filter((f:any) => f.startIndex)
       
       return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
+        
         <div
-         onMouseUp={()=> {
-             
-          let selObj = window.getSelection();
-          setFragSelected(selObj?.toString())
+        onMouseUp={()=> {
+          if(setFragSelected){
+            let selObj = window.getSelection();
+            setFragSelected(selObj?.toString())
+          }else{
+            console.log('mouseup');
+          }
         }}
         style={{ height:'90%', overflow:'auto'}}>
           {
           gContent.map((m:any, i:number)=> (
-            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
+            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} comments={artifact.comments.comments} />
           ))}
         </div>
+  
+       
       </Box>
 
     }
@@ -95,12 +106,16 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
     
-    let temp = txtData['text-data'].filter(f=> f['entry-title'] === activity.title);
+    let temp = txtData['text-data'].filter((f:any)=> f['entry-title'] === activity.title);
 
     return <div 
             onMouseUp={()=> {
-              let selObj = window.getSelection();
-              setFragSelected(selObj?.toString())
+              if(setFragSelected){
+                let selObj = window.getSelection();
+                setFragSelected(selObj?.toString())
+              }else{
+                console.log('mouseup');
+              }
             }}
             style={{ height:'90%', overflow:'auto'}}>
             {temp[0].text}

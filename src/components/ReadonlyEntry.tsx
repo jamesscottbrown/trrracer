@@ -38,8 +38,6 @@ interface EntryPropTypes {
   openFile: (a: string, fp: string) => void;
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
-  setSelectedArtifactIndex: (index: number) => void;
-  setSelectedArtifactEntry: (ent: any) => void;
 }
 
   const converter = new Showdown.Converter({
@@ -60,7 +58,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   };
 
   const checkTagColor = (tagName:string) => {
-    let tagFil = researchThreads.research_threads.filter(f => {
+    let tagFil = researchThreads.research_threads.filter((f:any) => {
       return f.associated_tags.indexOf(tagName) > -1;
     });
     if(tagFil.length > 0) return tagFil[tagFil.length - 1].color;
