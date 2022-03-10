@@ -39,8 +39,6 @@ const CenterView = (projectProps: any) => {
     );
   })
   .map((e, index) => ({ ...e, index }));
-
-  console.group('FILTERED ENTRIES LENGTH', filteredEntries.length)
   
   let years = d3.groups(filteredEntries, y => new Date(y.date).getFullYear())
 

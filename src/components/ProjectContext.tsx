@@ -503,7 +503,6 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATED_GOOGLE_IN_ENTRY': {
-         
       return action.newProjectData
     }
 
@@ -518,7 +517,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'SELECTED_ARTIFACT': {
-      console.log('testing in dispatch', action.selectedArtifactEntry, action.selectedArtifactIndex)
+     
       return {...state, selectedArtifactEntry: action.selectedArtifactEntry, selectedArtifactIndex: action.selectedArtifactIndex}
     }
 

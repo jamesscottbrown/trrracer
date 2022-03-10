@@ -106,8 +106,6 @@ const InteractiveActivityTag = (props:any) => {
 
     let tagMatches = projectData.entries.filter((f:any) => f.tags.indexOf(tag) > -1);
 
-    let indexOfE = tagMatches.map((m:any)=> m.title).indexOf(selectedArtifactEntry.title)
-
     return (
  
             <Box key={`tag-sel-${index}`} style={{padding:5, backgroundColor:'#D3D3D3', borderRadius:5, margin:5}}>
@@ -187,7 +185,12 @@ const DetailSidebar = (props:any) => {
             <Box>
                 <span style={{fontSize:20, fontWeight:700}}>Activity Tags</span>
                 {selectedArtifactEntry.tags.map((t:any, i:number)=> ( 
-                    <InteractiveActivityTag selectedArtifactEntry={selectedArtifactEntry} selectedArtifactIndex={selectedArtifactIndex} tag={t} index={i}/>
+                    <InteractiveActivityTag 
+                        key={`it-${i}`} 
+                        selectedArtifactEntry={selectedArtifactEntry} 
+                        selectedArtifactIndex={selectedArtifactIndex} 
+                        tag={t} 
+                        index={i}/>
                 ))
             }</Box>
         }

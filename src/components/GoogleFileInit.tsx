@@ -6,10 +6,7 @@ import {
   ButtonGroup,
   Editable,
   EditableInput,
-  EditablePreview,
-  Heading,
-  ListItem,
-  UnorderedList,
+  EditablePreview
 } from '@chakra-ui/react';
 
 
@@ -25,13 +22,12 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   const sendToFlask = async() =>{
 
     setShowFileCreate(false);
-
-    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`);
-
-    let newData = await response.json();
-
-    dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData })
     
+    const response = await fetch(`http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`);
+    
+    let newData = await response.json();
+    
+    dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData })
   } 
 
   console.log('STATE', state);

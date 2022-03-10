@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box
-} from '@chakra-ui/react';
+
 import * as d3 from "d3";
 import path from 'path';
 

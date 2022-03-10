@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import {
   Box,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Button,
 } from '@chakra-ui/react';
+
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 import * as d3 from "d3";
 import { useProjectState } from './ProjectContext';
@@ -11,6 +18,7 @@ import ThreadNav from './ThreadNav';
 const LeftSidebar = () => {
 
     const [{ projectData, researchThreads }, dispatch] = useProjectState();
+    const [fileTypeShown, setFileTypeShown] = useState('See All Files');
 
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
@@ -43,10 +51,22 @@ const LeftSidebar = () => {
                 </span><br></br>
             </Box>
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
-                {sortedTypes.map((m:any, i:any) => (
+                {/* {sortedTypes.map((m:any, i:any) => (
                     <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i} />
                 ))}
-                <br></br>
+                <br></br> */}
+                <Menu>
+                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                    {fileTypeShown}
+                </MenuButton>
+                <MenuList>
+                    <MenuItem>Download</MenuItem>
+                    <MenuItem>Create a Copy</MenuItem>
+                    <MenuItem>Mark as Draft</MenuItem>
+                    <MenuItem>Delete</MenuItem>
+                    <MenuItem>Attend a Workshop</MenuItem>
+                </MenuList>
+                </Menu>
             </Box>
             <span style={headerStyle}>
                 {`${tags.length} Tags`}

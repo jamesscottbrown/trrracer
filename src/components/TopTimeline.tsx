@@ -49,8 +49,6 @@ const TopTimeline = (projectProps:any)=> {
     let height = 100;
     let margin = (width * .25);
 
-    console.log('VIEW TYPE', viewType);
-
     const yearMonth = dataStructureForTimeline(activity);
 
     let startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
@@ -239,7 +237,6 @@ const TopTimeline = (projectProps:any)=> {
               return c.title === selectedArtifactEntry.title;
             }).attr('fill', 'red').attr('r', 10).attr('fill-opacity', 1)
           }else if(viewType === 'research threads'){
-            console.log('selected thread',researchThreads.research_threads[selectedThread])
 
             let threadG = circleG.selectAll('g.thread')
             .data(researchThreads.research_threads[selectedThread].evidence)
@@ -256,7 +253,7 @@ const TopTimeline = (projectProps:any)=> {
             threadG.each((d, i, n)=> {
               if(i > 0){
                 let prev = d3.select(n[i - 1]).data()[0]
-                console.log('prev',prev);
+              
                 d3.select(n[i]).append('line')
                 .attr('x1', xScale(new Date(prev.dob)))
                 .attr('y1', 5)

@@ -1,11 +1,8 @@
 import path from 'path';
 import React, { useState } from 'react';
-// const  EmlParser = require('eml-parser');
-// import EmlParser from 'eml-parser';
 
 import {
   Image,
-  Flex,
   Box
 } from '@chakra-ui/react';
 
@@ -13,6 +10,7 @@ import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumen
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
+import EmailRender from './EmailRender';
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -34,7 +32,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   let title = artifact.title;
 
-  console.log('TEST EML', EmlParser)
 
   if (
     title.endsWith('.mp4') ||
@@ -71,8 +68,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     if(Object.keys(googleData).indexOf(artifact.fileId) > -1){
 
       let googD = googleData[artifact.fileId];
-
-      console.log('artifact comments', artifact.comments.comments, googD);
 
       let gContent = googD["body"]["content"].filter((f:any) => f.startIndex)
       
@@ -130,7 +125,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />;
   }
   if (title.endsWith('.eml')) {
-    return <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />;
+    // let fetchData = async()=> {}
+    // const response = await fetch(`http://127.0.0.1:5000/create_google_file/${title}/${state.projectData.title}`);
+    // console.log('response!!!',response);
+    //return <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />;
+    return <EmailRender setFragSelected={setFragSelected} title={title} />
   }
 
   if (title.endsWith('.pdf')) {

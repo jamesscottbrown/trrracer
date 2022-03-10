@@ -8,6 +8,10 @@ from nlp_work import get_frequent_words_all_files, term_freq_for_entry, concorda
 from doc_clean import clean
 from word_extraction import extract_words_yake, use_yake_for_text
 from concordance import key_concord
+import datetime
+import json
+import eml_parser
+from email import message_from_file, policy, parser
 
 
 app = Flask(__name__)
@@ -18,6 +22,11 @@ DOCUMENT_PATH_JEN = '/Volumes/GoogleDrive/Shared drives/trrrace/Jen Artifact Trr
 FOLDER_ID_JEN  = '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp'
 DOCUMENT_PATH_EVO = '/Volumes/GoogleDrive/Shared drives/trrrace/EvoBio Design Study/'
 FOLDER_ID_EVO = '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC'
+
+def json_serial(obj):
+    if isinstance(obj, datetime.datetime):
+        serial = obj.isoformat()
+        return serial
 
 def reformat(entries):
     indexer = 0
@@ -98,6 +107,28 @@ def get_google_comments(path):
     json.dump(comms, outfile)
 
     return comms
+
+@app.route("/parse_eml/<string:name>/<string:path>")
+def parse_eml(name, path):
+
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+        
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+        
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+
+    with open(final_path + name, 'rb') as fp:
+        policy500 = policy.default.clone(max_line_length=500)
+        msg = parser.BytesParser(policy=policy500).parse(fp)
+        
+    text = msg.get_body(preferencelist=('plain')).get_content()
+
+    return text
+
+
 
 @app.route("/create_google_file/<string:name>/<string:type>/<string:entrynum>/<string:path>")
 def create_google(name, type, entrynum, path):
@@ -214,8 +245,6 @@ def yake_extract_words():
     outfile = open(DOCUMENT_PATH+'keyword_data_array.json', 'w')
     json.dump(bob, outfile)
     return str(blob_array)
-
-
 
  # load_all_blobs_as_corpus(document_path)
     # new_json["entries"] = reformat(d_b_json["entries"]
