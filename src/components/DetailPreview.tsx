@@ -11,6 +11,7 @@ GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
 import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
+import MarkableImage from './MarkableImage';
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -138,6 +139,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.HEIC')) {
     return <GrDocumentImage onClick={() => openFile(title, folderPath)} size={size} />;
+  }
+  if (title.endsWith('.png')) {
+    return <MarkableImage imgPath={`file://${path.join(folderPath, title)}`}/>
   }
   return (
     <Image
