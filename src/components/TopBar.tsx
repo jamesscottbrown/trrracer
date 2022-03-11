@@ -25,24 +25,9 @@ const TopBar = (ProjectPropValues: ProjectViewProps) =>{
 
   const [{ projectData, filterTags, filterTypes }, dispatch] = useProjectState();
 
-  // const ref = React.useRef();
-  // const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
-
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
   const { viewType, setViewType, reversedOrder, setReversedOrder, setNewTitle, timeFilter, setTimeFilter } = ProjectPropValues;
-
-  console.log('PROJECT DATA VIEW', viewType)
-
-  // React.useEffect(() => {
-  // if (ref.current) {
-  //   setDimensions({
-  //     width: ref.current.offsetWidth,
-  //     height: ref.current.offsetHeight
-  //   });
-
-  // }
-  // }, []);
 
   let splitTitle = (title:string)=>{
     let t = title.split('/');
@@ -134,7 +119,7 @@ return (
           </div>)
         )
       }
-            {
+            {/* {
         filterTypes.length > 0 && (
           filterTypes.map((t, i)=> 
           <div key={`tags-${i}`} style={{display:'inline-block', margin:5, backgroundColor:'gray', color:'#ffffff', borderRadius:5, padding:5}}>
@@ -144,7 +129,7 @@ return (
             }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
           </div>)
         )
-      }
+      } */}
     </Box>
     </Flex>
     {

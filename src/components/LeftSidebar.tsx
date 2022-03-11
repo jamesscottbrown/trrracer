@@ -17,15 +17,16 @@ import ThreadNav from './ThreadNav';
 
 const LeftSidebar = () => {
 
-    const [{ projectData, researchThreads }, dispatch] = useProjectState();
-    const [fileTypeShown, setFileTypeShown] = useState('See All Files');
-
+    const [{ projectData, researchThreads, filterTypes }, dispatch] = useProjectState();
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
+    const [fileTypeShown, setFileTypeShown] = useState({title:'all', matches: artifacts.length});
+
     let types = d3.groups(artifacts, a => a.fileType).map(ty => {
-        return {title: ty[0], matches: ty[1]}
+        return {title: ty[0], matches: ty[1].length}
     });
-    let sortedTypes = types.sort((a, b)=> b.matches.length - a.matches.length);
+    let sortedTypes = types.sort((a, b)=> b.matches - a.matches);
+    sortedTypes.push({title:'all', matches: artifacts.length})
     
     let tags = projectData.tags.map(t => {
         t.matches = projectData.entries.filter(f=> {
@@ -45,10 +46,11 @@ const LeftSidebar = () => {
             <Box>
                 <span style={headerStyle}>
                     {`${projectData.entries.length} Activities`} 
-                </span><br></br>
-                <span style={headerStyle}>
+                </span>
+                {/* <span style={headerStyle}>
                     {`${artifacts.length} Artifacts`}
-                </span><br></br>
+                </span> */}
+                <br></br>
             </Box>
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 {/* {sortedTypes.map((m:any, i:any) => (
@@ -57,14 +59,27 @@ const LeftSidebar = () => {
                 <br></br> */}
                 <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                    {fileTypeShown}
+                    {`View ${fileTypeShown.title} artifacts (${fileTypeShown.matches})`}
                 </MenuButton>
                 <MenuList>
-                    <MenuItem>Download</MenuItem>
-                    <MenuItem>Create a Copy</MenuItem>
-                    <MenuItem>Mark as Draft</MenuItem>
-                    <MenuItem>Delete</MenuItem>
-                    <MenuItem>Attend a Workshop</MenuItem>
+                    <MenuItem>{'all'}</MenuItem>
+                    {
+                       sortedTypes.map((m:any, i:any) => (
+                        <MenuItem 
+                            key={`type-${i}`} 
+                            data={m} 
+                            index={i}
+                            onClick={()=>{
+                                setFileTypeShown(m);
+                                if(m.title != 'all'){
+                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, m.title] });
+                                }else{
+                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [] });
+                                }
+                            }}
+                        >{`${m.title} (${m.matches})`}</MenuItem>
+                        ))
+                    }
                 </MenuList>
                 </Menu>
             </Box>
