@@ -13,7 +13,7 @@ import { useProjectState } from './ProjectContext';
 
 const SidebarButton = (sidebarProps: any) => {
   const { isTag, index, data } = sidebarProps;
-  const [{ researchThreads, filterTags, filterTypes }, dispatch] = useProjectState();
+  const [{ researchThreads, filterTags }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);

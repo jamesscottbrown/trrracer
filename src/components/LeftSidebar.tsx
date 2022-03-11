@@ -17,7 +17,7 @@ import ThreadNav from './ThreadNav';
 
 const LeftSidebar = () => {
 
-    const [{ projectData, researchThreads, filterTypes }, dispatch] = useProjectState();
+    const [{ projectData, researchThreads, filterType }, dispatch] = useProjectState();
     let artifacts = projectData.entries.flatMap(f=> f.files);
 
     const [fileTypeShown, setFileTypeShown] = useState({title:'all', matches: artifacts.length});
@@ -43,13 +43,13 @@ const LeftSidebar = () => {
         <Box margin="8px" p={5} flex='.7' flexDirection='column' h='calc(100vh - 250px)' overflow="auto">
             <ThreadNav researchTs={researchThreads ? researchThreads.research_threads : null} viewType={'overview'}/>
             <br />
-            <Box>
+            {/* <Box>
                 <span style={headerStyle}>
                     {`${projectData.entries.length} Activities`} 
                 </span>
                 <br></br>
-            </Box>
-            <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
+            </Box> */}
+            <Box marginLeft="3px" marginTop="10px" marginBottom="10px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
                 <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                     {`View ${fileTypeShown.title} artifacts (${fileTypeShown.matches})`}
@@ -65,9 +65,9 @@ const LeftSidebar = () => {
                             onClick={()=>{
                                 setFileTypeShown(m);
                                 if(m.title != 'all'){
-                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, m.title] });
+                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: m.title });
                                 }else{
-                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [] });
+                                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
                                 }
                             }}
                         >{`${m.title} (${m.matches})`}</MenuItem>

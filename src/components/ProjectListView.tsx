@@ -31,7 +31,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   
   const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry, timeFilter, setTimeFilter} = ProjectPropValues;
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, filterType }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -49,16 +49,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     }
   }, [projectData]);
 
-  // TODO: add files to json file and save
-
-  // const saveFiles = (fileList: FileObj[]) => {
-  //   dispatch({ type: 'ADD_FILES', fileList });
-  // };
-
-  // const addEntry = () => {
-  //   dispatch({ type: 'ADD_ENTRY' });
-  // };
-
   const updateEntryField = (
     entryIndex: number,
     fieldName: string,
@@ -67,13 +57,23 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-  const filteredEntries = projectData.entries
-    .filter((entryData: EntryType) => {
-      return filterTags.every((requiredTag: string) =>
-        entryData.tags.includes(requiredTag)
-      );
-    })
-    .map((e, index) => ({ ...e, index }));
+  const tagFilteredEntries = projectData.entries
+  .filter((entryData: any) => {
+    return filterTags.every((requiredTag: string) =>
+      entryData.tags.includes(requiredTag)
+    );
+  })
+  .map((e, index) => ({ ...e, index }));
+
+  const filteredEntries = tagFilteredEntries
+  .filter((entryData: any) => {
+      if(filterType){
+        return entryData.files.map((m: any)=> m.fileType).includes(filterType)
+      }else{
+        return entryData;
+      }
+  })
+  .map((e:any, index:number) => ({ ...e, index }));
 
   filteredEntries.sort(
     (a, b) =>
@@ -99,6 +99,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px'}}>
+      <div style={{position:'fixed', top:'170px', fontSize:24, fontWeight:700, textAlign:'center'}}>{`${filteredEntries.length} Activities Shown`}</div>
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">

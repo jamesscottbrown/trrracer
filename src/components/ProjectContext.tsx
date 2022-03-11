@@ -723,8 +723,8 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TYPES': {
-      console.log('types', action.filterTypes);
-      return { ...state, filterTypes: action.filterTypes };
+     
+      return { ...state, filterType: action.filterType };
     }
 
     case 'CREATE_CONCEPT':{
@@ -796,7 +796,7 @@ const initialState = {
   //projectData: getEmptyProject('null'),
   folderPath: null,
   filterTags: [],
-  filterTypes: []
+  filterType: null
 };
 
 export function ProjectStateProvider({ children }) {
