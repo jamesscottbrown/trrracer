@@ -13,7 +13,7 @@ import { useProjectState } from './ProjectContext';
 
 const SidebarButton = (sidebarProps: any) => {
   const { isTag, index, data } = sidebarProps;
-  const [{ researchThreads, projectData, filterTags, filterTypes }, dispatch] = useProjectState();
+  const [{ researchThreads, filterTags, filterTypes }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
@@ -26,35 +26,7 @@ const SidebarButton = (sidebarProps: any) => {
     }
   };
 
-  if (!isTag) {
-    return (
-      <Box
-        style={{ cursor: 'pointer' }}
-        bg={barColor}
-        key={`${data.title}-${index}`}
-        onMouseOver={() => {
-          setBarColor('#D3D3D3');
-          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedType: data.title });
-        }}
-        onMouseLeave={() => {
-          setBarColor('#FFFFFF');
-          dispatch({ type: 'HIGHLIGHT_TYPE', highlightedType: null });
-        }}
-        onClick={()=> {
-          console.log('tags filter check', filterTypes, data);
-          // nee to make a tag filter function
-          if(filterTypes.includes(data.title)){
-            alert('tag filter already exists');
-          }else{
-
-            dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: [...filterTypes, data.title] });
-          } 
-        }}
-      >
-        {`${data.title}  (${data.matches.length})`}
-      </Box>
-    );
-  } else if (!showPopover) {
+if (!showPopover) {
     return (
       <Box
         style={{ cursor: 'pointer' }}

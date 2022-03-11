@@ -47,16 +47,9 @@ const LeftSidebar = () => {
                 <span style={headerStyle}>
                     {`${projectData.entries.length} Activities`} 
                 </span>
-                {/* <span style={headerStyle}>
-                    {`${artifacts.length} Artifacts`}
-                </span> */}
                 <br></br>
             </Box>
             <Box marginLeft="3px" borderLeftColor={"black"} borderLeftWidth="1px" padding="3px">
-                {/* {sortedTypes.map((m:any, i:any) => (
-                    <SidebarButton key={`type-${i}`} isTag={false} data={m} index={i} />
-                ))}
-                <br></br> */}
                 <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                     {`View ${fileTypeShown.title} artifacts (${fileTypeShown.matches})`}
