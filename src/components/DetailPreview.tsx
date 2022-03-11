@@ -8,7 +8,7 @@ import {
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
-import {IoIosFlag} from 'react-icons/fa'
+
 import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
@@ -20,6 +20,7 @@ interface DetailPreviewPropsType {
   activity: any;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
+  artifactIndex:number;
 }
 
 const styleInterpreter = {
@@ -29,9 +30,9 @@ const styleInterpreter = {
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { setFragSelected, folderPath, artifact, activity, openFile } = props;
+  const { setFragSelected, folderPath, artifact, activity, artifactIndex, openFile } = props;
   const [{ googleData, txtData }, dispatch] = useProjectState();
-
+  console.log('artifact inex??',artifactIndex)
   let title = artifact.title;
 
 
@@ -138,7 +139,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return <GrDocumentImage onClick={() => openFile(title, folderPath)} size={size} />;
   }
   if (title.endsWith('.png')) {
-    return <MarkableImage imgPath={`file://${path.join(folderPath, title)}`}/>
+    return <MarkableImage activity={activity} artifactIndex={artifactIndex} imgPath={`file://${path.join(folderPath, title)}`}/>
   }
   return (
     <Image

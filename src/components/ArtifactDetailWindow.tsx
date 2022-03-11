@@ -264,6 +264,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     const { setViewType, folderPath, projectData } = props;
 
     const [{ selectedArtifactEntry, selectedArtifactIndex }, dispatch] = useProjectState();
+    
+    console.log('artifactIndex', selectedArtifactIndex);
 
     const [editable, setEditable] = useState<boolean[]>(
         Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -349,7 +351,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                             } style={{fontWeight:500, fontSize:'16px', padding:'3px'}}>{"<<"}</span>
                         </Flex>
                     
-                        <DetailPreview setFragSelected={setFragSelected} folderPath={folderPath} artifact={selectedArtifactEntry.files[selectedArtifactIndex]} activity={selectedArtifactEntry} openFile={openFile}></DetailPreview>
+                        <DetailPreview setFragSelected={setFragSelected} folderPath={folderPath} artifact={selectedArtifactEntry.files[selectedArtifactIndex]} activity={selectedArtifactEntry} artifactIndex={selectedArtifactIndex} openFile={openFile}></DetailPreview>
                         
                         <Flex style={{alignItems:'center'}}>
                             <span onClick={

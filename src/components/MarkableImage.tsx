@@ -1,5 +1,5 @@
 import path from 'path';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 import {
@@ -22,13 +22,18 @@ const CustomMarker = (props: MarkerComponentProps) => {
 };
 
 const MarkableImage = (props:any) => {
-    const [{selectedArtifactEntry, selectedArtifactIndex}, dispatch] = useProjectState();
-    const {imgPath} = props;
-  
+    const [{}, dispatch] = useProjectState();
+    const {imgPath, activity, artifactIndex} = props;
+   
     const [markers, setMarkers] = useState([])
-    if(selectedArtifactEntry.files[selectedArtifactIndex].markers){
-        setMarkers([...markers, selectedArtifactEntry.files[selectedArtifactIndex].markers])
-    }
+
+    useEffect(() => {
+        if(activity.files[artifactIndex].markers){
+            setMarkers(activity.files[artifactIndex].markers)
+        }
+     }, [artifactIndex])
+
+    
     const [markerCoor, setMarkerCoor] = useState([0, 0])
     const [note, setNote] = useState('add note');
     const [showNote, setShowNote] = useState(false);
@@ -39,11 +44,8 @@ const MarkableImage = (props:any) => {
                 src={imgPath}
                 markers={markers}
                 onAddMarker={(marker: Marker) => {
-                    console.log('MARKER', marker)
-                    // setMarkerHold(marker)
                     setShowNote(true)
                     setMarkerCoor([marker.left, marker.top])
-                    // setMarkers([...markers, marker])
                 }}
                 markerComponent={CustomMarker}
             />
@@ -57,21 +59,16 @@ const MarkableImage = (props:any) => {
                         setNote(inputValue);
                     }}/>
                     <Button onClick={()=>{
-                        console.log("TEST", markerCoor, note)
                         let marker = {}
                         marker.left = markerCoor[0];
                         marker.top = markerCoor[1];
                         marker.note = note;
-                        console.log(selectedArtifactEntry.files[selectedArtifactIndex]);
                         let newMarkers = [...markers, marker];
                         setMarkers(newMarkers)
                         setNote('add note')
                         setShowNote(false)
-                        dispatch({type:'ADD_MARKS_TO_ARTIFACT', markers:newMarkers, selectedArtifactEntry:selectedArtifactEntry, selectedArtifactIndex:selectedArtifactIndex})
-                    }
-                        
-                        // setMarkers([...markers, markerHold])
-                    }>{'ADD MARKER'}</Button>
+                        dispatch({type:'ADD_MARKS_TO_ARTIFACT', markers:newMarkers, activity:activity, artifactIndex:artifactIndex})
+                    }}>{'ADD MARKER'}</Button>
                     
                 </div>)
 

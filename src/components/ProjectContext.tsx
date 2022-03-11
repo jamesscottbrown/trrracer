@@ -728,18 +728,17 @@ const appStateReducer = (state, action) => {
     }
 
     case 'ADD_MARKS_TO_ARTIFACT':{
-      const {markers, selectedArtifactEntry, selectedArtifactIndex} = action;
+      const {markers, activity, artifactIndex} = action;
 
-      let newFile = selectedArtifactEntry.files[selectedArtifactIndex]
+      let newFile = activity.files[artifactIndex]
       newFile.markers = markers;
-      let entryIndex = action.selectedArtifactEntry.index;
-      state.projectData.entries[entryIndex].files[action.selectedArtifactIndex] = newFile;
+      let entryIndex = activity.index;
+      state.projectData.entries[entryIndex].files[artifactIndex] = newFile;
       
-
       const entries = state.projectData.entries;
-      entries[entryIndex].files[selectedArtifactIndex] = newFile;
+      entries[entryIndex].files[artifactIndex] = newFile;
       const newProjectData = { ...state.projectData, entries };
-      console.log('test', newProjectData.entries[entryIndex]);
+      
       return saveJSON(newProjectData);
     }
 
