@@ -141,8 +141,14 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
   return (
     <Image
+      htmlWidth={'90%'}
+      htmlHeight={'auto'}
+      fit={'contain'}
       src={`file://${path.join(folderPath, title)}`}
-      onClick={() => openFile(title, folderPath)}
+      onClick={(ev) => {
+        console.log(ev.target.width, ev.target.height)
+        !setFragSelected ? openFile(title, folderPath) : console.log(MouseEvent)
+      }}
     />
   );
 };
