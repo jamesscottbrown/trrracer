@@ -727,61 +727,20 @@ const appStateReducer = (state, action) => {
       return { ...state, filterType: action.filterType };
     }
 
-    case 'CREATE_CONCEPT':{
+    case 'ADD_MARKS_TO_ARTIFACT':{
+      const {markers, selectedArtifactEntry, selectedArtifactIndex} = action;
+
+      let newFile = selectedArtifactEntry.files[selectedArtifactIndex]
+      newFile.markers = markers;
+      let entryIndex = action.selectedArtifactEntry.index;
+      state.projectData.entries[entryIndex].files[action.selectedArtifactIndex] = newFile;
       
-      const newConcepts  = [
-        ...state.projectData.concepts,
-        { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
-      ];
 
-      const newProjectData = {
-        ...state.projectData,
-        concepts: newConcepts
-      };
-
+      const entries = state.projectData.entries;
+      entries[entryIndex].files[selectedArtifactIndex] = newFile;
+      const newProjectData = { ...state.projectData, entries };
+      console.log('test', newProjectData.entries[entryIndex]);
       return saveJSON(newProjectData);
-
-    }
-
-    case 'DELETE_CONCEPT':{
-    
-       const newConcepts  = state.projectData.concepts.map(m => {
-        
-           if(m.name === action.title.name){
-          
-             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
-           }
-           return m;
-         });
-
-       const newProjectData = {
-         ...state.projectData,
-         concepts: newConcepts
-       };
- 
-       return saveJSON(newProjectData);
- 
-    }
-
-    case 'MERGE_CONCEPT':{
-       
-       const newConcepts  = state.projectData.concepts.map(m => {
-        
-        if(m.name === action.fromName){
-
-          m.actions = [...m.actions, { action:'merged', with: action.mergeName, when: new Date().toISOString() }]
-        }
-        return m;
-      });
-      
-       const newProjectData = {
-        ...state.projectData,
-        concepts: newConcepts
-      };
-
-      return saveJSON(newProjectData);
-
-      
     }
 
     default: {

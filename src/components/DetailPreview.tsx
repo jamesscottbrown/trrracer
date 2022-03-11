@@ -8,6 +8,7 @@ import {
 
 import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
 GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
+import {IoIosFlag} from 'react-icons/fa'
 import { readProjectFile, useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
@@ -126,10 +127,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />;
   }
   if (title.endsWith('.eml')) {
-    // let fetchData = async()=> {}
-    // const response = await fetch(`http://127.0.0.1:5000/create_google_file/${title}/${state.projectData.title}`);
-    // console.log('response!!!',response);
-    //return <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />;
     return <EmailRender setFragSelected={setFragSelected} title={title} />
   }
 
