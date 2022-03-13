@@ -8,7 +8,7 @@ import { scaleTime } from 'd3-scale';
 
 import { repositionPoints } from 'respacer';
 
-import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import ConceptNav from './Concepts';
 
@@ -40,8 +40,6 @@ const EntryPlot = (props: EntryPlotProps) => {
 
   const squareWidth = 10;
   const squarePadding = 2;
-
-
 
   const getColor = (title: string) => {
     const tag = tags.filter((t) => t.title === title)[0];
@@ -262,29 +260,46 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
       // <Heading as="h2">Entries</Heading>
       // <TagFilter /> */}
-       <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <ConceptNav
+        concepts={projectData.concepts}
+        searchConcept={searchConcept}
+      />
       <br />
       <Divider />
-        {showTags ?
-      <div>
-        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading>
-        <TagList tags={projectData.tags} />
+      {showTags ? (
+        <div>
+          <Heading as="h5" size="lg">
+            Tags{' '}
+            <FaEyeSlash
+              onClick={() => {
+                if (showTags) {
+                  setShowTags(false);
+                } else {
+                  setShowTags(true);
+                }
+              }}
+              style={{ display: 'inline' }}
+            />
+          </Heading>
+          <TagList tags={projectData.tags} />
         </div>
-        :
-        <div><Heading as="h5">Tags <FaEye onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading></div>
-    }
+      ) : (
+        <div>
+          <Heading as="h5">
+            Tags{' '}
+            <FaEye
+              onClick={() => {
+                if (showTags) {
+                  setShowTags(false);
+                } else {
+                  setShowTags(true);
+                }
+              }}
+              style={{ display: 'inline' }}
+            />
+          </Heading>
+        </div>
+      )}
 
       <Heading as="h2">Entries</Heading>
 

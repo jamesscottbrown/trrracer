@@ -1,15 +1,17 @@
 import path from 'path';
-import React, { useState } from 'react';
+import React from 'react';
+
+import { Image, Box } from '@chakra-ui/react';
 
 import {
-  Image,
-  Box
-} from '@chakra-ui/react';
-
-import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
-GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
-
-import { readProjectFile, useProjectState } from './ProjectContext';
+  GrDocumentCsv,
+  GrDocumentWord,
+  GrDocumentExcel,
+  GrDocumentRtf,
+  GrDocumentImage,
+  GrCluster,
+} from 'react-icons/gr';
+import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
@@ -23,18 +25,14 @@ interface DetailPreviewPropsType {
   artifactIndex:number;
 }
 
-const styleInterpreter = {
-  bold: {fontWeight: 'bold'},
-  italic: {fontStyle: 'italic'},
-  underline: {textDecorationLine: 'underline'}
-}
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { setFragSelected, folderPath, artifact, activity, artifactIndex, openFile } = props;
-  const [{ googleData, txtData }, dispatch] = useProjectState();
-  console.log('artifact inex??',artifactIndex)
-  let title = artifact.title;
+  const [{ googleData, txtData }] = useProjectState();
+ 
+  // let title = artifact.title;
 
+  const { title } = artifact;
 
   if (
     title.endsWith('.mp4') ||
@@ -55,101 +53,143 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   const size = '65%';
 
   if (title.endsWith('.csv')) {
-    return <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
-  if (title.endsWith('.ppt') || title.endsWith('.pptx') || title.endsWith('.key')) {
-    //return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
-    return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="application/pdf"/>
+  if (
+    title.endsWith('.ppt') ||
+    title.endsWith('.pptx') ||
+    title.endsWith('.key')
+  ) {
+    // return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <embed
+        style={{ height: '90%' }}
+        src={`file://${path.join(folderPath, title)}`}
+        type="application/pdf"
+      />
+    );
   }
 
   if (title.endsWith('.doc') || title.endsWith('.docx')) {
-    return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.gdoc')) {
-    if(Object.keys(googleData).indexOf(artifact.fileId) > -1){
+    if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
+      const googD = googleData[artifact.fileId];
 
-      let googD = googleData[artifact.fileId];
+      const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
-      let gContent = googD["body"]["content"].filter((f:any) => f.startIndex)
-      
-      return <Box style={{overflowY: 'scroll', height:'100%', display: 'inline'}}>
-        
-        <div
-        onMouseUp={()=> {
-          if(setFragSelected){
-            let selObj = window.getSelection();
-            setFragSelected(selObj?.toString())
-          }else{
-            console.log('mouseup');
-          }
-        }}
-        style={{ height:'90%', overflow:'auto'}}>
-          {
-          gContent.map((m:any, i:number)=> (
-            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} comments={artifact.comments.comments} />
-          ))}
-        </div>
-  
-       
-      </Box>
-
+      return (
+        <Box style={{ overflowY: 'scroll', height: '100%', display: 'inline' }}>
+          <div
+            onMouseUp={() => {
+              if (setFragSelected) {
+                const selObj = window.getSelection();
+                setFragSelected(selObj?.toString());
+              } else {
+                console.log('mouseup');
+              }
+            }}
+            style={{ height: '90%', overflow: 'auto' }}
+          >
+            {gContent.map((m: any, i: number) => (
+              <GoogDriveParagraph
+                key={`par-${i}`}
+                parData={m}
+                index={i}
+                comments={artifact.comments.comments}
+              />
+            ))}
+          </div>
+        </Box>
+      );
     }
   }
 
   if (title.endsWith('.gsheet')) {
-    return <GrDocumentExcel onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentExcel
+        onClick={() => openFile(title, folderPath)}
+        size={size}
+      />
+    );
   }
 
   if (title.endsWith('.txt')) {
-    
-    let temp = txtData['text-data'].filter((f:any)=> f['entry-title'] === activity.title);
+    const temp = txtData['text-data'].filter(
+      (f: any) => f['entry-title'] === activity.title
+    );
 
-    return <div 
-            onMouseUp={()=> {
-              if(setFragSelected){
-                let selObj = window.getSelection();
-                setFragSelected(selObj?.toString())
-              }else{
-                console.log('mouseup');
-              }
-            }}
-            style={{ height:'90%', overflow:'auto'}}>
-            {temp[0].text}
-            </div>
+    return (
+      <div
+        onMouseUp={() => {
+          if (setFragSelected) {
+            const selObj = window.getSelection();
+            setFragSelected(selObj?.toString());
+          } else {
+            console.log('mouseup');
+          }
+        }}
+        style={{ height: '90%', overflow: 'auto' }}
+      >
+        {temp[0].text}
+      </div>
+    );
   }
 
-    if (title.endsWith('.phy') || title.endsWith('.nex')) {
-    return <GrCluster onClick={() => openFile(title, folderPath)} size={size} />;
+  if (title.endsWith('.phy') || title.endsWith('.nex')) {
+    return (
+      <GrCluster onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.rtf')) {
-    return <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
   if (title.endsWith('.eml')) {
     return <EmailRender setFragSelected={setFragSelected} title={title} />
   }
 
   if (title.endsWith('.pdf')) {
-    return <embed style={{height:'90%'}} src={`file://${path.join(folderPath, title)}`} type="application/pdf"/>
+    return (
+      <embed
+        style={{ height: '90%' }}
+        src={`file://${path.join(folderPath, title)}`}
+        type="application/pdf"
+      />
+    );
   }
 
   if (title.endsWith('.HEIC')) {
-    return <GrDocumentImage onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentImage
+        onClick={() => openFile(title, folderPath)}
+        size={size}
+      />
+    );
   }
   if (title.endsWith('.png')) {
     return <MarkableImage activity={activity} artifactIndex={artifactIndex} imgPath={`file://${path.join(folderPath, title)}`}/>
   }
   return (
     <Image
-      htmlWidth={'90%'}
-      htmlHeight={'auto'}
-      fit={'contain'}
+      htmlWidth="90%"
+      htmlHeight="auto"
+      fit="contain"
       src={`file://${path.join(folderPath, title)}`}
       onClick={(ev) => {
-        console.log(ev.target.width, ev.target.height)
-        !setFragSelected ? openFile(title, folderPath) : console.log(MouseEvent)
+        console.log(ev.target.width, ev.target.height);
+        !setFragSelected
+          ? openFile(title, folderPath)
+          : console.log(MouseEvent);
       }}
     />
   );

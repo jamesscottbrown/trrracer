@@ -1,42 +1,37 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  ButtonGroup,
-  Divider
-} from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip } from 'react-icons/fa';
+import { Button, ButtonGroup, Divider } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 
-import {
-  EntryType,
-  EntryTypeWithIndex,
-  ProjectViewProps,
-} from './types';
+import { EntryTypeWithIndex, ProjectViewProps } from './types';
 
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
-
 
 const { ipcRenderer } = require('electron');
 
 export const openFile = (fileName: string, folderPath: string) => {
   console.log('Open file:', path.join(folderPath, fileName));
   ipcRenderer.send('open-file', path.join(folderPath, fileName));
- 
 };
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
-  
-  const { projectData, folderPath, reversedOrder, setViewType, setSelectedArtifactIndex, setSelectedArtifactEntry, timeFilter, setTimeFilter} = ProjectPropValues;
+  const {
+    projectData,
+    reversedOrder,
+    setViewType,
+    setSelectedArtifactIndex,
+    setSelectedArtifactEntry,
+    timeFilter,
+  } = ProjectPropValues;
 
   const [{ filterTags, filterType }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
-
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -58,22 +53,22 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   };
 
   const tagFilteredEntries = projectData.entries
-  .filter((entryData: any) => {
-    return filterTags.every((requiredTag: string) =>
-      entryData.tags.includes(requiredTag)
-    );
-  })
-  .map((e, index) => ({ ...e, index }));
+    .filter((entryData: any) => {
+      return filterTags.every((requiredTag: string) =>
+        entryData.tags.includes(requiredTag)
+      );
+    })
+    .map((e, index) => ({ ...e, index }));
 
   const filteredEntries = tagFilteredEntries
-  .filter((entryData: any) => {
-      if(filterType){
-        return entryData.files.map((m: any)=> m.fileType).includes(filterType)
-      }else{
+    .filter((entryData: any) => {
+      if (filterType) {
+        return entryData.files.map((m: any) => m.fileType).includes(filterType);
+      } else {
         return entryData;
       }
-  })
-  .map((e:any, index:number) => ({ ...e, index }));
+    })
+    .map((e: any, index: number) => ({ ...e, index }));
 
   filteredEntries.sort(
     (a, b) =>
@@ -81,7 +76,14 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       (Number(new Date(a.date)) - Number(new Date(b.date)))
   );
 
-  let fAct = timeFilter != null ? filteredEntries.filter(f => new Date(f.date) >= timeFilter[0] && new Date(f.date) <= timeFilter[1]) : filteredEntries;
+  let fAct =
+    timeFilter != null
+      ? filteredEntries.filter(
+          (f) =>
+            new Date(f.date) >= timeFilter[0] &&
+            new Date(f.date) <= timeFilter[1]
+        )
+      : filteredEntries;
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -98,8 +100,16 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   };
 
   return (
-    <div style={{ padding: '10px'}}>
-      <div style={{position:'fixed', top:'170px', fontSize:24, fontWeight:700, textAlign:'center'}}>{`${filteredEntries.length} Activities Shown`}</div>
+    <div style={{ padding: '10px' }}>
+      <div
+        style={{
+          position: 'fixed',
+          top: '170px',
+          fontSize: 24,
+          fontWeight: 700,
+          textAlign: 'center',
+        }}
+      >{`${filteredEntries.length} Activities Shown`}</div>
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
@@ -116,7 +126,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {fAct.map((entryData: EntryTypeWithIndex, i:number) => (
+      {fAct.map((entryData: EntryTypeWithIndex, i: number) => (
         <React.Fragment key={`fr-${entryData.title}-${entryData.index}-${i}`}>
           {editable[entryData.index] ? (
             <Entry
@@ -145,9 +155,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           <Divider marginTop="1em" marginBottom="1em" />
         </React.Fragment>
       ))}
-
-      </div>
-    );
-
+    </div>
+  );
 };
 export default ProjectListView;

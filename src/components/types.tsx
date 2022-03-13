@@ -60,13 +60,14 @@ interface EdgeType {
 
 interface ConceptType {
   name: string;
-  actions : ConceptActionType[];
+  actions: ConceptActionType[];
 }
 
 interface ConceptActionType {
-  action:string;
+  action: string;
   when: string;
 }
+
 interface DeadlineType {
   title: string;
   date: string;
@@ -77,8 +78,8 @@ interface ProjectType {
   description: string;
   tags: TagType[];
   entries: EntryType[];
-  concepts : ConceptType[];
-  edges : EdgeType[];
+  concepts: ConceptType[];
+  edges: EdgeType[];
   topics: [];
   deadlines: DeadlineType[];
 }
@@ -86,7 +87,7 @@ interface ProjectType {
 interface ProjectViewProps {
   projectData: ProjectType;
   folderPath: string;
-  setViewType: (v: any) => void; 
+  setViewType: (v: any) => void;
   setSelectedArtifactIndex: (i: Number) => void;
   setSelectedArtifactEntry: (e: any) => void;
 }
@@ -103,5 +104,5 @@ export {
   ProjectViewProps,
   ReactTagType,
   ConceptType,
-  EdgeType
+  EdgeType,
 };
