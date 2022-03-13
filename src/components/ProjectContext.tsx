@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import { copyFileSync } from 'fs';
-const {google} = require('googleapis');
-import *  as googleCred from '../../assets/google_cred_desktop_app.json';
+
+const { google } = require('googleapis');
+import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { v4 as uuidv4 } from 'uuid';
 
 import React, { createContext, useContext, useReducer } from 'react';
@@ -18,30 +19,24 @@ export function useProjectState() {
   return useContext(ProjectContext);
 }
 
-export function addMetaDescrip(projectData, state){
-
-  let newProjEntries = projectData.entries.map(( e: EntryType )=>{
-    e.files = e.files.map(f => {
-      if(!f.context){
-        f.context = "null";
+export function addMetaDescrip(projectData, state) {
+  let newProjEntries = projectData.entries.map((e: EntryType) => {
+    e.files = e.files.map((f) => {
+      if (!f.context) {
+        f.context = 'null';
       }
       return f;
     });
     return e;
   });
 
- 
+  let newProj = { ...projectData, entries: newProjEntries };
 
-  let newProj = {...projectData, 'entries': newProjEntries}
+  return null; //saveJSON(newProj);
 
-
-  
-  return null//saveJSON(newProj);
-  
-
-//});
-
+  //});
 }
+
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
     '#B80000',
@@ -71,218 +66,212 @@ const pickTagColor = (tags: TagType[]) => {
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   for (const file of fileList) {
-
     const sourceIsInProjectDir = file.path.startsWith(folderPath);
     let destination = path.join(folderPath, file.name);
     /**
      * is it google??
      */
-    let nameCheck = file.name.split(".");
-        
-    if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-        
-          if (fs.existsSync(destination) && !sourceIsInProjectDir){
-          
+    let nameCheck = file.name.split('.');
 
-            let newFile = { title: `${file.name}`, fileType: nameCheck[nameCheck.length - 1], context: "null" };
-      
-            newFiles = [...newFiles, newFile];
+    if (nameCheck[nameCheck.length - 1] === 'gdoc') {
+      if (fs.existsSync(destination) && !sourceIsInProjectDir) {
+        let newFile = {
+          title: `${file.name}`,
+          fileType: nameCheck[nameCheck.length - 1],
+          context: 'null',
+        };
 
-          }else{
-         
-            copyGoogle(file, newFiles).then(fileArray => {
-              newFiles = [...fileArray]
-            });
-          }
+        newFiles = [...newFiles, newFile];
+      } else {
+        copyGoogle(file, newFiles).then((fileArray) => {
+          newFiles = [...fileArray];
+        });
+      }
+    } else {
+      try {
+        let saveFile = true;
 
-        }else{
+        let newName = file.name;
 
-         
+        if (fs.existsSync(destination) && !sourceIsInProjectDir) {
+          saveFile = window.confirm(
+            `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
+          );
 
-      
-          try {
-            let saveFile = true;
-            
-            let newName = file.name;
-      
-            if (fs.existsSync(destination) && !sourceIsInProjectDir) {
-              saveFile = window.confirm(
-                `A file with name ${newName} has already been imported. Do you want to import this file anyway, with a modified name?`
-              );
-      
-              let i = 1;
-              do {
-                const parts = file.name.split('.');
-                const base = parts.slice(0, -1).join('');
-                const extension = parts.slice(-1)[0];
-                newName = `${base} (${i}).${extension}`;
-      
-                destination = path.join(folderPath, newName);
-           
-      
-                i += 1;
-              } while (fs.existsSync(destination) && !sourceIsInProjectDir);
-            }
-      
-            if (saveFile) {
-              if (!sourceIsInProjectDir) {
-                copyFileSync(file.path, destination);
-              }
-              console.log(`${file.path} was copied to ${destination}`);
-              newFiles = [...newFiles, { title: newName, fileType: nameCheck[nameCheck.length - 1], context: "null" }];
-            }
-          } catch (e) {
-            console.log('Error', e.stack);
-            console.log('Error', e.name);
-            console.log('Error', e.message);
-      
-            console.log('The file could not be copied');
-          }
+          let i = 1;
+          do {
+            const parts = file.name.split('.');
+            const base = parts.slice(0, -1).join('');
+            const extension = parts.slice(-1)[0];
+            newName = `${base} (${i}).${extension}`;
+
+            destination = path.join(folderPath, newName);
+
+            i += 1;
+          } while (fs.existsSync(destination) && !sourceIsInProjectDir);
         }
 
-    }
+        if (saveFile) {
+          if (!sourceIsInProjectDir) {
+            copyFileSync(file.path, destination);
+          }
+          console.log(`${file.path} was copied to ${destination}`);
+          newFiles = [
+            ...newFiles,
+            {
+              title: newName,
+              fileType: nameCheck[nameCheck.length - 1],
+              context: 'null',
+            },
+          ];
+        }
+      } catch (e) {
+        console.log('Error', e.stack);
+        console.log('Error', e.name);
+        console.log('Error', e.message);
 
+        console.log('The file could not be copied');
+      }
+    }
+  }
 
   return newFiles;
 };
 
-export async function getGoogleIds(projectData, state){
+export async function getGoogleIds(projectData, state) {
+  const oAuth2Client = new google.auth.OAuth2(
+    googleCred.installed.client_id,
+    googleCred.installed.client_secret,
+    googleCred.installed.redirect_uris[0]
+  );
+  const token = fs.readFileSync('token.json', { encoding: 'utf-8' });
+  oAuth2Client.setCredentials(JSON.parse(token));
 
+  let drive = google.drive({ version: 'v3', auth: oAuth2Client });
 
-  const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-            const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
-            oAuth2Client.setCredentials(JSON.parse(token))
-           
-            let drive = google.drive({version: 'v3', auth: oAuth2Client});
+  drive.files
+    .list({
+      q: `"1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg" in parents and trashed = false`,
+      fields: 'nextPageToken, files(id, name)',
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
+    })
+    .then((fi) => {
+      let newProjEntries = projectData.entries.map((e: EntryType) => {
+        e.files = e.files.map((f) => {
+          let nameCheck = f.title.split('.');
 
-            drive.files.list({
-              q:`"1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg" in parents and trashed = false`, 
-              fields:"nextPageToken, files(id, name)",
-              supportsAllDrives: true,
-              includeItemsFromAllDrives: true,
-
-            }).then((fi)=> {
-
-           
-              let newProjEntries = projectData.entries.map(( e: EntryType )=>{
-               
-                e.files = e.files.map(f => {
-                 
-                  let nameCheck = f.title.split('.');
-                  
-                  if(nameCheck[nameCheck.length - 1] === 'gdoc'){
-
-                  
-
-                    let id = fi.data.files.filter(m=> {
-                      return `${m.name}.gdoc` === f.title});
-                  
-
-                    if(id.length != 0){
-                      f.fileType = 'gdoc';
-                      f.fileId = id[0].id;
-                    }
-                  }
-
-                  return f;
-
-                });
-
-                return e;
-
-              });
-
-             
-
-              let newProj = {...projectData, 'entries': newProjEntries}
-              return saveJSON(newProj, state);
-
-            });
-}
-
-async function copyGoogle(file:any, fileList:any){
-
-  const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-            const token = fs.readFileSync('token.json', {encoding: 'utf-8'})
-            oAuth2Client.setCredentials(JSON.parse(token));
-           
-            let drive = google.drive({version: 'v3', auth: oAuth2Client});
-            let nameF = file.name.split('.');
-
-            drive.files.list({
-              q:`name="${nameF[0]}" and trashed = false`, 
-              fields:"nextPageToken, files(id, name)",
-              supportsAllDrives: true,
-              includeItemsFromAllDrives: true,
-
-            }).then((fi)=> {
-              
-                var copyRequest = {  // Modified
-                    name: nameF,
-                    parents: ['1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg']
-                  };
-                  
-                  drive.files.copy(
-                    {  // Modified
-                      fileId: fi.data.files[0].id,
-                      requestBody: copyRequest, // or resource: copyRequest
-                      supportsAllDrives: true,
-                      includeItemsFromAllDrives: true,
-                    },
-                    function(err, response) {
-                      if (err) {
-                        console.log(err);
-                        // res.send("error");
-                        return;
-                      }
-                      // let newFiles = state.projectData.entries[entryIndex].files;
-                      let newFile = { title: `${file.name}`, fileType: nameF[nameF.length - 1], context: "null", fileId: response.data.id }
-        
-                      fileList = [...fileList, newFile]; 
-                    }
-                  );
-            
+          if (nameCheck[nameCheck.length - 1] === 'gdoc') {
+            let id = fi.data.files.filter((m) => {
+              return `${m.name}.gdoc` === f.title;
             });
 
-            return fileList;
+            if (id.length != 0) {
+              f.fileType = 'gdoc';
+              f.fileId = id[0].id;
+            }
+          }
+
+          return f;
+        });
+
+        return e;
+      });
+
+      let newProj = { ...projectData, entries: newProjEntries };
+      return saveJSON(newProj, state);
+    });
 }
 
-export const readProjectFile = (folderPath: string, fileName: string, fileType:any) => {
+async function copyGoogle(file: any, fileList: any) {
+  const oAuth2Client = new google.auth.OAuth2(
+    googleCred.installed.client_id,
+    googleCred.installed.client_secret,
+    googleCred.installed.redirect_uris[0]
+  );
+  const token = fs.readFileSync('token.json', { encoding: 'utf-8' });
+  oAuth2Client.setCredentials(JSON.parse(token));
 
+  let drive = google.drive({ version: 'v3', auth: oAuth2Client });
+  let nameF = file.name.split('.');
+
+  drive.files
+    .list({
+      q: `name="${nameF[0]}" and trashed = false`,
+      fields: 'nextPageToken, files(id, name)',
+      supportsAllDrives: true,
+      includeItemsFromAllDrives: true,
+    })
+    .then((fi) => {
+      var copyRequest = {
+        // Modified
+        name: nameF,
+        parents: ['1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg'],
+      };
+
+      drive.files.copy(
+        {
+          // Modified
+          fileId: fi.data.files[0].id,
+          requestBody: copyRequest, // or resource: copyRequest
+          supportsAllDrives: true,
+          includeItemsFromAllDrives: true,
+        },
+        function (err, response) {
+          if (err) {
+            console.log(err);
+            // res.send("error");
+            return;
+          }
+          // let newFiles = state.projectData.entries[entryIndex].files;
+          let newFile = {
+            title: `${file.name}`,
+            fileType: nameF[nameF.length - 1],
+            context: 'null',
+            fileId: response.data.id,
+          };
+
+          fileList = [...fileList, newFile];
+        }
+      );
+    });
+
+  return fileList;
+}
+
+export const readProjectFile = (
+  folderPath: string,
+  fileName: string,
+  fileType: any
+) => {
   const filePath = path.join(folderPath, fileName);
   const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
-  if(!fileType){
+  if (!fileType) {
     return JSON.parse(fileContents);
-  }else{
-    console.log('this is a text file', fileContents)
+  } else {
+    console.log('this is a text file', fileContents);
   }
-  
 };
-        
-
 
 const appStateReducer = (state, action) => {
-
   /**
-   *  function for set data that checks to see if the file exists and if not, creates one. 
+   *  function for set data that checks to see if the file exists and if not, creates one.
    * research_threads = readProjectFile(baseDir, 'research_threads.json');
    */
 
-  const checkRtFile = (dir:any) => {
-
-    try{
+  const checkRtFile = (dir: any) => {
+    try {
       return readProjectFile(dir, 'research_threads.json', null);
-    }catch (e){
+    } catch (e) {
       let rtOb = {
         title: action.projectData.title,
-        research_threads: []
-      }
+        research_threads: [],
+      };
 
       saveJSONRT(rtOb);
       return rtOb;
     }
-
-  }
+  };
 
   const saveJSON = (newProjectData: any) => {
     fs.writeFileSync(
@@ -293,12 +282,11 @@ const appStateReducer = (state, action) => {
           console.log(`Error writing file to disk: ${err}`);
         } else {
           // parse JSON string to JSON object
- 
         }
       }
     );
     return { ...state, ProjectData: newProjectData };
-  }
+  };
 
   const saveJSONRT = (RTData: any) => {
     fs.writeFileSync(
@@ -309,62 +297,59 @@ const appStateReducer = (state, action) => {
           console.log(`Error writing file to disk: ${err}`);
         } else {
           // parse JSON string to JSON object
-  
         }
       }
     );
 
-  return { ...state, researchThreads: RTData };
+    return { ...state, researchThreads: RTData };
   };
 
-
   switch (action.type) {
-  
     case 'SET_DATA': {
-
       const baseDir = action.folderName;
-    
+
       let newEntries;
       let roleData;
       let google_data;
       let txtData;
-      
+
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json', null);
-    
+
         google_data = readProjectFile(baseDir, 'goog_data.json', null);
 
         const text_data = readProjectFile(baseDir, 'text_data.json', null);
         txtData = text_data;
 
         const comment_data = readProjectFile(baseDir, 'goog_comms.json', null);
-        
-        roleData = readProjectFile(baseDir, 'roles.json', null);       
+
+        roleData = readProjectFile(baseDir, 'roles.json', null);
 
         newEntries = action.projectData.entries.map((e, i) => {
-            e.key_txt = text_data["text-data"].filter(td => td['entry-index'] === i)
-           
-            let testArray = e.files.filter(f=> f.fileType === 'gdoc');
-            if(testArray.length > 0){
-              e.files = e.files.map(ef => {
-                if(ef.fileType === "gdoc"){
-                  ef.emphasized = google_em[ef.fileId];
-                  ef.comments = comment_data[ef.fileId];
-                }
-                return ef
-              })
-            }
-            return e;
+          e.key_txt = text_data['text-data'].filter(
+            (td) => td['entry-index'] === i
+          );
 
-          });         
+          let testArray = e.files.filter((f) => f.fileType === 'gdoc');
+          if (testArray.length > 0) {
+            e.files = e.files.map((ef) => {
+              if (ef.fileType === 'gdoc') {
+                ef.emphasized = google_em[ef.fileId];
+                ef.comments = comment_data[ef.fileId];
+              }
+              return ef;
+            });
+          }
+          return e;
+        });
       } catch (e) {
         newEntries = action.projectData.entries;
-        
+
         return e;
       }
-     
+
       let research_threads = checkRtFile(baseDir);
-      
+
       const newProjectData = {
         ...action.projectData,
         entries: newEntries,
@@ -379,8 +364,8 @@ const appStateReducer = (state, action) => {
         researchThreads: research_threads,
         selectedThread: 0,
         filterTags: [],
-        filterTypes: []
-      }
+        filterTypes: [],
+      };
     }
 
     case 'UPDATE_TITLE': {
@@ -391,67 +376,73 @@ const appStateReducer = (state, action) => {
 
       return saveJSON(newProjectData);
     }
-    case 'ADD_TAG_TO_THREAD':{
+    case 'ADD_TAG_TO_THREAD': {
       const { tag, threadIndex } = action;
-     
-      let newRT = {...state.researchThreads}
-      console.log('NEW RT',newRT)
+
+      let newRT = { ...state.researchThreads };
+      console.log('NEW RT', newRT);
       newRT.research_threads[threadIndex].associated_tags.push(tag);
-      
+
       return saveJSONRT(newRT);
     }
 
-    case 'ADD_ACTIVITY_TO_THREAD':{
-      const {activity, rationale, activityIndex, threadIndex} = action;
-      
+    case 'ADD_ACTIVITY_TO_THREAD': {
+      const { activity, rationale, activityIndex, threadIndex } = action;
+
       let newRT = state.researchThreads;
-      
-      let newA =  {
-        type: "activity",
-        dob: activity.date, 
-        activity_index: activityIndex, 
+
+      let newA = {
+        type: 'activity',
+        dob: activity.date,
+        activity_index: activityIndex,
         title: activity.title,
-        rationale: rationale
-      }
-      newRT.research_threads[threadIndex].evidence.push(newA)
+        rationale: rationale,
+      };
+      newRT.research_threads[threadIndex].evidence.push(newA);
 
       return saveJSONRT(newRT);
-    } 
+    }
 
     case 'ADD_ARTIFACT_TO_THREAD': {
-      const {activity, rationale, artifactIndex, threadIndex} = action;
+      const { activity, rationale, artifactIndex, threadIndex } = action;
       let newRT = state.researchThreads;
       console.log('activity files', activity.files, artifactIndex);
-      let newA =  {
-        type: "artifact",
-        dob: activity.date, 
-        activity_index: activity.index, 
-        artifactIndex: artifactIndex,
-        activityTitle: activity.title,
-        artifactTitle: activity.files[artifactIndex].title,
-        rationale: rationale
-      }
-      newRT.research_threads[threadIndex].evidence.push(newA);
-     
-      return saveJSONRT(newRT);
-
-    }
-
-    case "ADD_FRAGMENT_TO_THREAD":{
-      const {activity, rationale, artifactIndex, threadIndex, fragment, fragmentType} = action;
-      let newRT = state.researchThreads;
-      let newA =  {
-        type: "fragment",
-        dob: activity.date, 
-        activity_index: activity.index, 
+      let newA = {
+        type: 'artifact',
+        dob: activity.date,
+        activity_index: activity.index,
         artifactIndex: artifactIndex,
         activityTitle: activity.title,
         artifactTitle: activity.files[artifactIndex].title,
         rationale: rationale,
-        anchors:[{anchor_type: fragmentType, frag_type: fragment}]
-      }
+      };
       newRT.research_threads[threadIndex].evidence.push(newA);
-      return saveJSONRT(newRT);;
+
+      return saveJSONRT(newRT);
+    }
+
+    case 'ADD_FRAGMENT_TO_THREAD': {
+      const {
+        activity,
+        rationale,
+        artifactIndex,
+        threadIndex,
+        fragment,
+        fragmentType,
+      } = action;
+      let newRT = state.researchThreads;
+      let newA = {
+        type: 'fragment',
+        dob: activity.date,
+        activity_index: activity.index,
+        artifactIndex: artifactIndex,
+        activityTitle: activity.title,
+        artifactTitle: activity.files[artifactIndex].title,
+        rationale: rationale,
+        anchors: [{ anchor_type: fragmentType, frag_type: fragment }],
+      };
+      newRT.research_threads[threadIndex].evidence.push(newA);
+      return saveJSONRT(newRT);
     }
 
     case 'ADD_TAG_TO_ENTRY': {
@@ -465,7 +456,11 @@ const appStateReducer = (state, action) => {
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
-          { title: newTag.text, color: newColor, date: new Date().toISOString() },
+          {
+            title: newTag.text,
+            color: newColor,
+            date: new Date().toISOString(),
+          },
         ];
       } else {
         newTags = state.projectData.tags;
@@ -503,30 +498,31 @@ const appStateReducer = (state, action) => {
     }
 
     case 'CREATED_GOOGLE_IN_ENTRY': {
-      return action.newProjectData
+      return action.newProjectData;
     }
 
     case 'HIGHLIGHT_TAG': {
-     
-      return {...state, highlightedTag: action.highlightedTag }
+      return { ...state, highlightedTag: action.highlightedTag };
     }
 
     case 'HIGHLIGHT_TYPE': {
-     
-      return {...state, highlightedType: action.highlightedType }
+      return { ...state, highlightedType: action.highlightedType };
     }
 
     case 'SELECTED_ARTIFACT': {
-     
-      return {...state, selectedArtifactEntry: action.selectedArtifactEntry, selectedArtifactIndex: action.selectedArtifactIndex}
+      return {
+        ...state,
+        selectedArtifactEntry: action.selectedArtifactEntry,
+        selectedArtifactIndex: action.selectedArtifactIndex,
+      };
     }
 
-    case 'SELECTED_THREAD':{
-      return {...state, selectedThread: action.selectedThread }
+    case 'SELECTED_THREAD': {
+      return { ...state, selectedThread: action.selectedThread };
     }
 
-    case 'DELETE_EVIDENCE_FROM_THREAD':{
-      return {...state, researchThreads: action.researchThreads}
+    case 'DELETE_EVIDENCE_FROM_THREAD': {
+      return { ...state, researchThreads: action.researchThreads };
     }
 
     case 'ADD_URL': {
@@ -544,24 +540,21 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
-    case 'CREATE_THREAD':{
-
-      let randomColor = Math.floor(Math.random()*16777215).toString(16);
+    case 'CREATE_THREAD': {
+      let randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
       let threadOb = {
-        title: action.threadName, 
-        actions:[
-          {action: "created", when: new Date()}
-        ],
+        title: action.threadName,
+        actions: [{ action: 'created', when: new Date() }],
         rt_id: uuidv4(),
         description: action.threadDescription,
         associated_tags: [],
-        color:`#${randomColor}`,
-        evidence:[]
-      }
+        color: `#${randomColor}`,
+        evidence: [],
+      };
       let newRT = state.researchThreads;
       newRT.research_threads.push(threadOb);
-     
+
       return saveJSONRT(newRT);
     }
 
@@ -723,65 +716,66 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TYPES': {
-     
       return { ...state, filterType: action.filterType };
     }
 
-    case 'CREATE_CONCEPT':{
-      
-      const newConcepts  = [
+    case 'CREATE_CONCEPT': {
+      const newConcepts = [
         ...state.projectData.concepts,
-        { name: action.title, actions: [ {action: 'created', when: new Date().toISOString() }] },
+        {
+          name: action.title,
+          actions: [{ action: 'created', when: new Date().toISOString() }],
+        },
       ];
 
       const newProjectData = {
         ...state.projectData,
-        concepts: newConcepts
+        concepts: newConcepts,
       };
 
       return saveJSON(newProjectData);
-
     }
 
-    case 'DELETE_CONCEPT':{
-    
-       const newConcepts  = state.projectData.concepts.map(m => {
-        
-           if(m.name === action.title.name){
-          
-             m.actions = [...m.actions, { action:'deleted', when: new Date().toISOString() }]
-           }
-           return m;
-         });
-
-       const newProjectData = {
-         ...state.projectData,
-         concepts: newConcepts
-       };
- 
-       return saveJSON(newProjectData);
- 
-    }
-
-    case 'MERGE_CONCEPT':{
-       
-       const newConcepts  = state.projectData.concepts.map(m => {
-        
-        if(m.name === action.fromName){
-
-          m.actions = [...m.actions, { action:'merged', with: action.mergeName, when: new Date().toISOString() }]
+    case 'DELETE_CONCEPT': {
+      const newConcepts = state.projectData.concepts.map((m) => {
+        if (m.name === action.title.name) {
+          m.actions = [
+            ...m.actions,
+            { action: 'deleted', when: new Date().toISOString() },
+          ];
         }
         return m;
       });
-      
-       const newProjectData = {
+
+      const newProjectData = {
         ...state.projectData,
-        concepts: newConcepts
+        concepts: newConcepts,
       };
 
       return saveJSON(newProjectData);
+    }
 
-      
+    case 'MERGE_CONCEPT': {
+      const newConcepts = state.projectData.concepts.map((m) => {
+        if (m.name === action.fromName) {
+          m.actions = [
+            ...m.actions,
+            {
+              action: 'merged',
+              with: action.mergeName,
+              when: new Date().toISOString(),
+            },
+          ];
+        }
+        return m;
+      });
+
+      const newProjectData = {
+        ...state.projectData,
+        concepts: newConcepts,
+      };
+
+      return saveJSON(newProjectData);
     }
 
     default: {
@@ -796,11 +790,10 @@ const initialState = {
   //projectData: getEmptyProject('null'),
   folderPath: null,
   filterTags: [],
-  filterType: null
+  filterType: null,
 };
 
 export function ProjectStateProvider({ children }) {
-
   const reducer = useReducer(appStateReducer, initialState);
 
   return (

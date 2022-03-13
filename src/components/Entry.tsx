@@ -16,7 +16,6 @@ import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
 import {
   FaExternalLinkAlt,
-  FaEyeSlash,
   FaLock,
   FaLockOpen,
   FaPlus,
@@ -32,7 +31,6 @@ import FileUpload from './FileUpload';
 import { EntryType, File, FileObj, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
-
 
 import URLList from './URLList';
 
@@ -70,33 +68,32 @@ const EditDate = (props: EditDateTypes) => {
   );
 };
 
+const FileContext = (props: any) => {
+  const { file, entryIndex, fileIndex } = props;
 
-const FileContext = (props:any)=>{
+  const [, dispatch] = useProjectState();
 
-    let {file, entryIndex, fileIndex} = props;
+  const contextFill = file.meta ? file.meta : file.context;
 
-    const [state, dispatch] = useProjectState();
-    
-    let contextFill = file.meta ? file.meta : file.context;
-   
-    let contextStarter = contextFill != "null" ? contextFill : "No context here yet."
+  const contextStarter =
+    contextFill != 'null' ? contextFill : 'No context here yet.';
 
-    const [context, setContext] = useState(contextStarter);
+  const [context, setContext] = useState(contextStarter);
 
-    const [editing, setEditing] = useState(false);
-  
-    const updateMeta = () => {
-      dispatch({type: 'FILE_META', entryIndex, fileIndex, context});
-    }
+  const updateMeta = () => {
+    dispatch({ type: 'FILE_META', entryIndex, fileIndex, context });
+  };
 
-    return (
-      <Editable defaultValue={context === "null" ? "No context here yet." : context}>
-      <EditablePreview/>
-      <EditableInput/>
-      <Button onClick={()=> updateMeta()}>Update Context</Button>
-      </Editable>
-    )
-}
+  return (
+    <Editable
+      defaultValue={context === 'null' ? 'No context here yet.' : context}
+    >
+      <EditablePreview />
+      <EditableInput />
+      <Button onClick={() => updateMeta()}>Update Context</Button>
+    </Editable>
+  );
+};
 
 interface EntryPropTypes {
   entryData: EntryType;
@@ -193,13 +190,16 @@ const Entry = (props: EntryPropTypes) => {
           <EditablePreview />
           <EditableInput />
         </Editable>
-        <Button 
-        style={{display:'inline'}} onClick={makeNonEditable} type="button">
+        <Button
+          style={{ display: 'inline' }}
+          onClick={makeNonEditable}
+          type="button"
+        >
           Hide edit controls
         </Button>
 
         <Button
-        style={{marginLeft:5}}
+          style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() =>
             updateEntryField(entryIndex, 'isPrivate', !entryData.isPrivate)
@@ -212,25 +212,24 @@ const Entry = (props: EntryPropTypes) => {
           )}
         </Button>
 
-
         <Button
-        style={{display:'inline'}}
-        colorScheme="red"
-        leftIcon={<DeleteIcon />}
-        onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
+          style={{ display: 'inline' }}
+          colorScheme="red"
+          leftIcon={<DeleteIcon />}
+          onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
         >
-        Delete Activity
-      </Button>
+          Delete Activity
+        </Button>
       </Heading>
       <br />
-      <Flex alignItems={'center'}>
-      <EditDate
-        date={entryData.date}
-        entryIndex={entryIndex}
-        updateEntryField={updateEntryField}
-      />
+      <Flex alignItems="center">
+        <EditDate
+          date={entryData.date}
+          entryIndex={entryIndex}
+          updateEntryField={updateEntryField}
+        />
       </Flex>
-     
+
       <br />
 
       <ReactTags
@@ -248,7 +247,6 @@ const Entry = (props: EntryPropTypes) => {
           dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex });
         }}
       />
-
 
       <br />
 
@@ -287,83 +285,90 @@ const Entry = (props: EntryPropTypes) => {
       )}
 
       <br />
-      <div style={{marginTop:10}}>
-        <span style={{fontSize:24, fontWeight:500}}>Artifacts</span>
-      <br />
-      <UnorderedList>
-        {files.map((file: File, j:any) => (
-          <ListItem key={file.title}>
-            {file.title}{' '}
-            <FaExternalLinkAlt
-              onClick={() => {
-                
-                openFile(file.title)}}
-              title="Open file externally"
-              size="12px"
-              style={{ display: 'inline' }}
-            />{' '}
-            <FaTrashAlt
-              onClick={() => deleteFile(file)}
-              title="Unattahch or delete File"
-              size="12px"
-              style={{ display: 'inline' }}
-            />
-            <UnorderedList>
-               <ListItem> 
-                  <FileContext file={file} entryIndex={entryIndex} fileIndex={j}></FileContext>
-               </ListItem> 
-            </UnorderedList>
-            
-          </ListItem>
-        ))}
-      </UnorderedList>
-
+      <div style={{ marginTop: 10 }}>
+        <span style={{ fontSize: 24, fontWeight: 500 }}>Artifacts</span>
+        <br />
+        <UnorderedList>
+          {files.map((file: File, j: any) => (
+            <ListItem key={file.title}>
+              {file.title}{' '}
+              <FaExternalLinkAlt
+                onClick={() => {
+                  openFile(file.title);
+                }}
+                title="Open file externally"
+                size="12px"
+                style={{ display: 'inline' }}
+              />{' '}
+              <FaTrashAlt
+                onClick={() => deleteFile(file)}
+                title="Unattahch or delete File"
+                size="12px"
+                style={{ display: 'inline' }}
+              />
+              <UnorderedList>
+                <ListItem>
+                  <FileContext
+                    file={file}
+                    entryIndex={entryIndex}
+                    fileIndex={j}
+                  />
+                </ListItem>
+              </UnorderedList>
+            </ListItem>
+          ))}
+        </UnorderedList>
       </div>
-     
 
       {showFileUpload ? (
         <>
-        <Flex style={{borderColor:'gray', borderRadius:5, alignItems:'center', justifyContent:'left'}}>
-          <FileUpload
-            saveFiles={saveFiles}
-            containerStyle={{outerWidth:'100%'}}
-            msg={
-              <>
-                Drag and drop some files here, or <b>click to select files</b>,
-                to add to this entry.
-              </>
-            }
-          />
-          <Button onClick={() => setShowFileUpload(false)} type="button">
-            Cancel
-          </Button>
+          <Flex
+            style={{
+              borderColor: 'gray',
+              borderRadius: 5,
+              alignItems: 'center',
+              justifyContent: 'left',
+            }}
+          >
+            <FileUpload
+              saveFiles={saveFiles}
+              containerStyle={{ outerWidth: '100%' }}
+              msg={
+                <>
+                  Drag and drop some files here, or <b>click to select files</b>
+                  , to add to this entry.
+                </>
+              }
+            />
+            <Button onClick={() => setShowFileUpload(false)} type="button">
+              Cancel
+            </Button>
           </Flex>
         </>
       ) : (
         <Button onClick={() => setShowFileUpload(true)} type="button">
           <FaPlus /> Add files
         </Button>
-        
       )}
 
-    <GoogFileInit
-      fileType={'document'}
-      text={"Create Google Doc"}
-      entryIndex={entryIndex}
-    />
+      <GoogFileInit
+        fileType="document"
+        text="Create Google Doc"
+        entryIndex={entryIndex}
+      />
 
-    <GoogFileInit
-      fileType={'spreadsheet'}
-      text={"Create Google Sheet"}
-      entryIndex={entryIndex}
-    />
+      <GoogFileInit
+        fileType="spreadsheet"
+        text="Create Google Sheet"
+        entryIndex={entryIndex}
+      />
 
-    {/* {showURL ?
+      {/* {showURL ?
     <div>
-      <Button color="primary" onClick={()=>{ 
+      <Button color="primary" onClick={()=>{
         setShowURL(false)
       }}>Cancel</Button>
-   
+
       <form>
         <label>
             <input onChange={handleChange} type="text" />
