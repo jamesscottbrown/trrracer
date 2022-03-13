@@ -23,7 +23,7 @@ import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 
-import { EntryType, TagType } from './types';
+import { EntryType, TagType, File } from './types';
 import { useProjectState } from './ProjectContext';
 
 interface EntryPropTypes {
@@ -40,8 +40,16 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
-const ReadonlyEntryFile = (props) => {
-  const { entryData, openFile, setViewType } = props;
+interface ReadonlyEntryFilePropTypes {
+  entryData: EntryType;
+  openFile: (a: string, fp: string) => void;
+  setViewType: (viewType: string) => void;
+  file: File;
+  i: number;
+}
+
+const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
+  const { entryData, openFile, setViewType, file, i } = props;
   const [{ folderPath }, dispatch] = useProjectState();
 
   const [showPopover, setShowPopover] = useState(false);
@@ -50,16 +58,14 @@ const ReadonlyEntryFile = (props) => {
     setShowPopover(false);
   };
 
-  const { f, i } = props;
-
   return (
-    <React.Fragment key={`fr-${f.title}-${i}`}>
-      <Box bg="#ececec" key={`${f.title}-${i}`} p={3}>
+    <React.Fragment key={`fr-${file.title}-${i}`}>
+      <Box bg="#ececec" key={`${file.title}-${i}`} p={3}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
               <span style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}>
-                {f.title}{' '}
+                {file.title}{' '}
               </span>
             </PopoverTrigger>
             <PopoverContent bg="white" color="gray">
@@ -86,19 +92,19 @@ const ReadonlyEntryFile = (props) => {
             onMouseEnter={() => setShowPopover(true)}
           >
             {' '}
-            {f.title}{' '}
+            {file.title}{' '}
           </span>
         )}
 
         <FaExternalLinkAlt
-          onClick={() => openFile(f.title, folderPath)}
+          onClick={() => openFile(file.title, folderPath)}
           title="Open file externally"
           size="13px"
           style={{ display: 'inline' }}
         />
         <AttachmentPreview
           folderPath={folderPath}
-          title={f.title}
+          title={file.title}
           openFile={openFile}
           size={60}
         />
@@ -115,7 +121,7 @@ const ReadonlyEntryFile = (props) => {
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable } = props;
+  const { entryData, makeEditable, openFile, setViewType } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
   const checkTagColor = (tagName: string) => {
@@ -200,7 +206,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
-          <ReadonlyEntryFile f={f} i={i} />
+          <ReadonlyEntryFile
+            entryData={entryData}
+            openFile={openFile}
+            setViewType={setViewType}
+            file={f}
+            i={i}
+          />
         ))}
       </SimpleGrid>
       {urls.length > 0 && (
