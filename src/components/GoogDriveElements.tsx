@@ -6,6 +6,7 @@ import {
   PopoverContent,
 } from '@chakra-ui/react';
 import React from 'react';
+import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
 const colorConvert = (codes: Object) => {
   return `rgb(${255 * (codes.red ? codes.red : 0)},${
@@ -83,7 +84,7 @@ const GoogDriveParagraph = (parProps: any) => {
   const { parData, index, comments } = parProps;
   // console.log(parData)
 
-  const getHeading = (styling: any, content: any) => {
+  const getHeading = (styling: GoogleParagraphStyle, content: GoogleDocParagraph) => {
     if (styling.namedStyleType.includes('1'))
       return (
         <span
