@@ -40,15 +40,83 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
-const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, openFile, makeEditable, setViewType } = props;
+const ReadonlyEntryFile = (props) => {
+  const { entryData, openFile, setViewType } = props;
+  const [{ folderPath }, dispatch] = useProjectState();
+
   const [showPopover, setShowPopover] = useState(false);
-  const [{ projectData, folderPath, researchThreads }, dispatch] =
-    useProjectState();
 
   const closePopover = () => {
     setShowPopover(false);
   };
+
+  const { f, i } = props;
+
+  return (
+    <React.Fragment key={`fr-${f.title}-${i}`}>
+      <Box bg="#ececec" key={`${f.title}-${i}`} p={3}>
+        {showPopover ? (
+          <Popover isOpen={showPopover} onClose={closePopover}>
+            <PopoverTrigger>
+              <span style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}>
+                {f.title}{' '}
+              </span>
+            </PopoverTrigger>
+            <PopoverContent bg="white" color="gray">
+              <PopoverArrow bg="white" />
+              <PopoverBody>
+                <Button
+                  onClick={() => {
+                    setViewType('detail view');
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: entryData,
+                      selectedArtifactIndex: i,
+                    });
+                  }}
+                >
+                  See artifact in detail.
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <span
+            style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
+            onMouseEnter={() => setShowPopover(true)}
+          >
+            {' '}
+            {f.title}{' '}
+          </span>
+        )}
+
+        <FaExternalLinkAlt
+          onClick={() => openFile(f.title, folderPath)}
+          title="Open file externally"
+          size="13px"
+          style={{ display: 'inline' }}
+        />
+        <AttachmentPreview
+          folderPath={folderPath}
+          title={f.title}
+          openFile={openFile}
+          size={60}
+        />
+        {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ?
+                <AttachmentPreview
+                  folderPath={folderPath}
+                  title={f.title}
+                  openFile={openFile}
+                /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
+            } */}
+      </Box>
+    </React.Fragment>
+  );
+};
+
+const ReadonlyEntry = (props: EntryPropTypes) => {
+  const { entryData, makeEditable } = props;
+  const [{ projectData, researchThreads }] = useProjectState();
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
@@ -132,66 +200,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
-          <React.Fragment key={`fr-${f.title}-${i}`}>
-            <Box bg="#ececec" key={`${f.title}-${i}`} p={3}>
-              {showPopover ? (
-                <Popover isOpen={showPopover} onClose={closePopover}>
-                  <PopoverTrigger>
-                    <span
-                      style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
-                    >
-                      {f.title}{' '}
-                    </span>
-                  </PopoverTrigger>
-                  <PopoverContent bg="white" color="gray">
-                    <PopoverArrow bg="white" />
-                    <PopoverBody>
-                      <Button
-                        onClick={() => {
-                          setViewType('detail view');
-                          dispatch({
-                            type: 'SELECTED_ARTIFACT',
-                            selectedArtifactEntry: entryData,
-                            selectedArtifactIndex: i,
-                          });
-                        }}
-                      >
-                        See artifact in detail.
-                      </Button>
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              ) : (
-                <span
-                  style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
-                  onMouseEnter={() => setShowPopover(true)}
-                >
-                  {' '}
-                  {f.title}{' '}
-                </span>
-              )}
-
-              <FaExternalLinkAlt
-                onClick={() => openFile(f.title, folderPath)}
-                title="Open file externally"
-                size="13px"
-                style={{ display: 'inline' }}
-              />
-              <AttachmentPreview
-                folderPath={folderPath}
-                title={f.title}
-                openFile={openFile}
-                size={60}
-              />
-              {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ?
-                <AttachmentPreview
-                  folderPath={folderPath}
-                  title={f.title}
-                  openFile={openFile}
-                /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
-            } */}
-            </Box>
-          </React.Fragment>
+          <ReadonlyEntryFile f={f} i={i} />
         ))}
       </SimpleGrid>
       {urls.length > 0 && (
