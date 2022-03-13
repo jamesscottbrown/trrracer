@@ -26,12 +26,16 @@ const MarkableImage = (props:any) => {
     const {imgPath, activity, artifactIndex} = props;
    
     const [markers, setMarkers] = useState([])
+    
+    let artifactId = `${artifactIndex}-${activity.title}`;
+    console.log('testing', artifactId);
 
     useEffect(() => {
         if(activity.files[artifactIndex].markers){
+            console.log('this is going to run forever');
             setMarkers(activity.files[artifactIndex].markers)
         }
-     }, [artifactIndex])
+    }, [artifactId])
 
     
     const [markerCoor, setMarkerCoor] = useState([0, 0])
