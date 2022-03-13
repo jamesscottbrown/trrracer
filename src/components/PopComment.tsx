@@ -7,161 +7,174 @@ import {
   PopoverBody,
   PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
   Button,
 } from '@chakra-ui/react';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
 
 const colorConvert = (codes: Object) => {
-return `rgb(${255 * codes.red},${255 * codes.green},${255 * codes.blue})`;
+  return `rgb(${255 * codes.red},${255 * codes.green},${255 * codes.blue})`;
 };
 
 const formatText = (blob, spanType) => {
-if (spanType === 'comment') {
-  return blob['quotedFileContent']
-    ? `${blob['quotedFileContent']['value']}`
-    : ' ';
-} else {
-  return blob['em']['content'];
-}
+  if (spanType === 'comment') {
+    return blob.quotedFileContent ? `${blob.quotedFileContent.value}` : ' ';
+  }
+  return blob.em.content;
 };
 
 const formatContext = (blob, pos) => {
-if (blob.context) {
-  return pos === 'before' ? blob.context[0] : blob.context[1];
-} else {
+  if (blob.context) {
+    return pos === 'before' ? blob.context[0] : blob.context[1];
+  }
   return '';
-}
 };
 
 const renderPop = (blob, spanType, anonName) => {
-if (spanType === 'comment') {
-  let starter = formatPopoverComment(blob, anonName);
-  if (blob.replies.length > 0) {
-    let rep = blob.replies.map((m) => formatPopoverComment(m, anonName));
-    starter += '-----------------------------' + rep;
+  if (spanType === 'comment') {
+    let starter = formatPopoverComment(blob, anonName);
+    if (blob.replies.length > 0) {
+      const rep = blob.replies.map((m) => formatPopoverComment(m, anonName));
+      starter += `-----------------------------${rep}`;
+    }
+    return starter;
   }
-  return starter;
-} else {
   return formatPopoverEmText(blob);
-}
 };
 
-const formatPopoverComment = (blob, anonName)=> {
-return `${anonName(blob["author"]["displayName"], 'initials')} (${anonName(blob["author"]["displayName"], 'role')}): "${blob["content"]}"`
-}
+const formatPopoverComment = (blob, anonName) => {
+  return `${anonName(blob.author.displayName, 'initials')} (${anonName(
+    blob.author.displayName,
+    'role'
+  )}): "${blob.content}"`;
+};
 
 const formatPopoverEmText = (blob) => {
-
-let blobIndex = blob['index-in'];
-// let before = (blobIndex > 1 && state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph.elements : " ";
-// let after = (state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1] && state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph.elements : " ";
-// return `${before[0].textRun} .... ${after.at(-1).textRun}`
-}
+  const blobIndex = blob['index-in'];
+  // let before = (blobIndex > 1 && state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex - 1].paragraph.elements : " ";
+  // let after = (state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1] && state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph) ? state.projectData.googleData[blob['google-id']].body.content[blobIndex + 1].paragraph.elements : " ";
+  // return `${before[0].textRun} .... ${after.at(-1).textRun}`
+};
 
 const formatEmphasis = (blob, spanType) => {
-let blobOb = { margin: '4px' };
-if (spanType === 'comment') {
-  blobOb['fontWeight'] = 'bold';
-  blobOb['backgroundColor'] = 'rgb(253,213,145)';
-} else {
-  if (blob['em']['textStyle'].bold === true) blobOb['fontWeight'] = 'bold';
+  const blobOb = { margin: '4px' };
+  if (spanType === 'comment') {
+    blobOb.fontWeight = 'bold';
+    blobOb.backgroundColor = 'rgb(253,213,145)';
+  } else {
+    if (blob.em.textStyle.bold === true) blobOb.fontWeight = 'bold';
 
-  if (blob['em']['textStyle'].backgroundColor)
-    blobOb['backgroundColor'] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor);
-}
-return blobOb;
+    if (blob.em.textStyle.backgroundColor)
+      blobOb.backgroundColor = colorConvert(
+        blob.em.textStyle.backgroundColor.color.rgbColor
+      );
+  }
+  return blobOb;
 };
 
 const formatEmphasisVis = (blob, spanType) => {
-
-  let blobOb =  {margin: '2px', width:'5px', height:'50px', backgroundColor: 'gray', display:"inline-block"}
+  const blobOb = {
+    margin: '2px',
+    width: '5px',
+    height: '50px',
+    backgroundColor: 'gray',
+    display: 'inline-block',
+  };
   if (spanType === 'comment') {
-      blobOb["fontWeight"] = "bold";
-      blobOb["backgroundColor"] = "rgb(253,213,145)";
+    blobOb.fontWeight = 'bold';
+    blobOb.backgroundColor = 'rgb(253,213,145)';
   } else {
-      if (blob['em']['textStyle'].bold === true) blobOb["width"] = '10px';
-      if (blob['em']['textStyle'].italic === true) blobOb["fontStyle"] = "italic";
+    if (blob.em.textStyle.bold === true) blobOb.width = '10px';
+    if (blob.em.textStyle.italic === true) blobOb.fontStyle = 'italic';
 
-      if (blob['em']['textStyle'].backgroundColor) {
-        blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].backgroundColor.color.rgbColor)
-        blobOb["borderColor"] = "gray";
-        blobOb["borderStyle"] = "solid";
-        blobOb["borderWidth"] = '1px';
-      }
-      if (blob['em']['textStyle'].foregroundColor){
-        blobOb["backgroundColor"] = colorConvert(blob['em']['textStyle'].foregroundColor.color.rgbColor);
-        blobOb["borderColor"] = "gray";
-        blobOb["borderStyle"] = "solid";
-        blobOb["borderWidth"] = '1px';
-      }
+    if (blob.em.textStyle.backgroundColor) {
+      blobOb.backgroundColor = colorConvert(
+        blob.em.textStyle.backgroundColor.color.rgbColor
+      );
+      blobOb.borderColor = 'gray';
+      blobOb.borderStyle = 'solid';
+      blobOb.borderWidth = '1px';
+    }
+    if (blob.em.textStyle.foregroundColor) {
+      blobOb.backgroundColor = colorConvert(
+        blob.em.textStyle.foregroundColor.color.rgbColor
+      );
+      blobOb.borderColor = 'gray';
+      blobOb.borderStyle = 'solid';
+      blobOb.borderWidth = '1px';
+    }
   }
-  return blobOb
-}
+  return blobOb;
+};
 
 const PopComment = (props) => {
-
   const [showPopover, setShowPopover] = useState(false);
 
   const closePopover = () => {
     setShowPopover(false);
   };
 
-    const {data, spanType} = props;
-    const [state, dispatch] = useProjectState();
+  const { data, spanType } = props;
+  const [state, dispatch] = useProjectState();
 
-    const anonName = (name, type)=> {
-      let anon = state.projectData.roles[name];
-      if(anon){
-          return anon[type]
-      }else{
-          console.log('NAME NOT FOUND', name)
-      }
+  const anonName = (name, type) => {
+    const anon = state.projectData.roles[name];
+    if (anon) {
+      return anon[type];
     }
+    console.log('NAME NOT FOUND', name);
+  };
 
-      if (!showPopover){
-        return (
-          <Box onMouseEnter={() => setShowPopover(true)}>
-            { spanType === 'comment' ?  renderPop(data, spanType, anonName)   :   <>
-                <span>{formatContext(data, 'before')}</span>
-                <span style={formatEmphasis(data, spanType)}>{formatText(data, spanType)}</span>
-                <span>{formatContext(data, 'after')}</span>
-              </> }
-          </Box>
-        );
-      }
-
+  if (!showPopover) {
     return (
-      <Popover isOpen={showPopover} onClose={closePopover}>
-          <PopoverTrigger>
-            <div style={formatEmphasisVis(data, spanType)} onMouseLeave={() => setShowPopover(false)}></div>
-          </PopoverTrigger>
-        <PopoverContent bg="white" color="gray">
-          <PopoverHeader fontWeight="semibold">
-            {data.createdTime}
-          </PopoverHeader>
-          <PopoverArrow bg="white" />
-
-          <PopoverBody>
-            {spanType === 'comment' ? (
-              <Box>{renderPop(data, spanType, anonName)}</Box>
-            ) : (
-              <Box>
-                <span>{formatContext(data, 'before')}</span>
-                <span style={formatEmphasis(data, spanType)}>{formatText(data, spanType)}</span>
-                <span>{formatContext(data, 'after')}</span>
-              </Box>
-            )}
-          </PopoverBody>
-          <PopoverFooter>
-            <Button>Go to Doc</Button>
-          </PopoverFooter>
-        </PopoverContent>
-      </Popover>
+      <Box onMouseEnter={() => setShowPopover(true)}>
+        {spanType === 'comment' ? (
+          renderPop(data, spanType, anonName)
+        ) : (
+          <>
+            <span>{formatContext(data, 'before')}</span>
+            <span style={formatEmphasis(data, spanType)}>
+              {formatText(data, spanType)}
+            </span>
+            <span>{formatContext(data, 'after')}</span>
+          </>
+        )}
+      </Box>
     );
+  }
 
-}
+  return (
+    <Popover isOpen={showPopover} onClose={closePopover}>
+      <PopoverTrigger>
+        <div
+          style={formatEmphasisVis(data, spanType)}
+          onMouseLeave={() => setShowPopover(false)}
+        />
+      </PopoverTrigger>
+      <PopoverContent bg="white" color="gray">
+        <PopoverHeader fontWeight="semibold">{data.createdTime}</PopoverHeader>
+        <PopoverArrow bg="white" />
+
+        <PopoverBody>
+          {spanType === 'comment' ? (
+            <Box>{renderPop(data, spanType, anonName)}</Box>
+          ) : (
+            <Box>
+              <span>{formatContext(data, 'before')}</span>
+              <span style={formatEmphasis(data, spanType)}>
+                {formatText(data, spanType)}
+              </span>
+              <span>{formatContext(data, 'after')}</span>
+            </Box>
+          )}
+        </PopoverBody>
+        <PopoverFooter>
+          <Button>Go to Doc</Button>
+        </PopoverFooter>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 export default PopComment;

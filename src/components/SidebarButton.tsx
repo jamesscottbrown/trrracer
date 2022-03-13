@@ -26,7 +26,7 @@ const SidebarButton = (sidebarProps: any) => {
     }
   };
 
-if (!showPopover) {
+  if (!showPopover) {
     return (
       <Box
         style={{ cursor: 'pointer' }}
@@ -48,15 +48,17 @@ if (!showPopover) {
             dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
           }
         }}
-
-        onClick={()=> {
+        onClick={() => {
           console.log('tags filter check', filterTags);
-          //nee to make a tag filter function
-          if(filterTags.includes(data.title)){
+          // nee to make a tag filter function
+          if (filterTags.includes(data.title)) {
             alert('tag filter already exists');
-          }else{
-            dispatch({ type: 'UPDATE_FILTER_TAGS', filterTags: [...filterTags, data.title] });
-          } 
+          } else {
+            dispatch({
+              type: 'UPDATE_FILTER_TAGS',
+              filterTags: [...filterTags, data.title],
+            });
+          }
         }}
       >
         {`${data.title}  (${data.matches.length})`}
@@ -108,15 +110,13 @@ if (!showPopover) {
                   </Box>
                 ))
               ) : (
-                <span>{'no threads yet'}</span>
+                <span>no threads yet</span>
               )}
-              <Button onClick={() => setShowThreadPop(false)}>
-                {'cancel'}
-              </Button>
+              <Button onClick={() => setShowThreadPop(false)}>cancel</Button>
             </Box>
           ) : (
             <Button onClick={() => setShowThreadPop(true)}>
-              {'Add this tag to a thread.'}
+              Add this tag to a thread.
             </Button>
           )}
         </PopoverBody>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { ChangeEvent } from 'react';
 import {
   Box,
   Popover,
@@ -13,19 +14,20 @@ import {
   ListItem,
   Textarea,
 } from '@chakra-ui/react';
+import type { File } from './types';
 
 import CenterFileRender from './CenterFileRender';
 import { useProjectState } from './ProjectContext';
 
 const ActivitytoThread = (props: any) => {
-  const [{ researchThreads }, dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
 
   const { thread, threadIndex, activity, activityIndex } = props;
   const [showDesc, setShowDesc] = useState(false);
   const [threadRat, setThreadRat] = useState(null);
 
-  let handleDescriptionChange = (e) => {
-    let inputValue = e.target.value;
+  const handleDescriptionChange = (e: ChangeEvent) => {
+    const inputValue = e.target.value;
     setThreadRat(inputValue);
   };
 
@@ -45,20 +47,20 @@ const ActivitytoThread = (props: any) => {
           <Textarea
             placeholder="Why are you including this?"
             onChange={handleDescriptionChange}
-          ></Textarea>
+          />
           <Button
             onClick={() => {
               setShowDesc(false);
               dispatch({
                 type: 'ADD_ACTIVITY_TO_THREAD',
-                activity: activity,
+                activity,
                 rationale: threadRat,
-                activityIndex: activityIndex,
-                threadIndex: threadIndex,
+                activityIndex,
+                threadIndex,
               });
             }}
           >
-            {'Add'}
+            Add
           </Button>
         </>
       )}
@@ -70,14 +72,19 @@ const Activity = (activityProps: any) => {
   // console.log('Rendering activity');
 
   const { activity, folderPath, index, numRendered } = activityProps;
-  const [{ highlightedTag, highlightedType, researchThreads }, dispatch] = useProjectState();
+  const [{ highlightedTag, highlightedType, researchThreads }] =
+    useProjectState();
 
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [activitySelected, setActivitySelected] = useState(false);
 
   const colorVar =
-    (activitySelected || activity.tags.indexOf(highlightedTag) > -1 || activity.files.map(m => m.fileType).indexOf(highlightedType) > -1) ? '#FFFCBB' : '#F5F5F5';
+    activitySelected ||
+    activity.tags.indexOf(highlightedTag) > -1 ||
+    activity.files.map((m: File) => m.fileType).indexOf(highlightedType) > -1
+      ? '#FFFCBB'
+      : '#F5F5F5';
 
   const closePopover = () => {
     setShowPopover(false);
@@ -90,10 +97,11 @@ const Activity = (activityProps: any) => {
         w={50}
         marginTop={2}
         marginLeft={4}
-        className={`activity`}
+        className="activity"
         onMouseEnter={() => {
-          setActivitySelected(true)
-          setShowPopover(true)}}
+          setActivitySelected(true);
+          setShowPopover(true);
+        }}
       >
         <CenterFileRender
           key={`cfr-${activity.title}-${index}`}
@@ -101,7 +109,7 @@ const Activity = (activityProps: any) => {
           folderPath={folderPath}
           bgColor={colorVar}
           numRendered={numRendered}
-        ></CenterFileRender>
+        />
       </Box>
     );
   }
@@ -118,10 +126,11 @@ const Activity = (activityProps: any) => {
           w={50}
           marginTop={2}
           marginLeft={4}
-          className={`activity`}
-          onMouseLeave={()=> {
-            setActivitySelected(false)
-            closePopover}}
+          className="activity"
+          onMouseLeave={() => {
+            setActivitySelected(false);
+            closePopover();
+          }}
         >
           <CenterFileRender
             key={`cfr-${activity.title}-${index}`}
@@ -129,7 +138,7 @@ const Activity = (activityProps: any) => {
             folderPath={folderPath}
             bgColor={colorVar}
             numRendered={numRendered}
-          ></CenterFileRender>
+          />
         </Box>
       </PopoverTrigger>
       <PopoverContent bg="white" color="gray">
@@ -156,14 +165,14 @@ const Activity = (activityProps: any) => {
                   )
                 )
               ) : (
-                <span>{'no threads yet'}</span>
+                <span>no threads yet</span>
               )}
             </div>
           ) : (
             <div>
-              <span style={{ display: 'block' }}>{'Artifacts:'}</span>
+              <span style={{ display: 'block' }}>Artifacts:</span>
               <UnorderedList>
-                {activity.files.map((f, i) => (
+                {activity.files.map((f: File, i: number) => (
                   <ListItem key={`f-${f.title}-${i}`}>{f.title}</ListItem>
                 ))}
               </UnorderedList>
@@ -173,13 +182,11 @@ const Activity = (activityProps: any) => {
         <PopoverFooter>
           {seeThreadAssign ? (
             <Box>
-              <Button onClick={() => setSeeThreadAssign(false)}>
-                {'cancel'}
-              </Button>
+              <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
             </Box>
           ) : (
             <Button onClick={() => setSeeThreadAssign(true)}>
-              {'Add this tag to a thread.'}
+              Add this tag to a thread.
             </Button>
           )}
         </PopoverFooter>

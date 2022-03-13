@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 // import Modal from 'react-modal';
 import {
   Button,
-  ButtonGroup,
   FormControl,
   FormLabel,
   Heading,
@@ -48,6 +47,7 @@ const URLList = (props: URLListProps) => {
     setAdditionTitle('');
   };
 
+  /*
   const customStyles = {
     content: {
       top: '50%',
@@ -61,6 +61,7 @@ const URLList = (props: URLListProps) => {
       height: 'max-content',
     },
   };
+   */
 
   if (addingURL) {
     return (
