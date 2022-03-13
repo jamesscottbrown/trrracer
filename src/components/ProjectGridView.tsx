@@ -7,12 +7,11 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  Image,
   SimpleGrid,
   Divider,
 } from '@chakra-ui/react';
 
-import { FaExternalLinkAlt, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 import { EntryType, ProjectViewProps } from './types';
@@ -21,11 +20,10 @@ import TagList from './TagList';
 import ConceptNav from './Concepts';
 import AttachmentPreview from './AttachmentPreview';
 
-
 const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
+  const [{ filterTags, searchConcept }] = useProjectState();
   const [numColumns, setNumColumns] = useState<number>(4);
 
   const [showTags, setShowTags] = useState(false);
@@ -47,29 +45,46 @@ const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      <ConceptNav concepts={projectData.concepts} searchConcept={searchConcept}/>
+      <ConceptNav
+        concepts={projectData.concepts}
+        searchConcept={searchConcept}
+      />
       <br />
       <Divider />
-    {showTags ?
-      <div>
-        <Heading as="h5" size="lg">Tags <FaEyeSlash onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading>
-        <TagList tags={projectData.tags} />
+      {showTags ? (
+        <div>
+          <Heading as="h5" size="lg">
+            Tags{' '}
+            <FaEyeSlash
+              onClick={() => {
+                if (showTags) {
+                  setShowTags(false);
+                } else {
+                  setShowTags(true);
+                }
+              }}
+              style={{ display: 'inline' }}
+            />
+          </Heading>
+          <TagList tags={projectData.tags} />
         </div>
-        :
-        <div><Heading as="h5">Tags <FaEye onClick={()=>{
-          if(showTags){ 
-            setShowTags(false);
-          }else{ 
-            setShowTags(true);
-          };
-        }} style={{display:"inline"}}/></Heading></div>
-    }
+      ) : (
+        <div>
+          <Heading as="h5">
+            Tags{' '}
+            <FaEye
+              onClick={() => {
+                if (showTags) {
+                  setShowTags(false);
+                } else {
+                  setShowTags(true);
+                }
+              }}
+              style={{ display: 'inline' }}
+            />
+          </Heading>
+        </div>
+      )}
 
       <Heading as="h2">Attachments</Heading>
 
