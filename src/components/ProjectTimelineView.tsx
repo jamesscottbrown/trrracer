@@ -10,7 +10,6 @@ import { repositionPoints } from 'respacer';
 
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-import ConceptNav from './Concepts';
 
 import {
   DeadlineType,
@@ -228,7 +227,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   const [showTags, setShowTags] = useState(false);
 
-  const [{ filterTags, searchConcept }, dispatch] = useProjectState();
+  const [{ filterTags }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -252,59 +251,8 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      {/* // <Heading as="h1">{projectData.title}</Heading>
-
-      // <ViewTypeControl viewType={viewType} setViewType={setViewType} />
-
-      // <TagList tags={projectData.tags} />
-
-      // <Heading as="h2">Entries</Heading>
-      // <TagFilter /> */}
-      <ConceptNav
-        concepts={projectData.concepts}
-        searchConcept={searchConcept}
-      />
-      <br />
-      <Divider />
-      {showTags ? (
-        <div>
-          <Heading as="h5" size="lg">
-            Tags{' '}
-            <FaEyeSlash
-              onClick={() => {
-                if (showTags) {
-                  setShowTags(false);
-                } else {
-                  setShowTags(true);
-                }
-              }}
-              style={{ display: 'inline' }}
-            />
-          </Heading>
-          <TagList tags={projectData.tags} />
-        </div>
-      ) : (
-        <div>
-          <Heading as="h5">
-            Tags{' '}
-            <FaEye
-              onClick={() => {
-                if (showTags) {
-                  setShowTags(false);
-                } else {
-                  setShowTags(true);
-                }
-              }}
-              style={{ display: 'inline' }}
-            />
-          </Heading>
-        </div>
-      )}
-
-      <Heading as="h2">Entries</Heading>
-
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
-        <div>
+        <div style={{ overflow:'auto' }}>
           <TimelinePlot
             projectData={projectData}
             filteredEntries={filteredEntries}

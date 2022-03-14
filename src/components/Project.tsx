@@ -10,6 +10,7 @@ import CenterView from './CenterView';
 import LeftSidebar from './LeftSidebar';
 import ArtifactDetailWindow from './ArtifactDetailWindow';
 import ThreadView from './TheadView';
+import ProjectTimelineView from './ProjectTimelineView';
 
 interface ProjectProps {
   folderPath: string;
@@ -18,7 +19,7 @@ interface ProjectProps {
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData }] = useProjectState();
-  const [viewType, setViewType] = useState<string>('activity view');
+  const [viewType, setViewType] = useState<string>('timeline');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
@@ -51,6 +52,48 @@ const Project = (ProjectPropValues: ProjectProps) => {
             folderPath={folderPath}
             timeFilter={timeFilter}
             setTimeFilter={setTimeFilter}
+          />
+          <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+            <ProjectListView
+              projectData={projectData}
+              folderPath={folderPath}
+              reversedOrder={reversedOrder}
+              setViewType={setViewType}
+              timeFilter={timeFilter}
+              setTimeFilter={setTimeFilter}
+            />
+          </Box>
+        </Flex>
+      </div>
+    );
+  }
+
+  if (viewType === 'timeline') {
+    return (
+      <div
+        style={{
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          width: '100%',
+        }}
+      >
+        <TopBar
+          folderPath={folderPath}
+          viewType={viewType}
+          setViewType={setViewType}
+          reversedOrder={reversedOrder}
+          setReversedOrder={setReversedOrder}
+          setNewTitle={setNewTitle}
+          timeFilter={timeFilter}
+          setTimeFilter={setTimeFilter}
+        />
+        <Flex position="relative" top={220}>
+          <LeftSidebar />
+          <ProjectTimelineView 
+            projectData={projectData}
+            folderPath={folderPath}
           />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
