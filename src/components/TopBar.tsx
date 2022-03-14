@@ -76,7 +76,6 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
         <Heading as="h1">
           <Editable
             value={newTitle}
-            // valu={projectData.title}
             onChange={(val) => setNewTitle(val)}
             onCancel={() => setNewTitle(projectData.title)}
             onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
@@ -85,8 +84,6 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
             <EditableInput />
           </Editable>
       </Heading>
-
-        {/* <Heading as="h3">{splitTitle(projectData.title)}</Heading> */}
         <Spacer />
         <QueryBar />
 
@@ -102,7 +99,7 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
           bg={useColorModeValue('white', 'gray.800')}
           color={useColorModeValue('gray.600', 'white')}
         >
-          {viewType === 'activity view' && (
+          {(viewType === 'activity view' || viewType === 'timeline') && (
             <>
               <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
@@ -164,20 +161,9 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
                   </span>
                 </div>
               ))}
-            {/* {
-        filterTypes.length > 0 && (
-          filterTypes.map((t, i)=>
-          <div key={`tags-${i}`} style={{display:'inline-block', margin:5, backgroundColor:'gray', color:'#ffffff', borderRadius:5, padding:5}}>
-            <span>{`${t}`}</span>
-            <span onClick={()=> {
-              dispatch({ type: 'UPDATE_FILTER_TYPES', filterTypes: filterTypes.filter(f => f != t) });
-            }} style={{padding:5, cursor:'pointer'}}>{'x'}</span>
-          </div>)
-        )
-      } */}
           </Box>
         </Flex>
-        {viewType === 'activity view' && (
+        {(viewType === 'activity view' || viewType === 'timeline') && (
           <Box flex="1.8" maxWidth="25%">
             <Flex flexFlow="row wrap" p={5}>
               <Button alignSelf="center" onClick={addEntry} type="button">

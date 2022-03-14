@@ -138,7 +138,7 @@ const TopTimeline = (projectProps: any) => {
         return scale.domain().slice(iMin, iMax);
       };
 
-      if (viewType === 'activity view') {
+      if (viewType === 'activity view' || viewType === 'timeline') {
         const triangle = d3.symbol().size(100).type(d3.symbolTriangle);
 
         const brushed = function (event, d) {

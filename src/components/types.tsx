@@ -174,6 +174,7 @@ type ProjectState = {
 
 interface ProjectViewProps {
   projectData: ProjectType;
+  viewData: EntryType[];
   folderPath: string;
   setViewType: (v: any) => void;
   setSelectedArtifactIndex: (i: number) => void;

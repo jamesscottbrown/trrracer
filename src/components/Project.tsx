@@ -18,17 +18,52 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData }] = useProjectState();
+  const [{ projectData, filterTags, filterTypes, filterDates }] = useProjectState();
   const [viewType, setViewType] = useState<string>('timeline');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
+  const [viewData, setViewData] = useState(projectData.entries);
+
+  console.log('viewdata data', viewData)
 
   // Update title when projectData changes.
   useEffect(() => {
     setNewTitle(projectData.title);
-  }, [projectData]);
+  }, [projectData]);                                                                                                                                        
+
+    // Update title when projectData changes.
+    useEffect(() => {
+      console.log('useEfect running', projectData);
+      const tagFilteredEntries = projectData.entries
+      .filter((entryData: any) => {
+        return filterTags.every((requiredTag: string) =>
+          entryData.tags.includes(requiredTag)
+        );
+      })
+      .map((e, index) => ({ ...e, index }));
+  
+      const filteredEntries = tagFilteredEntries
+        .filter((entryData: any) => {
+          if (filterTypes && filterTypes.length > 0) {
+            return entryData.files.map((m: any) => m.fileType).includes(filterTypes);
+          } else {
+            return entryData;
+          }
+        })
+        .map((e: any, index: number) => ({ ...e, index }));
+  
+      filteredEntries.sort(
+        (a, b) =>
+          (reversedOrder ? -1 : +1) *
+          (Number(new Date(a.date)) - Number(new Date(b.date)))
+      );
+
+      setViewData(filteredEntries);
+    }, [projectData, filterTags, filterTypes,]);
+
+    console.log('viewdata after',viewData)
 
   if (viewType === 'activity view') {
     return (
@@ -63,6 +98,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
+              viewData={viewData}
               folderPath={folderPath}
               reversedOrder={reversedOrder}
               setViewType={setViewType}
@@ -102,6 +138,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="4" h="calc(100vh - 250px)">
           <ProjectTimelineView 
             projectData={projectData}
+            viewData={viewData}
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
@@ -110,6 +147,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
+              viewData={viewData}
               folderPath={folderPath}
               reversedOrder={reversedOrder}
               setViewType={setViewType}
@@ -161,24 +199,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       />
     );
   }
-
-  // if (viewType === 'timeline') {
-  //   return (
-  //     <div>
-  //     <TopBar
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}/>
-  //     <ProjectTimelineView
-  //       projectData={projectData}
-  //       folderPath={folderPath}
-  //       viewType={viewType}
-  //       setViewType={setViewType}
-  //     />
-  //     </div>
-  //   );
-  // }
 };
 
 export default Project;
