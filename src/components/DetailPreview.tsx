@@ -2,6 +2,7 @@ import path from 'path';
 import React from 'react';
 
 import { Image, Box } from '@chakra-ui/react';
+import type { TextEntry } from './types';
 
 import {
   GrDocumentCsv,
@@ -122,8 +123,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    const temp = txtData['text-data'].filter(
-      (f: any) => f['entry-title'] === activity.title
+    const temp: TextEntry[] = txtData['text-data'].filter(
+      (f: TextEntry) => f['entry-title'] === activity.title
     );
 
     return (

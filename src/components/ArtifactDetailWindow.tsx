@@ -10,6 +10,7 @@ import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
+import type { ResearchThread, ResearchThreadEvidence } from './types';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -256,12 +257,14 @@ const DetailSidebar = (props: any) => {
   const [showThreadAdd, setShowThreadAdd] = useState(false);
 
   const isArtifactInThread = researchThreads.research_threads.filter(
-    (f: any) => {
-      let temp = f.evidence.filter((e: any) => e.type === 'artifact');
+    (f: ResearchThread) => {
+      let temp = f.evidence.filter(
+        (e: ResearchThreadEvidence) => e.type === 'artifact'
+      );
       temp =
         temp.length > 0
           ? temp.filter(
-              (tm: any) =>
+              (tm: ResearchThreadEvidence) =>
                 tm.activityTitle === selectedArtifactEntry.title &&
                 tm.artifactIndex === selectedArtifactIndex
             )

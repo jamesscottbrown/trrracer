@@ -8,15 +8,17 @@ import { v4 as uuidv4 } from 'uuid';
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
-import { EntryType, File, FileObj, TagType } from './types';
+import { EntryType, File, FileObj, TagType, ProjectState } from './types';
 import getEmptyProject from '../emptyProject';
 import { readFile } from '../fileUtil';
 import DataDisplayer from '../CallFlask';
 
-export const ProjectContext = createContext();
+export const ProjectContext = createContext<DispatchType>();
+
+type DispatchType = [ProjectState, (msg: any) => ProjectState];
 
 export function useProjectState() {
-  return useContext(ProjectContext);
+  return useContext<DispatchType>(ProjectContext);
 }
 
 export function addMetaDescrip(projectData, state) {
@@ -741,7 +743,7 @@ const appStateReducer = (state, action) => {
   }
 };
 
-const initialState = {
+const initialState: ProjectState = {
   projectData: null,
   //projectData: getEmptyProject('null'),
   folderPath: null,
