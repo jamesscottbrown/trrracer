@@ -11,6 +11,9 @@ import {
   FormControl,
   FormLabel,
   Switch,
+  Editable,
+  EditableInput,
+  EditablePreview
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
@@ -33,6 +36,8 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
     setReversedOrder,
     timeFilter,
     setTimeFilter,
+    newTitle,
+    setNewTitle
   } = ProjectPropValues;
 
   const splitTitle = (title: string) => {
@@ -68,10 +73,10 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align="center"
       >
-        {/* <Heading as="h1">
+        <Heading as="h1">
           <Editable
-            // value={newTitle}
-            valu={projectData.title}
+            value={newTitle}
+            // valu={projectData.title}
             onChange={(val) => setNewTitle(val)}
             onCancel={() => setNewTitle(projectData.title)}
             onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
@@ -79,8 +84,9 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
             <EditablePreview />
             <EditableInput />
           </Editable>
-      </Heading> */}
-        <Heading as="h3">{splitTitle(projectData.title)}</Heading>
+      </Heading>
+
+        {/* <Heading as="h3">{splitTitle(projectData.title)}</Heading> */}
         <Spacer />
         <QueryBar />
 

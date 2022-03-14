@@ -272,20 +272,14 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div>
-      
       <DateFilter />
-
-    
-
-      <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
-        <div>
+        <div style={{overflowY:"auto", height:"calc(100vh - 250px)", width:'100%'}}>
           <TimelinePlot
             projectData={projectData}
             filteredEntries={filteredEntries}
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
         </div>
-      </div>
     </div>
   );
 };

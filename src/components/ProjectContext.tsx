@@ -379,6 +379,7 @@ const appStateReducer = (state, action) => {
 
       return saveJSON(newProjectData);
     }
+    
     case 'ADD_TAG_TO_THREAD': {
       const { tag, threadIndex } = action;
 

@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Box } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
@@ -25,6 +25,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
+  // Update title when projectData changes.
+  useEffect(() => {
+    setNewTitle(projectData.title);
+  }, [projectData]);
+
   if (viewType === 'activity view') {
     return (
       <div
@@ -42,6 +47,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
+          newTitle={newTitle}
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
@@ -86,18 +92,21 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
+          newTitle={newTitle}
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
         />
         <Flex position="relative" top={220}>
           <LeftSidebar />
+          <Box flex="4" h="calc(100vh - 250px)">
           <ProjectTimelineView 
             projectData={projectData}
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
+          </Box>
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
@@ -132,6 +141,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
+          newTitle={newTitle}
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
