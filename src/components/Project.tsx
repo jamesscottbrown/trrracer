@@ -23,6 +23,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
+  const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
   if (viewType === 'activity view') {
     return (
@@ -94,6 +95,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <ProjectTimelineView 
             projectData={projectData}
             folderPath={folderPath}
+            selectedEntryIndex={selectedEntryIndex} 
+            setSelectedEntryIndex={setSelectedEntryIndex}
           />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
@@ -103,6 +106,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
               setViewType={setViewType}
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
+              selectedEntryIndex={selectedEntryIndex} 
+              setSelectedEntryIndex={setSelectedEntryIndex}
             />
           </Box>
         </Flex>

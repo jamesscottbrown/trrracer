@@ -367,6 +367,7 @@ const appStateReducer = (state, action) => {
         selectedThread: 0,
         filterTags: [],
         filterTypes: [],
+        filterDates: [null, null],
       };
     }
 
@@ -718,6 +719,21 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_FILTER_TYPES': {
       return { ...state, filterType: action.filterType };
+    }
+
+    case 'UPDATE_FILTER_DATES': {
+      console.log(
+        state.filterDates.map((d: string, i: number) =>
+          i === action.field ? action.value : d
+        )
+      );
+
+      return {
+        ...state,
+        filterDates: state.filterDates.map((d: string, i: number) =>
+          i === action.field ? action.value : d
+        ),
+      };
     }
 
     case 'ADD_MARKS_TO_ARTIFACT':{

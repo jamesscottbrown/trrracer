@@ -25,6 +25,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     timeFilter,
+    selectedEntryIndex, 
+    setSelectedEntryIndex,
   } = ProjectPropValues;
 
   const [{ filterTags, filterType }, dispatch] = useProjectState();
@@ -34,6 +36,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   );
 
   useEffect(() => {
+    console.log('this was triggered!', selectedEntryIndex)
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
       setEditable([...editable, true]);
@@ -43,6 +46,15 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       );
     }
   }, [projectData]);
+
+  useEffect(() => {
+
+    setEditable(
+      Array.from(Array(projectData.entries.length), (_, x) => false)
+    );
+    setEditableStatus(selectedEntryIndex, true);
+   
+  }, [selectedEntryIndex]);
 
   const updateEntryField = (
     entryIndex: number,

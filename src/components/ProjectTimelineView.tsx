@@ -1,15 +1,13 @@
 import path from 'path';
 
 import React, { useState } from 'react';
-import { Heading, Divider } from '@chakra-ui/react';
+import { Heading } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
+import { timeFormat } from 'd3-time-format';
 
 import { repositionPoints } from 'respacer';
-
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
 
 import {
   DeadlineType,
@@ -19,8 +17,8 @@ import {
   TagType,
 } from './types';
 import { useProjectState } from './ProjectContext';
-import Entry from './Entry';
 import TagList from './TagList';
+import DateFilter from './FilterDates';
 
 const { ipcRenderer } = require('electron');
 
@@ -34,8 +32,8 @@ interface EntryPlotProps {
 const EntryPlot = (props: EntryPlotProps) => {
   const { entryData, y, tags, setEntryAsSelected } = props;
 
-  const angledLineWidth = 10;
-  const straightLineWidth = 10;
+  const angledLineWidth = 100;
+  const straightLineWidth = 20;
 
   const squareWidth = 10;
   const squarePadding = 2;
@@ -101,48 +99,46 @@ const EntryPlot = (props: EntryPlotProps) => {
       </g>
     </>
   );
-
-  return null;
 };
 
-interface DeadlineProps {
-  deadline: DeadlineType;
-  width: number;
-  y: (t: Date) => number;
-}
+// interface DeadlineProps {
+//   deadline: DeadlineType;
+//   width: number;
+//   y: (t: Date) => number;
+// }
 
-const Deadline = (props: DeadlineProps) => {
-  const { deadline, width, y } = props;
+// const Deadline = (props: DeadlineProps) => {
+//   const { deadline, width, y } = props;
 
-  const spaceForTitle = 300;
-  const slopeLength = 25;
+//   const spaceForTitle = 300;
+//   const slopeLength = 25;
 
-  return (
-    <>
-      <line
-        x1={0}
-        x2={width - spaceForTitle - slopeLength}
-        y1={deadline.yDirect}
-        y2={deadline.yDirect}
-        stroke="grey"
-        strokeDasharray="4,4"
-      />
+//   return (
+//     <>
+//       <line
+//         x1={0}
+//         x2={width - spaceForTitle - slopeLength}
+//         y1={deadline.yDirect}
+//         y2={deadline.yDirect}
+//         stroke="grey"
+//         strokeDasharray="4,4"
+//       />
 
-      <line
-        x1={width - spaceForTitle - slopeLength}
-        x2={width - spaceForTitle}
-        y1={deadline.yDirect}
-        y2={deadline.y}
-        stroke="grey"
-        strokeDasharray="4,4"
-      />
+//       <line
+//         x1={width - spaceForTitle - slopeLength}
+//         x2={width - spaceForTitle}
+//         y1={deadline.yDirect}
+//         y2={deadline.y}
+//         stroke="grey"
+//         strokeDasharray="4,4"
+//       />
 
-      <text x={width - spaceForTitle} y={deadline.y}>
-        {deadline.title}
-      </text>
-    </>
-  );
-};
+//       <text x={width - spaceForTitle} y={deadline.y}>
+//         {deadline.title}
+//       </text>
+//     </>
+//   );
+// };
 
 interface TimelinePlotProps {
   projectData: ProjectType;
@@ -177,6 +173,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             oldPositionName: 'yDirect',
             newPositionName: 'y',
             minSpacing: 40,
+            width: height - 20,
           }
         )
       : [];
@@ -193,14 +190,38 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             oldPositionName: 'yDirect',
             newPositionName: 'y',
             minSpacing: 40,
+            width: height - 20,
           }
         )
       : [];
 
-  const width = 500;
+  const width = 1000;
+  const dateLabelWidth = 130;
+  const tickWidth = 20;
+  const ticks = y.ticks();
+
+  const formatTime = timeFormat('%Y-%m-%d (%a)');
+
   return (
     <svg height={height} width={width}>
-      <g transform="translate(20, 20)">
+      <g transform="translate(20,20)">
+        {ticks.map((t) => (
+          <>
+            <text x={0} y={y(t)}>
+              {formatTime(t)}
+            </text>
+            <line
+              x1={dateLabelWidth}
+              x2={dateLabelWidth + tickWidth}
+              y1={y(t)}
+              y2={y(t)}
+              stroke="black"
+            />
+          </>
+        ))}
+      </g>
+
+      <g transform={`translate(${20 + dateLabelWidth + tickWidth}, 20)`}>
         <line x1={0} x2={0} y1={y.range()[0]} y2={y.range()[1]} stroke="grey" />
 
         {positionEntries.map((e) => (
@@ -212,10 +233,6 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             setEntryAsSelected={() => setSelectedEntryIndex(e.entryIndex)}
           />
         ))}
-
-        {positionedDeadlines.map((d) => (
-          <Deadline deadline={d} key={d.title} width={width} y={y} />
-        ))}
       </g>
     </svg>
   );
@@ -225,9 +242,9 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
-  const [showTags, setShowTags] = useState(false);
+  console.log('SELECTED INDEX:', selectedEntryIndex);
 
-  const [{ filterTags }, dispatch] = useProjectState();
+  const [{ filterTags, filterDates }, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -238,40 +255,35 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-  const openFile = (fileName: string) => {
-    console.log('Open file:', path.join(folderPath, fileName));
-    ipcRenderer.send('open-file', path.join(folderPath, fileName));
-  };
-
-  const filteredEntries = projectData.entries.filter((entryData: EntryType) => {
-    return filterTags.every((requiredTag: string) =>
-      entryData.tags.includes(requiredTag)
-    );
-  });
+  const filteredEntries = projectData.entries
+    .filter((entryData: EntryType) => {
+      return filterTags.every(
+        (requiredTag: string) =>
+          entryData.tags.includes(requiredTag) ||
+          entryData.quoteTags.includes(requiredTag)
+      );
+    })
+    .filter((entryData: EntryType) => {
+      return (
+        (!filterDates[0] || filterDates[0] <= entryData.date) &&
+        (!filterDates[1] || entryData.date <= filterDates[1])
+      );
+    });
 
   return (
     <div>
+      
+      <DateFilter />
+
+    
+
       <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
-        <div style={{ overflow:'auto' }}>
+        <div>
           <TimelinePlot
             projectData={projectData}
             filteredEntries={filteredEntries}
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
-        </div>
-
-        <div>
-          {selectedEntryIndex < 0 ? (
-            <p>Click on an entry to see details</p>
-          ) : (
-            <Entry
-              entryData={projectData.entries[selectedEntryIndex]}
-              entryIndex={selectedEntryIndex}
-              openFile={openFile}
-              updateEntryField={updateEntryField}
-              allTags={projectData.tags}
-            />
-          )}
         </div>
       </div>
     </div>
