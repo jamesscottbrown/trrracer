@@ -180,6 +180,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.png')) {
     return <MarkableImage activity={activity} artifactIndex={artifactIndex} imgPath={`file://${path.join(folderPath, title)}`}/>
   }
+  // imgPath, activity, artifactIndex
   return (
     <Image
       htmlWidth="90%"

@@ -69,7 +69,7 @@ const ActivitytoThread = (props: any) => {
 };
 
 const Activity = (activityProps: any) => {
-  // console.log('Rendering activity');
+  
 
   const { activity, folderPath, index, numRendered } = activityProps;
   const [{ highlightedTag, highlightedType, researchThreads }] =
@@ -94,7 +94,7 @@ const Activity = (activityProps: any) => {
     return (
       <Box
         key={`${activity.title}-${index}`}
-        w={50}
+        minWidth={(numRendered > 20 ? 50 : 300)}
         marginTop={2}
         marginLeft={4}
         className="activity"
@@ -109,6 +109,7 @@ const Activity = (activityProps: any) => {
           folderPath={folderPath}
           bgColor={colorVar}
           numRendered={numRendered}
+          activity={activity}
         />
       </Box>
     );
@@ -186,7 +187,7 @@ const Activity = (activityProps: any) => {
             </Box>
           ) : (
             <Button onClick={() => setSeeThreadAssign(true)}>
-              Add this tag to a thread.
+              Add this activity to a thread.
             </Button>
           )}
         </PopoverFooter>

@@ -27,8 +27,6 @@ const QueryBar = (queryProps: any) => {
         : googleData[artifactData.fileId];
   }
 
-  console.log('DATA TEST', data);
-
   return (
     <InputGroup align={'center'} width={'400px'} marginEnd={'90px'}>
       <Input

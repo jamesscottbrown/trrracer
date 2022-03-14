@@ -50,12 +50,12 @@ const styleSection = (sectionData: any, commentedOn: any) => {
 
 const GoogDriveSpans = (googProps: any) => {
   const { googEl, index, comments } = googProps;
-
+  console.log('comments', comments);
   const temp = comments.filter((f: any) =>
     googEl.textRun.content.includes(f.quotedFileContent.value)
   );
 
-  console.log('TEMP IN MOD', temp);
+  console.log('TEMP IN MOD', comments);
 
   return temp.length > 0 ? (
     <Popover>
@@ -82,7 +82,6 @@ const GoogDriveSpans = (googProps: any) => {
 
 const GoogDriveParagraph = (parProps: any) => {
   const { parData, index, comments } = parProps;
-  // console.log(parData)
 
   const getHeading = (styling: GoogleParagraphStyle, content: GoogleDocParagraph) => {
     if (styling.namedStyleType.includes('1'))

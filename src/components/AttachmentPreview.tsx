@@ -41,7 +41,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <audio src={`file://${path.join(folderPath, title)}`} controls />;
   }
 
-  const size = '65%';
+  const size = '40%';
 
   if (title.endsWith('.csv')) {
     return (

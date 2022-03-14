@@ -17,7 +17,7 @@ const ThreadedActivity = (props: any) => {
     (f) => f.title === evidence.title
   )[0];
 
-  console.log('activity threaded', activity, evidence, folderPath);
+  // console.log('activity threaded', activity, evidence, folderPath);
   return (
     <div>
       <SimpleGrid columns={1} spacing={3}>
@@ -101,6 +101,8 @@ const ThreadedFragment = (props: any) => {
     const goog = googleData[artifactChosen.fileId];
     const gContent = goog.body.content.filter((f) => f.startIndex);
 
+    console.log('gContent', artifactChosen.comments.comments)
+
     return (
       <Flex
         flexDirection="row"
@@ -116,7 +118,7 @@ const ThreadedFragment = (props: any) => {
           }}
         >
           {gContent.map((m: any, i: number) => (
-            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} />
+            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} comments={artifactChosen.comments.comments} />
           ))}
         </div>
         <div
@@ -196,6 +198,8 @@ const ThreadView = () => {
   ] = useProjectState();
 
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
+
+  console.log('researchThreads',researchThreads)
 
   return (
     <Flex position="relative" top={220}>

@@ -109,26 +109,23 @@ const CenterView = (projectProps: any) => {
 
   return (
     <Flex flex="3" h="calc(100vh - 150px)" overflowY="auto">
-      {/* <Box flex='3' h='calc(100vh - 150px)' overflowY='auto'></Box> */}
       <div
         style={{
           display: 'flex',
           flexFlow: 'column wrap',
-          height: 'calc(100vh - 250px)',
+          height: filteredEntries.length > 50 ? 'calc(100vh - 250px)' : 'calc(100vh)',
         }}
       >
         {fAct.map((fa: any, i: number) => (
           <React.Fragment key={`fr-${fa.title}-${i}`}>
-            {fa.firstMonth ? (
+            {fa.firstMonth && (
               <Box
                 key={`first-${fa.title}-${i}`}
                 marginTop={7}
                 textAlign="right"
                 paddingRight={2}
               >{`${getMonth(fa)}`}</Box>
-            ) : (
-              ''
-            )}
+            ) }
             <Activity
               key={`${fa.title}-${i}`}
               activity={fa}
@@ -139,7 +136,6 @@ const CenterView = (projectProps: any) => {
           </React.Fragment>
         ))}
       </div>
-      {/* </Box> */}
     </Flex>
   );
 };

@@ -24,14 +24,14 @@ const CustomMarker = (props: MarkerComponentProps) => {
 const MarkableImage = (props:any) => {
     const [{}, dispatch] = useProjectState();
     const {imgPath, activity, artifactIndex} = props;
-   
+   console.log(imgPath, activity, artifactIndex)
     const [markers, setMarkers] = useState([])
     
     let artifactId = `${artifactIndex}-${activity.title}`;
     console.log('testing', artifactId);
 
     useEffect(() => {
-        if(activity.files[artifactIndex].markers){
+        if(artifactIndex && activity.files[artifactIndex].markers){
             console.log('this is going to run forever');
             setMarkers(activity.files[artifactIndex].markers)
         }

@@ -2,13 +2,49 @@ import React from 'react';
 
 import * as d3 from 'd3';
 import path from 'path';
+import AttachmentPreview from './AttachmentPreview';
+import { openFile } from './ProjectListView';
 
-const CenterFileRender = (fileArrayProps: any) => {
-  const { fileArray, folderPath, bgColor, numRendered } = fileArrayProps;
+const LargeFileRender = (props:any) => {
+  const { fileArray, folderPath, bgColor, numRendered, activity } = props;
 
+
+
+  return (
+    <div>
+       {activity && (<div style={{fontSize:13, fontWeight:600, width: 250}}>{activity.title}</div>)}
+      <div
+      style={{
+        backgroundColor: bgColor,
+        width: 250,
+        borderRightWidth: 1,
+        borderRightColor: 'black',
+        paddingRight: 5,
+      }}
+      >
+       
+        {
+          fileArray.map((fa:any, i:number)=> (
+            <div
+            key={`file-${i}`}>
+              {/* <span>{fa.title}</span> */}
+              <AttachmentPreview folderPath={folderPath} title={fa.title} openFile={openFile}/>
+            </div>
+          ))
+        }
+      </div>
+
+    </div>
+
+  )
+}
+
+const SmallFileRender = (props:any) => {
+  const { fileArray, folderPath, bgColor, numRendered } = props;
   const dimensionCheck = (dim: string, fType: string) => {
     if (dim === 'width') {
       if (fType === 'url') {
+
         return numRendered > 60 ? 45 : 67;
       }
       return numRendered > 60 ? 40 : 60;
@@ -34,7 +70,7 @@ const CenterFileRender = (fileArrayProps: any) => {
     return 30;
   };
 
-  const getHeight = (previousValue, currentValue) =>
+  const getHeight = (previousValue:any, currentValue:any) =>
     ++previousValue + ++currentValue;
 
   const getSvgHeight = () => {
@@ -46,7 +82,6 @@ const CenterFileRender = (fileArrayProps: any) => {
 
   React.useEffect(() => {
     const svgEl = d3.select(svgRef.current);
-    // svgEl.selectAll("*").remove(); // Clear svg content before adding new elements
 
     const typeData = d3
       .groups(fileArray, (f) => f.fileType)
@@ -111,15 +146,6 @@ const CenterFileRender = (fileArrayProps: any) => {
       });
     }
 
-    // let gdocG = typeGroups.filter(g => g.fileType === 'gdoc');
-
-    // if(!gdocG.empty()){
-
-    //     let emR = gdocG.selectAll('rect.em').data(d => {
-    //         return d.emphasized}).join('rect').classed('em', true);
-    //
-    //     // emR.attr('width', 30).attr('height', 3);
-    // }
   }, [fileArray]);
 
   return (
@@ -135,6 +161,19 @@ const CenterFileRender = (fileArrayProps: any) => {
       <svg width={44} height={getSvgHeight()} ref={svgRef} />
     </div>
   );
+
+}
+
+const CenterFileRender = (fileArrayProps: any) => {
+  const { fileArray, folderPath, bgColor, numRendered, activity } = fileArrayProps;
+  
+  return (
+    numRendered > 50 ? 
+    <SmallFileRender fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered}/>
+    :<LargeFileRender activity={activity} fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered} />
+  )
+
+ 
 };
 
 export default CenterFileRender;

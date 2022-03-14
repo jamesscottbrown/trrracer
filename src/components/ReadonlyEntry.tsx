@@ -135,10 +135,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
-  // const key = entryData.key_txt.flatMap(kt => {
-  //   return kt.keywords.keywords.map(k => k)
-  // });
-
   const getColor = (tagName: string) => {
     const matchingTags = projectData.tags.filter(
       (t: TagType) => t.title === tagName
@@ -207,6 +203,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (
           <ReadonlyEntryFile
+            key={`readonly-${i}`}
             entryData={entryData}
             openFile={openFile}
             setViewType={setViewType}
