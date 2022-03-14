@@ -26,7 +26,7 @@ const LargeFileRender = (props:any) => {
         {
           fileArray.map((fa:any, i:number)=> (
             <div
-            key={`file-${i}`}>
+            key={`file-${i}`} style={{marginBottom:10}}>
               {/* <span>{fa.title}</span> */}
               <AttachmentPreview folderPath={folderPath} title={fa.title} openFile={openFile}/>
             </div>
