@@ -20,26 +20,21 @@ export const openFile = (fileName: string, folderPath: string) => {
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const {
     projectData,
-    viewData,
-    reversedOrder,
+    filteredActivites,
     setViewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
-    timeFilter,
     selectedEntryIndex, 
     setSelectedEntryIndex,
   } = ProjectPropValues;
 
-  console.log('VIEW DATA', viewData)
-
-  const [{ filterTags, filterType }, dispatch] = useProjectState();
+  const [{}, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
   );
 
   useEffect(() => {
-    console.log('this was triggered!', selectedEntryIndex)
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
       setEditable([...editable, true]);
@@ -50,6 +45,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     }
   }, [projectData]);
 
+  console.log('selected entry index',selectedEntryIndex)
   useEffect(() => {
 
     setEditable(
@@ -66,39 +62,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   ) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
-
-  // const tagFilteredEntries = projectData.entries
-  //   .filter((entryData: any) => {
-  //     return filterTags.every((requiredTag: string) =>
-  //       entryData.tags.includes(requiredTag)
-  //     );
-  //   })
-  //   .map((e, index) => ({ ...e, index }));
-
-  // const filteredEntries = tagFilteredEntries
-  //   .filter((entryData: any) => {
-  //     if (filterType) {
-  //       return entryData.files.map((m: any) => m.fileType).includes(filterType);
-  //     } else {
-  //       return entryData;
-  //     }
-  //   })
-  //   .map((e: any, index: number) => ({ ...e, index }));
-
-  // filteredEntries.sort(
-  //   (a, b) =>
-  //     (reversedOrder ? -1 : +1) *
-  //     (Number(new Date(a.date)) - Number(new Date(b.date)))
-  // );
-
-  let fAct =
-    timeFilter != null
-      ? viewData.filter(
-          (f) =>
-            new Date(f.date) >= timeFilter[0] &&
-            new Date(f.date) <= timeFilter[1]
-        )
-      : viewData;
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -124,7 +87,8 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           fontWeight: 700,
           textAlign: 'center',
         }}
-      >{`${viewData.length} Activities Shown`}</div>
+      >{`${filteredActivites.length} Activities Shown`}</div>
+
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
@@ -141,7 +105,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {fAct.map((entryData: EntryTypeWithIndex, i: number) => (
+      {filteredActivites.map((entryData: EntryTypeWithIndex, i: number) => (
         <React.Fragment key={`fr-${entryData.title}-${entryData.index}-${i}`}>
           {editable[entryData.index] ? (
             <Entry

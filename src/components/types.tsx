@@ -3,7 +3,6 @@
 interface File {
   fileType: string;
   title: string;
-  // fileId: string;
   context: string;
   url?: string;
 }
@@ -50,23 +49,6 @@ interface ReactTagType {
   text: string;
 }
 
-interface EdgeType {
-  to: string;
-  from: string;
-  description: string;
-  actions: ConceptActionType[];
-  key: string;
-}
-
-interface ConceptType {
-  name: string;
-  actions: ConceptActionType[];
-}
-
-interface ConceptActionType {
-  action: string;
-  when: string;
-}
 
 interface DeadlineType {
   title: string;
@@ -78,8 +60,6 @@ interface ProjectType {
   description: string;
   tags: TagType[];
   entries: EntryType[];
-  concepts: ConceptType[];
-  edges: EdgeType[];
   topics: [];
   deadlines: DeadlineType[];
 }
@@ -174,7 +154,7 @@ type ProjectState = {
 
 interface ProjectViewProps {
   projectData: ProjectType;
-  viewData: EntryType[];
+  filteredActivites: EntryType[];
   folderPath: string;
   setViewType: (v: any) => void;
   setSelectedArtifactIndex: (i: number) => void;

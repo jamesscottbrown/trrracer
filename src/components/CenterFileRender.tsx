@@ -8,8 +8,6 @@ import { openFile } from './ProjectListView';
 const LargeFileRender = (props:any) => {
   const { fileArray, folderPath, bgColor, numRendered, activity } = props;
 
-
-
   return (
     <div>
        {activity && (<div style={{fontSize:13, fontWeight:600, width: 250}}>{activity.title}</div>)}

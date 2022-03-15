@@ -1,6 +1,6 @@
 import path from 'path';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Heading } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
@@ -17,10 +17,7 @@ import {
   TagType,
 } from './types';
 import { useProjectState } from './ProjectContext';
-import TagList from './TagList';
 import DateFilter from './FilterDates';
-
-const { ipcRenderer } = require('electron');
 
 interface EntryPlotProps {
   entryData: EntryType;
@@ -67,7 +64,7 @@ const EntryPlot = (props: EntryPlotProps) => {
         {entryData.tags.map((t, i) => {
           return (
             <rect
-              key={t.id}
+              key={`re-${i}`}
               x={i * (squareWidth + squarePadding)}
               y={entryData.y - squareWidth}
               width={squareWidth}
@@ -142,14 +139,15 @@ const EntryPlot = (props: EntryPlotProps) => {
 
 interface TimelinePlotProps {
   projectData: ProjectType;
-  filteredEntries: EntryType[];
+  filteredActivites: EntryType[];
+  boundingWidth:number | null;
   setSelectedEntryIndex: (entryIndex: number) => void;
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex, filteredEntries } = props;
+  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth } = props;
 
-  const entries = filteredEntries.map((e) => ({
+  const entries = filteredActivites.map((e:EntryType) => ({
     ...e,
     date: new Date(e.date),
   }));
@@ -161,9 +159,10 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 
   const height = Math.max(40 * entries.length, 600);
 
+  //NEED TO MAKE THIS DYNAMIC
   const y = scaleTime()
     .range([0, height])
-    .domain(extent([...dates, ...deadlineDates]));
+    .domain(extent([...dates, ...deadlineDates]).reverse());
 
   const positionEntries =
     entries.length > 0
@@ -178,24 +177,24 @@ const TimelinePlot = (props: TimelinePlotProps) => {
         )
       : [];
 
-  const positionedDeadlines =
-    deadlines.length > 0
-      ? repositionPoints(
-          deadlines.map((d, i) => ({
-            ...d,
-            yDirect: y(new Date(d.date)),
-            entryIndex: i,
-          })),
-          {
-            oldPositionName: 'yDirect',
-            newPositionName: 'y',
-            minSpacing: 40,
-            width: height - 20,
-          }
-        )
-      : [];
+  // const positionedDeadlines =
+  //   deadlines.length > 0
+  //     ? repositionPoints(
+  //         deadlines.map((d, i) => ({
+  //           ...d,
+  //           yDirect: y(new Date(d.date)),
+  //           entryIndex: i,
+  //         })),
+  //         {
+  //           oldPositionName: 'yDirect',
+  //           newPositionName: 'y',
+  //           minSpacing: 40,
+  //           width: height - 20,
+  //         }
+  //       )
+  //     : [];
 
-  const width = 1000;
+  const width = (boundingWidth - 50);
   const dateLabelWidth = 130;
   const tickWidth = 20;
   const ticks = y.ticks();
@@ -206,7 +205,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
     <svg height={height} width={width}>
       <g transform="translate(20,20)">
         {ticks.map((t) => (
-          <>
+          <React.Fragment key={`tick-${t}`}>
             <text x={0} y={y(t)}>
               {formatTime(t)}
             </text>
@@ -217,7 +216,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
               y2={y(t)}
               stroke="black"
             />
-          </>
+          </React.Fragment>
         ))}
       </g>
 
@@ -226,11 +225,13 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 
         {positionEntries.map((e) => (
           <EntryPlot
-            key={e.entryIndex}
+            key={`en-${e.entryIndex}`}
             y={y}
             entryData={e}
             tags={projectData.tags}
-            setEntryAsSelected={() => setSelectedEntryIndex(e.entryIndex)}
+            setEntryAsSelected={() => {
+              console.log('click')
+              setSelectedEntryIndex(e.entryIndex)}}
           />
         ))}
       </g>
@@ -239,12 +240,10 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, folderPath } = ProjectPropValues;
-  const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
+  const { projectData, filteredActivites, selectedEntryIndex, setSelectedEntryIndex } = ProjectPropValues;
+  // const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
 
-  console.log('SELECTED INDEX:', selectedEntryIndex);
-
-  const [{ filterTags, filterDates }, dispatch] = useProjectState();
+  const [{}, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
   const updateEntryField = (
@@ -255,29 +254,22 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
 
-  const filteredEntries = projectData.entries
-    .filter((entryData: EntryType) => {
-      return filterTags.every(
-        (requiredTag: string) =>
-          entryData.tags.includes(requiredTag) ||
-          entryData.quoteTags.includes(requiredTag)
-      );
-    })
-    .filter((entryData: EntryType) => {
-      return (
-        (!filterDates[0] || filterDates[0] <= entryData.date) &&
-        (!filterDates[1] || entryData.date <= filterDates[1])
-      );
-    });
+  const [width, setWidth] = useState(null);
+  const div = useCallback(node => {
+    if (node !== null) {
+      setWidth(node.getBoundingClientRect().width);
+    }
+  }, []);
 
   return (
-    <div>
+    <div ref={div} style={{width:'100%'}}>
       <DateFilter />
         <div style={{overflowY:"auto", height:"calc(100vh - 250px)", width:'100%'}}>
           <TimelinePlot
             projectData={projectData}
-            filteredEntries={filteredEntries}
+            filteredActivites={filteredActivites}
             setSelectedEntryIndex={setSelectedEntryIndex}
+            boundingWidth={width}
           />
         </div>
     </div>

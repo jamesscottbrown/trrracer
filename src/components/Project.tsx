@@ -11,6 +11,7 @@ import LeftSidebar from './LeftSidebar';
 import ArtifactDetailWindow from './ArtifactDetailWindow';
 import ThreadView from './TheadView';
 import ProjectTimelineView from './ProjectTimelineView';
+import { EntryType } from './types';
 
 interface ProjectProps {
   folderPath: string;
@@ -24,9 +25,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
-  const [viewData, setViewData] = useState(projectData.entries);
-
-  console.log('viewdata data', viewData)
+  const [filteredActivites, setFilteredActivites] = useState(projectData.entries);
 
   // Update title when projectData changes.
   useEffect(() => {
@@ -35,8 +34,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     // Update title when projectData changes.
     useEffect(() => {
-      console.log('useEfect running', projectData);
-      const tagFilteredEntries = projectData.entries
+      
+      const tagFiltered = projectData.entries
       .filter((entryData: any) => {
         return filterTags.every((requiredTag: string) =>
           entryData.tags.includes(requiredTag)
@@ -44,7 +43,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       })
       .map((e, index) => ({ ...e, index }));
   
-      const filteredEntries = tagFilteredEntries
+      const typeFiltered = tagFiltered
         .filter((entryData: any) => {
           if (filterTypes && filterTypes.length > 0) {
             return entryData.files.map((m: any) => m.fileType).includes(filterTypes);
@@ -52,18 +51,27 @@ const Project = (ProjectPropValues: ProjectProps) => {
             return entryData;
           }
         })
-        .map((e: any, index: number) => ({ ...e, index }));
+        .map((e: EntryType, index: number) => ({ ...e, index }));
+
+      let timeFiltered =
+      timeFilter != null
+        ? typeFiltered.filter(
+            (f) =>
+              new Date(f.date) >= timeFilter[0] &&
+              new Date(f.date) <= timeFilter[1]
+          )
+        : typeFiltered;
   
-      filteredEntries.sort(
+        timeFiltered.sort(
         (a, b) =>
           (reversedOrder ? -1 : +1) *
           (Number(new Date(a.date)) - Number(new Date(b.date)))
       );
 
-      setViewData(filteredEntries);
-    }, [projectData, filterTags, filterTypes,]);
+      setFilteredActivites(timeFiltered);
+    }, [projectData, filterTags, filterTypes, timeFilter]);
 
-    console.log('viewdata after',viewData)
+   
 
   if (viewType === 'activity view') {
     return (
@@ -78,7 +86,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           folderPath={folderPath}
-          viewType={viewType}
+          filteredActivites={filteredActivites}
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
@@ -98,9 +106,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
-              viewData={viewData}
-              folderPath={folderPath}
-              reversedOrder={reversedOrder}
+              filteredActivites={filteredActivites}
               setViewType={setViewType}
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
@@ -135,24 +141,20 @@ const Project = (ProjectPropValues: ProjectProps) => {
         />
         <Flex position="relative" top={220}>
           <LeftSidebar />
-          <Box flex="4" h="calc(100vh - 250px)">
+          <Box flex="3.5" h="calc(100vh - 250px)">
           <ProjectTimelineView 
             projectData={projectData}
-            viewData={viewData}
+            filteredActivites={filteredActivites}
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
           />
           </Box>
-          <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+          <Box flex="1.5" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
-              viewData={viewData}
-              folderPath={folderPath}
-              reversedOrder={reversedOrder}
+              filteredActivites={filteredActivites}
               setViewType={setViewType}
-              timeFilter={timeFilter}
-              setTimeFilter={setTimeFilter}
               selectedEntryIndex={selectedEntryIndex} 
               setSelectedEntryIndex={setSelectedEntryIndex}
             />

@@ -47,7 +47,7 @@ const LeftSidebar = () => {
     <Box
       margin="8px"
       p={5}
-      flex=".7"
+      flex={1}
       flexDirection="column"
       h="calc(100vh - 250px)"
       overflow="auto"
@@ -57,12 +57,6 @@ const LeftSidebar = () => {
         viewType="overview"
       />
       <br />
-      {/* <Box>
-                <span style={headerStyle}>
-                    {`${projectData.entries.length} Activities`}
-                </span>
-                <br></br>
-            </Box> */}
       <Box
         marginLeft="3px"
         marginTop="10px"

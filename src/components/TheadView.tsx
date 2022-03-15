@@ -17,7 +17,6 @@ const ThreadedActivity = (props: any) => {
     (f) => f.title === evidence.title
   )[0];
 
-  // console.log('activity threaded', activity, evidence, folderPath);
   return (
     <div>
       <SimpleGrid columns={1} spacing={3}>
@@ -59,8 +58,6 @@ const ThreadedArtifact = (props: any) => {
     (a) => a.title === evidence.artifactTitle
   )[0];
 
-  console.log('artifact chosen', artifactChosen);
-
   return (
     <Flex flexDirection="row" alignItems="center" justifyContent="space-around">
       <div style={{ width: '60%', maxHeight: '600px', overflow: 'auto' }}>
@@ -101,8 +98,6 @@ const ThreadedFragment = (props: any) => {
     const goog = googleData[artifactChosen.fileId];
     const gContent = goog.body.content.filter((f) => f.startIndex);
 
-    console.log('gContent', artifactChosen.comments.comments)
-
     return (
       <Flex
         flexDirection="row"
@@ -141,7 +136,6 @@ const ThreadedFragment = (props: any) => {
     const temp = txtData['text-data'].filter(
       (f) => f['entry-title'] === activity.title
     )[0];
-    console.log('evidence', evidence.anchors[0].frag_type);
 
     const txtArray = temp.text.split(evidence.anchors[0].frag_type);
 
@@ -198,8 +192,6 @@ const ThreadView = () => {
   ] = useProjectState();
 
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
-
-  console.log('researchThreads',researchThreads)
 
   return (
     <Flex position="relative" top={220}>

@@ -37,7 +37,6 @@ export const dataStructureForTimeline = (activityData: any) => {
       return { year: year[0], months: wrapper };
     });
 };
-
 export const jitter = (val: any) => Math.random() * val;
 
 const TopTimeline = (projectProps: any) => {
