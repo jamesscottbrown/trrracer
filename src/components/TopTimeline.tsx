@@ -42,10 +42,10 @@ export const jitter = (val: any) => Math.random() * val;
 const TopTimeline = (projectProps: any) => {
   const svgRef = React.useRef(null);
 
-  const { defineEvent, setTimeFilter, viewType } = projectProps;
+  const { defineEvent, setTimeFilter, viewType, filteredActivityNames } = projectProps;
   const [
     { projectData, selectedArtifactEntry, researchThreads, selectedThread },
-  ] = useProjectState();
+  dispatch] = useProjectState();
   const activity = projectData.entries;
   const [newWidth, setNewWidth] = useState('1000px');
 
@@ -99,7 +99,7 @@ const TopTimeline = (projectProps: any) => {
       .attr('cy', () => jitter(10))
       .attr('r', 5)
       .attr('fill', 'gray')
-      .attr('fill-opacity', 0.4);
+      .attr('fill-opacity', 0.6);
 
     const xAxis = d3.axisBottom(xScale).ticks(16).tickSize(10);
 
@@ -124,6 +124,14 @@ const TopTimeline = (projectProps: any) => {
       .attr('dx', '-1em')
       .attr('dy', '-.2em')
       .attr('transform', 'rotate(-65)');
+
+    circles.filter(f=> filteredActivityNames.indexOf(f.title) === -1).attr('fill-opacity', 0.1);
+    if(filteredActivityNames.length < activity.length){
+      circles.filter(f=> filteredActivityNames.indexOf(f.title) > -1)
+      .attr('fill-opacity', 0.9)
+      .attr('stroke', 'gray.900');
+    }
+    
 
     if (!defineEvent) {
       const filteredDomain = function (scale: any, min: any, max: any) {
@@ -155,6 +163,7 @@ const TopTimeline = (projectProps: any) => {
               xScale.invert(event.selection[0]),
               xScale.invert(event.selection[1]),
             ]);
+            dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [xScale.invert(event.selection[0]), xScale.invert(event.selection[1])] });
           }
 
           // move handlers
@@ -289,6 +298,7 @@ const TopTimeline = (projectProps: any) => {
           .attr('x2', 0)
           .attr('y2', height + 5)
           .attr('stroke', 'black');
+
       } else if (selectedArtifactEntry) {
         circles
           .filter((c: any) => {
@@ -332,7 +342,7 @@ const TopTimeline = (projectProps: any) => {
         });
       }
     }
-  }, [activity, selectedArtifactEntry, viewType, selectedThread]);
+  }, [activity, selectedArtifactEntry, viewType, selectedThread, filteredActivityNames]);
 
   return (
     <Flex

@@ -24,7 +24,19 @@ import FileUpload from './FileUpload';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 
-const TopBar = (ProjectPropValues: ProjectViewProps) => {
+interface TopbarProps{
+  viewType: string;
+  setViewType: any;
+  reversedOrder: any;
+  setReversedOrder: any;
+  timeFilter: any;
+  setTimeFilter: any;
+  newTitle: string;
+  setNewTitle: any;
+  filteredActivityNames: any;
+}
+
+const TopBar = (ProjectPropValues: TopbarProps) => {
   const [{ projectData, filterTags }, dispatch] = useProjectState();
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
@@ -37,13 +49,9 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
     timeFilter,
     setTimeFilter,
     newTitle,
-    setNewTitle
+    setNewTitle,
+    filteredActivityNames
   } = ProjectPropValues;
-
-  const splitTitle = (title: string) => {
-    const t = title.split('/');
-    return t[t.length - 1];
-  };
 
   const addEntry = () => {
     dispatch({ type: 'ADD_ENTRY' });
@@ -73,19 +81,19 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         align="center"
       >
-        <Heading as="h1">
-          <Editable
-            value={newTitle}
-            onChange={(val) => setNewTitle(val)}
-            onCancel={() => setNewTitle(projectData.title)}
-            onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
-          >
-            <EditablePreview />
-            <EditableInput />
-          </Editable>
+      <Heading as="h1">
+        <Editable
+          value={newTitle}
+          onChange={(val) => setNewTitle(val)}
+          onCancel={() => setNewTitle(projectData.title)}
+          onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
       </Heading>
-        <Spacer />
-        <QueryBar />
+      <Spacer />
+      <QueryBar />
 
         <div style={{ float: 'right' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
@@ -132,6 +140,7 @@ const TopBar = (ProjectPropValues: ProjectViewProps) => {
             timeFilter={timeFilter}
             setTimeFilter={setTimeFilter}
             viewType={viewType}
+          filteredActivityNames={filteredActivityNames}
           />
           <Box style={{ width: '100%', display: 'block' }}>
             {filterTags.length > 0 &&

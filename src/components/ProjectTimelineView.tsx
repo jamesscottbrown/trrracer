@@ -28,6 +28,7 @@ interface EntryPlotProps {
 
 const EntryPlot = (props: EntryPlotProps) => {
   const { entryData, y, tags, setEntryAsSelected } = props;
+  const [{}, dispatch] = useProjectState();
 
   const angledLineWidth = 100;
   const straightLineWidth = 20;
@@ -42,8 +43,15 @@ const EntryPlot = (props: EntryPlotProps) => {
 
   return (
     <>
-      <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="white">
-        <title>{entryData.date.toDateString()}</title>
+      <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="gray">
+
+        <title>{new Date(entryData.date).toLocaleDateString('en-us', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}</title>
+        
       </circle>
       <line
         x1={0}
@@ -59,41 +67,48 @@ const EntryPlot = (props: EntryPlotProps) => {
         y2={entryData.y}
         stroke="lightGrey"
       />
+      <g onMouseOver={()=> {
+          dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
+        }}>
+        <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
+          {entryData.tags.map((t, i) => {
+            return (
+              <rect
+                key={`re-${i}`}
+                x={i * (squareWidth + squarePadding)}
+                y={entryData.y - squareWidth}
+                width={squareWidth}
+                height={squareWidth}
+                // fill={getColor(t)}
+                fill={'gray'}
+                onClick={setEntryAsSelected}
+              >
+                <title>{t}</title>
+              </rect>
+            );
+          })}
+        </g>
 
-      <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
-        {entryData.tags.map((t, i) => {
-          return (
-            <rect
-              key={`re-${i}`}
-              x={i * (squareWidth + squarePadding)}
-              y={entryData.y - squareWidth}
-              width={squareWidth}
-              height={squareWidth}
-              fill={getColor(t)}
-              onClick={setEntryAsSelected}
-            >
-              <title>{t}</title>
-            </rect>
-          );
-        })}
-      </g>
-
-      <g
-        transform={`translate(${
-          angledLineWidth +
-          straightLineWidth +
-          entryData.tags.length * (squareWidth + squarePadding)
-        }, 0)`}
-      >
-        <text
-          x={0}
-          y={entryData.y}
-          textAnchor="start"
-          onClick={setEntryAsSelected}
+        <g
+          transform={`translate(${
+            angledLineWidth +
+            straightLineWidth +
+            entryData.tags.length * (squareWidth + squarePadding)
+          }, 0)`}
         >
-          {entryData.title}
-        </text>
+          <text
+            x={0}
+            y={entryData.y}
+            textAnchor="start"
+            onClick={setEntryAsSelected}
+            style={{cursor:'pointer'}}
+          >
+            {entryData.title}
+          </text>
+        </g>
+
       </g>
+
     </>
   );
 };
@@ -161,7 +176,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 
   //NEED TO MAKE THIS DYNAMIC
   const y = scaleTime()
-    .range([0, height])
+    .range([0, (height - 70)])
     .domain(extent([...dates, ...deadlineDates]).reverse());
 
   const positionEntries =
@@ -177,36 +192,19 @@ const TimelinePlot = (props: TimelinePlotProps) => {
         )
       : [];
 
-  // const positionedDeadlines =
-  //   deadlines.length > 0
-  //     ? repositionPoints(
-  //         deadlines.map((d, i) => ({
-  //           ...d,
-  //           yDirect: y(new Date(d.date)),
-  //           entryIndex: i,
-  //         })),
-  //         {
-  //           oldPositionName: 'yDirect',
-  //           newPositionName: 'y',
-  //           minSpacing: 40,
-  //           width: height - 20,
-  //         }
-  //       )
-  //     : [];
-
   const width = (boundingWidth - 50);
-  const dateLabelWidth = 130;
-  const tickWidth = 20;
+  const dateLabelWidth = 50;
+  const tickWidth = 10;
   const ticks = y.ticks();
 
-  const formatTime = timeFormat('%Y-%m-%d (%a)');
+  const formatTime =  timeFormat('%x');//timeFormat('%Y-%m-%d (%a)');
 
   return (
     <svg height={height} width={width}>
       <g transform="translate(20,20)">
         {ticks.map((t) => (
           <React.Fragment key={`tick-${t}`}>
-            <text x={0} y={y(t)}>
+            <text x={0} y={y(t)} style={{fontSize:10}}>
               {formatTime(t)}
             </text>
             <line
@@ -241,7 +239,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, filteredActivites, selectedEntryIndex, setSelectedEntryIndex } = ProjectPropValues;
-  // const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
+ 
 
   const [{}, dispatch] = useProjectState();
 
@@ -263,7 +261,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div ref={div} style={{width:'100%'}}>
-      <DateFilter />
+      {/* <DateFilter /> */}
         <div style={{overflowY:"auto", height:"calc(100vh - 250px)", width:'100%'}}>
           <TimelinePlot
             projectData={projectData}

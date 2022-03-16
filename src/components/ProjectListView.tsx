@@ -28,7 +28,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setSelectedEntryIndex,
   } = ProjectPropValues;
 
-  const [{}, dispatch] = useProjectState();
+  const [{hoverActivity}, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -45,7 +45,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     }
   }, [projectData]);
 
-  console.log('selected entry index',selectedEntryIndex)
+
   useEffect(() => {
 
     setEditable(
@@ -54,6 +54,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditableStatus(selectedEntryIndex, true);
    
   }, [selectedEntryIndex]);
+
+
+  useEffect(()=> {
+    console.log('this is workingg', hoverActivity, filteredActivites)
+  }, [hoverActivity]);
 
   const updateEntryField = (
     entryIndex: number,

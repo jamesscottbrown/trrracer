@@ -752,6 +752,15 @@ const appStateReducer = (state, action) => {
       return saveJSON(newProjectData);
     }
 
+    case 'HOVER_OVER_ACTIVITY':{
+
+      return {
+        ...state,
+        hoverActivity: action.hoverActivity
+      };
+
+    }
+
     default: {
       console.log("Can't handle:", action);
       return state;

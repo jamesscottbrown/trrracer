@@ -71,6 +71,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
       setFilteredActivites(timeFiltered);
     }, [projectData, filterTags, filterTypes, timeFilter]);
 
+    console.log('filtered activities', filteredActivites)
+
    
 
   if (viewType === 'activity view') {
@@ -129,7 +131,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
         }}
       >
         <TopBar
-          folderPath={folderPath}
           viewType={viewType}
           setViewType={setViewType}
           reversedOrder={reversedOrder}
@@ -138,7 +139,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
-        />
+          filteredActivityNames={filteredActivites.map(n => n.title)}
+        />  
         <Flex position="relative" top={220}>
           <LeftSidebar />
           <Box flex="3.5" h="calc(100vh - 250px)">
