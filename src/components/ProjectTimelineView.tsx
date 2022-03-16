@@ -24,11 +24,11 @@ interface EntryPlotProps {
   y: (date: Date) => number;
   tags: TagType[];
   setEntryAsSelected: () => void;
+  setHoverActivity: (entry:EntryType) => void;
 }
 
 const EntryPlot = (props: EntryPlotProps) => {
-  const { entryData, y, tags, setEntryAsSelected } = props;
-  const [{}, dispatch] = useProjectState();
+  const { entryData, y, tags, setEntryAsSelected, setHoverActivity } = props;
 
   const angledLineWidth = 100;
   const straightLineWidth = 20;
@@ -68,7 +68,8 @@ const EntryPlot = (props: EntryPlotProps) => {
         stroke="lightGrey"
       />
       <g onMouseOver={()=> {
-          dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
+          //dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
+          setHoverActivity(entryData)
         }}>
         <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
           {entryData.tags.map((t, i) => {
@@ -160,7 +161,7 @@ interface TimelinePlotProps {
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth } = props;
+  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth, setHoverActivity } = props;
 
   const entries = filteredActivites.map((e:EntryType) => ({
     ...e,
@@ -177,7 +178,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
   //NEED TO MAKE THIS DYNAMIC
   const y = scaleTime()
     .range([0, (height - 70)])
-    .domain(extent([...dates, ...deadlineDates]).reverse());
+    .domain(extent([...dates, ...deadlineDates]));
 
   const positionEntries =
     entries.length > 0
@@ -228,8 +229,8 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             entryData={e}
             tags={projectData.tags}
             setEntryAsSelected={() => {
-              console.log('click')
               setSelectedEntryIndex(e.entryIndex)}}
+            setHoverActivity={setHoverActivity}
           />
         ))}
       </g>
@@ -238,9 +239,14 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, filteredActivites, selectedEntryIndex, setSelectedEntryIndex } = ProjectPropValues;
+  const { 
+    projectData, 
+    filteredActivites, 
+    selectedEntryIndex, 
+    setSelectedEntryIndex, 
+    setHoverActivity 
+  } = ProjectPropValues;
  
-
   const [{}, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
@@ -268,6 +274,7 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
             filteredActivites={filteredActivites}
             setSelectedEntryIndex={setSelectedEntryIndex}
             boundingWidth={width}
+            setHoverActivity={setHoverActivity}
           />
         </div>
     </div>

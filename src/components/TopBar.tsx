@@ -140,7 +140,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             timeFilter={timeFilter}
             setTimeFilter={setTimeFilter}
             viewType={viewType}
-          filteredActivityNames={filteredActivityNames}
+            filteredActivityNames={filteredActivityNames}
           />
           <Box style={{ width: '100%', display: 'block' }}>
             {filterTags.length > 0 &&

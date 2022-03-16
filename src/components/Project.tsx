@@ -26,6 +26,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
   const [filteredActivites, setFilteredActivites] = useState(projectData.entries);
+  const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
 
   // Update title when projectData changes.
   useEffect(() => {
@@ -34,7 +35,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     // Update title when projectData changes.
     useEffect(() => {
-      
       const tagFiltered = projectData.entries
       .filter((entryData: any) => {
         return filterTags.every((requiredTag: string) =>
@@ -69,11 +69,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       );
 
       setFilteredActivites(timeFiltered);
-    }, [projectData, filterTags, filterTypes, timeFilter]);
-
-    console.log('filtered activities', filteredActivites)
-
-   
+    }, [projectData.entries, filterTags, filterTypes, timeFilter]); 
 
   if (viewType === 'activity view') {
     return (
@@ -112,6 +108,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
               setViewType={setViewType}
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
+              hoverActivity={hoverActivity}
             />
           </Box>
         </Flex>
@@ -150,15 +147,16 @@ const Project = (ProjectPropValues: ProjectProps) => {
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
+            setHoverActivity={setHoverActivity}
           />
           </Box>
           <Box flex="1.5" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
-              projectData={projectData}
               filteredActivites={filteredActivites}
               setViewType={setViewType}
               selectedEntryIndex={selectedEntryIndex} 
               setSelectedEntryIndex={setSelectedEntryIndex}
+              hoverActivity={hoverActivity}
             />
           </Box>
         </Flex>

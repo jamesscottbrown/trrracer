@@ -188,7 +188,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       fit="contain"
       src={`file://${path.join(folderPath, title)}`}
       onClick={(ev) => {
-        console.log(ev.target.width, ev.target.height);
         !setFragSelected
           ? openFile(title, folderPath)
           : console.log(MouseEvent);

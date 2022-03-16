@@ -125,8 +125,6 @@ const Entry = (props: EntryPropTypes) => {
 
   const [state, dispatch] = useProjectState();
 
-  console.log('STATE IN ENTRY', state);
-
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
