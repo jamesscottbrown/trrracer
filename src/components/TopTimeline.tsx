@@ -125,12 +125,16 @@ const TopTimeline = (projectProps: any) => {
       .attr('dy', '-.2em')
       .attr('transform', 'rotate(-65)');
 
-    circles.filter(f=> filteredActivityNames.indexOf(f.title) === -1).attr('fill-opacity', 0.1);
-    if(filteredActivityNames.length < activity.length){
-      circles.filter(f=> filteredActivityNames.indexOf(f.title) > -1)
-      .attr('fill-opacity', 0.9)
-      .attr('stroke', 'gray.900');
+    if(filteredActivityNames){
+      circles.filter(f=> filteredActivityNames.indexOf(f.title) === -1).attr('fill-opacity', 0.1);
+      if(filteredActivityNames.length < activity.length){
+        circles.filter(f=> filteredActivityNames.indexOf(f.title) > -1)
+        .attr('fill-opacity', 0.9)
+        .attr('stroke', 'gray.900');
+      }
     }
+
+
     
 
     if (!defineEvent) {

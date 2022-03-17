@@ -92,6 +92,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
+          filteredActivityNames={null}
         />
         <Flex position="relative" top={220}>
           <LeftSidebar />
@@ -185,6 +186,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
+          filteredActivityNames={null}
         />
 
         <ThreadView />
