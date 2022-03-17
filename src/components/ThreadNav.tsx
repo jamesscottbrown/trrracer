@@ -108,7 +108,10 @@ const ThreadNav = (threadProps: any) => {
                       ? 0.5
                       : 1,
                 }}
-              >
+                onMouseEnter={() => {
+                  console.log('rt', rt)
+                  dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
+                }}>
                 <span
                   style={{ cursor: 'pointer' }}
                   onClick={() => {

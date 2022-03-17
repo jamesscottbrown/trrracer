@@ -40,7 +40,6 @@ const LeftSidebar = () => {
   });
 
   const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
-
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
 
   return (

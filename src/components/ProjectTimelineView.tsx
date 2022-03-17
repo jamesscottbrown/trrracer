@@ -1,6 +1,6 @@
 import path from 'path';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Heading } from '@chakra-ui/react';
 
 import { extent } from 'd3-array';
@@ -33,13 +33,18 @@ const EntryPlot = (props: EntryPlotProps) => {
   const angledLineWidth = 100;
   const straightLineWidth = 20;
 
-  const squareWidth = 10;
+  const squareWidth = 20;
   const squarePadding = 2;
 
-  const getColor = (title: string) => {
-    const tag = tags.filter((t) => t.title === title)[0];
-    return tag ? tag.color : 'grey';
-  };
+  const [hoverState, setHoverState] = useState(false);
+
+  const [{ highlightedTag, researchThreadHover }] =
+  useProjectState();
+
+  useEffect(()=> {
+    console.log('highlightedTag', highlightedTag)
+    entryData.tags.indexOf(highlightedTag) > -1 ? setHoverState(true) : setHoverState(false)
+  }, [highlightedTag, researchThreadHover])
 
   return (
     <>
@@ -58,33 +63,49 @@ const EntryPlot = (props: EntryPlotProps) => {
         x2={angledLineWidth}
         y1={entryData.yDirect}
         y2={entryData.y}
-        stroke="lightGrey"
+        stroke={(hoverState ? 'yellow' : 'gray')}
+        strokeWidth={(hoverState ? 3 : 1)}
       />
       <line
         x1={angledLineWidth}
         x2={angledLineWidth + straightLineWidth}
         y1={entryData.y}
         y2={entryData.y}
-        stroke="lightGrey"
+        stroke={(hoverState ? 'yellow' : 'gray')}
+        strokeWidth={(hoverState ? 3 : 1)}
       />
-      <g onMouseOver={()=> {
+      <g 
+      style={{cursor:'pointer'}}
+      onMouseOver={()=> {
           //dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
           setHoverActivity(entryData)
-        }}>
+          setHoverState(true)
+        }}
+        onMouseOut={()=> {
+          setHoverState(false)
+        }}
+        >
+       
         <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
-          {entryData.tags.map((t, i) => {
+        <rect 
+          width={((entryData.files.length * (squareWidth + squarePadding) + (squareWidth/2)) + (8*entryData.title.length))}
+          height={squareWidth*2}
+          fill={(hoverState ? 'yellow' : 'white')}
+          y={entryData.y - squareWidth}
+          x={0-(squareWidth / 2)}
+        />
+          {entryData.files.map((t, i) => {
             return (
               <rect
-                key={`re-${i}`}
+                key={`${entryData.title}-artifact-${i}`}
                 x={i * (squareWidth + squarePadding)}
-                y={entryData.y - squareWidth}
+                y={entryData.y - (squareWidth/2)}
                 width={squareWidth}
                 height={squareWidth}
-                // fill={getColor(t)}
                 fill={'gray'}
                 onClick={setEntryAsSelected}
               >
-                <title>{t}</title>
+                <title>{t.title}</title>
               </rect>
             );
           })}
@@ -94,12 +115,12 @@ const EntryPlot = (props: EntryPlotProps) => {
           transform={`translate(${
             angledLineWidth +
             straightLineWidth +
-            entryData.tags.length * (squareWidth + squarePadding)
+            entryData.files.length * (squareWidth + squarePadding)
           }, 0)`}
         >
           <text
             x={0}
-            y={entryData.y}
+            y={entryData.y + (squareWidth/4)}
             textAnchor="start"
             onClick={setEntryAsSelected}
             style={{cursor:'pointer'}}
@@ -114,49 +135,10 @@ const EntryPlot = (props: EntryPlotProps) => {
   );
 };
 
-// interface DeadlineProps {
-//   deadline: DeadlineType;
-//   width: number;
-//   y: (t: Date) => number;
-// }
-
-// const Deadline = (props: DeadlineProps) => {
-//   const { deadline, width, y } = props;
-
-//   const spaceForTitle = 300;
-//   const slopeLength = 25;
-
-//   return (
-//     <>
-//       <line
-//         x1={0}
-//         x2={width - spaceForTitle - slopeLength}
-//         y1={deadline.yDirect}
-//         y2={deadline.yDirect}
-//         stroke="grey"
-//         strokeDasharray="4,4"
-//       />
-
-//       <line
-//         x1={width - spaceForTitle - slopeLength}
-//         x2={width - spaceForTitle}
-//         y1={deadline.yDirect}
-//         y2={deadline.y}
-//         stroke="grey"
-//         strokeDasharray="4,4"
-//       />
-
-//       <text x={width - spaceForTitle} y={deadline.y}>
-//         {deadline.title}
-//       </text>
-//     </>
-//   );
-// };
-
 interface TimelinePlotProps {
   projectData: ProjectType;
   filteredActivites: EntryType[];
-  boundingWidth:number | null;
+  boundingWidth: number | null;
   setSelectedEntryIndex: (entryIndex: number) => void;
 }
 

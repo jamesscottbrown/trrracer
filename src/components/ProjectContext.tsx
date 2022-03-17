@@ -9,9 +9,6 @@ import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
-import getEmptyProject from '../emptyProject';
-import { readFile } from '../fileUtil';
-import DataDisplayer from '../CallFlask';
 
 export const ProjectContext = createContext<DispatchType>();
 
