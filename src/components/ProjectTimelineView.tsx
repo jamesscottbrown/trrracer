@@ -36,6 +36,8 @@ const EntryPlot = (props: EntryPlotProps) => {
   const squareWidth = 10;
   const squarePadding = 2;
 
+  console.log(entryData);
+
   const getColor = (title: string) => {
     const tag = tags.filter((t) => t.title === title)[0];
     return tag ? tag.color : 'grey';
@@ -71,10 +73,10 @@ const EntryPlot = (props: EntryPlotProps) => {
           dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
         }}>
         <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
-          {entryData.tags.map((t, i) => {
+          {entryData.files.map((t, i) => {
             return (
               <rect
-                key={`re-${i}`}
+                key={`${entryData.title}-artifact-${i}`}
                 x={i * (squareWidth + squarePadding)}
                 y={entryData.y - squareWidth}
                 width={squareWidth}
@@ -83,7 +85,7 @@ const EntryPlot = (props: EntryPlotProps) => {
                 fill={'gray'}
                 onClick={setEntryAsSelected}
               >
-                <title>{t}</title>
+                <title>{t.title}</title>
               </rect>
             );
           })}
@@ -93,7 +95,7 @@ const EntryPlot = (props: EntryPlotProps) => {
           transform={`translate(${
             angledLineWidth +
             straightLineWidth +
-            entryData.tags.length * (squareWidth + squarePadding)
+            entryData.files.length * (squareWidth + squarePadding)
           }, 0)`}
         >
           <text
@@ -101,7 +103,7 @@ const EntryPlot = (props: EntryPlotProps) => {
             y={entryData.y}
             textAnchor="start"
             onClick={setEntryAsSelected}
-            style={{cursor:'pointer'}}
+            
           >
             {entryData.title}
           </text>
