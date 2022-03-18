@@ -22,7 +22,8 @@ const ActivityWrap = (props:any) => {
         setSelectedArtifactIndex,
         setSelectedArtifactEntry,
         index,
-        hoverActivity
+        hoverActivity,
+        viewType
     } = props;
 
     const [{projectData}, dispatch] = useProjectState();
@@ -56,6 +57,7 @@ const ActivityWrap = (props:any) => {
               updateEntryField={updateEntryField}
               allTags={projectData.tags}
               makeNonEditable={() => setEditableStatus(activityData.index, false)}
+              viewType={viewType}
             />
           ) : (
             <ReadonlyEntry
@@ -67,6 +69,7 @@ const ActivityWrap = (props:any) => {
               setSelectedArtifactIndex={setSelectedArtifactIndex}
               setSelectedArtifactEntry={setSelectedArtifactEntry}
               makeEditable={() => setEditableStatus(activityData.index, true)}
+              viewType={viewType}
             />
           )}
 

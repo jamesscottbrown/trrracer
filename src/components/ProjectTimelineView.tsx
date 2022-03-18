@@ -42,9 +42,16 @@ const EntryPlot = (props: EntryPlotProps) => {
   useProjectState();
 
   useEffect(()=> {
-    console.log('highlightedTag', highlightedTag)
-    entryData.tags.indexOf(highlightedTag) > -1 ? setHoverState(true) : setHoverState(false)
+    setHoverState(false)
+    if(highlightedTag){
+      entryData.tags.indexOf(highlightedTag) > -1 ? setHoverState(true) : setHoverState(false)
+    }
+    if(researchThreadHover){
+      researchThreadHover.evidence.map(m=> m.activityTitle).indexOf(entryData.title) > -1 ? setHoverState(true) : setHoverState(false)
+    }
   }, [highlightedTag, researchThreadHover])
+
+
 
   return (
     <>

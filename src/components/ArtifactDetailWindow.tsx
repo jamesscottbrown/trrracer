@@ -11,6 +11,7 @@ import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
 import type { ResearchThread, ResearchThreadEvidence } from './types';
+import ActivityWrap from './ActivityWrap';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -501,6 +502,25 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           selectedArtifactEntry={selectedArtifactEntry}
           selectedArtifactIndex={selectedArtifactIndex}
         />
+
+
+        <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
+    
+          <ActivityWrap 
+          key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
+          activityData={selectedArtifactEntry} 
+          editable={false}
+          setEditableStatus={setEditableStatus} 
+          setViewType={setViewType}
+          setSelectedArtifactIndex={null}
+          setSelectedArtifactEntry={null}
+          index={selectedArtifactEntry.index}
+          hoverActivity={null}
+          viewType={"detail"}
+          />
+        </Box>
+
+
         <Box flex="4">
           {(selectedArtifactEntry.files[selectedArtifactIndex].fileType ===
             'txt' ||
@@ -601,6 +621,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               >
                 {'>>'}
               </span>
+
               <span
                 onClick={() => {
                   console.log(selectedArtifactEntry.index);
@@ -628,18 +649,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           </Flex>
         </Box>
 
-        <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
-          <ReadonlyEntry
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
-            entryData={selectedArtifactEntry}
-            openFile={openFile}
-            setViewType={setViewType}
-            makeEditable={() =>
-              setEditableStatus(selectedArtifactEntry.index, true)
-            }
-          />
-        </Box>
       </Flex>
     </div>
     // </div>

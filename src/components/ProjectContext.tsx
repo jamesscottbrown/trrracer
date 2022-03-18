@@ -365,6 +365,7 @@ const appStateReducer = (state, action) => {
         filterTags: [],
         filterTypes: [],
         filterDates: [null, null],
+        filterRT: null
       };
     }
 
@@ -421,6 +422,14 @@ const appStateReducer = (state, action) => {
 
       return saveJSONRT(newRT);
     }
+
+    case 'THREAD_FILTER': {
+      if(action.filterRT){
+        return {...state, filterRT:{title:action.filterRT.title, key:action.filterRT.evidence.map(m=> m.activityTitle)} }
+      }else{
+        return {...state, filterRT:null }
+      }
+    } 
 
     case 'ADD_FRAGMENT_TO_THREAD': {
       const {
@@ -756,6 +765,16 @@ const appStateReducer = (state, action) => {
         hoverActivity: action.hoverActivity
       };
 
+    }
+
+    case 'HOVER_THREAD':{
+
+      console.log('actionnnnn', action.researchThreadHover)
+
+      return {
+        ...state,
+        researchThreadHover: action.researchThreadHover
+      }
     }
 
     default: {

@@ -19,7 +19,7 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterTypes, filterDates }] = useProjectState();
+  const [{ projectData, filterTags, filterTypes, filterDates, filterRT }] = useProjectState();
   const [viewType, setViewType] = useState<string>('timeline');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -53,14 +53,22 @@ const Project = (ProjectPropValues: ProjectProps) => {
         })
         .map((e: EntryType, index: number) => ({ ...e, index }));
 
+      let rtFiltered = typeFiltered.filter((entryData:any)=> {
+        if(filterRT){
+          return filterRT.key.includes(entryData.title);
+        }else{
+          return typeFiltered;
+        }
+      })
+
       let timeFiltered =
       timeFilter != null
-        ? typeFiltered.filter(
+        ? rtFiltered.filter(
             (f) =>
               new Date(f.date) >= timeFilter[0] &&
               new Date(f.date) <= timeFilter[1]
           )
-        : typeFiltered;
+        : rtFiltered;
   
         timeFiltered.sort(
         (a, b) =>
@@ -68,8 +76,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
           (Number(new Date(a.date)) - Number(new Date(b.date)))
       );
 
+          console.log('rtfiltered',rtFiltered)
+
       setFilteredActivites(timeFiltered);
-    }, [projectData.entries, filterTags, filterTypes, timeFilter]); 
+    }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 
 
   if (viewType === 'activity view') {
     return (

@@ -121,7 +121,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable, openFile, setViewType } = props;
+  const { entryData, makeEditable, openFile, setViewType, viewType } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
   const checkTagColor = (tagName: string) => {
@@ -160,7 +160,10 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             style={{ display: 'inline', fill: 'lightgrey' }}
           />
         )}
-        {entryData.title}{' '}
+        {viewType != 'detail' && (
+          <span>{entryData.title}{' '}</span>
+        )}
+        
         {makeEditable ? (
           <Button leftIcon={<EditIcon />} onClick={makeEditable}>
             Edit
