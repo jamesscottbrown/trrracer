@@ -276,40 +276,17 @@ const DetailSidebar = (props: any) => {
 
   return (
     <Box
-      margin="8px"
-      p={5}
+      marginLeft="8px"
+      marginRight="8px"
+      
       flex="2"
       flexDirection="column"
       h="calc(100vh - 250px)"
       overflow="auto"
     >
+
       <Box>
-        <div>
-          <span style={{ fontSize: 20, fontWeight: 700 }}>
-            {selectedArtifactEntry.title}
-          </span>
-        </div>
-        <Box
-          marginLeft="3px"
-          borderLeftColor="black"
-          borderLeftWidth="1px"
-          padding="3px"
-        >
-          {selectedArtifactEntry.files.map((f: any, i: number) => (
-            <React.Fragment key={`fi-${f.title}-${i}`}>
-              {i === selectedArtifactIndex ? (
-                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                  {selectedArtifactEntry.files[i].title}
-                </div>
-              ) : (
-                <div>{selectedArtifactEntry.files[i].title}</div>
-              )}
-            </React.Fragment>
-          ))}
-        </Box>
-      </Box>
-      <Box>
-        <span style={{ fontSize: 20, fontWeight: 700 }}>Activity Tags</span>
+        <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>Activity Tags</div>
         {selectedArtifactEntry.tags.map((t: any, i: number) => (
           <InteractiveActivityTag
             key={`it-${i}`}
@@ -396,24 +373,6 @@ const DetailSidebar = (props: any) => {
             </span>
             <ThreadNav researchTs={isArtifactInThread} viewType="detail" />
           </div>
-
-          // <div>
-          //     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
-          // {isArtifactInThread.map((at:any, i:number)=> (
-          //     <Box key={`in-thread-${i}`}>
-          //         <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
-          //         <div style={{padding:5, borderLeft: "1px solid gray"}}>{
-          //             at.evidence.map((e:any, j:number)=>(
-          //                 <React.Fragment key={`evid-${j}`}>{
-          //                 e.artifactIndex === selectedArtifactIndex ?
-          //                 <div><span style={{fontWeight:600, display:"block"}}>{e.artifactTitle}</span>{e.rationale}</div>
-          //                 :<div><span style={{fontSize:11, color:'gray'}}>{e.type}</span></div>}
-          //                 </React.Fragment>
-          //             ))
-          //         }</div>
-          //     </Box>
-          // ))}
-          // </div>
         )}
       </Box>
     </Box>
@@ -481,6 +440,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           >
             {'<< GO BACK TO OVERVIEW'}
           </Button>
+          <Spacer/>
+          <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
+          <Spacer/>
+          <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>
         </Flex>
         <Flex alignContent="center">
           <Spacer />
@@ -505,7 +468,33 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
 
         <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
-    
+          
+        <Box style={{marginBottom:10}}>
+        <div>
+          <span style={{ fontSize: 20, fontWeight: 700 }}>
+            {`Artifacts associated with ${selectedArtifactEntry.title}`}
+          </span>
+        </div>
+        <Box
+          marginLeft="3px"
+          borderLeftColor="black"
+          borderLeftWidth="1px"
+          padding="3px"
+        >
+          {selectedArtifactEntry.files.map((f: any, i: number) => (
+            <React.Fragment key={`fi-${f.title}-${i}`}>
+              {i === selectedArtifactIndex ? (
+                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                  {selectedArtifactEntry.files[i].title}
+                </div>
+              ) : (
+                <div>{selectedArtifactEntry.files[i].title}</div>
+              )}
+            </React.Fragment>
+          ))}
+        </Box>
+      </Box>
+
           <ActivityWrap 
           key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
           activityData={selectedArtifactEntry} 
@@ -544,7 +533,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             }}
           >
             <Flex style={{ alignItems: 'center' }}>
-              <span
+              {/* <span
                 onClick={() => {
                   const entryIndex = selectedArtifactEntry.index;
                   if (entryIndex === 0) {
@@ -587,7 +576,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 style={{ fontWeight: 500, fontSize: '16px', padding: '3px' }}
               >
                 {'<<'}
-              </span>
+              </span> */}
             </Flex>
 
             <DetailPreview
@@ -600,7 +589,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             />
 
             <Flex style={{ alignItems: 'center' }}>
-              <span
+              {/* <span
                 onClick={() => {
                   const len = selectedArtifactEntry.files.length;
                   if (selectedArtifactIndex < len - 1) {
@@ -644,7 +633,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 style={{ fontWeight: 700, fontSize: '24px', padding: '3px' }}
               >
                 {'>>'}
-              </span>
+              </span> */}
             </Flex>
           </Flex>
         </Box>
