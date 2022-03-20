@@ -169,9 +169,6 @@ const CenterFileRender = (fileArrayProps: any) => {
     numRendered > 50 ? 
     <SmallFileRender fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered}/>
     :<LargeFileRender activity={activity} fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered} />
-  )
-
- 
-};
+  )};
 
 export default CenterFileRender;

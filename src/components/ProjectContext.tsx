@@ -89,7 +89,6 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
     } else {
       try {
         let saveFile = true;
-
         let newName = file.name;
 
         if (fs.existsSync(destination) && !sourceIsInProjectDir) {
@@ -325,6 +324,7 @@ const appStateReducer = (state, action) => {
         roleData = readProjectFile(baseDir, 'roles.json', null);
 
         newEntries = action.projectData.entries.map((e, i) => {
+          e.index = i;
           e.key_txt = text_data['text-data'].filter(
             (td) => td['entry-index'] === i
           );
@@ -382,7 +382,7 @@ const appStateReducer = (state, action) => {
       const { tag, threadIndex } = action;
 
       let newRT = { ...state.researchThreads };
-      console.log('NEW RT', newRT);
+      
       newRT.research_threads[threadIndex].associated_tags.push(tag);
 
       return saveJSONRT(newRT);

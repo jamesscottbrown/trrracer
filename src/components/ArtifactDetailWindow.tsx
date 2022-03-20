@@ -233,8 +233,16 @@ const InteractiveActivityTag = (props: any) => {
                     fontSize: 10,
                     borderBottom: '1px solid black',
                     padding: 3,
+                    cursor:'pointer'
                   }}
                   key={`match-${i}`}
+                  onClick={()=> {
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: t,
+                      selectedArtifactIndex: 0,
+                    });
+                  }}
                 >
                   {t.title}
                 </div>
@@ -441,9 +449,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             {'<< GO BACK TO OVERVIEW'}
           </Button>
           <Spacer/>
-          <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
-          <Spacer/>
           <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>
+          <Spacer/>
+          <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
         </Flex>
         <Flex alignContent="center">
           <Spacer />
@@ -459,28 +467,28 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         bottom={0}
         height="calc(100% - 150px)"
       >
-        <DetailSidebar
-          fragSelected={fragSelected}
-          setFragSelected={setFragSelected}
-          selectedArtifactEntry={selectedArtifactEntry}
-          selectedArtifactIndex={selectedArtifactIndex}
-        />
+      <DetailSidebar
+        fragSelected={fragSelected}
+        setFragSelected={setFragSelected}
+        selectedArtifactEntry={selectedArtifactEntry}
+        selectedArtifactIndex={selectedArtifactIndex}
+      />
 
 
         <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
           
-        <Box style={{marginBottom:10}}>
-        <div>
-          <span style={{ fontSize: 20, fontWeight: 700 }}>
-            {`Artifacts associated with ${selectedArtifactEntry.title}`}
-          </span>
-        </div>
-        <Box
-          marginLeft="3px"
-          borderLeftColor="black"
-          borderLeftWidth="1px"
-          padding="3px"
-        >
+        <Box style={{marginBottom:20}}>
+          <div>
+            <span style={{ fontSize: 20, fontWeight: 700 }}>
+              {`Artifacts associated with ${selectedArtifactEntry.title}`}
+            </span>
+          </div>
+          <Box
+            marginLeft="3px"
+            borderLeftColor="black"
+            borderLeftWidth="1px"
+            padding="3px"
+          >
           {selectedArtifactEntry.files.map((f: any, i: number) => (
             <React.Fragment key={`fi-${f.title}-${i}`}>
               {i === selectedArtifactIndex ? (
@@ -492,8 +500,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               )}
             </React.Fragment>
           ))}
+          </Box>
         </Box>
-      </Box>
 
           <ActivityWrap 
           key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
@@ -530,6 +538,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               justifyContent: 'center',
               alignItems: 'stretch',
               height: '90%',
+              paddingLeft:20,
+              paddingRight:20
             }}
           >
             <Flex style={{ alignItems: 'center' }}>

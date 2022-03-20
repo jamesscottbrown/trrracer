@@ -10,14 +10,13 @@ import { timeFormat } from 'd3-time-format';
 import { repositionPoints } from 'respacer';
 
 import {
-  DeadlineType,
   EntryType,
   ProjectType,
   ProjectViewProps,
   TagType,
 } from './types';
 import { useProjectState } from './ProjectContext';
-import DateFilter from './FilterDates';
+
 
 interface EntryPlotProps {
   entryData: EntryType;
@@ -27,18 +26,72 @@ interface EntryPlotProps {
   setHoverActivity: (entry:EntryType) => void;
 }
 
+const imageTypes = ['png', 'jpg', 'gif'];
+
+const angledLineWidth = 100;
+const straightLineWidth = 30;
+const squareWidth = 30;
+const squarePadding = 2;
+
+const RenderImage = (props:any) => {
+
+  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props
+
+  // console.log('fileData', fileData)
+
+  const extension = fileData.fileType;
+  const newName = fileData.title.split(`.${extension}`);
+
+  const newPath = `thumbs/${newName[0]}.png`;
+   
+
+    // d3.select(n[i])
+    //   .select('rect')
+    //   .attr('fill', `url(#image${fileData.title})`)
+    //   .style('width', '100%')
+    //   .style('padding-bottom', '92%');
+     
+   
+    return(
+      <g>
+        <defs>
+          <pattern
+            id={`image${fileData.title}`}
+            patternUnits="userSpaceOnUse"
+            width={10}
+            height={10}
+          >                             {/* <---- these attributes needed here */}
+          <image
+            href={`file://${path.join(folderPath, newPath)}`}
+            height={30}
+            width={30}
+            x={0}
+            y={0}
+          />
+          </pattern>
+        </defs>
+        <rect 
+          key={`${entryData.title}-artifact-${index}`}
+          x={index * (squareWidth + squarePadding)}
+          y={entryData.y - (squareWidth/2)}
+          width={squareWidth}
+          height={squareWidth}
+          fill={`url(#image${fileData.title})`}
+          stroke={'gray'}
+          onClick={setEntryAsSelected}
+        />
+      </g>
+      
+    )
+}
+
 const EntryPlot = (props: EntryPlotProps) => {
   const { entryData, y, tags, setEntryAsSelected, setHoverActivity } = props;
 
-  const angledLineWidth = 100;
-  const straightLineWidth = 20;
-
-  const squareWidth = 20;
-  const squarePadding = 2;
-
   const [hoverState, setHoverState] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
 
-  const [{ highlightedTag, researchThreadHover }] =
+  const [{ highlightedTag, researchThreadHover, folderPath }] =
   useProjectState();
 
   useEffect(()=> {
@@ -50,8 +103,6 @@ const EntryPlot = (props: EntryPlotProps) => {
       researchThreadHover.evidence.map(m=> m.activityTitle).indexOf(entryData.title) > -1 ? setHoverState(true) : setHoverState(false)
     }
   }, [highlightedTag, researchThreadHover])
-
-
 
   return (
     <>
@@ -96,13 +147,16 @@ const EntryPlot = (props: EntryPlotProps) => {
         <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
         <rect 
           width={((entryData.files.length * (squareWidth + squarePadding) + (squareWidth/2)) + (8*entryData.title.length))}
-          height={squareWidth*2}
+          height={squareWidth+ 10}
           fill={(hoverState ? 'yellow' : 'white')}
-          y={entryData.y - squareWidth}
-          x={0-(squareWidth / 2)}
+          y={entryData.y - (squareWidth - 10)}
+          x={-5}
         />
           {entryData.files.map((t, i) => {
             return (
+              imageTypes.includes(t.fileType) ?
+              <RenderImage fileData={t} entryData={entryData} index={i} setEntryAsSelected={setEntryAsSelected} folderPath={folderPath}/> 
+              :
               <rect
                 key={`${entryData.title}-artifact-${i}`}
                 x={i * (squareWidth + squarePadding)}
@@ -256,7 +310,6 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div ref={div} style={{width:'100%'}}>
-      {/* <DateFilter /> */}
         <div style={{overflowY:"auto", height:"calc(100vh - 250px)", width:'100%'}}>
           <TimelinePlot
             projectData={projectData}
