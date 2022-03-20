@@ -161,9 +161,6 @@ const EntryPlot = (props: EntryPlotProps) => {
           x={-5}
         />
           {entryData.files.map((t, i) => {
-            // return (
-
-            // );
             <MagicRect 
               key={`${entryData.title}-artifact-${i}`}
               fileData={t} 
