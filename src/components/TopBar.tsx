@@ -37,7 +37,7 @@ interface TopbarProps{
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-  const [{ projectData, filterTags }, dispatch] = useProjectState();
+  const [{ projectData, filterTags, filterRT }, dispatch] = useProjectState();
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
@@ -140,7 +140,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             timeFilter={timeFilter}
             setTimeFilter={setTimeFilter}
             viewType={viewType}
-          filteredActivityNames={filteredActivityNames}
+            filteredActivityNames={filteredActivityNames}
           />
           <Box style={{ width: '100%', display: 'block' }}>
             {filterTags.length > 0 &&
@@ -170,6 +170,33 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   </span>
                 </div>
               ))}
+            {filterRT && (
+              <div
+              key={`rt-${filterRT.title}`}
+              style={{
+                display: 'inline-block',
+                margin: 5,
+                backgroundColor: 'gray',
+                color: '#ffffff',
+                borderRadius: 5,
+                padding: 5,
+              }}
+            >
+              <span>{`${filterRT.title}`}</span>
+              <span
+                onClick={() => {
+                  dispatch({
+                    type:'THREAD_FILTER', 
+                    filterRT: null
+                  });
+                }}
+                style={{ padding: 5, cursor: 'pointer' }}
+              >
+                x
+              </span>
+            </div>
+              
+            )}
           </Box>
         </Flex>
         {(viewType === 'activity view' || viewType === 'timeline') && (

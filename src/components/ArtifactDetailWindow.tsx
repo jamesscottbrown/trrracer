@@ -11,6 +11,7 @@ import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
 import type { ResearchThread, ResearchThreadEvidence } from './types';
+import ActivityWrap from './ActivityWrap';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -232,8 +233,16 @@ const InteractiveActivityTag = (props: any) => {
                     fontSize: 10,
                     borderBottom: '1px solid black',
                     padding: 3,
+                    cursor:'pointer'
                   }}
                   key={`match-${i}`}
+                  onClick={()=> {
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: t,
+                      selectedArtifactIndex: 0,
+                    });
+                  }}
                 >
                   {t.title}
                 </div>
@@ -275,40 +284,17 @@ const DetailSidebar = (props: any) => {
 
   return (
     <Box
-      margin="8px"
-      p={5}
+      marginLeft="8px"
+      marginRight="8px"
+      
       flex="2"
       flexDirection="column"
       h="calc(100vh - 250px)"
       overflow="auto"
     >
+
       <Box>
-        <div>
-          <span style={{ fontSize: 20, fontWeight: 700 }}>
-            {selectedArtifactEntry.title}
-          </span>
-        </div>
-        <Box
-          marginLeft="3px"
-          borderLeftColor="black"
-          borderLeftWidth="1px"
-          padding="3px"
-        >
-          {selectedArtifactEntry.files.map((f: any, i: number) => (
-            <React.Fragment key={`fi-${f.title}-${i}`}>
-              {i === selectedArtifactIndex ? (
-                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                  {selectedArtifactEntry.files[i].title}
-                </div>
-              ) : (
-                <div>{selectedArtifactEntry.files[i].title}</div>
-              )}
-            </React.Fragment>
-          ))}
-        </Box>
-      </Box>
-      <Box>
-        <span style={{ fontSize: 20, fontWeight: 700 }}>Activity Tags</span>
+        <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>Activity Tags</div>
         {selectedArtifactEntry.tags.map((t: any, i: number) => (
           <InteractiveActivityTag
             key={`it-${i}`}
@@ -395,24 +381,6 @@ const DetailSidebar = (props: any) => {
             </span>
             <ThreadNav researchTs={isArtifactInThread} viewType="detail" />
           </div>
-
-          // <div>
-          //     <span style={{fontWeight:600, marginTop:10, marginBottom:10}}>{"This artifact is associated with:"}</span>
-          // {isArtifactInThread.map((at:any, i:number)=> (
-          //     <Box key={`in-thread-${i}`}>
-          //         <span>{at.title}<FaFill style={{color: at.color, display:"inline", marginLeft:5}}/></span>
-          //         <div style={{padding:5, borderLeft: "1px solid gray"}}>{
-          //             at.evidence.map((e:any, j:number)=>(
-          //                 <React.Fragment key={`evid-${j}`}>{
-          //                 e.artifactIndex === selectedArtifactIndex ?
-          //                 <div><span style={{fontWeight:600, display:"block"}}>{e.artifactTitle}</span>{e.rationale}</div>
-          //                 :<div><span style={{fontSize:11, color:'gray'}}>{e.type}</span></div>}
-          //                 </React.Fragment>
-          //             ))
-          //         }</div>
-          //     </Box>
-          // ))}
-          // </div>
         )}
       </Box>
     </Box>
@@ -480,6 +448,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           >
             {'<< GO BACK TO OVERVIEW'}
           </Button>
+          <Spacer/>
+          <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>
+          <Spacer/>
+          <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
         </Flex>
         <Flex alignContent="center">
           <Spacer />
@@ -495,12 +467,57 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         bottom={0}
         height="calc(100% - 150px)"
       >
-        <DetailSidebar
-          fragSelected={fragSelected}
-          setFragSelected={setFragSelected}
-          selectedArtifactEntry={selectedArtifactEntry}
-          selectedArtifactIndex={selectedArtifactIndex}
-        />
+      <DetailSidebar
+        fragSelected={fragSelected}
+        setFragSelected={setFragSelected}
+        selectedArtifactEntry={selectedArtifactEntry}
+        selectedArtifactIndex={selectedArtifactIndex}
+      />
+
+
+        <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
+          
+        <Box style={{marginBottom:20}}>
+          <div>
+            <span style={{ fontSize: 20, fontWeight: 700 }}>
+              {`Artifacts associated with ${selectedArtifactEntry.title}`}
+            </span>
+          </div>
+          <Box
+            marginLeft="3px"
+            borderLeftColor="black"
+            borderLeftWidth="1px"
+            padding="3px"
+          >
+          {selectedArtifactEntry.files.map((f: any, i: number) => (
+            <React.Fragment key={`fi-${f.title}-${i}`}>
+              {i === selectedArtifactIndex ? (
+                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                  {selectedArtifactEntry.files[i].title}
+                </div>
+              ) : (
+                <div>{selectedArtifactEntry.files[i].title}</div>
+              )}
+            </React.Fragment>
+          ))}
+          </Box>
+        </Box>
+
+          <ActivityWrap 
+          key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
+          activityData={selectedArtifactEntry} 
+          editable={false}
+          setEditableStatus={setEditableStatus} 
+          setViewType={setViewType}
+          setSelectedArtifactIndex={null}
+          setSelectedArtifactEntry={null}
+          index={selectedArtifactEntry.index}
+          hoverActivity={null}
+          viewType={"detail"}
+          />
+        </Box>
+
+
         <Box flex="4">
           {(selectedArtifactEntry.files[selectedArtifactIndex].fileType ===
             'txt' ||
@@ -521,10 +538,12 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               justifyContent: 'center',
               alignItems: 'stretch',
               height: '90%',
+              paddingLeft:20,
+              paddingRight:20
             }}
           >
             <Flex style={{ alignItems: 'center' }}>
-              <span
+              {/* <span
                 onClick={() => {
                   const entryIndex = selectedArtifactEntry.index;
                   if (entryIndex === 0) {
@@ -567,7 +586,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 style={{ fontWeight: 500, fontSize: '16px', padding: '3px' }}
               >
                 {'<<'}
-              </span>
+              </span> */}
             </Flex>
 
             <DetailPreview
@@ -580,7 +599,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             />
 
             <Flex style={{ alignItems: 'center' }}>
-              <span
+              {/* <span
                 onClick={() => {
                   const len = selectedArtifactEntry.files.length;
                   if (selectedArtifactIndex < len - 1) {
@@ -601,6 +620,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               >
                 {'>>'}
               </span>
+
               <span
                 onClick={() => {
                   console.log(selectedArtifactEntry.index);
@@ -623,23 +643,11 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 style={{ fontWeight: 700, fontSize: '24px', padding: '3px' }}
               >
                 {'>>'}
-              </span>
+              </span> */}
             </Flex>
           </Flex>
         </Box>
 
-        <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
-          <ReadonlyEntry
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
-            entryData={selectedArtifactEntry}
-            openFile={openFile}
-            setViewType={setViewType}
-            makeEditable={() =>
-              setEditableStatus(selectedArtifactEntry.index, true)
-            }
-          />
-        </Box>
       </Flex>
     </div>
     // </div>

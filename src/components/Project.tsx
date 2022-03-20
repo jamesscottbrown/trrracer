@@ -19,13 +19,14 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterTypes, filterDates }] = useProjectState();
+  const [{ projectData, filterTags, filterTypes, filterDates, filterRT }] = useProjectState();
   const [viewType, setViewType] = useState<string>('timeline');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
   const [filteredActivites, setFilteredActivites] = useState(projectData.entries);
+  const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
 
   // Update title when projectData changes.
   useEffect(() => {
@@ -34,7 +35,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     // Update title when projectData changes.
     useEffect(() => {
-      
       const tagFiltered = projectData.entries
       .filter((entryData: any) => {
         return filterTags.every((requiredTag: string) =>
@@ -53,14 +53,22 @@ const Project = (ProjectPropValues: ProjectProps) => {
         })
         .map((e: EntryType, index: number) => ({ ...e, index }));
 
+      let rtFiltered = typeFiltered.filter((entryData:any)=> {
+        if(filterRT){
+          return filterRT.key.includes(entryData.title);
+        }else{
+          return typeFiltered;
+        }
+      })
+
       let timeFiltered =
       timeFilter != null
-        ? typeFiltered.filter(
+        ? rtFiltered.filter(
             (f) =>
               new Date(f.date) >= timeFilter[0] &&
               new Date(f.date) <= timeFilter[1]
           )
-        : typeFiltered;
+        : rtFiltered;
   
         timeFiltered.sort(
         (a, b) =>
@@ -68,12 +76,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
           (Number(new Date(a.date)) - Number(new Date(b.date)))
       );
 
+          console.log('rtfiltered',rtFiltered)
+
       setFilteredActivites(timeFiltered);
-    }, [projectData, filterTags, filterTypes, timeFilter]);
-
-    console.log('filtered activities', filteredActivites)
-
-   
+    }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 
 
   if (viewType === 'activity view') {
     return (
@@ -96,6 +102,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
+          filteredActivityNames={null}
         />
         <Flex position="relative" top={220}>
           <LeftSidebar />
@@ -112,6 +119,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
               setViewType={setViewType}
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
+              hoverActivity={hoverActivity}
             />
           </Box>
         </Flex>
@@ -150,15 +158,16 @@ const Project = (ProjectPropValues: ProjectProps) => {
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
+            setHoverActivity={setHoverActivity}
           />
           </Box>
           <Box flex="1.5" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
-              projectData={projectData}
               filteredActivites={filteredActivites}
               setViewType={setViewType}
               selectedEntryIndex={selectedEntryIndex} 
               setSelectedEntryIndex={setSelectedEntryIndex}
+              hoverActivity={hoverActivity}
             />
           </Box>
         </Flex>
@@ -187,6 +196,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setNewTitle={setNewTitle}
           timeFilter={timeFilter}
           setTimeFilter={setTimeFilter}
+          filteredActivityNames={null}
         />
 
         <ThreadView />

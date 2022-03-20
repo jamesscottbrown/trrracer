@@ -9,26 +9,24 @@ import { EntryTypeWithIndex, ProjectViewProps } from './types';
 
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
+import ActivityWrap from './ActivityWrap';
 
 const { ipcRenderer } = require('electron');
 
-export const openFile = (fileName: string, folderPath: string) => {
-  console.log('Open file:', path.join(folderPath, fileName));
-  ipcRenderer.send('open-file', path.join(folderPath, fileName));
-};
+
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const {
-    projectData,
     filteredActivites,
     setViewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     selectedEntryIndex, 
     setSelectedEntryIndex,
+    hoverActivity
   } = ProjectPropValues;
 
-  const [{hoverActivity}, dispatch] = useProjectState();
+  const [{projectData}, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -54,19 +52,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditableStatus(selectedEntryIndex, true);
    
   }, [selectedEntryIndex]);
-
-
-  useEffect(()=> {
-    console.log('this is workingg', hoverActivity, filteredActivites)
-  }, [hoverActivity]);
-
-  const updateEntryField = (
-    entryIndex: number,
-    fieldName: string,
-    newValue: any
-  ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
-  };
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -110,34 +95,18 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {filteredActivites.map((entryData: EntryTypeWithIndex, i: number) => (
-        <React.Fragment key={`fr-${entryData.title}-${entryData.index}-${i}`}>
-          {editable[entryData.index] ? (
-            <Entry
-              /* eslint-disable-next-line react/no-array-index-key */
-              key={`en-${entryData.title}-${entryData.index}-${i}`}
-              entryData={entryData}
-              entryIndex={entryData.index}
-              openFile={openFile}
-              updateEntryField={updateEntryField}
-              allTags={projectData.tags}
-              makeNonEditable={() => setEditableStatus(entryData.index, false)}
-            />
-          ) : (
-            <ReadonlyEntry
-              /* eslint-disable-next-line react/no-array-index-key */
-              key={`ro-${entryData.title}-${entryData.index}-${i}`}
-              entryData={entryData}
-              openFile={openFile}
-              setViewType={setViewType}
-              setSelectedArtifactIndex={setSelectedArtifactIndex}
-              setSelectedArtifactEntry={setSelectedArtifactEntry}
-              makeEditable={() => setEditableStatus(entryData.index, true)}
-            />
-          )}
-
-          <Divider marginTop="1em" marginBottom="1em" />
-        </React.Fragment>
+      {filteredActivites.map((activityData: EntryTypeWithIndex, i: number) => (
+        <ActivityWrap 
+          key={`fr-${activityData.title}-${activityData.index}-${i}`}
+          activityData={activityData} 
+          editable={editable}
+          setEditableStatus={setEditableStatus} 
+          setViewType={setViewType}
+          setSelectedArtifactIndex={setSelectedArtifactIndex}
+          setSelectedArtifactEntry={setSelectedArtifactEntry}
+          index={i}
+          hoverActivity={hoverActivity}
+        />
       ))}
     </div>
   );

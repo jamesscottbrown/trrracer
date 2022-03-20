@@ -1,7 +1,6 @@
 import path from 'path';
 
-import React, { useCallback, useState } from 'react';
-import { Heading } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
@@ -10,43 +9,112 @@ import { timeFormat } from 'd3-time-format';
 import { repositionPoints } from 'respacer';
 
 import {
-  DeadlineType,
   EntryType,
   ProjectType,
   ProjectViewProps,
   TagType,
 } from './types';
 import { useProjectState } from './ProjectContext';
-import DateFilter from './FilterDates';
+
 
 interface EntryPlotProps {
   entryData: EntryType;
   y: (date: Date) => number;
   tags: TagType[];
   setEntryAsSelected: () => void;
+  setHoverActivity: (entry:EntryType) => void;
+}
+
+const imageTypes = ['png', 'jpg', 'gif'];
+
+const angledLineWidth = 100;
+const straightLineWidth = 30;
+const squareWidth = 30;
+const squarePadding = 2;
+
+const MagicRect = (props:any) => {
+  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props;
+
+  return(
+    imageTypes.includes(fileData.fileType) ?
+    <RenderImage fileData={fileData} entryData={entryData} index={index} setEntryAsSelected={setEntryAsSelected} folderPath={folderPath}/> 
+    :
+    <rect
+      x={index * (squareWidth + squarePadding)}
+      y={entryData.y - (squareWidth/2)}
+      width={squareWidth}
+      height={squareWidth}
+      fill={'gray'}
+      onClick={setEntryAsSelected}
+    >
+      <title>{fileData.title}</title>
+    </rect>
+  )
+}
+
+const RenderImage = (props:any) => {
+
+  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props
+  const extension = fileData.fileType;
+  const newName = fileData.title.split(`.${extension}`);
+
+  const newPath = `thumbs/${newName[0]}.png`;
+   
+    return(
+      <g>
+        <defs>
+          <pattern
+            id={`image${fileData.title}`}
+            patternUnits="userSpaceOnUse"
+            width={10}
+            height={10}
+          >                             {/* <---- these attributes needed here */}
+          <image
+            href={`file://${path.join(folderPath, newPath)}`}
+            height={30}
+            width={30}
+            x={0}
+            y={0}
+          />
+          </pattern>
+        </defs>
+        <rect 
+          key={`${entryData.title}-artifact-${index}`}
+          x={index * (squareWidth + squarePadding)}
+          y={entryData.y - (squareWidth/2)}
+          width={squareWidth}
+          height={squareWidth}
+          fill={`url(#image${fileData.title})`}
+          stroke={'gray'}
+          onClick={setEntryAsSelected}
+        />
+      </g>
+      
+    )
 }
 
 const EntryPlot = (props: EntryPlotProps) => {
-  const { entryData, y, tags, setEntryAsSelected } = props;
-  const [{}, dispatch] = useProjectState();
+  const { entryData, y, tags, setEntryAsSelected, setHoverActivity } = props;
 
-  const angledLineWidth = 100;
-  const straightLineWidth = 20;
+  const [hoverState, setHoverState] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
 
-  const squareWidth = 10;
-  const squarePadding = 2;
+  const [{ highlightedTag, researchThreadHover, folderPath }] =
+  useProjectState();
 
-  console.log(entryData);
-
-  const getColor = (title: string) => {
-    const tag = tags.filter((t) => t.title === title)[0];
-    return tag ? tag.color : 'grey';
-  };
+  useEffect(()=> {
+    setHoverState(false)
+    if(highlightedTag){
+      entryData.tags.indexOf(highlightedTag) > -1 ? setHoverState(true) : setHoverState(false)
+    }
+    if(researchThreadHover){
+      researchThreadHover.evidence.map(m=> m.activityTitle).indexOf(entryData.title) > -1 ? setHoverState(true) : setHoverState(false)
+    }
+  }, [highlightedTag, researchThreadHover])
 
   return (
     <>
       <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="gray">
-
         <title>{new Date(entryData.date).toLocaleDateString('en-us', {
                         weekday: 'long',
                         year: 'numeric',
@@ -60,34 +128,45 @@ const EntryPlot = (props: EntryPlotProps) => {
         x2={angledLineWidth}
         y1={entryData.yDirect}
         y2={entryData.y}
-        stroke="lightGrey"
+        stroke={(hoverState ? 'yellow' : 'gray')}
+        strokeWidth={(hoverState ? 3 : 1)}
       />
       <line
         x1={angledLineWidth}
         x2={angledLineWidth + straightLineWidth}
         y1={entryData.y}
         y2={entryData.y}
-        stroke="lightGrey"
+        stroke={(hoverState ? 'yellow' : 'gray')}
+        strokeWidth={(hoverState ? 3 : 1)}
       />
-      <g onMouseOver={()=> {
-          dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
-        }}>
+      <g 
+      style={{cursor:'pointer'}}
+      onMouseOver={()=> {
+          //dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
+          setHoverActivity(entryData)
+          setHoverState(true)
+        }}
+        onMouseOut={()=> {
+          setHoverState(false)
+        }}
+        >
+       
         <g transform={`translate(${angledLineWidth + straightLineWidth}, 0)`}>
+        <rect 
+          width={((entryData.files.length * (squareWidth + squarePadding) + (squareWidth/2)) + (8*entryData.title.length))}
+          height={squareWidth+ 10}
+          fill={(hoverState ? 'yellow' : 'white')}
+          y={entryData.y - (squareWidth - 10)}
+          x={-5}
+        />
           {entryData.files.map((t, i) => {
-            return (
-              <rect
-                key={`${entryData.title}-artifact-${i}`}
-                x={i * (squareWidth + squarePadding)}
-                y={entryData.y - squareWidth}
-                width={squareWidth}
-                height={squareWidth}
-                // fill={getColor(t)}
-                fill={'gray'}
-                onClick={setEntryAsSelected}
-              >
-                <title>{t.title}</title>
-              </rect>
-            );
+            <MagicRect 
+              key={`${entryData.title}-artifact-${i}`}
+              fileData={t} 
+              entryData={entryData} 
+              index={i} 
+              setEntryAsSelected={setEntryAsSelected} 
+              folderPath={folderPath} />
           })}
         </g>
 
@@ -100,7 +179,7 @@ const EntryPlot = (props: EntryPlotProps) => {
         >
           <text
             x={0}
-            y={entryData.y}
+            y={entryData.y + (squareWidth/4)}
             textAnchor="start"
             onClick={setEntryAsSelected}
             
@@ -115,54 +194,15 @@ const EntryPlot = (props: EntryPlotProps) => {
   );
 };
 
-// interface DeadlineProps {
-//   deadline: DeadlineType;
-//   width: number;
-//   y: (t: Date) => number;
-// }
-
-// const Deadline = (props: DeadlineProps) => {
-//   const { deadline, width, y } = props;
-
-//   const spaceForTitle = 300;
-//   const slopeLength = 25;
-
-//   return (
-//     <>
-//       <line
-//         x1={0}
-//         x2={width - spaceForTitle - slopeLength}
-//         y1={deadline.yDirect}
-//         y2={deadline.yDirect}
-//         stroke="grey"
-//         strokeDasharray="4,4"
-//       />
-
-//       <line
-//         x1={width - spaceForTitle - slopeLength}
-//         x2={width - spaceForTitle}
-//         y1={deadline.yDirect}
-//         y2={deadline.y}
-//         stroke="grey"
-//         strokeDasharray="4,4"
-//       />
-
-//       <text x={width - spaceForTitle} y={deadline.y}>
-//         {deadline.title}
-//       </text>
-//     </>
-//   );
-// };
-
 interface TimelinePlotProps {
   projectData: ProjectType;
   filteredActivites: EntryType[];
-  boundingWidth:number | null;
+  boundingWidth: number | null;
   setSelectedEntryIndex: (entryIndex: number) => void;
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth } = props;
+  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth, setHoverActivity } = props;
 
   const entries = filteredActivites.map((e:EntryType) => ({
     ...e,
@@ -179,7 +219,7 @@ const TimelinePlot = (props: TimelinePlotProps) => {
   //NEED TO MAKE THIS DYNAMIC
   const y = scaleTime()
     .range([0, (height - 70)])
-    .domain(extent([...dates, ...deadlineDates]).reverse());
+    .domain(extent([...dates, ...deadlineDates]));
 
   const positionEntries =
     entries.length > 0
@@ -230,8 +270,8 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             entryData={e}
             tags={projectData.tags}
             setEntryAsSelected={() => {
-              console.log('click')
               setSelectedEntryIndex(e.entryIndex)}}
+            setHoverActivity={setHoverActivity}
           />
         ))}
       </g>
@@ -240,9 +280,14 @@ const TimelinePlot = (props: TimelinePlotProps) => {
 };
 
 const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
-  const { projectData, filteredActivites, selectedEntryIndex, setSelectedEntryIndex } = ProjectPropValues;
+  const { 
+    projectData, 
+    filteredActivites, 
+    selectedEntryIndex, 
+    setSelectedEntryIndex, 
+    setHoverActivity 
+  } = ProjectPropValues;
  
-
   const [{}, dispatch] = useProjectState();
 
   // TODO - these are duplicated from ProjectListView
@@ -263,13 +308,13 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div ref={div} style={{width:'100%'}}>
-      {/* <DateFilter /> */}
         <div style={{overflowY:"auto", height:"calc(100vh - 250px)", width:'100%'}}>
           <TimelinePlot
             projectData={projectData}
             filteredActivites={filteredActivites}
             setSelectedEntryIndex={setSelectedEntryIndex}
             boundingWidth={width}
+            setHoverActivity={setHoverActivity}
           />
         </div>
     </div>

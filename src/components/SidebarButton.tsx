@@ -12,7 +12,7 @@ import {
 import { useProjectState } from './ProjectContext';
 
 const SidebarButton = (sidebarProps: any) => {
-  const { isTag, index, data } = sidebarProps;
+  const { index, data } = sidebarProps;
   const [{ researchThreads, filterTags }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
@@ -20,10 +20,8 @@ const SidebarButton = (sidebarProps: any) => {
 
   const closePopover = () => {
     setShowPopover(false);
-    if (isTag) {
-      setBarColor('#FFFFFF');
+    setBarColor('#FFFFFF');
       // dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
-    }
   };
 
   if (!showPopover) {
@@ -34,19 +32,16 @@ const SidebarButton = (sidebarProps: any) => {
         key={`${data.title}-${index}`}
         onMouseEnter={() => {
           setShowPopover(true);
-          if (isTag) {
-            setBarColor('#D3D3D3');
-            dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: data.title });
-          }
+          setBarColor('#D3D3D3');
+          dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: data.title });
+        
         }}
         onMouseLeave={() => {
-          console.log('Moused out:', data.title);
-
-          setShowPopover(false);
-          if (isTag) {
-            setBarColor('#FFFFFF');
-            dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
-          }
+          console.log('mouse leaving?')
+          dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
+          setShowPopover(false)
+          setBarColor('#FFFFFF');
+          
         }}
         onClick={() => {
           console.log('tags filter check', filterTags);

@@ -70,7 +70,6 @@ const ActivitytoThread = (props: any) => {
 
 const Activity = (activityProps: any) => {
   
-
   const { activity, folderPath, index, numRendered } = activityProps;
   const [{ highlightedTag, highlightedType, researchThreads }] =
     useProjectState();

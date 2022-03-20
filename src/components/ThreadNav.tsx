@@ -108,7 +108,17 @@ const ThreadNav = (threadProps: any) => {
                       ? 0.5
                       : 1,
                 }}
-              >
+                onMouseEnter={() => {
+                  dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
+                }}
+                onMouseLeave={() => {
+                  console.log('need to add this to project context and highlight timline with activities')
+                  dispatch({ type: 'HOVER_THREAD', researchThreadHover: null });
+                }}
+                onClick={()=> {
+                  dispatch({type:'THREAD_FILTER', filterRT: rt})
+                }}
+                >
                 <span
                   style={{ cursor: 'pointer' }}
                   onClick={() => {

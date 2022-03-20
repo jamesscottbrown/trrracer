@@ -9,9 +9,6 @@ import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
-import getEmptyProject from '../emptyProject';
-import { readFile } from '../fileUtil';
-import DataDisplayer from '../CallFlask';
 
 export const ProjectContext = createContext<DispatchType>();
 
@@ -92,7 +89,6 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
     } else {
       try {
         let saveFile = true;
-
         let newName = file.name;
 
         if (fs.existsSync(destination) && !sourceIsInProjectDir) {
@@ -328,6 +324,7 @@ const appStateReducer = (state, action) => {
         roleData = readProjectFile(baseDir, 'roles.json', null);
 
         newEntries = action.projectData.entries.map((e, i) => {
+          e.index = i;
           e.key_txt = text_data['text-data'].filter(
             (td) => td['entry-index'] === i
           );
@@ -368,6 +365,7 @@ const appStateReducer = (state, action) => {
         filterTags: [],
         filterTypes: [],
         filterDates: [null, null],
+        filterRT: null
       };
     }
 
@@ -384,7 +382,7 @@ const appStateReducer = (state, action) => {
       const { tag, threadIndex } = action;
 
       let newRT = { ...state.researchThreads };
-      console.log('NEW RT', newRT);
+      
       newRT.research_threads[threadIndex].associated_tags.push(tag);
 
       return saveJSONRT(newRT);
@@ -424,6 +422,14 @@ const appStateReducer = (state, action) => {
 
       return saveJSONRT(newRT);
     }
+
+    case 'THREAD_FILTER': {
+      if(action.filterRT){
+        return {...state, filterRT:{title:action.filterRT.title, key:action.filterRT.evidence.map(m=> m.activityTitle)} }
+      }else{
+        return {...state, filterRT:null }
+      }
+    } 
 
     case 'ADD_FRAGMENT_TO_THREAD': {
       const {
@@ -759,6 +765,16 @@ const appStateReducer = (state, action) => {
         hoverActivity: action.hoverActivity
       };
 
+    }
+
+    case 'HOVER_THREAD':{
+
+      console.log('actionnnnn', action.researchThreadHover)
+
+      return {
+        ...state,
+        researchThreadHover: action.researchThreadHover
+      }
     }
 
     default: {
