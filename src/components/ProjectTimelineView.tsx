@@ -33,24 +33,33 @@ const straightLineWidth = 30;
 const squareWidth = 30;
 const squarePadding = 2;
 
+const MagicRect = (props:any) => {
+  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props;
+
+  return(
+    imageTypes.includes(fileData.fileType) ?
+    <RenderImage fileData={fileData} entryData={entryData} index={index} setEntryAsSelected={setEntryAsSelected} folderPath={folderPath}/> 
+    :
+    <rect
+      x={index * (squareWidth + squarePadding)}
+      y={entryData.y - (squareWidth/2)}
+      width={squareWidth}
+      height={squareWidth}
+      fill={'gray'}
+      onClick={setEntryAsSelected}
+    >
+      <title>{fileData.title}</title>
+    </rect>
+  )
+}
+
 const RenderImage = (props:any) => {
 
   const {fileData, entryData, folderPath, setEntryAsSelected, index} = props
-
-  // console.log('fileData', fileData)
-
   const extension = fileData.fileType;
   const newName = fileData.title.split(`.${extension}`);
 
   const newPath = `thumbs/${newName[0]}.png`;
-   
-
-    // d3.select(n[i])
-    //   .select('rect')
-    //   .attr('fill', `url(#image${fileData.title})`)
-    //   .style('width', '100%')
-    //   .style('padding-bottom', '92%');
-     
    
     return(
       <g>
@@ -107,7 +116,6 @@ const EntryPlot = (props: EntryPlotProps) => {
   return (
     <>
       <circle cx={0} cy={entryData.yDirect} r={5} stroke="grey" fill="gray">
-
         <title>{new Date(entryData.date).toLocaleDateString('en-us', {
                         weekday: 'long',
                         year: 'numeric',
@@ -153,22 +161,16 @@ const EntryPlot = (props: EntryPlotProps) => {
           x={-5}
         />
           {entryData.files.map((t, i) => {
-            return (
-              imageTypes.includes(t.fileType) ?
-              <RenderImage fileData={t} entryData={entryData} index={i} setEntryAsSelected={setEntryAsSelected} folderPath={folderPath}/> 
-              :
-              <rect
-                key={`${entryData.title}-artifact-${i}`}
-                x={i * (squareWidth + squarePadding)}
-                y={entryData.y - (squareWidth/2)}
-                width={squareWidth}
-                height={squareWidth}
-                fill={'gray'}
-                onClick={setEntryAsSelected}
-              >
-                <title>{t.title}</title>
-              </rect>
-            );
+            // return (
+
+            // );
+            <MagicRect 
+              key={`${entryData.title}-artifact-${i}`}
+              fileData={t} 
+              entryData={entryData} 
+              index={i} 
+              setEntryAsSelected={setEntryAsSelected} 
+              folderPath={folderPath} />
           })}
         </g>
 
