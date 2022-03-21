@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 const ActivitytoThread = (props: any) => {
     const [, dispatch] = useProjectState();
   
-    const { thread, threadIndex, activity, activityIndex } = props;
+    const { thread, threadIndex, activity, activityIndex, setSeeThreadAssign, closePopover } = props;
     const [showDesc, setShowDesc] = useState(false);
     const [threadRat, setThreadRat] = useState(null);
   
@@ -34,6 +34,8 @@ const ActivitytoThread = (props: any) => {
             <Button
               onClick={() => {
                 setShowDesc(false);
+                setSeeThreadAssign(false);
+                closePopover();
                 dispatch({
                   type: 'ADD_ACTIVITY_TO_THREAD',
                   activity,

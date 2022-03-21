@@ -443,10 +443,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 selectedArtifactEntry: null,
                 selectedArtifactIndex: null,
               });
-              setViewType('activity view');
+              setViewType('timeline');
             }}
           >
-            {'<< GO BACK TO OVERVIEW'}
+            {'<< GO BACK TO TIMELINE'}
           </Button>
           <Spacer/>
           <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>

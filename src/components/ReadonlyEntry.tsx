@@ -133,7 +133,9 @@ const ActivityTitlePopoverLogic = (props:any) => {
 
 
   const closePopover = () => {
+    if(!seeThreadAssign){
     setShowPopover(false);
+    }
   };
 
   return (showPopover ? (
@@ -150,8 +152,14 @@ const ActivityTitlePopoverLogic = (props:any) => {
           style={{cursor:'pointer'}}
           className="activity"
           onMouseLeave={() => {
-            setActivitySelected(false);
-            closePopover();
+            if(!seeThreadAssign){
+              setTimeout(function(){ 
+                setActivitySelected(false);
+                closePopover(); 
+              }, 3000);
+            }
+            
+            
           }}
         >
            <div>{activityData.title}{' '}</div>
@@ -176,6 +184,8 @@ const ActivityTitlePopoverLogic = (props:any) => {
                         threadIndex={tIndex}
                         activity={activityData}
                         activityIndex={activityData.index}
+                        setSeeThreadAssign={setSeeThreadAssign} 
+                        closePopover={closePopover}
                       /> 
                     </React.Fragment>
                   )
