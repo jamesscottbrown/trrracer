@@ -121,47 +121,41 @@ const Project = (ProjectPropValues: ProjectProps) => {
       );
     })
     .map((e, index) => ({ ...e, index }));
+    
+  console.log('filtertypes',filterTypes)
 
-  // useEffect(()=> {
-  //   document.addEventListener("mousemove", (event) => {
-  //     const {clientX, clientY, target} = event;
-  //     setPosX((clientX + 25));
-  //     setPosY(clientY + 25);
-  //   })
-  // }, [])
-  
-      const typeFiltered = tagFiltered
-        .filter((entryData: any) => {
-          if (filterTypes && filterTypes.length > 0) {
-            return entryData.files.map((m: any) => m.fileType).includes(filterTypes);
-          } else {
-            return entryData;
-          }
-        })
-        .map((e: EntryType, index: number) => ({ ...e, index }));
+  const typeFiltered = tagFiltered
+    .filter((entryData: any) => {
+      if (filterTypes && filterTypes.length > 0) {
+        return entryData.files.map((m: any) => m.fileType).includes(filterTypes);
+      } else {
+        return entryData;
+      }
+    })
+    .map((e: EntryType, index: number) => ({ ...e, index }));
 
-      let rtFiltered = typeFiltered.filter((entryData:any)=> {
-        if(filterRT){
-          return filterRT.key.includes(entryData.title);
-        }else{
-          return typeFiltered;
-        }
-      })
+    let rtFiltered = typeFiltered.filter((entryData:any)=> {
+      if(filterRT){
+        return filterRT.key.includes(entryData.title);
+      }else{
+        return typeFiltered;
+      }
+    })
 
-      let timeFiltered =
-      timeFilter != null
-        ? rtFiltered.filter(
-            (f) =>
-              new Date(f.date) >= timeFilter[0] &&
-              new Date(f.date) <= timeFilter[1]
-          )
-        : rtFiltered;
-  
-        timeFiltered.sort(
-        (a, b) =>
-          (reversedOrder ? -1 : +1) *
-          (Number(new Date(a.date)) - Number(new Date(b.date)))
-      );
+    let timeFiltered =
+    timeFilter != null
+      ? rtFiltered.filter(
+          (f) =>
+            new Date(f.date) >= timeFilter[0] &&
+            new Date(f.date) <= timeFilter[1]
+        )
+      : rtFiltered;
+
+      timeFiltered.sort(
+      (a, b) =>
+        (reversedOrder ? -1 : +1) *
+        (Number(new Date(a.date)) - Number(new Date(b.date)))
+    );
 
       setFilteredActivites(timeFiltered);
     }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 

@@ -141,7 +141,7 @@ const EntryPlot = (props: EntryPlotProps) => {
         x2={angledLineWidth}
         y1={entryData.yDirect}
         y2={entryData.y}
-        stroke={(hoverState ? 'yellow' : 'gray')}
+        stroke={(hoverState ? '#FFFCBB' : 'gray')}
         strokeWidth={(hoverState ? 3 : 1)}
       />
       <line
@@ -149,13 +149,12 @@ const EntryPlot = (props: EntryPlotProps) => {
         x2={angledLineWidth + straightLineWidth}
         y1={entryData.y}
         y2={entryData.y}
-        stroke={(hoverState ? 'yellow' : 'gray')}
+        stroke={(hoverState ? '#FFFCBB' : 'gray')}
         strokeWidth={(hoverState ? 3 : 1)}
       />
       <g 
       style={{cursor:'pointer'}}
       onMouseOver={(event)=> {
-          console.log('event', event)
           const {clientX, clientY} = event;
           // setPosX(clientX);
           // setPosY(clientY);
@@ -174,7 +173,7 @@ const EntryPlot = (props: EntryPlotProps) => {
         <rect 
           width={((entryData.files.length * (squareWidth + squarePadding) + (squareWidth/2)) + (8*entryData.title.length))}
           height={squareWidth+ 10}
-          fill={(hoverState ? 'yellow' : 'white')}
+          fill={(hoverState ? '#FFFCBB' : 'white')}
           y={entryData.y - (squareWidth - 10)}
           x={-5}
         />

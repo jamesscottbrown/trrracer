@@ -109,9 +109,9 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         >
           {(viewType === 'activity view' || viewType === 'timeline') && (
             <>
-              <Button onClick={() => console.log('BUTTON PUSH')}>
+              {/* <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
-              </Button>
+              </Button> */}
 
               <Box>
                 <FormControl display="flex" alignItems="center">

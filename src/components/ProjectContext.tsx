@@ -725,7 +725,8 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TYPES': {
-      return { ...state, filterType: action.filterType };
+      
+      return { ...state, filterTypes: action.filterType };
     }
 
     case 'UPDATE_FILTER_DATES': {

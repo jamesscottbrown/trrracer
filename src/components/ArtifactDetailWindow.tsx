@@ -474,8 +474,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         selectedArtifactIndex={selectedArtifactIndex}
       />
 
-
-        <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
+      <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
           
         <Box style={{marginBottom:20}}>
           <div>
