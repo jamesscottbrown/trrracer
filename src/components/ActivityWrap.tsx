@@ -13,7 +13,6 @@ export const openFile = (fileName: string, folderPath: string) => {
 };
 
 const ActivityWrap = (props:any) => {
-
     const {
         activityData, 
         editable, 

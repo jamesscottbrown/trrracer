@@ -12,62 +12,10 @@ import ArtifactDetailWindow from './ArtifactDetailWindow';
 import ThreadView from './TheadView';
 import ProjectTimelineView from './ProjectTimelineView';
 import { EntryType } from './types';
-
-interface ProjectProps {
-  folderPath: string;
-}
-
-const ActivitytoThread = (props: any) => {
-  const [, dispatch] = useProjectState();
-
-  const { thread, threadIndex, activity, activityIndex } = props;
-  const [showDesc, setShowDesc] = useState(false);
-  const [threadRat, setThreadRat] = useState(null);
-
-  const handleDescriptionChange = (e: ChangeEvent) => {
-    const inputValue = e.target.value;
-    setThreadRat(inputValue);
-  };
-
-  return (
-    <Box
-      key={`t-${threadIndex}`}
-      style={{
-        border: '1px solid gray',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-      }}
-    >
-      <div onClick={() => setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
-      {showDesc && (
-        <>
-          <Textarea
-            placeholder="Why are you including this?"
-            onChange={handleDescriptionChange}
-          />
-          <Button
-            onClick={() => {
-              setShowDesc(false);
-              dispatch({
-                type: 'ADD_ACTIVITY_TO_THREAD',
-                activity,
-                rationale: threadRat,
-                activityIndex,
-                threadIndex,
-              });
-            }}
-          >
-            Add
-          </Button>
-        </>
-      )}
-    </Box>
-  );
-};
+import ActivitytoThread from './ActivityToThread';
 
 const StupidTooltip = (props:any) => {
-
+  
   const {posX, posY, showTool, setShowTool, hoverActivity, setHoverActivity} = props;
   const [{ highlightedTag, highlightedType, researchThreads }] =
   useProjectState();
@@ -138,6 +86,10 @@ const StupidTooltip = (props:any) => {
       </div>
     ): null
   )
+} 
+
+interface ProjectProps {
+  folderPath: string;
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
@@ -210,8 +162,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
           (reversedOrder ? -1 : +1) *
           (Number(new Date(a.date)) - Number(new Date(b.date)))
       );
-
-         // console.log('rtfiltered',rtFiltered)
 
       setFilteredActivites(timeFiltered);
     }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 
@@ -286,14 +236,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setTimeFilter={setTimeFilter}
           filteredActivityNames={filteredActivites.map(n => n.title)}
         />  
-        <StupidTooltip 
+        {/* <StupidTooltip 
           setShowTool={setShowTool} 
           showTool={showTool} 
           hoverActivity={hoverActivity} 
           setHoverActivity={setHoverActivity}
           posX={posX}
           posY={posY}
-          />
+          /> */}
         <Flex position="relative" top={220}>
           <LeftSidebar />
           <Box flex="3.5" h="calc(100vh - 250px)">

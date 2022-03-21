@@ -18,55 +18,7 @@ import type { File } from './types';
 
 import CenterFileRender from './CenterFileRender';
 import { useProjectState } from './ProjectContext';
-
-const ActivitytoThread = (props: any) => {
-  const [, dispatch] = useProjectState();
-
-  const { thread, threadIndex, activity, activityIndex } = props;
-  const [showDesc, setShowDesc] = useState(false);
-  const [threadRat, setThreadRat] = useState(null);
-
-  const handleDescriptionChange = (e: ChangeEvent) => {
-    const inputValue = e.target.value;
-    setThreadRat(inputValue);
-  };
-
-  return (
-    <Box
-      key={`t-${threadIndex}`}
-      style={{
-        border: '1px solid gray',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-      }}
-    >
-      <div onClick={() => setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
-      {showDesc && (
-        <>
-          <Textarea
-            placeholder="Why are you including this?"
-            onChange={handleDescriptionChange}
-          />
-          <Button
-            onClick={() => {
-              setShowDesc(false);
-              dispatch({
-                type: 'ADD_ACTIVITY_TO_THREAD',
-                activity,
-                rationale: threadRat,
-                activityIndex,
-                threadIndex,
-              });
-            }}
-          >
-            Add
-          </Button>
-        </>
-      )}
-    </Box>
-  );
-};
+import ActivitytoThread from './ActivityToThread';
 
 const Activity = (activityProps: any) => {
   
@@ -160,7 +112,7 @@ const Activity = (activityProps: any) => {
                         threadIndex={tIndex}
                         activity={activity}
                         activityIndex={index}
-                      />
+                      /> 
                     </React.Fragment>
                   )
                 )

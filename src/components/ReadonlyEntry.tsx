@@ -14,6 +14,8 @@ import {
   PopoverArrow,
   Box,
   SimpleGrid,
+  PopoverHeader,
+  PopoverFooter
 } from '@chakra-ui/react';
 
 import { EditIcon } from '@chakra-ui/icons';
@@ -25,6 +27,7 @@ import AttachmentPreview from './AttachmentPreview';
 
 import { EntryType, TagType, File } from './types';
 import { useProjectState } from './ProjectContext';
+import ActivitytoThread from './ActivityToThread';
 
 interface EntryPropTypes {
   entryData: EntryType;
@@ -38,7 +41,7 @@ const converter = new Showdown.Converter({
   simplifiedAutoLink: true,
   strikethrough: true,
   tasklists: true,
-});
+}); 
 
 interface ReadonlyEntryFilePropTypes {
   entryData: EntryType;
@@ -120,10 +123,106 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   );
 };
 
+const ActivityTitlePopoverLogic = (props:any) => {
+
+  const { activityData, researchThreads} = props;
+
+  const [seeThreadAssign, setSeeThreadAssign] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const [activitySelected, setActivitySelected] = useState(false);
+
+
+  const closePopover = () => {
+    setShowPopover(false);
+  };
+
+  return (showPopover ? (
+      <Popover
+        isOpen={showPopover}
+        onClose={closePopover}
+        onMouseLeave={closePopover}
+      >
+      <PopoverTrigger>
+        <Box
+          key={`${activityData.title}-${activityData.index}`}
+          marginTop={2}
+          marginLeft={2}
+          style={{cursor:'pointer'}}
+          className="activity"
+          onMouseLeave={() => {
+            setActivitySelected(false);
+            closePopover();
+          }}
+        >
+           <div>{activityData.title}{' '}</div>
+        </Box>
+      </PopoverTrigger>
+      <PopoverContent bg="white" color="gray">
+        <PopoverArrow bg="white" />
+        <PopoverHeader>
+          <span style={{ fontWeight: 600 }}>{`${activityData.title}`}</span>
+          <span style={{ display: 'block' }}>{activityData.date}</span>
+        </PopoverHeader>
+        <PopoverBody>
+          {seeThreadAssign ? (
+            <div>
+              {researchThreads &&
+              researchThreads.research_threads.length > 0 ? (
+                researchThreads.research_threads.map(
+                  (rt: any, tIndex: number) => (
+                    <React.Fragment key={`rt-${tIndex}`}>
+                      <ActivitytoThread
+                        thread={rt}
+                        threadIndex={tIndex}
+                        activity={activityData}
+                        activityIndex={activityData.index}
+                      /> 
+                    </React.Fragment>
+                  )
+                )
+              ) : (
+                <span>no threads yet</span>
+              )}
+            </div>
+          ) : (
+            <div>
+              <span style={{ display: 'block' }}>Artifacts:</span>
+              <UnorderedList>
+                {activityData.files.map((f: File, i: number) => (
+                  <ListItem key={`f-${f.title}-${i}`}>{f.title}</ListItem>
+                ))}
+              </UnorderedList>
+            </div>
+          )}
+        </PopoverBody>
+        <PopoverFooter>
+          {seeThreadAssign ? (
+            <Box>
+              <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
+            </Box>
+          ) : (
+            <Button onClick={() => setSeeThreadAssign(true)}>
+              Add this activity to a thread.
+            </Button>
+          )}
+        </PopoverFooter>
+      </PopoverContent>
+    </Popover>
+  ):
+  
+  <div 
+  style={{cursor:'pointer'}}
+  onMouseOver={()=> {
+    setShowPopover(true);
+  }}>{activityData.title}{' '}</div>)
+  
+}
+
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
+ 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
       return f.associated_tags.indexOf(tagName) > -1;
@@ -134,16 +233,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
-
-  const getColor = (tagName: string) => {
-    const matchingTags = projectData.tags.filter(
-      (t: TagType) => t.title === tagName
-    );
-    if (matchingTags.length === 0) {
-      return 'gray';
-    }
-    return matchingTags[0].color;
-  };
 
   // Cache the results of converting markdown to HTML, to avoid re-converting on every render
   const descriptionHTML = useMemo(() => {
@@ -161,7 +250,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           />
         )}
         {viewType != 'detail' && (
-          <span>{entryData.title}{' '}</span>
+          <ActivityTitlePopoverLogic 
+            activityData={entryData}
+            researchThreads={researchThreads}
+          />
+         
         )}
         
         {makeEditable ? (
