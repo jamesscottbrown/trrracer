@@ -16,13 +16,18 @@ import {
 } from './types';
 import { useProjectState } from './ProjectContext';
 
+// import { Tooltip } from 'react-svg-tooltip';
+
 
 interface EntryPlotProps {
   entryData: EntryType;
   y: (date: Date) => number;
   tags: TagType[];
   setEntryAsSelected: () => void;
+  setShowTool: (bool:Boolean) => void;
   setHoverActivity: (entry:EntryType) => void;
+  setPosX: (pos:number) => void;
+  setPosY: (pos:number) => void;
 }
 
 const imageTypes = ['png', 'jpg', 'gif'];
@@ -33,13 +38,18 @@ const squareWidth = 30;
 const squarePadding = 2;
 
 const MagicRect = (props:any) => {
-  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props;
 
+  const {fileData, entryData, folderPath, setEntryAsSelected, index} = props;
+  const rectRef = React.createRef<SVGRectElement>();
+  
   return(
+    <g>
+    {
     imageTypes.includes(fileData.fileType) ?
     <RenderImage fileData={fileData} entryData={entryData} index={index} setEntryAsSelected={setEntryAsSelected} folderPath={folderPath}/> 
     :
     <rect
+      ref={rectRef}
       x={index * (squareWidth + squarePadding)}
       y={entryData.y - (squareWidth/2)}
       width={squareWidth}
@@ -49,6 +59,10 @@ const MagicRect = (props:any) => {
     >
       <title>{fileData.title}</title>
     </rect>
+
+    }
+   
+    </g>
   )
 }
 
@@ -94,10 +108,9 @@ const RenderImage = (props:any) => {
 }
 
 const EntryPlot = (props: EntryPlotProps) => {
-  const { entryData, y, tags, setEntryAsSelected, setHoverActivity } = props;
+  const { entryData, y, tags, setEntryAsSelected, setHoverActivity, setShowTool, setPosX, setPosY } = props;
 
   const [hoverState, setHoverState] = useState(false);
-  const [showPopover, setShowPopover] = useState(false);
 
   const [{ highlightedTag, researchThreadHover, folderPath }] =
   useProjectState();
@@ -141,13 +154,19 @@ const EntryPlot = (props: EntryPlotProps) => {
       />
       <g 
       style={{cursor:'pointer'}}
-      onMouseOver={()=> {
+      onMouseOver={(event)=> {
+          console.log('event', event)
+          const {clientX, clientY} = event;
+          // setPosX(clientX);
+          // setPosY(clientY);
           //dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: entryData});
+          setShowTool(true)
           setHoverActivity(entryData)
           setHoverState(true)
         }}
         onMouseOut={()=> {
-          setHoverState(false)
+          setShowTool(false);
+          setHoverState(false);
         }}
         >
        
@@ -160,6 +179,7 @@ const EntryPlot = (props: EntryPlotProps) => {
           x={-5}
         />
           {entryData.files.map((t, i) => {
+            return(
             <MagicRect 
               key={`${entryData.title}-artifact-${i}`}
               fileData={t} 
@@ -167,6 +187,7 @@ const EntryPlot = (props: EntryPlotProps) => {
               index={i} 
               setEntryAsSelected={setEntryAsSelected} 
               folderPath={folderPath} />
+              )
           })}
         </g>
 
@@ -199,10 +220,22 @@ interface TimelinePlotProps {
   filteredActivites: EntryType[];
   boundingWidth: number | null;
   setSelectedEntryIndex: (entryIndex: number) => void;
+  setHoverActivity: (entryIndex: any) => void;
+  setShowTool: (boo: Boolean) => void;
+  setPosX: (pos:number) => void;
+  setPosY: (pos:number) => void;
 }
 
 const TimelinePlot = (props: TimelinePlotProps) => {
-  const { projectData, setSelectedEntryIndex, filteredActivites, boundingWidth, setHoverActivity } = props;
+  const { projectData, 
+    setSelectedEntryIndex, 
+    filteredActivites, 
+    boundingWidth, 
+    setHoverActivity, 
+    setShowTool,
+    setPosX,
+    setPosY
+  } = props;
 
   const entries = filteredActivites.map((e:EntryType) => ({
     ...e,
@@ -270,8 +303,12 @@ const TimelinePlot = (props: TimelinePlotProps) => {
             entryData={e}
             tags={projectData.tags}
             setEntryAsSelected={() => {
-              setSelectedEntryIndex(e.entryIndex)}}
+              setSelectedEntryIndex(e.entryIndex)
+            }}
             setHoverActivity={setHoverActivity}
+            setShowTool={setShowTool}
+            setPosX={setPosX} 
+            setPosY={setPosY}
           />
         ))}
       </g>
@@ -285,7 +322,10 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
     filteredActivites, 
     selectedEntryIndex, 
     setSelectedEntryIndex, 
-    setHoverActivity 
+    setHoverActivity,
+    setShowTool,
+    setPosX, 
+    setPosY
   } = ProjectPropValues;
  
   const [{}, dispatch] = useProjectState();
@@ -315,6 +355,9 @@ const ProjectTimelineView = (ProjectPropValues: ProjectViewProps) => {
             setSelectedEntryIndex={setSelectedEntryIndex}
             boundingWidth={width}
             setHoverActivity={setHoverActivity}
+            setShowTool={setShowTool}
+            setPosX={setPosX} 
+            setPosY={setPosY}
           />
         </div>
     </div>

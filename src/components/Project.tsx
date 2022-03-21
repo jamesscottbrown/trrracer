@@ -1,7 +1,7 @@
 /* eslint no-console: off */
 
 import React, { useEffect, useState } from 'react';
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, UnorderedList, ListItem, Button } from '@chakra-ui/react';
 
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
@@ -17,6 +17,129 @@ interface ProjectProps {
   folderPath: string;
 }
 
+const ActivitytoThread = (props: any) => {
+  const [, dispatch] = useProjectState();
+
+  const { thread, threadIndex, activity, activityIndex } = props;
+  const [showDesc, setShowDesc] = useState(false);
+  const [threadRat, setThreadRat] = useState(null);
+
+  const handleDescriptionChange = (e: ChangeEvent) => {
+    const inputValue = e.target.value;
+    setThreadRat(inputValue);
+  };
+
+  return (
+    <Box
+      key={`t-${threadIndex}`}
+      style={{
+        border: '1px solid gray',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+      }}
+    >
+      <div onClick={() => setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
+      {showDesc && (
+        <>
+          <Textarea
+            placeholder="Why are you including this?"
+            onChange={handleDescriptionChange}
+          />
+          <Button
+            onClick={() => {
+              setShowDesc(false);
+              dispatch({
+                type: 'ADD_ACTIVITY_TO_THREAD',
+                activity,
+                rationale: threadRat,
+                activityIndex,
+                threadIndex,
+              });
+            }}
+          >
+            Add
+          </Button>
+        </>
+      )}
+    </Box>
+  );
+};
+
+const StupidTooltip = (props:any) => {
+
+  const {posX, posY, showTool, setShowTool, hoverActivity, setHoverActivity} = props;
+  const [{ highlightedTag, highlightedType, researchThreads }] =
+  useProjectState();
+
+  const [seeThreadAssign, setSeeThreadAssign] = useState(false);
+  
+  const tooltipRef = React.useRef(null);
+
+  return(
+    showTool ? (
+      <div 
+        ref={tooltipRef}
+        style={{
+          zIndex:9000000,
+          position:'absolute', 
+          top: posY, 
+          left: posX, 
+          padding:5,
+          borderRadius:10, 
+          backgroundColor: 'white'}}>
+            {`${hoverActivity ? hoverActivity.title : ""}`}
+            <div style={{backgroundColor:"white", color:"gray"}}>
+   
+            <div>
+              {seeThreadAssign ? (
+                <div>
+                  {researchThreads && 
+                  researchThreads.research_threads.length > 0 ? (
+                    researchThreads.research_threads.map(
+                      (rt: any, tIndex: number) => (
+                        <React.Fragment key={`rt-${tIndex}`}>
+                          <ActivitytoThread
+                            thread={rt}
+                            threadIndex={tIndex}
+                            activity={hoverActivity}
+                            activityIndex={hoverActivity.index}
+                          />
+                        </React.Fragment>
+                      ))
+              ) : (
+                <span>no threads yet</span>
+              )}
+            </div> 
+          ) : (
+            <div>
+              <span style={{ display: 'block' }}>Artifacts:</span>
+              <UnorderedList>
+                {hoverActivity.files.map((f: File, i: number) => (
+                  <ListItem key={`f-${f.title}-${i}`}>{f.title}</ListItem>
+                ))}
+              </UnorderedList>
+            </div>
+          )}
+        </div>
+        <div>
+          {seeThreadAssign ? ( 
+            <Box>
+              <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
+            </Box>
+          ) : (
+            <Button onClick={() => setSeeThreadAssign(true)}>
+              Add this activity to a thread.
+            </Button>
+          )}
+        </div>
+      </div>
+
+      </div>
+    ): null
+  )
+}
+
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData, filterTags, filterTypes, filterDates, filterRT }] = useProjectState();
@@ -27,21 +150,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
   const [filteredActivites, setFilteredActivites] = useState(projectData.entries);
   const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
+  const [showTool, setShowTool] = useState(false);
+  const [posX, setPosX] = useState(0);
+  const [posY, setPosY] = useState(0);
+
 
   // Update title when projectData changes.
   useEffect(() => {
     setNewTitle(projectData.title);
   }, [projectData]);                                                                                                                                        
 
-    // Update title when projectData changes.
-    useEffect(() => {
-      const tagFiltered = projectData.entries
-      .filter((entryData: any) => {
-        return filterTags.every((requiredTag: string) =>
-          entryData.tags.includes(requiredTag)
-        );
-      })
-      .map((e, index) => ({ ...e, index }));
+  // Update title when projectData changes.
+  useEffect(() => {
+    const tagFiltered = projectData.entries
+    .filter((entryData: any) => {
+      return filterTags.every((requiredTag: string) =>
+        entryData.tags.includes(requiredTag)
+      );
+    })
+    .map((e, index) => ({ ...e, index }));
+
+  // useEffect(()=> {
+  //   document.addEventListener("mousemove", (event) => {
+  //     const {clientX, clientY, target} = event;
+  //     setPosX((clientX + 25));
+  //     setPosY(clientY + 25);
+  //   })
+  // }, [])
   
       const typeFiltered = tagFiltered
         .filter((entryData: any) => {
@@ -76,7 +211,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           (Number(new Date(a.date)) - Number(new Date(b.date)))
       );
 
-          console.log('rtfiltered',rtFiltered)
+         // console.log('rtfiltered',rtFiltered)
 
       setFilteredActivites(timeFiltered);
     }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 
@@ -120,13 +255,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
               timeFilter={timeFilter}
               setTimeFilter={setTimeFilter}
               hoverActivity={hoverActivity}
+              setPosX={setPosX}
+              setPoY={setPosY}
             />
           </Box>
         </Flex>
       </div>
     );
   }
-
   if (viewType === 'timeline') {
     return (
       <div
@@ -138,6 +274,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           width: '100%',
         }}
       >
+         
         <TopBar
           viewType={viewType}
           setViewType={setViewType}
@@ -149,6 +286,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setTimeFilter={setTimeFilter}
           filteredActivityNames={filteredActivites.map(n => n.title)}
         />  
+        <StupidTooltip 
+          setShowTool={setShowTool} 
+          showTool={showTool} 
+          hoverActivity={hoverActivity} 
+          setHoverActivity={setHoverActivity}
+          posX={posX}
+          posY={posY}
+          />
         <Flex position="relative" top={220}>
           <LeftSidebar />
           <Box flex="3.5" h="calc(100vh - 250px)">
@@ -159,6 +304,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
             setHoverActivity={setHoverActivity}
+            setShowTool={setShowTool}
           />
           </Box>
           <Box flex="1.5" h="calc(100vh - 250px)" overflowY="auto">
@@ -171,6 +317,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             />
           </Box>
         </Flex>
+       
       </div>
     );
   }
