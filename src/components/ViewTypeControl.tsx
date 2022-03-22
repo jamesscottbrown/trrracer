@@ -17,7 +17,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
           value={viewType}
           width="max-content"
         >
-          {/* <option id="activity view">activity view</option> */}
+          <option id="activity view">activity view</option>
           <option id="timeline">timeline</option>
           <option id="research threads">research threads</option>
         </Select>

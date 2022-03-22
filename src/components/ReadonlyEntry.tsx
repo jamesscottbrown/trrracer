@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import reactDOMServer from 'react-dom/server';
 
 import {
   Button,
@@ -24,7 +25,7 @@ import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-
+import MarkdownIt from 'markdown-it';
 import { EntryType, TagType, File } from './types';
 import { useProjectState } from './ProjectContext';
 import ActivitytoThread from './ActivityToThread';
@@ -62,14 +63,33 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   };
 
   return (
-    <React.Fragment key={`fr-${file.title}-${i}`}>
-      <Box bg="#ececec" key={`${file.title}-${i}`} p={3}>
+    <React.Fragment>
+      <Box bg="#ececec" p={3}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
-              <span style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}>
-                {file.title}{' '}
-              </span>
+            <div>
+            {
+            ['png', 'jpg', 'gif'].includes(file.fileType) && (
+              <AttachmentPreview
+                folderPath={folderPath}
+                title={file.title}
+                openFile={openFile}
+              />
+            )}
+          <div
+            style={{ fontSize: 18, fontWeight: 700, marginBottom: 5, width:75, display:'inline' }}
+          >
+          {' '}
+          {file.title}{' '}
+          </div>
+          <FaExternalLinkAlt
+          onClick={() => openFile(file.title, folderPath)}
+          title="Open file externally"
+          size="13px"
+          style={{ display: 'inline' }}
+          />
+          </div>
             </PopoverTrigger>
             <PopoverContent bg="white" color="gray">
               <PopoverArrow bg="white" />
@@ -90,27 +110,34 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             </PopoverContent>
           </Popover>
         ) : (
-          <span
-            style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}
-            onMouseEnter={() => setShowPopover(true)}
+          <div
+          onMouseEnter={() => setShowPopover(true)}
           >
-            {' '}
-            {file.title}{' '}
-          </span>
-        )}
-
-        <FaExternalLinkAlt
+          {
+            ['png', 'jpg', 'gif'].includes(file.fileType) && (
+              <AttachmentPreview
+                folderPath={folderPath}
+                title={file.title}
+                openFile={openFile}
+              />
+            )}
+          <div
+            style={{ fontSize: 18, fontWeight: 500, marginBottom: '5px', width:'50%', display:'inline' }}
+          >
+          {' '}
+          {file.title}{' '}
+          </div>
+          <FaExternalLinkAlt
           onClick={() => openFile(file.title, folderPath)}
           title="Open file externally"
           size="13px"
           style={{ display: 'inline' }}
-        />
-        <AttachmentPreview
-          folderPath={folderPath}
-          title={file.title}
-          openFile={openFile}
-          size={60}
-        />
+          />
+          </div>
+        )}
+      
+       
+    
         {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ?
                 <AttachmentPreview
                   folderPath={folderPath}
@@ -148,7 +175,6 @@ const ActivityTitlePopoverLogic = (props:any) => {
         <Box
           key={`${activityData.title}-${activityData.index}`}
           marginTop={2}
-          marginLeft={2}
           style={{cursor:'pointer'}}
           className="activity"
           onMouseLeave={() => {
@@ -167,12 +193,9 @@ const ActivityTitlePopoverLogic = (props:any) => {
       </PopoverTrigger>
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
-        <PopoverHeader>
-          <span style={{ fontWeight: 600 }}>{`${activityData.title}`}</span>
-          <span style={{ display: 'block' }}>{activityData.date}</span>
-        </PopoverHeader>
+       
         <PopoverBody>
-          {seeThreadAssign ? (
+          {seeThreadAssign && (
             <div>
               {researchThreads &&
               researchThreads.research_threads.length > 0 ? (
@@ -193,15 +216,6 @@ const ActivityTitlePopoverLogic = (props:any) => {
               ) : (
                 <span>no threads yet</span>
               )}
-            </div>
-          ) : (
-            <div>
-              <span style={{ display: 'block' }}>Artifacts:</span>
-              <UnorderedList>
-                {activityData.files.map((f: File, i: number) => (
-                  <ListItem key={`f-${f.title}-${i}`}>{f.title}</ListItem>
-                ))}
-              </UnorderedList>
             </div>
           )}
         </PopoverBody>
@@ -232,6 +246,10 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
+  if(entryData.description != ''){
+    const split = entryData.description.split(/(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/);
+    // console.log('split', split[0] === "" ? split[1] : split[0]);
+  }
  
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
@@ -264,15 +282,12 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             activityData={entryData}
             researchThreads={researchThreads}
           />
-         
         )}
         
-        {makeEditable ? (
+        {makeEditable && (
           <Button leftIcon={<EditIcon />} onClick={makeEditable}>
             Edit
           </Button>
-        ) : (
-          ''
         )}
       </span>
 
@@ -291,20 +306,29 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 marginRight="0.25em"
                 marginBottom="0.25em"
               >
-                {t}
+              {t}
               </Tag>
             ))}
           </>
         )}
       </p>
-
       <br />
+
+     {
+       entryData.description != "" && (
+         <div
+         style={{fontSize:'12px', fontStyle:'italic', marginTop:'5px', marginBottom:5}}
+         >{entryData.description}
+         <br />
+         </div>
+       )}
+      {/* <br />
       {entryData.description && (
         <div
           className="readonlyEntryMarkdownPreview"
           dangerouslySetInnerHTML={{ __html: descriptionHTML }}
         />
-      )}
+      )} */}
 
       <SimpleGrid columns={1} spacing={3}>
         {files.map((f, i) => (

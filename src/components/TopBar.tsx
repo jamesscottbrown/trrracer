@@ -41,6 +41,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
+  console.log('this is reloading', projectData, filterTags, filterRT);
+
   const {
     viewType,
     setViewType,
@@ -112,7 +114,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               {/* <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
               </Button> */}
-
               <Box>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel htmlFor="filter-artifacts" mb="2">

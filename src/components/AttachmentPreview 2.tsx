@@ -37,8 +37,6 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     return <audio src={`file://${path.join(folderPath, title)}`} controls />;
   }
 
-  // const size = '65%';
-
   if (title.endsWith('.csv')) {
     return <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />;
   }
@@ -52,7 +50,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
+    return <GrDocumentWord onClick={() => openFile(title, folderPath)} style={{width:60}} />;
   }
 
   if (title.endsWith('.gsheet')) {
