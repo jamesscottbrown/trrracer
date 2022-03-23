@@ -365,7 +365,8 @@ const appStateReducer = (state, action) => {
         filterTags: [],
         filterTypes: [],
         filterDates: [null, null],
-        filterRT: null
+        filterRT: null,
+        query: null,
       };
     }
 
@@ -386,6 +387,10 @@ const appStateReducer = (state, action) => {
       newRT.research_threads[threadIndex].associated_tags.push(tag);
 
       return saveJSONRT(newRT);
+    }
+
+    case 'QUERY_TERM': {
+      return {...state, query:{term: action.term, textMatch: action.textMatch, googMatch: action.googMatch} }
     }
 
     case 'ADD_ACTIVITY_TO_THREAD': {

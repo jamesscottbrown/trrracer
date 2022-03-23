@@ -185,7 +185,6 @@ const ActivityTitlePopoverLogic = (props:any) => {
               }, 3000);
             }
             
-            
           }}
         >
            <div>{activityData.title}{' '}</div>

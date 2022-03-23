@@ -13,6 +13,7 @@ import ThreadView from './TheadView';
 import ProjectTimelineView from './ProjectTimelineView';
 import { EntryType } from './types';
 import ActivitytoThread from './ActivityToThread';
+import QueryView from './QueryView';
 
 const StupidTooltip = (props:any) => {
   
@@ -121,7 +122,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       );
     })
     .map((e, index) => ({ ...e, index }));
-    
+
   console.log('filtertypes',filterTypes)
 
   const typeFiltered = tagFiltered
@@ -265,7 +266,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
-
   if (viewType === 'research threads') {
     return (
       <div
@@ -294,7 +294,58 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
-
+  if (viewType === 'query') {
+    return(
+      <div
+      style={{
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        width: '100%',
+      }}
+    >
+      <TopBar
+        folderPath={folderPath}
+        filteredActivites={filteredActivites}
+        setViewType={setViewType}
+        reversedOrder={reversedOrder}
+        setReversedOrder={setReversedOrder}
+        newTitle={newTitle}
+        setNewTitle={setNewTitle}
+        timeFilter={timeFilter}
+        setTimeFilter={setTimeFilter}
+        filteredActivityNames={null}
+      />
+      <Flex position="relative" top={220}>
+        <LeftSidebar />
+        <Box
+          flex="3"
+          h="calc(100vh - 250px)" 
+          overflowY="auto"
+        >
+          <QueryView 
+            setViewType={setViewType} 
+            filteredActivites={filteredActivites}
+            projectData={projectData} 
+            />
+        </Box>
+        <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+          <ProjectListView
+            projectData={projectData}
+            filteredActivites={filteredActivites}
+            setViewType={setViewType}
+            timeFilter={timeFilter}
+            setTimeFilter={setTimeFilter}
+            hoverActivity={hoverActivity}
+            setPosX={setPosX}
+            setPoY={setPosY}
+          />
+        </Box>
+      </Flex>
+    </div>
+    )
+  }
   if (viewType === 'detail view') {
     return (
       <ArtifactDetailWindow
