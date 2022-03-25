@@ -28,6 +28,8 @@ const HoverTitle = (props:any) => {
 
     console.log('match',match)
 
+    const fileIndex = match.fileType === 'gdoc' ? entry.files.map(m=> m.title).indexOf(match.title) : match['file-index'];
+
     const [showPopover, setShowPopover] = useState(false);
     const [{}, dispatch] = useProjectState();
 
@@ -53,7 +55,7 @@ const HoverTitle = (props:any) => {
                           dispatch({
                             type: 'SELECTED_ARTIFACT',
                             selectedArtifactEntry: entry,
-                            selectedArtifactIndex: match['file-index'],
+                            selectedArtifactIndex: fileIndex,
                           });
                         }}
                       >
@@ -153,7 +155,7 @@ const QueryView = (props: any) => {
                 {
                 matches.map((m:any, i:number)=> (
                     <div key={`match-${i}`}>
-                        {/* <HoverTitle entry={m.entry} match={m} setViewType={setViewType} /> */}
+                      
                         <div style={{fontSize:18, fontWeight:700, marginTop:30}}>
                             {m.entry.title}
                             </div>
@@ -164,7 +166,7 @@ const QueryView = (props: any) => {
                                     style={{marginTop:10}} 
                                     key={`tm-${j}`}>
                                         <HoverTitle title={tm['file-title']} entry={m.entry} match={tm} setViewType={setViewType} />
-                                        {/* <div>{tm['file-title']}</div> */}
+                                       
                                         <div>
                                             {
                                                 tm.context.map(c=> (
@@ -193,7 +195,7 @@ const QueryView = (props: any) => {
                                     <div 
                                     style={{marginTop:10}}
                                     key={`gm-${j}`}>
-                                        <div>{gm.title}</div>
+                                        <HoverTitle title={gm.title} entry={m.entry} match={gm} setViewType={setViewType} />
                                         <div>
                                             {
                                                 gm.context.map((c, k)=> (
