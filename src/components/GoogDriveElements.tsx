@@ -50,12 +50,11 @@ const styleSection = (sectionData: any, commentedOn: any) => {
 
 const GoogDriveSpans = (googProps: any) => {
   const { googEl, index, comments } = googProps;
-  console.log('comments', comments);
+
+  
   const temp = comments.filter((f: any) =>
     googEl.textRun.content.includes(f.quotedFileContent.value)
   );
-
-  console.log('TEMP IN MOD', comments);
 
   return temp.length > 0 ? (
     <Popover>

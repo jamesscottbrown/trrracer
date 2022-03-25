@@ -1,11 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
+import { 
+    Input, 
+    InputGroup, 
+    InputRightElement, 
+    Button, 
+    Popover,
+    PopoverTrigger, 
+    PopoverContent, 
+    PopoverArrow, 
+    PopoverBody } from '@chakra-ui/react';
 
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
 import { MdCancel } from "react-icons/md";
-import { relative } from 'path';
+
 
 
 interface QueryViewProps{
@@ -13,10 +22,62 @@ interface QueryViewProps{
   filteredActivites: any;
 }
 
+const HoverTitle = (props:any) => {
+
+    const {title, entry, match, setViewType} = props;
+
+    console.log('match',match)
+
+    const [showPopover, setShowPopover] = useState(false);
+    const [{}, dispatch] = useProjectState();
+
+    const closePopover = () => {
+      setShowPopover(false);
+    };
+
+    return (
+        <React.Fragment>
+               {showPopover ? (
+                <Popover isOpen={showPopover} onClose={closePopover}>
+                    <PopoverTrigger>
+                        <div>
+                        {title}
+                        </div>
+                  </PopoverTrigger>
+                  <PopoverContent bg="white" color="gray">
+                    <PopoverArrow bg="white" />
+                    <PopoverBody>
+                      <Button
+                        onClick={() => {
+                          setViewType('detail view');
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            selectedArtifactEntry: entry,
+                            selectedArtifactIndex: match['file-index'],
+                          });
+                        }}
+                      >
+                        See artifact in detail.
+                      </Button>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                
+                <div
+                onMouseEnter={() => setShowPopover(true)}
+                >
+                {title}
+                </div>
+              )}
+        </React.Fragment>
+    )
+
+}
+
 const QueryView = (props: any) => {
     const {setViewType, projectData} = props;
     const [{query}] = useProjectState();
-    console.log(projectData.entries, query.textMatch, query.googMatch);
 
     const matches = [];
     projectData.entries.forEach((ent:any) => {
@@ -27,16 +88,12 @@ const QueryView = (props: any) => {
                 let indexArray = [];
                 txtArray.forEach((t, i)=> {
                     if(t.includes(query.term)){
-                        
                         let con = []
                         if(i > 0){
-                            
                             con.push({style:null, context:txtArray[(i-1)]})
                         }
-                        
                         con.push({style:'bold', context:txtArray[i]})
                         if(i < txtArray.length - 1){
-                            
                             con.push({style:null, context:txtArray[(i+1)]})
                         }
                         indexArray.push(con)
@@ -46,7 +103,34 @@ const QueryView = (props: any) => {
                 return tt;
             })
         }
-        let tempG = ent.files.filter((fg:any) => fg.fileType === 'gdoc' && query.googMatch.map(gm => gm[0]).includes(fg.fileId))
+        
+        let tempG = ent.files.filter((fg:any) => fg.fileType === 'gdoc' && query.googMatch.map(gm => gm.fileId).includes(fg.fileId))
+        
+        if(tempG.length > 0){
+            tempG.map((tt)=> {
+                
+                let test = query.googMatch.filter(f=> f.fileId === tt.fileId)[0];
+                let txtArray = test.textBlock.split('. ');
+
+                let indexArray = [];
+                txtArray.forEach((t, i)=> {
+                    if(t.includes(query.term)){
+                        let con = []
+                        if(i > 0){
+                            con.push({style:null, context:txtArray[(i-1)]})
+                        }
+                        con.push({style:'bold', context:txtArray[i]})
+                        if(i < txtArray.length - 1){
+                            con.push({style:null, context:txtArray[(i+1)]})
+                        }
+                        indexArray.push(con)
+                    }
+                });
+                tt.context = indexArray;
+               
+                return tt;
+            })
+        }
        
         if(tempText.length > 0 || tempG.length > 0){
             const entM = {entry: ent, textMatch:tempText, googMatch:tempG}
@@ -54,9 +138,10 @@ const QueryView = (props: any) => {
         }        
     });
 
-    console.log('mat',matches);
+   
 
     return (
+
         <div>
             <div
             style={{padding:5, float:'right'}}
@@ -68,14 +153,18 @@ const QueryView = (props: any) => {
                 {
                 matches.map((m:any, i:number)=> (
                     <div key={`match-${i}`}>
-                        <div style={{fontSize:18, fontWeight:700}}>
+                        {/* <HoverTitle entry={m.entry} match={m} setViewType={setViewType} /> */}
+                        <div style={{fontSize:18, fontWeight:700, marginTop:30}}>
                             {m.entry.title}
                             </div>
                         {
                             m.textMatch.length > 0 && (
                                 m.textMatch.map((tm, j) => (
-                                    <div key={`tm-${j}`}>
-                                        <div>{tm['file-title']}</div>
+                                    <div
+                                    style={{marginTop:10}} 
+                                    key={`tm-${j}`}>
+                                        <HoverTitle title={tm['file-title']} entry={m.entry} match={tm} setViewType={setViewType} />
+                                        {/* <div>{tm['file-title']}</div> */}
                                         <div>
                                             {
                                                 tm.context.map(c=> (
@@ -101,12 +190,30 @@ const QueryView = (props: any) => {
                         {
                             m.googMatch.length > 0 && (
                                 m.googMatch.map((gm, j)=> (
-                                    <div key={`gm-${j}`}>
+                                    <div 
+                                    style={{marginTop:10}}
+                                    key={`gm-${j}`}>
                                         <div>{gm.title}</div>
                                         <div>
                                             {
-                                                "test"
-                                            }
+                                                gm.context.map((c, k)=> (
+                                                    <div key={`in-gm-${k}`}>
+                                                        {
+                                                            c.map((m, l)=> (
+                                                                <span 
+                                                                key={`span-${l}`}
+                                                                style={{
+                                                                    fontSize:11,
+                                                                    fontWeight: m.style ? 700 : 400,
+                                                                    fontStyle:'italic',
+                                                                    backgroundColor: m.style ? 'yellow' : '#ffffff',
+                                                                }}>{m.context}{'. '}</span>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                    
+                                                ))
+                                                }
                                         </div>
                                     </div>
                                 ))

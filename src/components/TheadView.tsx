@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Flex, Spacer, SimpleGrid } from '@chakra-ui/react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Box, Flex, Spacer, SimpleGrid, Button } from '@chakra-ui/react';
 
 import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
 
@@ -51,6 +51,10 @@ const ThreadedActivity = (props: any) => {
 const ThreadedArtifact = (props: any) => {
   const { projectData, evidence, folderPath } = props;
 
+  const [ showDoc, setShowDoc ] = useState(false);
+  const [ buttonLabel, setButtonLabel ] = useState('Show');
+  const [maxHeight, setMaxHeight] = useState(400);
+
   const activity = projectData.entries.filter(
     (f) => f.title === evidence.activityTitle
   )[0];
@@ -60,7 +64,8 @@ const ThreadedArtifact = (props: any) => {
 
   return (
     <Flex flexDirection="row" alignItems="center" justifyContent="space-around">
-      <div style={{ width: '60%', maxHeight: '600px', overflow: 'auto' }}>
+     
+      <div style={{ width: '60%', maxHeight: maxHeight, overflow: 'auto' }}>
         <DetailPreview
           setFragSelected={null}
           folderPath={folderPath}
@@ -69,6 +74,7 @@ const ThreadedArtifact = (props: any) => {
           openFile={openFile}
         />
       </div>
+    
       <div
         style={{
           maxWidth: 200,
@@ -88,6 +94,17 @@ const ThreadedArtifact = (props: any) => {
 
 const ThreadedFragment = (props: any) => {
   const { projectData, evidence, googleData, txtData } = props;
+  const [ showDoc, setShowDoc ] = useState(false);
+  const [ buttonLabel, setButtonLabel ] = useState('Show');
+  const [height, setHeight] = useState(200);
+  const [textColor, setTextColor] = useState('gray');
+
+  useEffect(() => {
+      const element = document.getElementById('highlighted')
+      if (element)
+          element.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
   const activity = projectData.entries.filter(
     (f) => f.title === evidence.activityTitle
   )[0];
@@ -104,18 +121,56 @@ const ThreadedFragment = (props: any) => {
         alignItems="center"
         justifyContent="space-around"
       >
-        <div
-          style={{
-            height: '400px',
-            overflow: 'auto',
-            fontSize: '11px',
-            width: '60%',
-          }}
-        >
-          {gContent.map((m: any, i: number) => (
-            <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} comments={artifactChosen.comments.comments} />
-          ))}
+        <div style={{
+          width: '60%',
+          height:height + 'px',
+          padding:3
+          }}>
+
+          <div>
+            
+              <div
+              style={{fontWeight:600, fontSize:24}}
+              >{"Threaded Fragment: "}</div>
+              {
+                evidence.anchors.map((a, i)=> (
+                  <div key={`frag-${i}`}>
+                    <span style={{backgroundColor:'#FFFCBB'}}>
+                    {a.frag_type}
+                    </span>
+                    </div>
+                ))
+              }
+          </div>
+          <div
+            style={{
+              height:height + 'px',
+              overflow: 'auto',
+              fontSize: '11px',
+              
+            }}
+          >
+          <div
+          style={{marginTop:15, marginBottom:15}}
+          >
+            <Button 
+              onClick={()=> {
+                showDoc ? setShowDoc(false) : setShowDoc(true);
+                buttonLabel === 'Show' ? setButtonLabel('Hide') : setButtonLabel('Show'); 
+                height === 200 ? setHeight(400) : setHeight(200);
+            }}
+            >{`${buttonLabel} Google Doc`}</Button>
+            </div>
+            {
+              showDoc && (
+                gContent.map((m: any, i: number) => (
+                <GoogDriveParagraph key={`par-${i}`} parData={m} index={i} comments={artifactChosen.comments.comments} />
+              ))
+            )}
+          </div>
+
         </div>
+
         <div
           style={{
             maxWidth: 200,
@@ -131,11 +186,11 @@ const ThreadedFragment = (props: any) => {
         </div>
       </Flex>
     );
-  }
-  if (artifactChosen.fileType === 'txt') {
-    const temp = txtData['text-data'].filter(
-      (f) => f['entry-title'] === activity.title
-    )[0];
+    }
+    if (artifactChosen.fileType === 'txt') {
+      const temp = txtData['text-data'].filter(
+        (f) => f['entry-title'] === activity.title
+      )[0];
 
     const txtArray = temp.text.split(evidence.anchors[0].frag_type);
 
@@ -147,18 +202,41 @@ const ThreadedFragment = (props: any) => {
       >
         <div
           style={{
-            height: '400px',
-            overflow: 'auto',
-            fontSize: '11px',
             width: '60%',
-          }}
+            height:height + 'px',
+            padding:3
+            }}
         >
-          <span>{txtArray[0]}</span>
-          <span style={{ fontWeight: 800 }}>
-            {evidence.anchors[0].frag_type}
-          </span>
-          <span>{txtArray[1]}</span>
+
+          <div
+            style={{marginTop:15, marginBottom:15}}
+            >
+              <Button 
+              onClick={()=> {
+                showDoc ? setShowDoc(false) : setShowDoc(true);
+                buttonLabel === 'Show' ? setButtonLabel('Hide') : setButtonLabel('Show'); 
+                height === 200 ? setHeight(400) : setHeight(200);
+                textColor === 'gray'? setTextColor('black') : setTextColor('gray');
+              }}
+              >{`${buttonLabel} Text File`}</Button>
+          </div>
+          <div
+            style={{
+              height:(height- 75) + 'px',
+              overflow: 'auto',
+            }}
+          >
+            <span style={{color:textColor}}>{txtArray[0]}</span>
+            <span style={{ fontWeight: 800, backgroundColor:'#FFFCBB' }} id={'highlighted'}>
+              {evidence.anchors[0].frag_type}
+            </span>
+            <span style={{color:textColor}}>{txtArray[1]}</span>
+          </div>
+
         </div>
+
+
+
         <div
           style={{
             maxWidth: 200,
@@ -191,7 +269,7 @@ const ThreadView = () => {
     dispatch,
   ] = useProjectState();
 
-  const headerStyle = { fontSize: '19px', fontWeight: 600 };
+  const headerStyle = { fontSize: '30px', fontWeight: 700, marginBottom:20 };
 
   return (
     <Flex position="relative" top={220}>
@@ -212,7 +290,7 @@ const ThreadView = () => {
         {researchThreads && (
           <Flex flexDirection="column">
             <span style={headerStyle}>
-              {researchThreads.research_threads[selectedThread].title}
+              {`${researchThreads.research_threads[selectedThread].title} Reserach Thread`}
             </span>
             {researchThreads.research_threads[selectedThread].evidence
               .sort((a, b) => b.dob - a.dob)
@@ -223,11 +301,11 @@ const ThreadView = () => {
                 >
                   <div>
                     {e.type === 'activity' ? (
-                      <span style={{ fontWeight: 700 }}>{e.title}</span>
+                      <span style={{ fontWeight: 700 }}>{`Threaded Activity: ${e.title}`}</span>
                     ) : (
                       <span>
                         <span style={{ fontWeight: 700 }}>
-                          {e.artifactTitle}
+                          {`Threaded Artifact: ${e.artifactTitle}`}
                         </span>
                         {` (from ${e.activityTitle})`}
                       </span>

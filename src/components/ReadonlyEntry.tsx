@@ -247,7 +247,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   if(entryData.description != ''){
     const split = entryData.description.split(/(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/);
-    // console.log('split', split[0] === "" ? split[1] : split[0]);
   }
  
   const checkTagColor = (tagName: string) => {

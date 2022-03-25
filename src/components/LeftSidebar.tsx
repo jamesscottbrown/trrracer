@@ -28,7 +28,8 @@ const LeftSidebar = () => {
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
       return { title: ty[0], matches: ty[1].length };
-    });
+  });
+
   const sortedTypes = types.sort((a, b) => b.matches - a.matches);
   sortedTypes.push({ title: 'all', matches: artifacts.length });
 
