@@ -367,6 +367,7 @@ const appStateReducer = (state, action) => {
         filterDates: [null, null],
         filterRT: null,
         query: null,
+        goBackView: 'timeline'
       };
     }
 
@@ -377,6 +378,11 @@ const appStateReducer = (state, action) => {
       };
 
       return saveJSON(newProjectData);
+    }
+
+    case 'UPDATE_GO_BACK':{
+
+      return { ...state, goBackView: action.goBackView };
     }
     
     case 'ADD_TAG_TO_THREAD': {

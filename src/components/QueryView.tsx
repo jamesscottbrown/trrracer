@@ -57,6 +57,10 @@ const HoverTitle = (props:any) => {
                             selectedArtifactEntry: entry,
                             selectedArtifactIndex: fileIndex,
                           });
+                          dispatch({
+                              type:'UPDATE_GO_BACK',
+                              goBackView: 'query'
+                          })
                         }}
                       >
                         See artifact in detail.
@@ -79,7 +83,7 @@ const HoverTitle = (props:any) => {
 
 const QueryView = (props: any) => {
     const {setViewType, projectData} = props;
-    const [{query}] = useProjectState();
+    const [{query}, dispatch] = useProjectState();
 
     const matches = [];
     projectData.entries.forEach((ent:any) => {
@@ -147,7 +151,13 @@ const QueryView = (props: any) => {
         <div>
             <div
             style={{padding:5, float:'right'}}
-            onClick={()=> setViewType('timeline')}
+            onClick={()=> {
+                setViewType('timeline')
+                dispatch({
+                    type:'UPDATE_GO_BACK',
+                    goBackView: 'timeline'
+                })
+            }}
             >
             <MdCancel size={30}/>
             </div>

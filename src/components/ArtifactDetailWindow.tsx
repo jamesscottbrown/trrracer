@@ -390,7 +390,7 @@ const DetailSidebar = (props: any) => {
 const ArtifactDetailWindow = (props: DetailProps) => {
   const { setViewType, folderPath, projectData } = props;
 
-  const [{ selectedArtifactEntry, selectedArtifactIndex }, dispatch] =
+  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView }, dispatch] =
     useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
@@ -443,10 +443,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 selectedArtifactEntry: null,
                 selectedArtifactIndex: null,
               });
-              setViewType('timeline');
+              setViewType(goBackView);
             }}
           >
-            {'<< GO BACK TO TIMELINE'}
+            {`Go back to ${goBackView} view`}
           </Button>
           <Spacer/>
           <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>

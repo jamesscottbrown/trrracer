@@ -95,7 +95,7 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterTypes, filterDates, filterRT }] = useProjectState();
+  const [{ projectData, filterTags, filterTypes, filterDates, filterRT, goBackView }] = useProjectState();
   const [viewType, setViewType] = useState<string>('timeline');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -122,8 +122,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       );
     })
     .map((e, index) => ({ ...e, index }));
-
-  console.log('filtertypes',filterTypes)
 
   const typeFiltered = tagFiltered
     .filter((entryData: any) => {
