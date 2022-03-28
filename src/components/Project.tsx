@@ -14,6 +14,7 @@ import ProjectTimelineView from './ProjectTimelineView';
 import { EntryType } from './types';
 import ActivitytoThread from './ActivityToThread';
 import QueryView from './QueryView';
+import BubbleVis from './BubbleVis';
 
 const StupidTooltip = (props:any) => {
   
@@ -96,7 +97,7 @@ interface ProjectProps {
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [{ projectData, filterTags, filterTypes, filterDates, filterRT, goBackView }] = useProjectState();
-  const [viewType, setViewType] = useState<string>('timeline');
+  const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [timeFilter, setTimeFilter] = useState<any>(null);
@@ -351,6 +352,49 @@ const Project = (ProjectPropValues: ProjectProps) => {
         folderPath={folderPath}
         projectData={projectData}
       />
+    );
+  }
+
+  if(viewType === 'overview'){
+    return (
+      <div
+        style={{
+          height: '100vh',
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          width: '100%',
+        }}
+      >
+        <TopBar
+          folderPath={folderPath}
+          filteredActivites={filteredActivites}
+          setViewType={setViewType}
+          reversedOrder={reversedOrder}
+          setReversedOrder={setReversedOrder}
+          newTitle={newTitle}
+          setNewTitle={setNewTitle}
+          timeFilter={timeFilter}
+          setTimeFilter={setTimeFilter}
+          filteredActivityNames={null}
+        />
+        <Flex position="relative" top={220}>
+          <LeftSidebar />
+          <BubbleVis />
+          <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+            <ProjectListView
+              projectData={projectData}
+              filteredActivites={filteredActivites}
+              setViewType={setViewType}
+              timeFilter={timeFilter}
+              setTimeFilter={setTimeFilter}
+              hoverActivity={hoverActivity}
+              setPosX={setPosX}
+              setPoY={setPosY}
+            />
+          </Box>
+        </Flex>
+      </div>
     );
   }
 };
