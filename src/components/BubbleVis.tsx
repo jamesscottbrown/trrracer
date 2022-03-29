@@ -202,7 +202,7 @@ const BubbleVis = (props:BubbleProps) => {
             
         }
 
-    }, [filteredActivites])
+    }, [filteredActivites, groupBy])
 
     
     return (

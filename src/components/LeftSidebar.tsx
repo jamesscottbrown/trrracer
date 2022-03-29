@@ -6,6 +6,9 @@ import {
   MenuItem,
   MenuList,
   Button,
+  FormControl,
+  Switch,
+  FormLabel
 } from '@chakra-ui/react';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
@@ -15,8 +18,10 @@ import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 
-const LeftSidebar = () => {
+const LeftSidebar = (props:any) => {
   const [{ projectData, researchThreads, artifactTypes }, dispatch] = useProjectState();
+  const {setGroupBy} = props;
+   // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({
@@ -29,8 +34,6 @@ const LeftSidebar = () => {
     matches: artifacts.length,
   });
 
-  
-
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
@@ -42,8 +45,6 @@ const LeftSidebar = () => {
   .map((ty) => {
     return { title: ty[0]? ty[0] : 'undefined', matches: ty[1].length };
 }); 
-
-  console.log('artifactTypes!', artifactTypes['artifact_types'], aTypes);
 
   const sortedTypes = types.sort((a, b) => b.matches - a.matches);
   sortedTypes.push({ title: 'all', matches: artifacts.length });
@@ -68,8 +69,19 @@ const LeftSidebar = () => {
       flex={1}
       flexDirection="column"
       h="calc(100vh - 250px)"
-      overflow="auto"
+      overflow="auto" 
     >
+      <FormControl display='flex' alignItems='center' marginBottom={10}>
+      <FormLabel htmlFor='split-by' mb='0'>
+        Split by research threads
+      </FormLabel>
+      <Switch id='split-by' 
+      onChange={(event)=> {
+        event.target.checked ? setGroupBy({type:'research_threads', data: researchThreads.research_threads}) : setGroupBy(null);
+      }}
+      />
+    </FormControl>
+
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType="overview"
