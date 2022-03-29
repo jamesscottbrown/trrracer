@@ -10,7 +10,7 @@
             "type": "reflection"
         },
         {
-            "type": "meeting"
+            "type": "transcript"
         },
         {
             "type": "correspondence"
@@ -22,10 +22,16 @@
             "type":"sketch"
         },
         {
-            "type":"view"
+            "type":"tool artifact"
         },
         {
             "type":"related work"
+        },
+        {
+            "type":"presentation"
+        },
+        {
+            "type":"paper draft"
         }
     ]
 }

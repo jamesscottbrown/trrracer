@@ -310,6 +310,7 @@ const appStateReducer = (state, action) => {
       let roleData;
       let google_data;
       let txtData;
+      let aTypes;
 
       try {
         const google_em = readProjectFile(baseDir, 'goog_em.json', null);
@@ -323,6 +324,8 @@ const appStateReducer = (state, action) => {
 
         roleData = readProjectFile(baseDir, 'roles.json', null);
 
+        aTypes = readProjectFile(baseDir, 'artifactTypes.json', null);
+
         newEntries = action.projectData.entries.map((e, i) => {
           e.index = i;
           e.key_txt = text_data['text-data'].filter(
@@ -333,9 +336,19 @@ const appStateReducer = (state, action) => {
           if (testArray.length > 0) {
             e.files = e.files.map((ef) => {
               if (ef.fileType === 'gdoc') {
+                ef.artifactType = 'notes'
                 ef.emphasized = google_em[ef.fileId];
                 ef.comments = comment_data[ef.fileId];
               }
+              // else if(ef.fileType === 'txt'){
+              //   ef.artifactType = 'transcript';
+              // }else if(ef.fileType === 'eml'){
+              //   ef.artifactType = 'correspondence'
+              // }else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
+              //   ef.artifactType = 'data'
+              // }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
+              //   ef.artifactType = 'tool artifact'
+              // }
               ef.artifactType = ef.artifactType ? ef.artifactType : "";
               return ef;
             });
@@ -364,11 +377,12 @@ const appStateReducer = (state, action) => {
         researchThreads: research_threads,
         selectedThread: 0,
         filterTags: [],
-        filterTypes: [],
+        filterType: null,
         filterDates: [null, null],
         filterRT: null,
         query: null,
-        goBackView: 'timeline'
+        goBackView: 'overview',
+        artifactTypes: aTypes
       };
     }
 
@@ -738,7 +752,7 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_FILTER_TYPES': {
       
-      return { ...state, filterTypes: action.filterType };
+      return { ...state, filterType: action.filterType };
     }
 
     case 'UPDATE_FILTER_DATES': {

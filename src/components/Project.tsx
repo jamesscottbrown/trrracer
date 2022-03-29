@@ -96,7 +96,7 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterTypes, filterDates, filterRT, goBackView, researchThreads }] = useProjectState();
+  const [{ projectData, filterTags, filterType, filterDates, filterRT, goBackView, researchThreads, artifactTypes }] = useProjectState();
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -125,11 +125,16 @@ const Project = (ProjectPropValues: ProjectProps) => {
       );
     })
     .map((e, index) => ({ ...e, index }));
-
+ 
   const typeFiltered = tagFiltered
     .filter((entryData: any) => {
-      if (filterTypes && filterTypes.length > 0) {
-        return entryData.files.map((m: any) => m.fileType).includes(filterTypes);
+      if (filterType) {
+        if(filterType.includes('undefined')){
+          return entryData.files.map((m: any) => !m.artifactType || m.artifactType === "").includes(true);
+        }else{
+          return entryData.files.map((m: any) => m.artifactType).includes(filterType);
+        }
+        
       } else {
         return entryData;
       }
@@ -160,7 +165,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     );
 
       setFilteredActivites(timeFiltered);
-    }, [projectData.entries, filterTags, filterTypes, timeFilter, filterRT]); 
+    }, [projectData.entries, filterTags, filterType, timeFilter, filterRT]); 
 
   if (viewType === 'activity view') {
     return (
@@ -232,14 +237,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setTimeFilter={setTimeFilter}
           filteredActivityNames={filteredActivites.map(n => n.title)}
         />  
-        {/* <StupidTooltip 
-          setShowTool={setShowTool} 
-          showTool={showTool} 
-          hoverActivity={hoverActivity} 
-          setHoverActivity={setHoverActivity}
-          posX={posX}
-          posY={posY}
-          /> */}
+    
         <Flex position="relative" top={220}>
           <LeftSidebar />
           <Box flex="3.5" h="calc(100vh - 250px)">
@@ -369,6 +367,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         }}
       >
         <TopBar
+          viewType={viewType}
           folderPath={folderPath}
           filteredActivites={filteredActivites}
           setViewType={setViewType}
@@ -386,6 +385,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           filteredActivites={filteredActivites}
           projectData={projectData}
           groupBy={groupBy}
+          setHoverActivity={setHoverActivity}
           />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView

@@ -55,6 +55,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     filteredActivityNames
   } = ProjectPropValues;
 
+  console.log('viewType', viewType)
+
   const addEntry = () => {
     dispatch({ type: 'ADD_ENTRY' });
   };
@@ -200,7 +202,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             )}
           </Box>
         </Flex>
-        {(viewType === 'activity view' || viewType === 'timeline') && (
+        {(viewType === 'activity view' || viewType === 'timeline' || viewType === 'overview') && (
           <Box flex="1.8" maxWidth="25%">
             <Flex flexFlow="row wrap" p={5}>
               <Button alignSelf="center" onClick={addEntry} type="button">

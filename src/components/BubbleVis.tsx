@@ -15,21 +15,16 @@ import {
 import { useProjectState } from './ProjectContext';
 import { m } from 'framer-motion';
 
-const toolStyle = {
-        position:'absolute',
-        textAlign: 'center',
-        width: 60,
-        height: 2,
-        padding: 2,
-        font: '12px sans-serif',
-        backgroundColor: 'lightsteelblue',
-        border: 0,
-        borderRadius: 8,
-        pointerEvents: 'none',
+interface BubbleProps {
+    filteredActivites: any,
+    projectData: any,
+    groupBy: any,
+    setHoverActivity: (ent:any)=> void
 }
-const BubbleVis = (props:any) => {
 
-    const {filteredActivites, projectData, groupBy} = props;
+const BubbleVis = (props:BubbleProps) => {
+
+    const {filteredActivites, projectData, groupBy, setHoverActivity} = props;
 
     const dateRange = extent(projectData.entries.map((e) => new Date(e.date)));
 
@@ -39,7 +34,7 @@ const BubbleVis = (props:any) => {
     const svgRef = React.useRef(null);
 
     const circleScale = d3.scaleLinear()
-    .domain(d3.extent(filteredActivites.map(m=> m.files.length)))
+    .domain(d3.extent(projectData.entries.map(m=> m.files.length)))
     .range([5, 20])
 
     //NEED TO MAKE THIS DYNAMIC
@@ -68,7 +63,7 @@ const BubbleVis = (props:any) => {
 
     useEffect(() => {
 
-        let nodes = filteredActivites.map((a, i)=> {
+        let nodesAll = projectData.entries.map((a, i)=> {
                 let node = {}
                 node.date = a.date;
                 node.description = a.description;
@@ -91,17 +86,20 @@ const BubbleVis = (props:any) => {
         let wrap = svg.append('g').attr('transform', 'translate(0, 50)');
 
         // create a force simulation and add forces to it
-        const simulation = d3.forceSimulation(nodes)
+        const simulation = d3.forceSimulation(nodesAll)
             .force('x', d3.forceX().x(width / 2))
             .force('y', d3.forceY().y(d => yScale(new Date(d.date))))
             .force('collision', d3.forceCollide().radius(d => d.radius + 1))
 
         for (var i = 0; i < 120; ++i) simulation.tick();
-
+        
+        let nodes = nodesAll.filter(f=> {
+            return filteredActivites.map(m=> m.title).includes(f.title);
+        })
 
         if(groupBy){
 
-            let groups = [{label:'all', color:'gray', highlighted:nodes, notHighlighted:[]}]
+            let groups = [{label:'all', color:'gray', highlighted:nodesAll, notHighlighted:[]}]
             if(groupBy.type === 'research_threads'){
                 let tempgroups = groupBy.data.map(m=> {
                     let group = {label: m.title, color: m.color}
@@ -151,31 +149,39 @@ const BubbleVis = (props:any) => {
         }else{
 
             let activityGroups = wrap.selectAll('g.activity')
-            .data(nodes).join('g').attr('class', 'activity');
+            .data(nodesAll).join('g').attr('class', 'activity');
         
             let circles = activityGroups.selectAll('circle').data(d => [d]).join('circle');
         
             circles
-            .attr('fill', 'gray')
             .attr('r', (d:any)=> d.radius)
             .attr('cy', (d:any)=> d.y)
             .attr('cx', (d:any)=> d.x)
 
+
+            let notCirc = circles.filter(f=> {
+                return filteredActivites.map(m=> m.title).indexOf(f.title) === -1
+            });
+            notCirc.attr('fill', 'gray').attr('fill-opacity', 0.25);
+
+            let highCirc = circles.filter(f=> {
+                return filteredActivites.map(m=> m.title).includes(f.title)
+            });
+
+            highCirc.attr('fill', 'gray');
             
 
-            circles.on('mouseover', (event, d)=> {
+            highCirc.on('mouseover', (event, d)=> {
                 d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
 
-                console.log('div', d);
+                setHoverActivity(d);
 
                 let htmlForm = () => {
                     let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
                                     ${d.date} <br/></div>`
-
                     d.files.forEach((f)=> {
                         start = start + `<div><span style="font-weight:700; font-size:14px">${f.fileType}:  </span>${f.title}</div>`
                     })
-
                     return start;
                 }
 
@@ -191,7 +197,6 @@ const BubbleVis = (props:any) => {
                 div.transition()
                 .duration(500)
                 .style("opacity", 0);
-                
             })
 
             

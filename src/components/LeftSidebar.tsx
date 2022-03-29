@@ -16,7 +16,7 @@ import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 
 const LeftSidebar = () => {
-  const [{ projectData, researchThreads }, dispatch] = useProjectState();
+  const [{ projectData, researchThreads, artifactTypes }, dispatch] = useProjectState();
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({
@@ -24,14 +24,32 @@ const LeftSidebar = () => {
     matches: artifacts.length,
   });
 
+  const [artifactTypeShown, seArtifactTypeShown] = useState({
+    title: 'all',
+    matches: artifacts.length,
+  });
+
+  
+
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
       return { title: ty[0], matches: ty[1].length };
   });
 
+  const aTypes = d3
+  .groups(artifacts, (a) => a.artifactType)
+  .map((ty) => {
+    return { title: ty[0]? ty[0] : 'undefined', matches: ty[1].length };
+}); 
+
+  console.log('artifactTypes!', artifactTypes['artifact_types'], aTypes);
+
   const sortedTypes = types.sort((a, b) => b.matches - a.matches);
   sortedTypes.push({ title: 'all', matches: artifacts.length });
+
+  const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
+  sortedArtTypes.push({ title: 'all', matches: artifacts.length });
 
   const tags = projectData.tags.map((t) => {
     t.matches = projectData.entries.filter((f) => {
@@ -65,13 +83,14 @@ const LeftSidebar = () => {
         borderLeftWidth="1px"
         padding="3px"
       >
+
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
             {`View ${fileTypeShown.title} artifacts (${fileTypeShown.matches})`}
           </MenuButton>
           <MenuList>
             <MenuItem>all</MenuItem>
-            {sortedTypes.map((m: any, i: any) => (
+            {sortedArtTypes.map((m: any, i: any) => (
               <MenuItem
                 key={`type-${i}`}
                 data={m}
