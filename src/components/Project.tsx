@@ -107,7 +107,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [showTool, setShowTool] = useState(false);
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
-  const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
+  const [groupBy, setGroupBy] = useState(null);
+  // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
 
 
   // Update title when projectData changes.

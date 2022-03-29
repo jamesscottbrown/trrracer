@@ -88,8 +88,6 @@ const BubbleVis = (props:any) => {
 
     const dateRange = extent(projectData.entries.map((e) => new Date(e.date)));
 
-    console.log(dateRange);
-
     const width = 200;
     const height = 600;
 
@@ -181,7 +179,7 @@ const BubbleVis = (props:any) => {
             
                 circlesNH
                 .attr('fill', 'gray')
-                .attr('fill-opacity', .5)
+                .attr('fill-opacity', .3)
                 .attr('r', (d:any)=> d.radius)
                 .attr('cy', (d:any)=> d.y)
                 .attr('cx', (d:any)=> d.x)
@@ -195,9 +193,17 @@ const BubbleVis = (props:any) => {
             let circles = activityGroups.selectAll('circle').data(d => [d]).join('circle');
         
             circles
+            .attr('fill', 'gray')
             .attr('r', (d:any)=> d.radius)
             .attr('cy', (d:any)=> d.y)
             .attr('cx', (d:any)=> d.x)
+
+            circles.on('mouseover', (event, d)=> {
+                d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2)
+
+            }).on('mouseout', (event, d)=> {
+                d3.select(event.target).attr('r', (d.radius)).attr('stroke-width', 0)
+            })
         }
 
     }, [filteredActivites])

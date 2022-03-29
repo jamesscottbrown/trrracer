@@ -328,7 +328,7 @@ const appStateReducer = (state, action) => {
           e.key_txt = text_data['text-data'].filter(
             (td) => td['entry-index'] === i
           );
-
+          
           let testArray = e.files.filter((f) => f.fileType === 'gdoc');
           if (testArray.length > 0) {
             e.files = e.files.map((ef) => {
@@ -336,6 +336,7 @@ const appStateReducer = (state, action) => {
                 ef.emphasized = google_em[ef.fileId];
                 ef.comments = comment_data[ef.fileId];
               }
+              ef.artifactType = ef.artifactType ? ef.artifactType : "";
               return ef;
             });
           }

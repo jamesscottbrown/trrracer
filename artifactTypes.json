@@ -1,0 +1,22 @@
+{
+    "artifact_types":[
+        {
+            "type": "memo"
+        },
+        {
+            "type": "meeting"
+        },
+        {
+            "type": "correspondence"
+        },
+        {
+            "type": "data"
+        },
+        {
+            "type":"sketch"
+        },
+        {
+            "type":"view"
+        }
+    ]
+}
