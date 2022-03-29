@@ -342,13 +342,18 @@ const appStateReducer = (state, action) => {
               }
               // else if(ef.fileType === 'txt'){
               //   ef.artifactType = 'transcript';
-              // }else if(ef.fileType === 'eml'){
+              // }
+              // else if(ef.fileType === 'eml'){
               //   ef.artifactType = 'correspondence'
-              // }else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
+              // }
+              //else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
               //   ef.artifactType = 'data'
               // }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
               //   ef.artifactType = 'tool artifact'
               // }
+              else if(ef.title.includes('Screen ')){
+                ef.artifactType = 'tool artifact';
+              }
               ef.artifactType = ef.artifactType ? ef.artifactType : "";
               return ef;
             });
