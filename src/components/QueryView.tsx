@@ -117,8 +117,8 @@ const QueryView = (props: any) => {
                 
                 let test = query.googMatch.filter(f=> f.fileId === tt.fileId)[0];
                 let txtArray = test.textBlock.split('. ');
-
                 let indexArray = [];
+
                 txtArray.forEach((t, i)=> {
                     if(t.includes(query.term)){
                         let con = []

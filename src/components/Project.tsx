@@ -96,7 +96,7 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterTypes, filterDates, filterRT, goBackView }] = useProjectState();
+  const [{ projectData, filterTags, filterTypes, filterDates, filterRT, goBackView, researchThreads }] = useProjectState();
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -107,6 +107,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [showTool, setShowTool] = useState(false);
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
+  const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
 
 
   // Update title when projectData changes.
@@ -380,7 +381,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         />
         <Flex position="relative" top={220}>
           <LeftSidebar />
-          <BubbleVis />
+          <BubbleVis 
+          filteredActivites={filteredActivites}
+          projectData={projectData}
+          groupBy={groupBy}
+          />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
