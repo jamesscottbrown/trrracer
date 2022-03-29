@@ -6,8 +6,6 @@ import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 
-import { repositionPoints } from 'respacer';
-
 import {
   EntryType,
   ProjectType,
@@ -17,71 +15,18 @@ import {
 import { useProjectState } from './ProjectContext';
 import { m } from 'framer-motion';
 
-// const runSimulation = (data:any, circleScale:any, xScale:any, yScale:any) => {
-//       //SIMULATION PART
-//       let simulation = d3
-//         .forceSimulation()
-//         .nodes(data)
-//         .force("x", d3.forceX(d => xScale(d.position)).strength(1))
-//         .force("y", d3.forceY().strength(1))
-//         .force(
-//           "collision",
-//           d3.forceCollide().radius(d => circleScale(d.total))
-//         );
-  
-//       for (
-//         let i = 0,
-//           n = Math.ceil(
-//             Math.log(simulation.alphaMin()) /
-//               Math.log(1 - simulation.alphaDecay())
-//           );
-//         i < n;
-//         ++i
-//       ) {
-//         simulation.tick();
-//       }
-//     //   simulation.on('end', firstCallback(data));
-  
-//       // Apply these forces to the nodes and update their positions.
-//       // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
-//       function firstCallback(firstPassData :any){
-  
-//           let newData = firstPassData.map(d=> {
-//               d.sourceX = d.x;
-//               d.sourceY = d.y;
-//               return d
-//           });
-//           //SECOND SIMULATION
-//           simulation = d3.forceSimulation().nodes(newData)
-//               .force('x', d3.forceX(d => xScale(d.position)).strength(1))
-//               .force('y', d3.forceY().y( d => {
-//                   let move = groupKeys.filter(g=> g.key === d.category)[0].pos;
-//                   return yScale(move);
-//               }))
-//               .force('collision', d3.forceCollide().radius( d => circleScale(d.total)))
-  
-//               for (var i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
-//                   simulation.tick();
-//               }
-//               simulation.on('end', secondCallback(newData));
-//       }
-  
-//       function secondCallback(test){
-//           //ASSIGN NEW POSITIONS TO GLOBAL DATA
-//           that.data = test.map(d=> {
-//           let move = that.groupKeys.filter(g=> g.key === d.category)[0].pos;
-//               d.moveX = d.x;
-//               d.moveY = d.y;
-//               //THIS IS TO MAKE EACH GROUP SEPARATE FOR BRUSHES
-//               d.correctedY = d.y - that.yScale(move);
-//               return d
-//           });
-//       }
-  
-//   }
-  
-
-
+const toolStyle = {
+        position:'absolute',
+        textAlign: 'center',
+        width: 60,
+        height: 2,
+        padding: 2,
+        font: '12px sans-serif',
+        backgroundColor: 'lightsteelblue',
+        border: 0,
+        borderRadius: 8,
+        pointerEvents: 'none',
+}
 const BubbleVis = (props:any) => {
 
     const {filteredActivites, projectData, groupBy} = props;
@@ -102,6 +47,25 @@ const BubbleVis = (props:any) => {
       .range([0, (height - 70)])
       .domain(dateRange);
 
+    const checktool = d3.select('#tooltip');
+
+    const div = checktool.empty() ? 
+    d3.select("body")
+    .append("div")
+    .attr("id", "tooltip")
+    .style("opacity", 0) 
+    .style('position', 'absolute')
+    .style('text-align', 'center')
+    .attr('width', 60)
+    .attr('height', 2)
+    .style('padding', '10px')
+    .style('font', '12px sans-serif')
+    .style('background', 'white')
+    .style('border', '2px solid gray')
+    .style('border-radius', '10px')
+    .style('pointer-events', 'none')
+    : checktool;
+
     useEffect(() => {
 
         let nodes = filteredActivites.map((a, i)=> {
@@ -119,7 +83,6 @@ const BubbleVis = (props:any) => {
                 node.radius = circleScale(a.files.length);
                 return node;
             });
-        
         
         let svg = d3.select(svgRef.current);
 
@@ -198,12 +161,40 @@ const BubbleVis = (props:any) => {
             .attr('cy', (d:any)=> d.y)
             .attr('cx', (d:any)=> d.x)
 
+            
+
             circles.on('mouseover', (event, d)=> {
-                d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2)
+                d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
+
+                console.log('div', d);
+
+                let htmlForm = () => {
+                    let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
+                                    ${d.date} <br/></div>`
+
+                    d.files.forEach((f)=> {
+                        start = start + `<div><span style="font-weight:700; font-size:14px">${f.fileType}:  </span>${f.title}</div>`
+                    })
+
+                    return start;
+                }
+
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html(htmlForm)
+                    .style("left", (event.pageX) + "px")
+                    .style("top", (event.pageY - 28) + "px");
 
             }).on('mouseout', (event, d)=> {
-                d3.select(event.target).attr('r', (d.radius)).attr('stroke-width', 0)
+                d3.select(event.target).attr('r', (d.radius)).attr('stroke-width', 0);
+                div.transition()
+                .duration(500)
+                .style("opacity", 0);
+                
             })
+
+            
         }
 
     }, [filteredActivites])

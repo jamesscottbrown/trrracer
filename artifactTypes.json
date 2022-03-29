@@ -4,6 +4,12 @@
             "type": "memo"
         },
         {
+            "type": "notes"
+        },
+        {
+            "type": "reflection"
+        },
+        {
             "type": "meeting"
         },
         {
@@ -17,6 +23,9 @@
         },
         {
             "type":"view"
+        },
+        {
+            "type":"related work"
         }
     ]
 }
