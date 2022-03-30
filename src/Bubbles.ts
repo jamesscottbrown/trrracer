@@ -18,10 +18,9 @@ class Bubbles {
         }else{
           this.bubbles.attr('fill', 'gray').attr('fill-opacity', .25);
         }
-
     }
     
-    
+  
     
     
   }

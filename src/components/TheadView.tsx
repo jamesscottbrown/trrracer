@@ -343,11 +343,7 @@ const ThreadView = () => {
           }
           start = start + `<div>Rationale: ${t.rationale}<div>`
         })
-          // let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
-          //                 ${d.date} <br/></div>`
-          // d.files.forEach((f)=> {
-          //     start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
-          // })
+        
           start = start + `</div>`
           return start;
       }

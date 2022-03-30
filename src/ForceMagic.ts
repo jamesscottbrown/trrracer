@@ -9,9 +9,9 @@ class ForceMagic {
     nodes:any;
     simulation:any;
    
-    constructor(projectEntries: any, width:number, height:number) {
+    constructor(projectEntries: any, width:number, height:number, splitBool:Boolean) {
 
-        this.circleScale = d3.scaleLinear()
+        this.circleScale = splitBool? null : d3.scaleLinear()
                                 .domain(d3.extent(projectEntries.map((m:any)=> m.files.length)))
                                 .range([5, 20]);
 
@@ -31,7 +31,7 @@ class ForceMagic {
           node.title = a.title;
           node.urls = a.urls;
           node.year = a.year;
-          node.radius = this.circleScale(a.files.length);
+          node.radius = splitBool? 5 : this.circleScale(a.files.length);
           return node;
       });
 

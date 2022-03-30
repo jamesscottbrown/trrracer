@@ -20,7 +20,7 @@ import ThreadNav from './ThreadNav';
 
 const LeftSidebar = (props:any) => {
   const [{ projectData, researchThreads, artifactTypes }, dispatch] = useProjectState();
-  const {setGroupBy} = props;
+  const {setGroupBy, setSplitBubbs} = props;
    // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
@@ -71,6 +71,28 @@ const LeftSidebar = (props:any) => {
       h="calc(100vh - 250px)"
       overflow="auto" 
     >
+
+    <Box
+      marginLeft="3px"
+      marginTop="10px"
+      marginBottom="10px"
+      borderLeftColor="black"
+      borderLeftWidth="1px"
+      padding="3px"
+    >
+      <FormControl display='flex' alignItems='center' marginBottom={10}>
+        <FormLabel htmlFor='split-by' mb='0'>
+          Split bubbles to artifacts
+        </FormLabel>
+        <Switch id='split-by' 
+        onChange={(event)=> {
+          console.log(event.target)
+          event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
+        }}
+        />
+      </FormControl>
+    </Box>
+   
       <FormControl display='flex' alignItems='center' marginBottom={10}>
       <FormLabel htmlFor='split-by' mb='0'>
         Split by research threads
@@ -94,7 +116,7 @@ const LeftSidebar = (props:any) => {
         borderLeftColor="black"
         borderLeftWidth="1px"
         padding="3px"
-      >
+        >
 
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -103,26 +125,28 @@ const LeftSidebar = (props:any) => {
           <MenuList>
             <MenuItem>all</MenuItem>
             {sortedArtTypes.map((m: any, i: any) => (
-              <MenuItem
-                key={`type-${i}`}
-                data={m}
-                index={i}
-                onClick={() => {
-                  setFileTypeShown(m);
-                  if (m.title != 'all') {
-                    dispatch({
-                      type: 'UPDATE_FILTER_TYPES',
-                      filterType: m.title,
-                    });
-                  } else {
-                    dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
-                  }
-                }}
-              >{`${m.title} (${m.matches})`}</MenuItem>
-            ))}
-          </MenuList>
-        </Menu>
+                <MenuItem
+                  key={`type-${i}`}
+                  data={m}
+                  index={i}
+                  onClick={() => {
+                    setFileTypeShown(m);
+                    if (m.title != 'all') {
+                      dispatch({
+                        type: 'UPDATE_FILTER_TYPES',
+                        filterType: m.title,
+                      });
+                    } else {
+                      dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
+                    }
+                  }}
+                >{`${m.title} (${m.matches})`}</MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
       </Box>
+      <br />
+
       <span style={headerStyle}>{`${tags.length} Tags`}</span>
       <br />
       <Box

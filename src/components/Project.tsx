@@ -108,6 +108,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
   const [groupBy, setGroupBy] = useState(null);
+  const [splitBubbs, setSplitBubbs] = useState(false);
   
   // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
 
@@ -381,12 +382,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
           filteredActivityNames={null}
         />
         <Flex position="relative" top={220}>
-          <LeftSidebar setGroupBy={setGroupBy}/>
+          <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
           <BubbleVis 
-          filteredActivites={filteredActivites}
-          projectData={projectData}
-          groupBy={groupBy}
-          setHoverActivity={setHoverActivity}
+            filteredActivites={filteredActivites}
+            projectData={projectData}
+            groupBy={groupBy}
+            splitBubbs={splitBubbs}
+            setHoverActivity={setHoverActivity}
           />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
