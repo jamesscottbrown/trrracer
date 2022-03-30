@@ -15,6 +15,9 @@ import {
 import { useProjectState } from './ProjectContext';
 import { m } from 'framer-motion';
 
+import ForceMagic from '../ForceMagic';
+import Bubbles from '../Bubbles';
+
 interface BubbleProps {
     filteredActivites: any,
     projectData: any,
@@ -26,21 +29,10 @@ const BubbleVis = (props:BubbleProps) => {
 
     const {filteredActivites, projectData, groupBy, setHoverActivity} = props;
 
-    const dateRange = extent(projectData.entries.map((e) => new Date(e.date)));
-
     const width = 200;
     const height = 600;
 
     const svgRef = React.useRef(null);
-
-    const circleScale = d3.scaleLinear()
-    .domain(d3.extent(projectData.entries.map(m=> m.files.length)))
-    .range([5, 20])
-
-    //NEED TO MAKE THIS DYNAMIC
-    const yScale = scaleTime()
-      .range([0, (height - 70)])
-      .domain(dateRange);
 
     const checktool = d3.select('#tooltip');
 
@@ -61,45 +53,22 @@ const BubbleVis = (props:BubbleProps) => {
     .style('pointer-events', 'none')
     : checktool;
 
+    const forced = new ForceMagic(projectData.entries, width, height);
+
     useEffect(() => {
 
-        let nodesAll = projectData.entries.map((a, i)=> {
-                let node = {}
-                node.date = a.date;
-                node.description = a.description;
-                node.files = a.files;
-                node.index = a.index;
-                node.key_txt = a.key_txt;
-                node.month = a.month;
-                node.tags = a.tags;
-                node.title = a.title;
-                node.urls = a.urls;
-                node.year = a.year;
-                node.radius = circleScale(a.files.length);
-                return node;
-            });
-        
         let svg = d3.select(svgRef.current);
-
         svg.selectAll('*').remove();
 
         let wrap = svg.append('g').attr('transform', 'translate(0, 50)');
 
-        // create a force simulation and add forces to it
-        const simulation = d3.forceSimulation(nodesAll)
-            .force('x', d3.forceX().x(width / 2))
-            .force('y', d3.forceY().y(d => yScale(new Date(d.date))))
-            .force('collision', d3.forceCollide().radius(d => d.radius + 1))
-
-        for (var i = 0; i < 120; ++i) simulation.tick();
-        
-        let nodes = nodesAll.filter(f=> {
+        let nodes = forced.nodes.filter(f=> {
             return filteredActivites.map(m=> m.title).includes(f.title);
         })
 
         if(groupBy){
 
-            let groups = [{label:'all', color:'gray', highlighted:nodesAll, notHighlighted:[]}]
+            let groups = [{label:'all', color:'gray', highlighted:forced.nodes, notHighlighted:[]}]
             if(groupBy.type === 'research_threads'){
                 let tempgroups = groupBy.data.map(m=> {
                     let group = {label: m.title, color: m.color}
@@ -114,6 +83,11 @@ const BubbleVis = (props:BubbleProps) => {
 
                 groupGroups.attr('transform', (d, i) => `translate(${i * 200}, 0)`)
     
+                ;
+
+                let activityNotGroups = groupGroups.selectAll('g.activity_not')
+                .data(d => d.notHighlighted).join('g').attr('class', 'activity_not');
+
                 let activityHighlightGroups = groupGroups.selectAll('g.activity')
                 .data(d => {
                     let temp = d.highlighted.map(m => {
@@ -121,57 +95,34 @@ const BubbleVis = (props:BubbleProps) => {
                         return m;
                     })
                     return temp}).join('g').attr('class', 'activity');
-            
-                let circlesH = activityHighlightGroups.selectAll('circle').data(d => [d]).join('circle');
-            
-                circlesH
-                .attr('fill', d=> d.color)
-                .attr('r', (d:any)=> d.radius)
-                .attr('cy', (d:any)=> d.y)
-                .attr('cx', (d:any)=> d.x)
 
-                let activityNotGroups = groupGroups.selectAll('g.activity_not')
-                .data(d => d.notHighlighted).join('g').attr('class', 'activity_not');
-            
-                let circlesNH = activityNotGroups
-                .selectAll('circle')
-                .data(d => [d])
-                .join('circle');
-            
-                circlesNH
-                .attr('fill', 'gray')
-                .attr('fill-opacity', .3)
-                .attr('r', (d:any)=> d.radius)
-                .attr('cy', (d:any)=> d.y)
-                .attr('cx', (d:any)=> d.x)
+                let bubbleNotHighlighted = new Bubbles(activityNotGroups, false);
+                let bubbleHighlighted = new Bubbles(activityHighlightGroups, true);
+
+                
             }
             
         }else{
+            let notNodes = forced.nodes.filter(f => filteredActivites.map(m=> m.title).indexOf(f.title) === -1);
+
+            let selectedNodes = forced.nodes.filter(f=> filteredActivites.map(m=> m.title).includes(f.title)).map(m=> {
+                m.color = 'gray';
+                return m;
+            });
+
+
+            let activityNot = wrap.selectAll('g.activity_not')
+            .data(notNodes).join('g').attr('class', 'activity_not');
 
             let activityGroups = wrap.selectAll('g.activity')
-            .data(nodesAll).join('g').attr('class', 'activity');
+            .data(selectedNodes).join('g').attr('class', 'activity');
+
+            let bubbleNotHighlighted = new Bubbles(activityNot, false);
+
+            let bubbleHighlighted = new Bubbles(activityGroups, true);
         
-            let circles = activityGroups.selectAll('circle').data(d => [d]).join('circle');
-        
-            circles
-            .attr('r', (d:any)=> d.radius)
-            .attr('cy', (d:any)=> d.y)
-            .attr('cx', (d:any)=> d.x)
-
-
-            let notCirc = circles.filter(f=> {
-                return filteredActivites.map(m=> m.title).indexOf(f.title) === -1
-            });
-            notCirc.attr('fill', 'gray').attr('fill-opacity', 0.25);
-
-            let highCirc = circles.filter(f=> {
-                return filteredActivites.map(m=> m.title).includes(f.title)
-            });
-
-            highCirc.attr('fill', 'gray');
             
-
-            highCirc.on('mouseover', (event, d)=> {
+            bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
                 d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
 
                 setHoverActivity(d);
@@ -197,7 +148,7 @@ const BubbleVis = (props:BubbleProps) => {
                 div.transition()
                 .duration(500)
                 .style("opacity", 0);
-            })
+            });
 
             
         }
