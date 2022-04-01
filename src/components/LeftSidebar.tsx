@@ -75,9 +75,6 @@ const LeftSidebar = (props:any) => {
     <Box
       marginLeft="3px"
       marginTop="10px"
-      marginBottom="10px"
-      borderLeftColor="black"
-      borderLeftWidth="1px"
       padding="3px"
     >
       <FormControl display='flex' alignItems='center' marginBottom={10}>
@@ -95,7 +92,7 @@ const LeftSidebar = (props:any) => {
    
       <FormControl display='flex' alignItems='center' marginBottom={10}>
       <FormLabel htmlFor='split-by' mb='0'>
-        Split by research threads
+        Group by research threads
       </FormLabel>
       <Switch id='split-by' 
       onChange={(event)=> {

@@ -317,8 +317,8 @@ const ThreadView = () => {
     let activityGroups = wrap.selectAll('g.activity')
     .data(nodes).join('g').attr('class', 'activity');
 
-    let bubbleNotHighlighted = new Bubbles(activityNot, false);
-    let bubbleHighlighted = new Bubbles(activityGroups, true);
+    let bubbleNotHighlighted = new Bubbles(activityNot, false, false, null);
+    let bubbleHighlighted = new Bubbles(activityGroups, true, false, null);
 
     bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
       d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
@@ -330,7 +330,6 @@ const ThreadView = () => {
         console.log(test)
         let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>`
         test.forEach((t)=> {
-          console.log(t)
           let type = t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
           let artifactTitle = t.type === 'fragment' || t.type === 'artifact' ? `: ${t.artifactTitle}` : '';
           start = start + `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`

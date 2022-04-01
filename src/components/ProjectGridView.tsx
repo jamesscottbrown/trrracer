@@ -17,13 +17,12 @@ import { useProjectState } from './ProjectContext';
 import { EntryType, ProjectViewProps } from './types';
 import TagList from './TagList';
 
-import ConceptNav from './Concepts';
 import AttachmentPreview from './AttachmentPreview';
 
 const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
 
-  const [{ filterTags, searchConcept }] = useProjectState();
+  const [{ filterTags }] = useProjectState();
   const [numColumns, setNumColumns] = useState<number>(4);
 
   const [showTags, setShowTags] = useState(false);

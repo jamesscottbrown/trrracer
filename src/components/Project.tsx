@@ -15,6 +15,8 @@ import { EntryType } from './types';
 import ActivitytoThread from './ActivityToThread';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
+import PaperView from './PaperView';
+import ForceMagic from '../ForceMagic';
 
 const StupidTooltip = (props:any) => {
   
@@ -356,7 +358,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       />
     );
   }
-
   if(viewType === 'overview'){
     return (
       <div
@@ -405,6 +406,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
         </Flex>
       </div>
     );
+  }
+  if(viewType === 'explore paper'){
+    return(
+    <div
+    style={{
+      height: '100vh',
+      position: 'fixed',
+      top: 0,
+      bottom: 0,
+      width: '100%',
+    }}
+  >
+    <TopBar
+      folderPath={folderPath}
+      viewType={viewType}
+      setViewType={setViewType}
+      reversedOrder={reversedOrder}
+      setReversedOrder={setReversedOrder}
+      newTitle={newTitle}
+      setNewTitle={setNewTitle}
+      timeFilter={timeFilter}
+      setTimeFilter={setTimeFilter}
+      filteredActivityNames={null}
+    />
+    <PaperView folderPath={folderPath}/> 
+  </div>
+    ) 
   }
 };
 

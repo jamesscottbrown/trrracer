@@ -180,6 +180,5 @@ export {
   ResearchThread,
   ResearchThreadEvidence,
   ReactTagType,
-  ConceptType,
-  EdgeType,
+ 
 };

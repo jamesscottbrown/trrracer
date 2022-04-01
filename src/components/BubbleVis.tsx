@@ -29,6 +29,7 @@ interface BubbleProps {
 const BubbleVis = (props:BubbleProps) => {
 
     const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity} = props;
+    const [{artifactTypes}] = useProjectState();
 
     const width = 200;
     const height = 600;
@@ -76,7 +77,12 @@ const BubbleVis = (props:BubbleProps) => {
         let wrap = svg.append('g').attr('transform', 'translate(0, 50)');
 
         let nodes = forced.nodes.filter(f=> {
-            return filteredActivites.map(m=> m.title).includes(f.title);
+            if(splitBubbs){
+                return filteredActivites.map(m=> m.title).includes(f.activityTitle);
+            }else{
+                return filteredActivites.map(m=> m.title).includes(f.title);
+            }
+            // return filteredActivites.map(m=> m.title).includes(f.title);
         })
 
         if(groupBy){
@@ -113,8 +119,8 @@ const BubbleVis = (props:BubbleProps) => {
                     })
                     return temp}).join('g').attr('class', 'activity');
 
-                let bubbleNotHighlighted = new Bubbles(activityNotGroups, false);
-                let bubbleHighlighted = new Bubbles(activityHighlightGroups, true);
+                let bubbleNotHighlighted = new Bubbles(activityNotGroups, false, splitBubbs, artifactTypes);
+                let bubbleHighlighted = new Bubbles(activityHighlightGroups, true, splitBubbs, artifactTypes);
 
                 bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
                     d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
@@ -166,10 +172,34 @@ const BubbleVis = (props:BubbleProps) => {
             }
             
         }else{
-            let notNodes = forced.nodes.filter(f => filteredActivites.map(m=> m.title).indexOf(f.title) === -1);
+            let notNodes = forced.nodes.filter(f => {
+                if(splitBubbs){
+                    return filteredActivites.map(m=> m.title).indexOf(f.activityTitle) === -1
+                }else{
+                    return filteredActivites.map(m=> m.title).indexOf(f.title) === -1
+                }
+                });
 
-            let selectedNodes = forced.nodes.filter(f=> filteredActivites.map(m=> m.title).includes(f.title)).map(m=> {
-                m.color = 'gray';
+            let selectedNodes = forced.nodes.filter(f=> {
+                if(splitBubbs){
+                    return filteredActivites.map(m=> m.title).includes(f.activityTitle)
+                }else{
+                    return filteredActivites.map(m=> m.title).includes(f.title)
+                }
+                
+            }).map(m=> {
+                if(splitBubbs){
+                    
+                    let temp = artifactTypes.artifact_types.filter(f => f.type === m.artifactType);
+                    if(temp.length > 0){
+                        m.color = temp[0].color
+                    }else{
+                        m.color = 'black';
+                    }
+                }else{
+                    m.color = 'gray';
+                }
+                
                 return m;
             });
 
@@ -179,8 +209,8 @@ const BubbleVis = (props:BubbleProps) => {
             let activityGroups = wrap.selectAll('g.activity')
             .data(selectedNodes).join('g').attr('class', 'activity');
 
-            let bubbleNotHighlighted = new Bubbles(activityNot, false);
-            let bubbleHighlighted = new Bubbles(activityGroups, true);
+            let bubbleNotHighlighted = new Bubbles(activityNot, false, splitBubbs, artifactTypes);
+            let bubbleHighlighted = new Bubbles(activityGroups, true, splitBubbs, artifactTypes);
         
             
             bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
@@ -191,9 +221,14 @@ const BubbleVis = (props:BubbleProps) => {
                 let htmlForm = () => {
                     let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
                                     ${d.date} <br/></div>`
-                    d.files.forEach((f)=> {
-                        start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
-                    })
+                    if(!splitBubbs){
+                        d.files.forEach((f)=> {
+                            start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
+                        });
+                    }else{
+                        console.log('dis a file', d)
+                    }
+                    
                     return start;
                 }
 

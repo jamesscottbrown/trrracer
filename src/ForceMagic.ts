@@ -23,12 +23,14 @@ class ForceMagic {
           let node = {}
           node.date = a.date;
           node.description = a.description;
-          node.files = a.files;
+          node.files = splitBool ? null : a.files;
           node.index = a.index;
           node.key_txt = a.key_txt;
           node.month = a.month;
           node.tags = a.tags;
           node.title = a.title;
+          node.activityTitle = splitBool ? a.activityTitle : null;
+          node.artifactType = splitBool ? a.artifactType : null;
           node.urls = a.urls;
           node.year = a.year;
           node.radius = splitBool? 5 : this.circleScale(a.files.length);
