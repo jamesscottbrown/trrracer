@@ -17,6 +17,7 @@ import { m } from 'framer-motion';
 
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
+import VerticalAxis from './VerticalAxis';
 
 interface BubbleProps {
     filteredActivites: any,
@@ -31,8 +32,11 @@ const BubbleVis = (props:BubbleProps) => {
     const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity} = props;
     const [{artifactTypes}] = useProjectState();
 
+    const [newHeight, setNewHeight] = useState('100%');
+
     const width = 200;
-    const height = 600;
+    const height = +newHeight.split('px')[0];
+    const margin = width * 0.25;
 
     const svgRef = React.useRef(null);
 
@@ -70,6 +74,10 @@ const BubbleVis = (props:BubbleProps) => {
     const forced = new ForceMagic(bubbleData, width, height, splitBubbs);
 
     useEffect(() => {
+
+        if (svgRef.current) {
+            setNewHeight(window.getComputedStyle(svgRef.current).height);
+        }
 
         let svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
@@ -254,7 +262,8 @@ const BubbleVis = (props:BubbleProps) => {
     
     return (
         <div style={{flex:"3"}}>
-            <svg ref={svgRef} width={'100%'} height={'100%'}/>
+            <VerticalAxis />
+            <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/>
         </div>
     )
 }

@@ -80,7 +80,7 @@ const ThreadNav = (threadProps: any) => {
 
   return (
     <Box>
-      {viewType === 'activity view' && (
+      {(viewType === 'activity view' || viewType === 'overview') && (
         <div
           style={headerStyle}
           onClick={() => {
@@ -104,7 +104,8 @@ const ThreadNav = (threadProps: any) => {
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
                   opacity:
-                    viewType === 'research threads' && i != selectedThread
+                    //viewType === 'research threads' && i != selectedThread
+                    i != selectedThread
                       ? 0.5
                       : 1,
                 }}

@@ -111,7 +111,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           bg={useColorModeValue('white', 'gray.800')}
           color={useColorModeValue('gray.600', 'white')}
         >
-          {(viewType === 'activity view' || viewType === 'timeline') && (
+          {(viewType === 'activity view' || viewType === 'timeline' || viewType === 'overview') && (
             <>
               {/* <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
@@ -185,7 +185,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 padding: 5,
               }}
             >
-              <span>{`${filterRT.title}`}</span>
+              <span>{`Research Thread: ${filterRT.title}`}</span>
               <span
                 onClick={() => {
                   dispatch({
@@ -193,7 +193,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                     filterRT: null
                   });
                 }}
-                style={{ padding: 5, cursor: 'pointer' }}
+                style={{ padding: 5, cursor: 'pointer', fontWeight:700 }}
               >
                 x
               </span>
