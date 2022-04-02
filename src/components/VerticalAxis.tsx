@@ -50,7 +50,7 @@ const VerticalAxis = (projectProps: any) => {
   const [newHeight, setNewHeight] = useState('100%');
 
   const width = 90;
-  const height = +newHeight.split('px')[0];
+  const height = (+newHeight.split('px')[0]);
   const margin = width * 0.25;
 
   const yearMonth = dataStructureForTimeline(activity);

@@ -1,7 +1,7 @@
 import path from 'path';
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup, Divider } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Button, ButtonGroup, Divider,  } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 
 import { useProjectState } from './ProjectContext';
 
@@ -12,7 +12,6 @@ import ReadonlyEntry from './ReadonlyEntry';
 import ActivityWrap from './ActivityWrap';
 
 const { ipcRenderer } = require('electron');
-
 
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
@@ -53,6 +52,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
    
   }, [selectedEntryIndex]);
 
+  const addEntry = () => {
+    dispatch({ type: 'ADD_ENTRY' });
+  };
+
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
   };
@@ -69,15 +72,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      <div
-        style={{
-          position: 'fixed',
-          top: '170px',
-          fontSize: 24,
-          fontWeight: 700,
-          textAlign: 'center',
-        }}
-      >{`${filteredActivites.length} Activities Shown`}</div>
 
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (

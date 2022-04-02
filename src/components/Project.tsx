@@ -382,7 +382,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setTimeFilter={setTimeFilter}
           filteredActivityNames={null}
         />
-        <Flex position="relative" top={220}>
+        <Flex position="relative" top={130}>
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
           <BubbleVis 
             filteredActivites={filteredActivites}
@@ -391,7 +391,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
           />
-          <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+          <Box flex="1.5" h="calc(100vh - 130px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
               filteredActivites={filteredActivites}

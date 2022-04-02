@@ -34,6 +34,7 @@ interface TopbarProps{
   newTitle: string;
   setNewTitle: any;
   filteredActivityNames: any;
+  filteredActivites:any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -52,7 +53,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setTimeFilter,
     newTitle,
     setNewTitle,
-    filteredActivityNames
+    filteredActivityNames,
+    filteredActivites
   } = ProjectPropValues;
 
   console.log('viewType', viewType)
@@ -72,7 +74,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       right={0}
       flexFlow="row wrap"
       zIndex={1000}
-      height={200}
+      height={'100px'}
+      backgrounColor={'yellow'}
     >
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
@@ -103,28 +106,18 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
       </Flex>
-      <Flex h="150px">
+      <Flex style={{height:70}}>
         <Box
-          backgroundColor="red.100"
+          style={{height:60, padding:'3px'}}
           flex={1.1}
-          p={10}
           bg={useColorModeValue('white', 'gray.800')}
           color={useColorModeValue('gray.600', 'white')}
         >
           {(viewType === 'activity view' || viewType === 'timeline' || viewType === 'overview') && (
             <>
-              {/* <Button onClick={() => console.log('BUTTON PUSH')}>
+              <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
-              </Button> */}
-              <Box>
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel htmlFor="filter-artifacts" mb="2">
-                    {`    Hide filtered artifacts.`}
-                  </FormLabel>
-                  <Switch id="filter-artifacts" />
-                </FormControl>
-              </Box>
-
+              </Button>
               <Box>
                 <FormControl display="flex" alignItems="center">
                   <FormLabel>{`Old ---> New`}</FormLabel>
@@ -138,14 +131,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           )}
         </Box>
         <Flex flex={4} flexDirection="column">
-          <TopTimeline
-            defineEvent={defineEvent}
-            timeFilter={timeFilter}
-            setTimeFilter={setTimeFilter}
-            viewType={viewType}
-            filteredActivityNames={filteredActivityNames}
-          />
-          <Box style={{ width: '100%', display: 'block' }}>
+          <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
             {filterTags.length > 0 &&
               filterTags.map((t, i) => (
                 <div
@@ -203,24 +189,25 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           </Box>
         </Flex>
         {(viewType === 'activity view' || viewType === 'timeline' || viewType === 'overview') && (
-          <Box flex="1.8" maxWidth="25%">
-            <Flex flexFlow="row wrap" p={5}>
-              <Button alignSelf="center" onClick={addEntry} type="button">
-                <FaPlus /> Add activity
-              </Button>
-
-              <FileUpload
-                saveFiles={saveFiles}
-                containerStyle={{}}
-                msg={
-                  <span style={{ fontSize: '11px' }}>
-                    Drag and drop some files here, or{' '}
-                    <b>click to select files</b>, create a new entry.
-                  </span>
-                }
-              />
-            </Flex>
-          </Box>
+         
+         <div
+         style={{
+           position: 'fixed',
+           top: '70px',
+           right: '10px',
+           fontSize: 24,
+           fontWeight: 700,
+           textAlign: 'end',
+            }}
+          >{`${filteredActivites.length} Activities Shown  `}
+            <Button marginLeft={'3px'} alignSelf="end" 
+            onClick={addEntry} 
+            type="button">
+              <FaPlus /> Add activity
+            </Button>
+          </div>
+         
+     
         )}
       </Flex>
     </Box>

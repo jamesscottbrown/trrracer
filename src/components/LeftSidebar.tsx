@@ -68,7 +68,7 @@ const LeftSidebar = (props:any) => {
       p={5}
       flex={1}
       flexDirection="column"
-      h="calc(100vh - 250px)"
+      h="calc(100vh - 130px)"
       overflow="auto" 
     >
 
