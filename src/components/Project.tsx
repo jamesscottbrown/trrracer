@@ -98,7 +98,7 @@ interface ProjectProps {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
-  const [{ projectData, filterTags, filterType, filterDates, filterRT, goBackView, researchThreads, artifactTypes }] = useProjectState();
+  const [{ projectData, filterTags, filterType, filterDates, filterQuery, filterRT, goBackView, researchThreads, artifactTypes }] = useProjectState();
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -168,7 +168,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         (Number(new Date(a.date)) - Number(new Date(b.date)))
     );
 
-      setFilteredActivites(timeFiltered);
+    let queryFiltered = 
+        filterQuery != null ? 
+          timeFiltered.filter((f)=> filterQuery.includes(f.title)) : timeFiltered;
+
+      setFilteredActivites(queryFiltered);
     }, [projectData.entries, filterTags, filterType, timeFilter, filterRT]); 
 
   if (viewType === 'activity view') {
@@ -309,6 +313,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }}
     >
       <TopBar
+        viewType={viewType}
         folderPath={folderPath}
         filteredActivites={filteredActivites}
         setViewType={setViewType}
@@ -320,33 +325,73 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setTimeFilter={setTimeFilter}
         filteredActivityNames={null}
       />
-      <Flex position="relative" top={220}>
-        <LeftSidebar />
-        <Box
-          flex="3"
-          h="calc(100vh - 250px)" 
-          overflowY="auto"
-        >
+      <Flex position="relative" top={130}>
+        <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
+        <BubbleVis 
+          filteredActivites={filteredActivites}
+          projectData={projectData}
+          groupBy={groupBy}
+          splitBubbs={splitBubbs}
+          setHoverActivity={setHoverActivity}
+          flexAmount={2}
+        />
+        <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
           <QueryView 
             setViewType={setViewType} 
             filteredActivites={filteredActivites}
             projectData={projectData} 
-            />
-        </Box>
-        <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
-          <ProjectListView
-            projectData={projectData}
-            filteredActivites={filteredActivites}
-            setViewType={setViewType}
-            timeFilter={timeFilter}
-            setTimeFilter={setTimeFilter}
-            hoverActivity={hoverActivity}
-            setPosX={setPosX}
-            setPoY={setPosY}
-          />
+           />
         </Box>
       </Flex>
     </div>
+    //   <div
+    //   style={{
+    //     height: '100vh',
+    //     position: 'fixed',
+    //     top: 0,
+    //     bottom: 0,
+    //     width: '100%',
+    //   }}
+    // >
+    //   <TopBar
+    //     folderPath={folderPath}
+    //     filteredActivites={filteredActivites}
+    //     setViewType={setViewType}
+    //     reversedOrder={reversedOrder}
+    //     setReversedOrder={setReversedOrder}
+    //     newTitle={newTitle}
+    //     setNewTitle={setNewTitle}
+    //     timeFilter={timeFilter}
+    //     setTimeFilter={setTimeFilter}
+    //     filteredActivityNames={null}
+    //   />
+    //   <Flex position="relative" top={220}>
+    //     <LeftSidebar />
+    //     <Box
+    //       flex="3"
+    //       h="calc(100vh - 250px)" 
+    //       overflowY="auto"
+    //     >
+    //       <QueryView 
+    //         setViewType={setViewType} 
+    //         filteredActivites={filteredActivites}
+    //         projectData={projectData} 
+    //         />
+    //     </Box>
+    //     <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
+    //       <ProjectListView
+    //         projectData={projectData}
+    //         filteredActivites={filteredActivites}
+    //         setViewType={setViewType}
+    //         timeFilter={timeFilter}
+    //         setTimeFilter={setTimeFilter}
+    //         hoverActivity={hoverActivity}
+    //         setPosX={setPosX}
+    //         setPoY={setPosY}
+    //       />
+    //     </Box>
+    //   </Flex>
+    // </div>
     )
   }
   if (viewType === 'detail view') {
@@ -390,6 +435,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             groupBy={groupBy}
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
+            flexAmount={2}
           />
           <Box flex="1.5" h="calc(100vh - 130px)" overflowY="auto">
             <ProjectListView

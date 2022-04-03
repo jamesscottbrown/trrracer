@@ -402,7 +402,7 @@ const appStateReducer = (state, action) => {
 
     case 'UPDATE_GO_BACK':{
 
-      return { ...state, goBackView: action.goBackView };
+      return { ...state, goBackView: action.goBackView, filterQuery: action.filterQuery };
     }
     
     case 'ADD_TAG_TO_THREAD': {
@@ -761,6 +761,10 @@ const appStateReducer = (state, action) => {
     case 'UPDATE_FILTER_TYPES': {
       
       return { ...state, filterType: action.filterType };
+    }
+
+    case 'UPDATE_FILTER_QUERY': {
+      return { ...state, filterQuery: action.filterQuery };
     }
 
     case 'UPDATE_FILTER_DATES': {

@@ -26,12 +26,13 @@ interface BubbleProps {
     projectData: any,
     groupBy: any,
     splitBubbs: Boolean;
-    setHoverActivity: (ent:any)=> void
+    setHoverActivity: (ent:any)=> void;
+    flexAmount:number;
 }
 
 const BubbleVis = (props:BubbleProps) => {
 
-    const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity} = props;
+    const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity, flexAmount} = props;
     const [{artifactTypes, selectedThread, researchThreads, folderPath}] = useProjectState();
 
     const [newHeight, setNewHeight] = useState('100%');
@@ -291,7 +292,7 @@ const BubbleVis = (props:BubbleProps) => {
 
     
     return (
-        <div style={{flex:"3"}}>
+        <div style={{flex:flexAmount}}>
             <VerticalAxis />
             <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/>
         </div>

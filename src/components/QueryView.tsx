@@ -24,9 +24,9 @@ interface QueryViewProps{
 
 const HoverTitle = (props:any) => {
 
-    const {title, entry, match, setViewType} = props;
+    const {title, entry, match, setViewType, matches} = props;
 
-    console.log('match',match)
+    // console.log('match',match)
 
     const fileIndex = match.fileType === 'gdoc' ? entry.files.map(m=> m.title).indexOf(match.title) : match['file-index'];
 
@@ -59,7 +59,8 @@ const HoverTitle = (props:any) => {
                           });
                           dispatch({
                               type:'UPDATE_GO_BACK',
-                              goBackView: 'query'
+                              goBackView: 'query',
+                              filterQuery: matches.map(m=> m.entry.title)
                           })
                         }}
                       >
@@ -144,24 +145,32 @@ const QueryView = (props: any) => {
         }        
     });
 
-   
+
+    console.log('matches', matches, matches.map(m=> m.entry.title))
+
+
+    // dispatch({
+    //     type:'UPDATE_FILTER_QUERY',
+    //     filterQuery: matches.map(m=> m.entry.title)
+    // })
 
     return (
 
         <div>
             <div
-            style={{padding:5, float:'right'}}
+            style={{padding:5, position:'absolute', top:'-20px', right:'10px', zIndex:'1000', cursor:'pointer'}}
             onClick={()=> {
-                setViewType('timeline')
+                setViewType('overview')
                 dispatch({
                     type:'UPDATE_GO_BACK',
-                    goBackView: 'timeline'
+                    goBackView: 'overview',
+                    filterQuery: null
                 })
             }}
             >
             <MdCancel size={30}/>
             </div>
-            <div style={{padding:5}}>
+            <div style={{padding:5, overflowY:'auto'}}>
                 {
                 matches.map((m:any, i:number)=> (
                     <div key={`match-${i}`}>
@@ -175,7 +184,7 @@ const QueryView = (props: any) => {
                                     <div
                                     style={{marginTop:10}} 
                                     key={`tm-${j}`}>
-                                        <HoverTitle title={tm['file-title']} entry={m.entry} match={tm} setViewType={setViewType} />
+                                        <HoverTitle title={tm['file-title']} entry={m.entry} match={tm} setViewType={setViewType} matches={matches} />
                                        
                                         <div>
                                             {
