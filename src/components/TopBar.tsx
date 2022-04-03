@@ -42,7 +42,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
-  console.log('this is reloading', projectData, filterTags, filterRT);
+  // console.log('this is reloading', projectData, filterTags, filterRT);
 
   const {
     viewType,
@@ -152,6 +152,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                         type: 'UPDATE_FILTER_TAGS',
                         filterTags: filterTags.filter((f) => f != t),
                       });
+                     
+
                     }}
                     style={{ padding: 5, cursor: 'pointer' }}
                   >

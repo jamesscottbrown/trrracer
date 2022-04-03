@@ -82,10 +82,10 @@ const LeftSidebar = (props:any) => {
           Split bubbles to artifacts
         </FormLabel>
         <Switch id='split-by' 
-        onChange={(event)=> {
-          console.log(event.target)
-          event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
-        }}
+          onChange={(event)=> {
+            console.log(event.target)
+            event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
+          }}
         />
       </FormControl>
     </Box>

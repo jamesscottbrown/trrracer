@@ -60,6 +60,19 @@ const ThreadNav = (threadProps: any) => {
   const [{ projectData, selectedArtifactIndex, selectedThread }, dispatch] =
     useProjectState();
 
+  const checkIfSelectThread = (i:any)=> {
+    console.log(selectedThread)
+    if(selectedThread != null){
+      if(i != selectedThread){
+        return 0.5
+      }else{
+        return 1;
+      }
+    }else{
+      return 1
+    }
+  }
+
   const [showThreads, setShowThreads] = useState(false);
   const [showCreateThread, setShowCreateThread] = useState(false);
 
@@ -103,11 +116,8 @@ const ThreadNav = (threadProps: any) => {
                 style={{
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
-                  opacity:
-                    //viewType === 'research threads' && i != selectedThread
-                    i != selectedThread
-                      ? 0.5
-                      : 1,
+                  opacity: checkIfSelectThread(i)
+                   
                 }}
                 onMouseEnter={() => {
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });

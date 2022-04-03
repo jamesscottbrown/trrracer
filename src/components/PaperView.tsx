@@ -29,6 +29,8 @@ const PaperView = (props:any) => {
 
     const [paragraphData, setParagraphData] = useState([]);
 
+    let index = selectedThread ? selectedThread : 0;
+
     const headerStyle = { fontSize: '30px', fontWeight: 700, marginBottom:20 };
     const width = 200;
     const height = 900;
@@ -62,12 +64,13 @@ const PaperView = (props:any) => {
       svg.selectAll('*').remove();
   
       let wrap = svg.append('g').attr('transform', 'translate(0, 20)');
-  
-      let nodes = forced.nodes.filter(f => researchThreads.research_threads[selectedThread].evidence.map(m=> m.activityTitle).includes(f.title)).map(m => {
-        m.color = researchThreads.research_threads[selectedThread].color;
+    
+      //researchThreads.research_threads[selectedThread]
+      let nodes = forced.nodes.filter(f => researchThreads.research_threads[index].evidence.map(m=> m.activityTitle).includes(f.title)).map(m => {
+        m.color = researchThreads.research_threads[index].color;
         return m;
       })
-      let notNodes = forced.nodes.filter(f => researchThreads.research_threads[selectedThread].evidence.map(m=> m.activityTitle).indexOf(f.title) === -1)
+      let notNodes = forced.nodes.filter(f => researchThreads.research_threads[index].evidence.map(m=> m.activityTitle).indexOf(f.title) === -1)
   
       let activityNot = wrap.selectAll('g.activity_not')
       .data(notNodes).join('g').attr('class', 'activity_not');
@@ -84,7 +87,7 @@ const PaperView = (props:any) => {
         // setHoverActivity(d);
   
         let htmlForm = () => {
-          let test = researchThreads.research_threads[selectedThread].evidence.filter(f => f.activityTitle === d.title)
+          let test = researchThreads.research_threads[index].evidence.filter(f => f.activityTitle === d.title)
         
           let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>`
           test.forEach((t)=> {
@@ -132,9 +135,12 @@ const PaperView = (props:any) => {
         let group = d3.select(svgRef.current).append('g');
 
         group.attr('transform', 'translate(240, 10)')
-        let rect = group.selectAll('rect.text').data(paragraphData).join('rect').classed('text', true);
-        console.log(rect)
-        rect.attr('width', 100).attr('height', 10)
+        let rect = group.selectAll('rect.text').data([{},{},{},{},{},{},{},{},{},{}]).join('rect').classed('text', true);
+        
+        rect.attr('width', 50).attr('height', 70)
+        rect.attr('y', (d, i)=> (i * 75))
+        rect.attr('fill', 'gray')
+        rect.attr('fill-opacity', 0.5)
 
     }, [iframeRef.current])
 
@@ -150,15 +156,7 @@ const PaperView = (props:any) => {
     })
 
     // const onIframeRef = (node)=> {
-    //     if (!node) {
-    //       return;
-    //     }
-    //     node.contentWindow.addEventListener("load", () => {
-    //       console.log(node.contentWindow.document.getElementById("some").value);
-    //     });
-    
-    //     this.Iframe = node;
-    //   };
+
 
     return (
         <Flex position="relative" top={220}>
@@ -177,7 +175,7 @@ const PaperView = (props:any) => {
           </Box>
           <Box flex={3} h="calc(100vh - 250px)" overflowY="auto" marginTop={15}>
     
-            <svg style={{backgroundColor:'blue', display:'inline'}} ref={svgRef} width={400} height={'100%'}/>
+            <svg style={{display:'inline'}} ref={svgRef} width={400} height={'100%'}/>
 
             <iframe style={{display:'inline', width:650, height:'100%'}} src={perf} id={'test'} ref={iframeRef}></iframe>
          <div dangerouslySetInnerHTML={{ __html: fileContents }} id={'divtext'}></div>

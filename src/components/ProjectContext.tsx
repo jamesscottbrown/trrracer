@@ -380,7 +380,7 @@ const appStateReducer = (state, action) => {
         googleData: google_data,
         txtData: txtData,
         researchThreads: research_threads,
-        selectedThread: 0,
+        selectedThread: null,
         filterTags: [],
         filterType: null,
         filterDates: [null, null],
@@ -752,7 +752,10 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TAGS': {
-      return { ...state, filterTags: action.filterTags };
+      console.log('ACTIONNNNN!!!',action, action != null)
+      let rT = action != null ? selectedThread : null;
+      console.log('SeleCTED',selectedThread)
+      return { ...state, filterTags: action.filterTags, selectedThread: rT };
     }
 
     case 'UPDATE_FILTER_TYPES': {

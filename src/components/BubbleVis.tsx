@@ -15,9 +15,11 @@ import {
 import { useProjectState } from './ProjectContext';
 import { m } from 'framer-motion';
 
+
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
+import { Image } from '@chakra-ui/react';
 
 interface BubbleProps {
     filteredActivites: any,
@@ -30,7 +32,7 @@ interface BubbleProps {
 const BubbleVis = (props:BubbleProps) => {
 
     const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity} = props;
-    const [{artifactTypes}] = useProjectState();
+    const [{artifactTypes, selectedThread, researchThreads, folderPath}] = useProjectState();
 
     const [newHeight, setNewHeight] = useState('100%');
 
@@ -68,8 +70,6 @@ const BubbleVis = (props:BubbleProps) => {
         })
         return files;
     }) : projectData.entries;
-
-    console.log('bubbleData', bubbleData);
 
     const forced = new ForceMagic(bubbleData, width, height, splitBubbs);
 
@@ -230,9 +230,39 @@ const BubbleVis = (props:BubbleProps) => {
                     let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
                                     ${d.date} <br/></div>`
                     if(!splitBubbs){
-                        d.files.forEach((f)=> {
-                            start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
-                        });
+                        console.log('ST',selectedThread)
+                        if(selectedThread != null){
+                           
+                           let test = researchThreads.research_threads[selectedThread].evidence.filter(f => f.activityTitle === d.title)
+                           console.log(test)
+                          
+                           test.forEach((t)=> {
+                             let type = t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
+                             let artifactTitle = t.type === 'fragment' || t.type === 'artifact' ? `: ${t.artifactTitle}` : '';
+                             start = start + `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`
+                             if(t.type === 'fragment'){
+                               t.anchors.map(an => {
+                                 if(an.anchor_type === 'text'){
+                                   start = start + `<div style="margin-bottom:10px">${an.frag_type}</div>`
+                                 }
+                               })
+                             }
+                             start = start + `<div>Rationale: ${t.rationale}<div>`
+                             console.log('t',`file://${path.join(folderPath, t.artifactTitle)}`)
+                             if(t.artifactTitle.includes('.png')){
+                                 start = start + `<img src="${path.join(folderPath, t.artifactTitle)}" style="width:500px; height:auto"
+                               />`
+                             }
+                           })
+                           
+                             start = start + `</div>`
+                             return start;
+                        }else{
+                            d.files.forEach((f)=> {
+                                start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
+                            });
+                        }
+                        
                     }else{
                         console.log('dis a file', d)
                     }
