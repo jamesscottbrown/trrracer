@@ -144,7 +144,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     let rtFiltered = typeFiltered.filter((entryData:any)=> {
       if(filterRT){
-        return filterRT.key.includes(entryData.title);
+        return filterRT.key.includes(entryData.title) || filterRT.associatedKey.includes(entryData.title);
       }else{
         return typeFiltered;
       }
