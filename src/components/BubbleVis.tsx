@@ -35,7 +35,7 @@ const BubbleVis = (props:BubbleProps) => {
     const {filteredActivities, projectData, groupBy, splitBubbs, setHoverActivity, flexAmount} = props;
     const [{artifactTypes, selectedThread, researchThreads, folderPath}] = useProjectState();
 
-    const [newHeight, setNewHeight] = useState('100%');
+    const [newHeight, setNewHeight] = useState('1000px');
 
     const width = 200;
     const height = +newHeight.split('px')[0];
@@ -293,7 +293,7 @@ const BubbleVis = (props:BubbleProps) => {
     
     return (
         <div style={{flex:flexAmount}}>
-            <VerticalAxis filteredActivities={filteredActivities}/>
+            <VerticalAxis filteredActivities={filteredActivities} height={height}/>
             <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/>
         </div>
     )
