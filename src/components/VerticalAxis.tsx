@@ -74,8 +74,6 @@ const VerticalAxis = (projectProps: any) => {
       .domain(d3.extent(allActivities.map((m) => new Date(m.date))))
       .range([0, height - margin])
       .nice();
-
-    console.log('RANGE??',yScale.range())
   
     const filteredActivitiesExtent = d3.extent(filteredActivities.map(m => new Date(m.date)));
 
@@ -119,17 +117,6 @@ const VerticalAxis = (projectProps: any) => {
 
     if (!defineEvent) {
 
-      // const filteredDomain = function (scale: any, min: any, max: any) {
-      //   const dif = scale(d3.min(scale.domain())) - scale.range()[0];
-
-      //   let iMin = min - dif < 0 ? 0 : Math.round(min - dif);
-      //   const iMax = Math.round(max - dif);
-
-      //   if (iMax == iMin) --iMin; // It happens with empty selections.
-
-      //   return scale.domain().slice(iMin, iMax);
-      // };
-
         const triangle = d3.symbol().size(100).type(d3.symbolTriangle);
 
         const brushed = function (event, d) {
@@ -137,13 +124,13 @@ const VerticalAxis = (projectProps: any) => {
           const s0 = event.selection
             ? event.selection
             : [1, 2].fill(event.sourceEvent.offsetX);
-          // const d0 = filteredDomain(yScale, s0[0], s0[1]);
+         
           let s1 = s0;
 
           if (event.sourceEvent && event.type === 'end') {
             s1 = event.selection;
             d3.select(this).transition().call(event.target.move, s1);
-            console.log(yScale.invert(event.selection[0]), yScale.invert(event.selection[1]))
+            
             dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [yScale.invert(event.selection[0]), yScale.invert(event.selection[1])] });
           }
 
@@ -152,16 +139,13 @@ const VerticalAxis = (projectProps: any) => {
             const y = d == 'handle--o' ? s1[0] : s1[1];
             return `translate(0, ${y})`;
           });
-          // console.log('D0?', d0);
+          
           // update labels
           d3.selectAll('g.handles')
             .selectAll('text')
-            // .attr('dy', d0.length > 1 ? 0 : 6)
             .attr('dy', 6)
             .text((d, i) => {
-              let year;
-              // if (d0.length > 1) {
-                year =
+              let year =
                   d == 'handle--o'
                     ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
                         weekday: 'long',
@@ -175,17 +159,7 @@ const VerticalAxis = (projectProps: any) => {
                         month: 'short',
                         day: 'numeric',
                       });
-              // } else {
-              //   year =
-              //     d == 'handle--o'
-              //       ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-              //           weekday: 'long',
-              //           year: 'numeric',
-              //           month: 'short',
-              //           day: 'numeric',
-              //         })
-              //       : '';
-              // }
+         
               return year;
             });
 
@@ -206,9 +180,7 @@ const VerticalAxis = (projectProps: any) => {
           .call(bY.move, [yScale(filteredActivitiesExtent[0]), yScale(filteredActivitiesExtent[1])]);
 
         
-        // gBrush.attr('transform', 'translate(-5,0)')
-
-          gBrush.select('.overlay').attr('opacity', 0.25);
+        gBrush.select('.overlay').attr('opacity', 0.25);
 
         // Custom handlers
         // Handle group
@@ -277,7 +249,7 @@ const VerticalAxis = (projectProps: any) => {
           .attr('y2', 0)
           .attr('stroke', 'black');
 
-          console.log('HEIGHTTTT!',height)
+          
       }
   }, [height, filteredActivities]);
 

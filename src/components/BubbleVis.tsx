@@ -231,11 +231,10 @@ const BubbleVis = (props:BubbleProps) => {
                     let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
                                     ${d.date} <br/></div>`
                     if(!splitBubbs){
-                        console.log('ST',selectedThread)
+                      
                         if(selectedThread != null){
                            
                            let test = researchThreads.research_threads[selectedThread].evidence.filter(f => f.activityTitle === d.title)
-                           console.log(test)
                           
                            test.forEach((t)=> {
                              let type = t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
@@ -249,7 +248,7 @@ const BubbleVis = (props:BubbleProps) => {
                                })
                              }
                              start = start + `<div>Rationale: ${t.rationale}<div>`
-                             console.log('t',`file://${path.join(folderPath, t.artifactTitle)}`)
+                             
                              if(t.artifactTitle.includes('.png')){
                                  start = start + `<img src="${path.join(folderPath, t.artifactTitle)}" style="width:500px; height:auto"
                                />`
