@@ -75,7 +75,7 @@ const ThreadNav = (threadProps: any) => {
     useProjectState();
 
   const checkIfSelectThread = (i:any)=> {
-    console.log(selectedThread)
+    
     if(selectedThread != null){
       if(i != selectedThread){
         return 0.5

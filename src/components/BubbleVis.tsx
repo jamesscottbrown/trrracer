@@ -235,25 +235,35 @@ const BubbleVis = (props:BubbleProps) => {
                         if(selectedThread != null){
                            
                            let test = researchThreads.research_threads[selectedThread].evidence.filter(f => f.activityTitle === d.title)
+
+                           if(test.length > 0){
+
+                                test.forEach((t)=> {
+                                    let type = t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
+                                    let artifactTitle = t.type === 'fragment' || t.type === 'artifact' ? `: ${t.artifactTitle}` : '';
+                                    start = start + `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`
+                                    if(t.type === 'fragment'){
+                                    t.anchors.map(an => {
+                                        if(an.anchor_type === 'text'){
+                                        start = start + `<div style="margin-bottom:10px">${an.frag_type}</div>`
+                                        }
+                                    })
+                                    }
+                                    start = start + `<div>Rationale: ${t.rationale}<div>`
+                                    
+                                    if(t.artifactTitle.includes('.png')){
+                                        start = start + `<img src="${path.join(folderPath, t.artifactTitle)}" style="width:500px; height:auto"
+                                    />`
+                                    }
+                                })
+
+                           }else{
+                                console.log('testing', researchThreads.research_threads[selectedThread])
+                                start = start + `</br>
+                                                <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`
+                           }
                           
-                           test.forEach((t)=> {
-                             let type = t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-                             let artifactTitle = t.type === 'fragment' || t.type === 'artifact' ? `: ${t.artifactTitle}` : '';
-                             start = start + `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`
-                             if(t.type === 'fragment'){
-                               t.anchors.map(an => {
-                                 if(an.anchor_type === 'text'){
-                                   start = start + `<div style="margin-bottom:10px">${an.frag_type}</div>`
-                                 }
-                               })
-                             }
-                             start = start + `<div>Rationale: ${t.rationale}<div>`
-                             
-                             if(t.artifactTitle.includes('.png')){
-                                 start = start + `<img src="${path.join(folderPath, t.artifactTitle)}" style="width:500px; height:auto"
-                               />`
-                             }
-                           })
+                         
                            
                              start = start + `</div>`
                              return start;
