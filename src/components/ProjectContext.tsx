@@ -471,7 +471,7 @@ const appStateReducer = (state, action) => {
       if(action.filterRT){
         return {...state, filterRT:{title:action.filterRT.title, key:action.filterRT.evidence.map(m=> m.activityTitle), associatedKey: action.filterRT.tagged_activities.flatMap(fm => fm.associatedActivities.map(a=> a.title))} }
       }else{
-        return {...state, filterRT:null }
+        return {...state, filterRT:null, selectedThread:null }
       }
     } 
 

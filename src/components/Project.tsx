@@ -142,6 +142,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
     })
     .map((e: EntryType, index: number) => ({ ...e, index }));
 
+    console.log('filterRT in project',filterRT)
+
     let rtFiltered = typeFiltered.filter((entryData:any)=> {
       if(filterRT){
         return filterRT.key.includes(entryData.title) || filterRT.associatedKey.includes(entryData.title);

@@ -114,15 +114,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               <Button onClick={() => console.log('BUTTON PUSH')}>
                 Add events to timeline
               </Button>
-              <Box>
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel>{`Old ---> New`}</FormLabel>
-                  <Checkbox
-                    checked={reversedOrder}
-                    onChange={(e) => setReversedOrder(e.target.checked)}
-                  />
-                </FormControl>
-              </Box>
             </>
           )}
         </Box>
