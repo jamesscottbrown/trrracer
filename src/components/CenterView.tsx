@@ -8,7 +8,7 @@ import Activity from './Activity';
 import { useProjectState } from './ProjectContext';
 
 const CenterView = (projectProps: any) => {
-  const { projectEntries, folderPath, timeFilter } = projectProps;
+  const { projectEntries, folderPath } = projectProps;
 
   const [{ filterTags, filterType }] = useProjectState();
 
@@ -98,14 +98,7 @@ const CenterView = (projectProps: any) => {
     return monthDict[activity.month];
   };
 
-  const fAct =
-    timeFilter != null
-      ? flatActivities.filter(
-          (f) =>
-            new Date(f.date) >= timeFilter[0] &&
-            new Date(f.date) <= timeFilter[1]
-        )
-      : flatActivities;
+  const fAct = flatActivities;
 
   return (
     <Flex flex="3" h="calc(100vh - 150px)" overflowY="auto">

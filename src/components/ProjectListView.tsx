@@ -16,7 +16,7 @@ const { ipcRenderer } = require('electron');
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const {
-    filteredActivites,
+    filteredActivities,
     setViewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
@@ -89,7 +89,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
       <br />
 
-      {filteredActivites.map((activityData: EntryTypeWithIndex, i: number) => (
+      {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap 
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
           activityData={activityData} 

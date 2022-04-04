@@ -102,9 +102,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
-  const [timeFilter, setTimeFilter] = useState<any>(null);
+  // const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
-  const [filteredActivites, setFilteredActivites] = useState(projectData.entries);
+  const [filteredActivities, setfilteredActivities] = useState(projectData.entries);
   const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
   const [showTool, setShowTool] = useState(false);
   const [posX, setPosX] = useState(0);
@@ -114,7 +114,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   
   // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
 
-
+  console.log('filterdates',filterDates);
   // Update title when projectData changes.
   useEffect(() => {
     setNewTitle(projectData.title);
@@ -154,13 +154,15 @@ const Project = (ProjectPropValues: ProjectProps) => {
     })
 
     let timeFiltered =
-    timeFilter != null
+    filterDates[0] != null && filterDates[1] != null
       ? rtFiltered.filter(
           (f) =>
-            new Date(f.date) >= timeFilter[0] &&
-            new Date(f.date) <= timeFilter[1]
+            new Date(f.date) >= filterDates[0] &&
+            new Date(f.date) <= filterDates[1]
         )
       : rtFiltered;
+
+      console.log('timeFIlter',timeFiltered)
 
       timeFiltered.sort(
       (a, b) =>
@@ -172,8 +174,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
         filterQuery != null ? 
           timeFiltered.filter((f)=> filterQuery.includes(f.title)) : timeFiltered;
 
-      setFilteredActivites(queryFiltered);
-    }, [projectData.entries, filterTags, filterType, timeFilter, filterRT]); 
+      setfilteredActivities(queryFiltered);
+    }, [projectData.entries, filterTags, filterType, filterDates, filterRT]); 
 
   if (viewType === 'activity view') {
     return (
@@ -188,14 +190,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           folderPath={folderPath}
-          filteredActivites={filteredActivites}
+          filteredActivities={filteredActivities}
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          timeFilter={timeFilter}
-          setTimeFilter={setTimeFilter}
           filteredActivityNames={null}
         />
         <Flex position="relative" top={220}>
@@ -203,16 +203,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <CenterView
             projectEntries={projectData.entries}
             folderPath={folderPath}
-            timeFilter={timeFilter}
-            setTimeFilter={setTimeFilter}
           />
           <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
-              filteredActivites={filteredActivites}
+              filteredActivities={filteredActivities}
               setViewType={setViewType}
-              timeFilter={timeFilter}
-              setTimeFilter={setTimeFilter}
               hoverActivity={hoverActivity}
               setPosX={setPosX}
               setPoY={setPosY}
@@ -241,9 +237,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          timeFilter={timeFilter}
-          setTimeFilter={setTimeFilter}
-          filteredActivityNames={filteredActivites.map(n => n.title)}
+          filteredActivityNames={filteredActivities.map(n => n.title)}
         />  
     
         <Flex position="relative" top={220}>
@@ -251,7 +245,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="3.5" h="calc(100vh - 250px)">
           <ProjectTimelineView 
             projectData={projectData}
-            filteredActivites={filteredActivites}
+            filteredActivities={filteredActivities}
             folderPath={folderPath}
             selectedEntryIndex={selectedEntryIndex} 
             setSelectedEntryIndex={setSelectedEntryIndex}
@@ -261,7 +255,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           </Box>
           <Box flex="1.5" h="calc(100vh - 250px)" overflowY="auto">
             <ProjectListView
-              filteredActivites={filteredActivites}
+              filteredActivities={filteredActivities}
               setViewType={setViewType}
               selectedEntryIndex={selectedEntryIndex} 
               setSelectedEntryIndex={setSelectedEntryIndex}
@@ -292,8 +286,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          timeFilter={timeFilter}
-          setTimeFilter={setTimeFilter}
           filteredActivityNames={null}
         />
 
@@ -315,20 +307,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
       <TopBar
         viewType={viewType}
         folderPath={folderPath}
-        filteredActivites={filteredActivites}
+        filteredActivities={filteredActivities}
         setViewType={setViewType}
         reversedOrder={reversedOrder}
         setReversedOrder={setReversedOrder}
         newTitle={newTitle}
         setNewTitle={setNewTitle}
-        timeFilter={timeFilter}
-        setTimeFilter={setTimeFilter}
         filteredActivityNames={null}
       />
       <Flex position="relative" top={130}>
         <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
         <BubbleVis 
-          filteredActivites={filteredActivites}
+          filteredActivities={filteredActivities}
           projectData={projectData}
           groupBy={groupBy}
           splitBubbs={splitBubbs}
@@ -338,7 +328,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
           <QueryView 
             setViewType={setViewType} 
-            filteredActivites={filteredActivites}
+            filteredActivities={filteredActivities}
             projectData={projectData} 
            />
         </Box>
@@ -355,7 +345,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     // >
     //   <TopBar
     //     folderPath={folderPath}
-    //     filteredActivites={filteredActivites}
+    //     filteredActivities={filteredActivities}
     //     setViewType={setViewType}
     //     reversedOrder={reversedOrder}
     //     setReversedOrder={setReversedOrder}
@@ -374,14 +364,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
     //     >
     //       <QueryView 
     //         setViewType={setViewType} 
-    //         filteredActivites={filteredActivites}
+    //         filteredActivities={filteredActivities}
     //         projectData={projectData} 
     //         />
     //     </Box>
     //     <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
     //       <ProjectListView
     //         projectData={projectData}
-    //         filteredActivites={filteredActivites}
+    //         filteredActivities={filteredActivities}
     //         setViewType={setViewType}
     //         timeFilter={timeFilter}
     //         setTimeFilter={setTimeFilter}
@@ -417,20 +407,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <TopBar
           viewType={viewType}
           folderPath={folderPath}
-          filteredActivites={filteredActivites}
+          filteredActivities={filteredActivities}
           setViewType={setViewType}
           reversedOrder={reversedOrder}
           setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          timeFilter={timeFilter}
-          setTimeFilter={setTimeFilter}
           filteredActivityNames={null}
         />
         <Flex position="relative" top={130}>
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
           <BubbleVis 
-            filteredActivites={filteredActivites}
+            filteredActivities={filteredActivities}
             projectData={projectData}
             groupBy={groupBy}
             splitBubbs={splitBubbs}
@@ -440,10 +428,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <Box flex="1.5" h="calc(100vh - 130px)" overflowY="auto">
             <ProjectListView
               projectData={projectData}
-              filteredActivites={filteredActivites}
+              filteredActivities={filteredActivities}
               setViewType={setViewType}
-              timeFilter={timeFilter}
-              setTimeFilter={setTimeFilter}
               hoverActivity={hoverActivity}
               setPosX={setPosX}
               setPoY={setPosY}
@@ -472,8 +458,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       setReversedOrder={setReversedOrder}
       newTitle={newTitle}
       setNewTitle={setNewTitle}
-      timeFilter={timeFilter}
-      setTimeFilter={setTimeFilter}
       filteredActivityNames={null}
     />
     <PaperView folderPath={folderPath}/> 

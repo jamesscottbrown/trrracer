@@ -766,18 +766,8 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_DATES': {
-      console.log(
-        state.filterDates.map((d: string, i: number) =>
-          i === action.field ? action.value : d
-        )
-      );
-
-      return {
-        ...state,
-        filterDates: state.filterDates.map((d: string, i: number) =>
-          i === action.field ? action.value : d
-        ),
-      };
+   
+      return { ...state, filterDates: action.filterDates }
     }
 
     case 'ADD_MARKS_TO_ARTIFACT':{

@@ -34,7 +34,7 @@ interface TopbarProps{
   newTitle: string;
   setNewTitle: any;
   filteredActivityNames: any;
-  filteredActivites:any;
+  filteredActivities:any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -42,19 +42,15 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
 
-  // console.log('this is reloading', projectData, filterTags, filterRT);
-
   const {
     viewType,
     setViewType,
     reversedOrder,
     setReversedOrder,
-    timeFilter,
-    setTimeFilter,
     newTitle,
     setNewTitle,
     filteredActivityNames,
-    filteredActivites
+    filteredActivities
   } = ProjectPropValues;
 
   console.log('viewType', viewType)
@@ -201,7 +197,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
            fontWeight: 700,
            textAlign: 'end',
             }}
-          >{`${filteredActivites.length} Activities Shown  `}
+          >{`${filteredActivities.length} Activities Shown  `}
             <Button marginLeft={'3px'} alignSelf="end" 
             onClick={addEntry} 
             type="button">

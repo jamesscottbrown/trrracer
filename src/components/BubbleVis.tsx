@@ -22,7 +22,7 @@ import VerticalAxis from './VerticalAxis';
 import { Image } from '@chakra-ui/react';
 
 interface BubbleProps {
-    filteredActivites: any,
+    filteredActivities: any,
     projectData: any,
     groupBy: any,
     splitBubbs: Boolean;
@@ -32,7 +32,7 @@ interface BubbleProps {
 
 const BubbleVis = (props:BubbleProps) => {
 
-    const {filteredActivites, projectData, groupBy, splitBubbs, setHoverActivity, flexAmount} = props;
+    const {filteredActivities, projectData, groupBy, splitBubbs, setHoverActivity, flexAmount} = props;
     const [{artifactTypes, selectedThread, researchThreads, folderPath}] = useProjectState();
 
     const [newHeight, setNewHeight] = useState('100%');
@@ -87,11 +87,11 @@ const BubbleVis = (props:BubbleProps) => {
 
         let nodes = forced.nodes.filter(f=> {
             if(splitBubbs){
-                return filteredActivites.map(m=> m.title).includes(f.activityTitle);
+                return filteredActivities.map(m=> m.title).includes(f.activityTitle);
             }else{
-                return filteredActivites.map(m=> m.title).includes(f.title);
+                return filteredActivities.map(m=> m.title).includes(f.title);
             }
-            // return filteredActivites.map(m=> m.title).includes(f.title);
+            // return filteredActivities.map(m=> m.title).includes(f.title);
         })
 
         if(groupBy){
@@ -183,17 +183,17 @@ const BubbleVis = (props:BubbleProps) => {
         }else{
             let notNodes = forced.nodes.filter(f => {
                 if(splitBubbs){
-                    return filteredActivites.map(m=> m.title).indexOf(f.activityTitle) === -1
+                    return filteredActivities.map(m=> m.title).indexOf(f.activityTitle) === -1
                 }else{
-                    return filteredActivites.map(m=> m.title).indexOf(f.title) === -1
+                    return filteredActivities.map(m=> m.title).indexOf(f.title) === -1
                 }
                 });
 
             let selectedNodes = forced.nodes.filter(f=> {
                 if(splitBubbs){
-                    return filteredActivites.map(m=> m.title).includes(f.activityTitle)
+                    return filteredActivities.map(m=> m.title).includes(f.activityTitle)
                 }else{
-                    return filteredActivites.map(m=> m.title).includes(f.title)
+                    return filteredActivities.map(m=> m.title).includes(f.title)
                 }
                 
             }).map(m=> {
@@ -288,12 +288,12 @@ const BubbleVis = (props:BubbleProps) => {
             
         }
 
-    }, [filteredActivites, groupBy, splitBubbs])
+    }, [filteredActivities, groupBy, splitBubbs])
 
     
     return (
         <div style={{flex:flexAmount}}>
-            <VerticalAxis />
+            <VerticalAxis filteredActivities={filteredActivities}/>
             <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/>
         </div>
     )

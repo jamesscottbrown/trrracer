@@ -17,7 +17,7 @@ export const dataStructureForTimeline = (activityData: any) => {
 
       const wrapper = new Array(12).fill({}).map((m, i) => {
         const activ = mon.filter((f: any) => f[0] === i);
-        const activity =
+        const allActivities =
           activ.length > 0
             ? activ.flatMap((f: any) => {
                 f[1] = f[1].map((a: any) => {
@@ -28,10 +28,10 @@ export const dataStructureForTimeline = (activityData: any) => {
                 return f[1];
               })
             : [];
-        if (activity.length > 0) {
-          activity[0].firstMonth = true;
+        if (allActivities.length > 0) {
+          allActivities[0].firstMonth = true;
         }
-        return { month: i, year: year[0], activities: activity };
+        return { month: i, year: year[0], activities: allActivities };
       });
 
       return { year: year[0], months: wrapper };
@@ -42,18 +42,18 @@ export const jitter = (val: any) => Math.random() * val;
 const VerticalAxis = (projectProps: any) => {
   const svgRef = React.useRef(null);
 
-  const { defineEvent, setTimeFilter, viewType, filteredActivityNames } = projectProps;
+  const { defineEvent, viewType, filteredActivities } = projectProps;
   const [
     { projectData, selectedArtifactEntry, researchThreads, selectedThread },
   dispatch] = useProjectState();
-  const activity = projectData.entries;
+  const allActivities = projectData.entries;
   const [newHeight, setNewHeight] = useState('100%');
 
   const width = 90;
   const height = (+newHeight.split('px')[0]);
   const margin = width * 0.25;
 
-  const yearMonth = dataStructureForTimeline(activity);
+  const yearMonth = dataStructureForTimeline(allActivities);
 
   const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
   const endIndex = getIndexOfMonth(
@@ -75,9 +75,13 @@ const VerticalAxis = (projectProps: any) => {
 
     const yScale = d3
       .scaleTime()
-      .domain(d3.extent(activity.map((m) => new Date(m.date))))
+      .domain(d3.extent(allActivities.map((m) => new Date(m.date))))
       .range([0, height - margin])
       .nice();
+  
+    const filteredActivitiesExtent = d3.extent(filteredActivities.map(m => new Date(m.date)));
+
+    console.log('FILTER EXTENT', filteredActivitiesExtent)
 
     // Create root container where we will append all other chart elements
     const svgEl = d3.select(svgRef.current);
@@ -105,12 +109,20 @@ const VerticalAxis = (projectProps: any) => {
       .attr('opacity', 0.9)
       .attr('font-size', '0.55rem')
 
-    let rects = svg.append('g').selectAll('rect.activity').data(projectData.entries).join('rect').classed('activity', true);
+    let rects = svg.append('g').selectAll('rect.activity').data(allActivities).join('rect').classed('activity', true);
     rects.attr('width', 40).attr('height', 3);
     rects.attr('y', (d: any)=> yScale(new Date(d.date)));
-    rects.attr('fill', 'gray').style('fill-opacity', .25)
+
+    rects.filter(r => {
+      return new Date(r.date) >= filteredActivitiesExtent[0] && new Date(r.date) <= filteredActivitiesExtent[1]
+    }).attr('fill', 'gray').style('fill-opacity', .3)
+
+    rects.filter(r => {
+      return new Date(r.date) < filteredActivitiesExtent[0] || new Date(r.date) > filteredActivitiesExtent[1]
+    }).attr('fill', 'red').style('fill-opacity', .08)
 
     if (!defineEvent) {
+
       const filteredDomain = function (scale: any, min: any, max: any) {
         const dif = scale(d3.min(scale.domain())) - scale.range()[0];
 
@@ -135,10 +147,7 @@ const VerticalAxis = (projectProps: any) => {
           if (event.sourceEvent && event.type === 'end') {
             s1 = event.selection;
             d3.select(this).transition().call(event.target.move, s1);
-            setTimeFilter([
-              yScale.invert(event.selection[0]),
-              yScale.invert(event.selection[1]),
-            ]);
+            console.log(yScale.invert(event.selection[0]), yScale.invert(event.selection[1]))
             dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [yScale.invert(event.selection[0]), yScale.invert(event.selection[1])] });
           }
 
@@ -190,18 +199,19 @@ const VerticalAxis = (projectProps: any) => {
           .handleSize(8)
           .extent([
             [0, 0],
-            [40, height - margin],
+            [50, height - margin],
           ])
           .on('start brush end', brushed);
 
         const gBrush = svg
           .append('g')
           .call(bY)
-          .call(bY.move, [0, height - margin]);
+          .call(bY.move, [yScale(filteredActivitiesExtent[0]), yScale(filteredActivitiesExtent[1])]);
 
+        
         // gBrush.attr('transform', 'translate(-5,0)')
 
-        gBrush.style('opacity', 0.3);
+        gBrush.style('opacity', 0.4);
 
   //       // Custom handlers
   //       // Handle group
