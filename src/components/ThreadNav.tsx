@@ -37,16 +37,30 @@ const MiniTimline = (props: any) => {
       .attr('fill', 'gray')
       .attr('fill-opacity', 0.1);
 
+      const circTagged = circleG
+      .selectAll('circle.associated')
+      .data(researchT.tagged_activities.flatMap(fm => fm.associatedActivities))
+      .join('circle')
+      .attr('class', 'associated')
+      .attr('cx', (d) => xScale(new Date(d.date)))
+      .attr('cy', () => jitter(10))
+      .attr('r', 3)
+      .attr('fill', researchT.color)
+      .attr('fill-opacity', 0.5);
+
     const circleResearch = circleG
       .selectAll('circle.research')
       .data(researchT.evidence)
       .join('circle')
+      .attr('class', 'research')
       .attr('cx', (d) => xScale(new Date(d.dob)))
       .attr('cy', () => jitter(10))
       .attr('r', 4.5)
       .attr('fill', researchT.color)
       .attr('fill-opacity', 1)
       .attr('stroke', '#ffffff');
+
+  
   }, [activities]);
 
   return (

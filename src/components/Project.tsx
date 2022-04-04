@@ -112,9 +112,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [groupBy, setGroupBy] = useState(null);
   const [splitBubbs, setSplitBubbs] = useState(false);
   
-  // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
-
-
   // Update title when projectData changes.
   useEffect(() => {
     setNewTitle(projectData.title);
@@ -162,14 +159,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
         )
       : rtFiltered;
 
-      console.log('timeFIlter',timeFiltered)
-
       timeFiltered.sort(
       (a, b) =>
         (reversedOrder ? -1 : +1) *
         (Number(new Date(a.date)) - Number(new Date(b.date)))
     );
-    console.log('filterQ',filterQuery)
+   
     let queryFiltered = 
         filterQuery != null ? 
           timeFiltered.filter((f)=> filterQuery.includes(f.title)) : timeFiltered;

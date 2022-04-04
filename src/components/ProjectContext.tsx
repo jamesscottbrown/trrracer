@@ -368,6 +368,18 @@ const appStateReducer = (state, action) => {
 
       let research_threads = checkRtFile(baseDir);
 
+    
+      let entriesAssociated = [...research_threads.research_threads].map(rt=> {
+        rt.tagged_activities = [...rt.associated_tags].map(at=> {
+          let matchOb = {tag:at}
+          matchOb.associatedActivities = newEntries.filter(f => f.tags.includes(at))
+          return matchOb
+        })
+        return rt
+      });
+      
+      research_threads.research_threads = entriesAssociated;
+
       const newProjectData = {
         ...action.projectData,
         entries: newEntries,
