@@ -752,10 +752,8 @@ const appStateReducer = (state, action) => {
     }
 
     case 'UPDATE_FILTER_TAGS': {
-      console.log('ACTIONNNNN!!!',action, action != null)
-      let rT = action != null ? selectedThread : null;
-      console.log('SeleCTED',selectedThread)
-      return { ...state, filterTags: action.filterTags, selectedThread: rT };
+      console.log('update filter', action.filterTags);
+      return { ...state, filterTags: action.filterTags };
     }
 
     case 'UPDATE_FILTER_TYPES': {
