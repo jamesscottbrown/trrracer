@@ -96,7 +96,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         </Editable>
       </Heading>
       <Spacer />
-      <QueryBar artifactData={null} setViewType={setViewType}/>
+      <QueryBar artifactData={null} setViewType={setViewType} filteredActivities={filteredActivities}/>
 
         <div style={{ float: 'right' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />

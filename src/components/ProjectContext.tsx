@@ -385,6 +385,7 @@ const appStateReducer = (state, action) => {
         filterType: null,
         filterDates: [null, null],
         filterRT: null,
+        filterQuery:null,
         query: null,
         goBackView: 'overview',
         artifactTypes: aTypes
@@ -416,7 +417,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'QUERY_TERM': {
-      return {...state, query:{term: action.term, textMatch: action.textMatch, googMatch: action.googMatch} }
+      return {...state, query:{term: action.term, matches: action.matches}, filterQuery: action.matches.map(m=> m.entry.title)}
     }
 
     case 'ADD_ACTIVITY_TO_THREAD': {
@@ -759,10 +760,6 @@ const appStateReducer = (state, action) => {
     case 'UPDATE_FILTER_TYPES': {
       
       return { ...state, filterType: action.filterType };
-    }
-
-    case 'UPDATE_FILTER_QUERY': {
-      return { ...state, filterQuery: action.filterQuery };
     }
 
     case 'UPDATE_FILTER_DATES': {

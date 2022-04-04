@@ -114,7 +114,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   
   // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
 
-  console.log('filterdates',filterDates);
+
   // Update title when projectData changes.
   useEffect(() => {
     setNewTitle(projectData.title);
@@ -169,13 +169,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
         (reversedOrder ? -1 : +1) *
         (Number(new Date(a.date)) - Number(new Date(b.date)))
     );
-
+    console.log('filterQ',filterQuery)
     let queryFiltered = 
         filterQuery != null ? 
           timeFiltered.filter((f)=> filterQuery.includes(f.title)) : timeFiltered;
 
       setfilteredActivities(queryFiltered);
-    }, [projectData.entries, filterTags, filterType, filterDates, filterRT]); 
+    }, [projectData.entries, filterTags, filterType, filterDates, filterRT, filterQuery]); 
 
   if (viewType === 'activity view') {
     return (
@@ -334,54 +334,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
         </Box>
       </Flex>
     </div>
-    //   <div
-    //   style={{
-    //     height: '100vh',
-    //     position: 'fixed',
-    //     top: 0,
-    //     bottom: 0,
-    //     width: '100%',
-    //   }}
-    // >
-    //   <TopBar
-    //     folderPath={folderPath}
-    //     filteredActivities={filteredActivities}
-    //     setViewType={setViewType}
-    //     reversedOrder={reversedOrder}
-    //     setReversedOrder={setReversedOrder}
-    //     newTitle={newTitle}
-    //     setNewTitle={setNewTitle}
-    //     timeFilter={timeFilter}
-    //     setTimeFilter={setTimeFilter}
-    //     filteredActivityNames={null}
-    //   />
-    //   <Flex position="relative" top={220}>
-    //     <LeftSidebar />
-    //     <Box
-    //       flex="3"
-    //       h="calc(100vh - 250px)" 
-    //       overflowY="auto"
-    //     >
-    //       <QueryView 
-    //         setViewType={setViewType} 
-    //         filteredActivities={filteredActivities}
-    //         projectData={projectData} 
-    //         />
-    //     </Box>
-    //     <Box flex="1.1" h="calc(100vh - 250px)" overflowY="auto">
-    //       <ProjectListView
-    //         projectData={projectData}
-    //         filteredActivities={filteredActivities}
-    //         setViewType={setViewType}
-    //         timeFilter={timeFilter}
-    //         setTimeFilter={setTimeFilter}
-    //         hoverActivity={hoverActivity}
-    //         setPosX={setPosX}
-    //         setPoY={setPosY}
-    //       />
-    //     </Box>
-    //   </Flex>
-    // </div>
     )
   }
   if (viewType === 'detail view') {
