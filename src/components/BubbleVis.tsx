@@ -39,7 +39,7 @@ const BubbleVis = (props:BubbleProps) => {
 
     const width = 200;
     const height = +newHeight.split('px')[0];
-    const margin = width * 0.25;
+    const margin = height * 0.25;
 
     const svgRef = React.useRef(null);
 
@@ -72,7 +72,7 @@ const BubbleVis = (props:BubbleProps) => {
         return files;
     }) : projectData.entries;
 
-    const forced = new ForceMagic(bubbleData, width, height, splitBubbs);
+    const forced = new ForceMagic(bubbleData, width, (height - margin), splitBubbs);
 
     useEffect(() => {
 
