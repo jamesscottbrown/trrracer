@@ -258,7 +258,6 @@ const BubbleVis = (props:BubbleProps) => {
                                 })
 
                            }else{
-                                console.log('testing', researchThreads.research_threads[selectedThread])
                                 start = start + `</br>
                                                 <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`
                            }

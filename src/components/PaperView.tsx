@@ -7,13 +7,15 @@ import * as d3 from 'd3';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import path from "path";
-import { openFile } from "./ActivityWrap";
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 
 
 const PaperView = (props:any) => {
     const {folderPath} = props;
 
-    const perf = `${path.join(folderPath, 'trevo-html-test.html')}`;
+    const perf = `${path.join(folderPath, 'paper_2020_trevo_CR (1).pdf')}`;
+
+    console.log('PERF',perf)
 
     const filePath = path.join(folderPath, 'trevo-html-test.html');
     const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
@@ -30,6 +32,26 @@ const PaperView = (props:any) => {
     const [paragraphData, setParagraphData] = useState([]);
 
     let index = selectedThread ? selectedThread : 0;
+
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
+  
+    function onDocumentLoadSuccess({ numPages }) {
+      setNumPages(numPages);
+      setPageNumber(1);
+    }
+  
+    function changePage(offset:any) {
+      setPageNumber(prevPageNumber => prevPageNumber + offset);
+    }
+  
+    function previousPage() {
+      changePage(-1);
+    }
+  
+    function nextPage() {
+      changePage(1);
+    }
 
     const headerStyle = { fontSize: '30px', fontWeight: 700, marginBottom:20 };
     const width = 200;
@@ -59,7 +81,6 @@ const PaperView = (props:any) => {
   
     useEffect(()=> {
 
-    
       let svg = d3.select(svgRef.current);
       svg.selectAll('*').remove();
   
@@ -83,8 +104,6 @@ const PaperView = (props:any) => {
   
       bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
         d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
-  
-        // setHoverActivity(d);
   
         let htmlForm = () => {
           let test = researchThreads.research_threads[index].evidence.filter(f => f.activityTitle === d.title)
@@ -126,7 +145,6 @@ const PaperView = (props:any) => {
 
 
     useEffect(()=> {
-      
         let test = d3.select("#divtext").selectAll('p').nodes()
         setParagraphData(test.map(t => t.innerText))
 
@@ -142,30 +160,17 @@ const PaperView = (props:any) => {
         rect.attr('fill', 'gray')
         rect.attr('fill-opacity', 0.5)
 
-    }, [iframeRef.current])
+    }, [numPages])
 
-    useLayoutEffect(()=> {
-
-        // console.log(iframeRef.current)
-        // console.log(d3.select(iframeRef.current))
-       
-       // let test = d3.select("#divtext").selectAll('p').nodes()
-        // let test = d3.select(fileContents).selectAll('p').nodes()
-       
-        // setParagraphData(test.map(t => t.innerText))
-    })
-
-    // const onIframeRef = (node)=> {
-
-
+  
     return (
-        <Flex position="relative" top={220}>
+        <Flex position="relative" top={100}>
           <Box
             margin="8px"
             p={5}
             flex={1}
             flexDirection="column"
-            h="calc(100vh - 250px)"
+            h="calc(100vh - 120px)"
             overflow="auto"
           >
             <ThreadNav
@@ -173,12 +178,61 @@ const PaperView = (props:any) => {
               viewType="research threads"
             />
           </Box>
-          <Box flex={3} h="calc(100vh - 250px)" overflowY="auto" marginTop={15}>
+          <Box flex={4} h="calc(100vh - 120px)" overflowY="auto" marginTop={15}>
     
-            <svg style={{display:'inline'}} ref={svgRef} width={400} height={'100%'}/>
+            <svg style={{display:'inline', backgroundColor:'yellow'}} ref={svgRef} width={360} height={'100%'}/>
 
-            <iframe style={{display:'inline', width:650, height:'100%'}} src={perf} id={'test'} ref={iframeRef}></iframe>
-         <div dangerouslySetInnerHTML={{ __html: fileContents }} id={'divtext'}></div>
+            <div 
+              id="pdf-wrap"
+              style={{
+                width:'650px', 
+                height:'auto'
+              }}>
+                <Document 
+                  file={perf} 
+                  onLoadSuccess={onDocumentLoadSuccess}>
+                  <Page pageNumber={pageNumber} />
+                </Document>
+                
+                <div id={"button-wrap"}>
+                  <p>
+                    Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
+                  </p>
+                <button 
+                  type="button" 
+                  disabled={pageNumber <= 1} 
+                  onClick={previousPage}
+                  style={{ 
+                    marginRight: '10px',
+                    backgroundColor: '#3f51b5',
+                    color: 'white',
+                    border: 'none',
+                    padding: '5px 10px',
+                    width: '100px',
+                    cursor: 'pointer',
+                    boxShadow: '2px 2px 2px 1px #ccc'}}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  disabled={pageNumber >= numPages}
+                  onClick={nextPage}
+                  style={{ 
+                    marginRight: '10px',
+                    backgroundColor: '#3f51b5',
+                    color: 'white',
+                    border: 'none',
+                    padding: '5px 10px',
+                    width: '100px',
+                    cursor: 'pointer',
+                    boxShadow: '2px 2px 2px 1px #ccc'}}
+                >
+                  Next
+                </button>
+                </div>
+            </div>
+
           </Box>
         </Flex>
       );

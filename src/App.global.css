@@ -27,6 +27,54 @@ hr {
   margin-bottom: 2em;
 }
 
+#pdf-wrap{
+  position:absolute;
+  top:0;
+  right:0;
+}
+
+#button-wrap{
+  position:absolute;
+  top:-6px;
+  right:0;
+}
+
+/* For pdf */
+.react-pdf__Document {
+  position:relative;
+  top:100px;
+  right:10px;
+  width:500px;
+}
+
+/* For pdf */
+.react-pdf__Page {
+  margin-top: 10px;
+  /* display:inline; */
+  width:500px;
+  position:relative;
+ 
+}
+.react-pdf__Page__textContent {
+  border: 1px solid darkgrey;
+  box-shadow: 5px 5px 5px 1px #ccc;
+  border-radius: 5px;
+ 
+  right:10px;
+  top:-10px;
+}
+
+.react-pdf__Page__annotations.annotationLayer {
+  padding: 20px;
+}
+
+.react-pdf__Page__canvas {
+  margin: 0 auto;
+  display:relative;
+  width:600px;
+}
+
+
 /* For markdown editor component */
 @import '~react-mde/lib/styles/css/react-mde-all.css';
 .markdownEditorContainer {
