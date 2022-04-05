@@ -58,8 +58,7 @@ const PaperView = (props:any) => {
     const height = 900;
   
     const svgRef = React.useRef(null);
-    const iframeRef = React.useRef(null);
-
+ 
     const forced = new ForceMagic(projectData.entries, width, height, false);
     const checktool = d3.select('#tooltip');
     const div = checktool.empty() ? 
@@ -85,8 +84,7 @@ const PaperView = (props:any) => {
       svg.selectAll('*').remove();
   
       let wrap = svg.append('g').attr('transform', 'translate(0, 20)');
-    
-      //researchThreads.research_threads[selectedThread]
+ 
       let nodes = forced.nodes.filter(f => researchThreads.research_threads[index].evidence.map(m=> m.activityTitle).includes(f.title)).map(m => {
         m.color = researchThreads.research_threads[index].color;
         return m;
@@ -145,22 +143,31 @@ const PaperView = (props:any) => {
 
 
     useEffect(()=> {
+
+        let pageRectData = []
+        for(let i = 0; i < numPages; i = i + 1){
+          pageRectData.push({pageIndex: (i + 1)})
+        }
         let test = d3.select("#divtext").selectAll('p').nodes()
         setParagraphData(test.map(t => t.innerText))
 
         console.log('paragraph', d3.select(svgRef.current).node().getBoundingClienRect)
 
-        let group = d3.select(svgRef.current).append('g');
+        let groupTest = d3.select(svgRef.current).select('.text-group');
 
-        group.attr('transform', 'translate(240, 10)')
-        let rect = group.selectAll('rect.text').data([{},{},{},{},{},{},{},{},{},{}]).join('rect').classed('text', true);
+        let group = groupTest.empty() ? d3.select(svgRef.current).append('g').classed('text-group', true) : groupTest;
+        
+        group.attr('transform', 'translate(240, 10)');
+        let rect = group.selectAll('rect.text').data(pageRectData).join('rect').classed('text', true);
         
         rect.attr('width', 50).attr('height', 70)
         rect.attr('y', (d, i)=> (i * 75))
         rect.attr('fill', 'gray')
         rect.attr('fill-opacity', 0.5)
 
-    }, [numPages])
+        rect.filter(f => f.pageIndex === pageNumber).attr('fill-opacity', 1)
+
+    }, [numPages, pageNumber])
 
   
     return (
@@ -180,7 +187,7 @@ const PaperView = (props:any) => {
           </Box>
           <Box flex={4} h="calc(100vh - 120px)" overflowY="auto" marginTop={15}>
     
-            <svg style={{display:'inline', backgroundColor:'yellow'}} ref={svgRef} width={360} height={'100%'}/>
+            <svg style={{display:'inline'}} ref={svgRef} width={360} height={'100%'}/>
 
             <div 
               id="pdf-wrap"
