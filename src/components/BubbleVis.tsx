@@ -92,21 +92,17 @@ const BubbleVis = (props:BubbleProps) => {
 
         if(groupBy){
 
-            console.log('forced nodes',forced.nodes)
-
             let highlightedForFirst = forced.nodes.filter(f=> filteredActivities.map(m=> m.title).includes(f.title))
             let notHighlightedForFirst = forced.nodes.filter(f=> filteredActivities.map(m=> m.title).indexOf(f.title) == -1)
-
-            console.log('those highlighted',highlightedForFirst)
 
             let groups = [{label:'all', color:'gray', highlighted: highlightedForFirst, notHighlighted: notHighlightedForFirst}]
             if(groupBy.type === 'research_threads'){
                 let tempgroups = groupBy.data.map(m=> {
                     let group = {label: m.title, color: m.color}
-                    group.highlighted = nodes.filter(n => m.evidence.map((e, i)=> e.activityTitle).includes(n.title))
+                    group.highlighted = nodes.filter(n => m.evidence.map((e, i)=> e.activityTitle).includes(n.title) || m.tagged_activities.flatMap(fm => fm.associatedActivities.map(m=> m.title)).includes(n.title))
                     group.highlighted = group.highlighted.map(h => {
                         h.rtTitle = m.title;
-                        h.evidence = m.evidence.filter((e, i)=> e.activityTitle === h.title);
+                        h.evidence = m.evidence.filter((e, i)=> e.activityTitle === h.title).length === 0 ? null : m.evidence.filter((e, i)=> e.activityTitle === h.title);
                         return h
                     });
 
@@ -137,7 +133,7 @@ const BubbleVis = (props:BubbleProps) => {
                 bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
                     d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
             
-                    // setHoverActivity(d);
+                    setHoverActivity(d);
             
                     let htmlForm = () => {
                         let start =  `<div style="margin-bottom:10px; font-weight:700">`
@@ -147,6 +143,12 @@ const BubbleVis = (props:BubbleProps) => {
                         d.files.forEach((f)=> {
                             start = start + `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`
                         })
+
+                        if(d.rtTitle)[
+                            start = start + `</br><div style="font-weight:700">This activity is tagged with a tag associated with ${d.rtTitle}</div>`
+                        ]
+
+                        
 
                     }else{
                         start = start + `Research Thread: ${d.rtTitle} - Activity: ${d.title} <br/>`
