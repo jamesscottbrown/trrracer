@@ -2,16 +2,9 @@ import path from 'path';
 import React, { useState, useEffect } from 'react';
 import { Button, ButtonGroup, Divider,  } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
-
 import { useProjectState } from './ProjectContext';
-
 import { EntryTypeWithIndex, ProjectViewProps } from './types';
-
-import Entry from './Entry';
-import ReadonlyEntry from './ReadonlyEntry';
 import ActivityWrap from './ActivityWrap';
-
-const { ipcRenderer } = require('electron');
 
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {

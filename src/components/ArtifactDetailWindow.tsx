@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
-
 import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
-
 import { openFile } from '../fileUtil';
-
 import TopTimeline from './TopTimeline';
-import ReadonlyEntry from './ReadonlyEntry';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
 import type { ResearchThread, ResearchThreadEvidence } from './types';
 import ActivityWrap from './ActivityWrap';
+import ForceMagic from '../ForceMagic';
+import Bubbles from '../Bubbles';
+import VerticalAxis from './VerticalAxis';
 
 interface DetailProps {
   setViewType: (view: string) => void;
   folderPath: string;
   projectData: any;
+  filteredActivities:any;
 }
 
 const ArtifactToThread = (props: any) => {
@@ -261,7 +261,7 @@ const DetailSidebar = (props: any) => {
     selectedArtifactEntry,
     selectedArtifactIndex,
   } = props;
-  const [{ researchThreads }] = useProjectState();
+  const [{ researchThreads }, dispatch] = useProjectState();
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
 
@@ -286,13 +286,48 @@ const DetailSidebar = (props: any) => {
     <Box
       marginLeft="8px"
       marginRight="8px"
-      
       flex="2"
       flexDirection="column"
-      h="calc(100vh - 250px)"
+      h="calc(100vh - 150px)"
       overflow="auto"
     >
+      <Box flex="2" overflowY="auto">  
+        <Box style={{marginBottom:20}}>
+          <div>
+            <span style={{ fontSize: 20, fontWeight: 700 }}>
+              {`Artifacts associated with ${selectedArtifactEntry.title}`}
+            </span>
+          </div>
+          <Box
+            marginLeft="3px"
+            borderLeftColor="black"
+            borderLeftWidth="1px"
+            padding="3px"
+          >
+          {selectedArtifactEntry.files.map((f: any, i: number) => (
+            <React.Fragment key={`fi-${f.title}-${i}`}>
+              {i === selectedArtifactIndex ? (
+                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                  {selectedArtifactEntry.files[i].title}
+                </div>
+              ) : (
+                <div
+                style={{cursor:'pointer'}}
+                onClick={()=>{
+                  dispatch({
+                    type: 'SELECTED_ARTIFACT',
+                    selectedArtifactEntry: selectedArtifactEntry,
+                    selectedArtifactIndex: i,
+                  });
+                }}
+                >{selectedArtifactEntry.files[i].title}</div>
+              )}
+            </React.Fragment>
+          ))}
+          </Box>
+        </Box>
 
+      </Box>
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>Activity Tags</div>
         {selectedArtifactEntry.tags.map((t: any, i: number) => (
@@ -388,15 +423,17 @@ const DetailSidebar = (props: any) => {
 };
 
 const ArtifactDetailWindow = (props: DetailProps) => {
-  const { setViewType, folderPath, projectData } = props;
-
-  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView }, dispatch] =
+  const { setViewType, folderPath, filteredActivities } = props;
+  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView, projectData }, dispatch] =
     useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
+  const width = 200;
+  const height = 900;
+  const svgRef = React.useRef(null);
   const [fragSelected, setFragSelected] = useState(null);
 
   useEffect(() => {
@@ -410,12 +447,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     }
   }, [projectData]);
 
-  const setEditableStatus = (index: number, isEditable: boolean) => {
-    setEditable((oldEditable) =>
-      oldEditable.map((d, i) => (i === index ? isEditable : d))
-    );
-  };
-
   return (
     <div style={{ height: '100vh', position: 'fixed', top: 0, bottom: 0 }}>
       <Box
@@ -424,7 +455,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         right={0}
         flexFlow="row wrap"
         zIndex={1000}
-        height={200}
+        height={100}
       >
         <Flex
           minH="60px"
@@ -453,17 +484,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           <Spacer/>
           <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
         </Flex>
-        <Flex alignContent="center">
-          <Spacer />
-          <Box flexGrow={4} minWidth="50%">
-            <TopTimeline viewType="detail" />
-          </Box>
-          <Spacer />
-        </Flex>
       </Box>
       <Flex
         position="relative"
-        top={220}
+        top={120}
         bottom={0}
         height="calc(100% - 150px)"
       >
@@ -474,48 +498,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         selectedArtifactIndex={selectedArtifactIndex}
       />
 
-      <Box flex="2" h="calc(100vh - 250px)" overflowY="auto">
-          
-        <Box style={{marginBottom:20}}>
-          <div>
-            <span style={{ fontSize: 20, fontWeight: 700 }}>
-              {`Artifacts associated with ${selectedArtifactEntry.title}`}
-            </span>
-          </div>
-          <Box
-            marginLeft="3px"
-            borderLeftColor="black"
-            borderLeftWidth="1px"
-            padding="3px"
-          >
-          {selectedArtifactEntry.files.map((f: any, i: number) => (
-            <React.Fragment key={`fi-${f.title}-${i}`}>
-              {i === selectedArtifactIndex ? (
-                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                  {selectedArtifactEntry.files[i].title}
-                </div>
-              ) : (
-                <div>{selectedArtifactEntry.files[i].title}</div>
-              )}
-            </React.Fragment>
-          ))}
-          </Box>
-        </Box>
-
-          <ActivityWrap 
-          key={`${selectedArtifactEntry.title}-${selectedArtifactEntry.index}`}
-          activityData={selectedArtifactEntry} 
-          editable={false}
-          setEditableStatus={setEditableStatus} 
-          setViewType={setViewType}
-          setSelectedArtifactIndex={null}
-          setSelectedArtifactEntry={null}
-          index={selectedArtifactEntry.index}
-          hoverActivity={null}
-          viewType={"detail"}
-          />
-        </Box>
-
+      <div style={{flex:1}}>
+            <VerticalAxis filteredActivities={filteredActivities} height={height}/>
+            {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
+        </div>
 
         <Box flex="4">
           {(selectedArtifactEntry.files[selectedArtifactIndex].fileType ===
@@ -541,52 +527,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               paddingRight:20
             }}
           >
-            <Flex style={{ alignItems: 'center' }}>
-              {/* <span
-                onClick={() => {
-                  const entryIndex = selectedArtifactEntry.index;
-                  if (entryIndex === 0) {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry:
-                        projectData.entries[projectData.entries.length - 1],
-                      selectedArtifactIndex: 0,
-                    });
-                  } else {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry:
-                        projectData.entries[entryIndex - 1],
-                      selectedArtifactIndex: 0,
-                    });
-                  }
-                }}
-                style={{ fontWeight: 700, fontSize: '24px', padding: '3px' }}
-              >
-                {'<<'}
-              </span>
-              <span
-                onClick={() => {
-                  if (selectedArtifactIndex > 0) {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry,
-                      selectedArtifactIndex: selectedArtifactIndex - 1,
-                    });
-                  } else {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry,
-                      selectedArtifactIndex:
-                        selectedArtifactEntry.files.length - 1,
-                    });
-                  }
-                }}
-                style={{ fontWeight: 500, fontSize: '16px', padding: '3px' }}
-              >
-                {'<<'}
-              </span> */}
-            </Flex>
 
             <DetailPreview
               setFragSelected={setFragSelected}
@@ -597,53 +537,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               openFile={openFile}
             />
 
-            <Flex style={{ alignItems: 'center' }}>
-              {/* <span
-                onClick={() => {
-                  const len = selectedArtifactEntry.files.length;
-                  if (selectedArtifactIndex < len - 1) {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry,
-                      selectedArtifactIndex: selectedArtifactIndex + 1,
-                    });
-                  } else {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry,
-                      selectedArtifactIndex: 0,
-                    });
-                  }
-                }}
-                style={{ fontWeight: 500, fontSize: '16px', padding: '3px' }}
-              >
-                {'>>'}
-              </span>
-
-              <span
-                onClick={() => {
-                  console.log(selectedArtifactEntry.index);
-                  const entryIndex = selectedArtifactEntry.index;
-                  if (entryIndex === projectData.entries.length - 1) {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: projectData.entries[0],
-                      selectedArtifactIndex: 0,
-                    });
-                  } else {
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry:
-                        projectData.entries[entryIndex + 1],
-                      selectedArtifactIndex: 0,
-                    });
-                  }
-                }}
-                style={{ fontWeight: 700, fontSize: '24px', padding: '3px' }}
-              >
-                {'>>'}
-              </span> */}
-            </Flex>
           </Flex>
         </Box>
 

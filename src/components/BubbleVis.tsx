@@ -13,13 +13,9 @@ import {
   TagType,
 } from './types';
 import { useProjectState } from './ProjectContext';
-import { m } from 'framer-motion';
-
-
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
-import { Image } from '@chakra-ui/react';
 
 interface BubbleProps {
     filteredActivities: any,

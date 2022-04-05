@@ -102,13 +102,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
-  // const [timeFilter, setTimeFilter] = useState<any>(null);
   const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
   const [filteredActivities, setfilteredActivities] = useState(projectData.entries);
   const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
   const [showTool, setShowTool] = useState(false);
-  const [posX, setPosX] = useState(0);
-  const [posY, setPosY] = useState(0);
   const [groupBy, setGroupBy] = useState(null);
   const [splitBubbs, setSplitBubbs] = useState(false);
   
@@ -207,8 +204,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
               filteredActivities={filteredActivities}
               setViewType={setViewType}
               hoverActivity={hoverActivity}
-              setPosX={setPosX}
-              setPoY={setPosY}
             />
           </Box>
         </Flex>
@@ -339,6 +334,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setViewType={setViewType}
         folderPath={folderPath}
         projectData={projectData}
+        filteredActivities={projectData.entries}
       />
     );
   }
@@ -380,8 +376,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
               filteredActivities={filteredActivities}
               setViewType={setViewType}
               hoverActivity={hoverActivity}
-              setPosX={setPosX}
-              setPoY={setPosY}
             />
           </Box>
         </Flex>

@@ -44,10 +44,11 @@ const VerticalAxis = (projectProps: any) => {
 
   const { defineEvent, height, filteredActivities } = projectProps;
   const [
-    { projectData, selectedArtifactEntry, researchThreads, selectedThread },
+    { projectData, selectedArtifactEntry, selectedArtifactIndex, researchThreads, selectedThread },
   dispatch] = useProjectState();
   const allActivities = projectData.entries;
 
+  console.log('USE PROJECT STATE', selectedArtifactEntry, selectedArtifactIndex);
 
   const width = 150;
   
@@ -115,7 +116,7 @@ const VerticalAxis = (projectProps: any) => {
       return new Date(r.date) < filteredActivitiesExtent[0] || new Date(r.date) > filteredActivitiesExtent[1]
     }).attr('fill', 'red').style('fill-opacity', .08)
 
-    if (!defineEvent) {
+    if (!defineEvent && !selectedArtifactEntry) {
 
         const triangle = d3.symbol().size(100).type(d3.symbolTriangle);
 
@@ -251,7 +252,17 @@ const VerticalAxis = (projectProps: any) => {
 
           
       }
-  }, [height, filteredActivities]);
+
+    if(selectedArtifactEntry){
+      console.log(rects.data())
+      rects
+        .filter(f => f.title === selectedArtifactEntry.title)
+        .attr('fill', 'red')
+        .style('fill-opacity', 1)
+        .attr('height', 10)
+        .attr('width', 40);
+    }
+  }, [height, filteredActivities, selectedArtifactEntry]);
 
 
   return (

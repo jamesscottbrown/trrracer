@@ -5,12 +5,10 @@ import { useProjectState } from './ProjectContext';
 
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
+import { openFile } from '../fileUtil';
 const { ipcRenderer } = require('electron');
 
-export const openFile = (fileName: string, folderPath: string) => {
-    console.log('Open file:', path.join(folderPath, fileName));
-    ipcRenderer.send('open-file', path.join(folderPath, fileName));
-};
+
 
 const ActivityWrap = (props:any) => {
     const {
