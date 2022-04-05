@@ -92,7 +92,14 @@ const BubbleVis = (props:BubbleProps) => {
 
         if(groupBy){
 
-            let groups = [{label:'all', color:'gray', highlighted:forced.nodes, notHighlighted:[]}]
+            console.log('forced nodes',forced.nodes)
+
+            let highlightedForFirst = forced.nodes.filter(f=> filteredActivities.map(m=> m.title).includes(f.title))
+            let notHighlightedForFirst = forced.nodes.filter(f=> filteredActivities.map(m=> m.title).indexOf(f.title) == -1)
+
+            console.log('those highlighted',highlightedForFirst)
+
+            let groups = [{label:'all', color:'gray', highlighted: highlightedForFirst, notHighlighted: notHighlightedForFirst}]
             if(groupBy.type === 'research_threads'){
                 let tempgroups = groupBy.data.map(m=> {
                     let group = {label: m.title, color: m.color}
