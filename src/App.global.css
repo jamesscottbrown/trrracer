@@ -36,7 +36,7 @@ hr {
 #button-wrap{
   position:absolute;
   top:-6px;
-  right:0;
+  right:220px;
 }
 
 /* For pdf */
@@ -60,7 +60,7 @@ hr {
   box-shadow: 5px 5px 5px 1px #ccc;
   border-radius: 5px;
   right:10px;
-  top:-10px;
+  top:-10px
 }
 
 .react-pdf__Page__annotations.annotationLayer {
@@ -69,7 +69,7 @@ hr {
 
 .react-pdf__Page__canvas {
   margin: 0 auto;
-  display:relative;
+  position:relative;
   width:600px;
 }
 

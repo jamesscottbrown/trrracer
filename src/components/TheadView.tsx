@@ -9,7 +9,7 @@ import { useProjectState } from './ProjectContext';
 import ThreadNav from './ThreadNav';
 import GoogDriveParagraph from './GoogDriveElements';
 import AttachmentPreview from './AttachmentPreview';
-import { openFile } from './ProjectListView';
+import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';

@@ -2,7 +2,7 @@ import React from 'react';
 import * as d3 from 'd3';
 import path from 'path';
 import AttachmentPreview from './AttachmentPreview';
-import { openFile } from './ProjectListView';
+import { openFile } from '../fileUtil';
 
 const LargeFileRender = (props:any) => {
   const { fileArray, folderPath, bgColor, numRendered, activity } = props;

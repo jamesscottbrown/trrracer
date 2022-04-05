@@ -1,6 +1,13 @@
+import { ipcRenderer } from 'electron';
+
 const os = require('os');
 const fs = require('fs-extra');
+ipcRenderer
 
+export const openFile = (fileName, folderPath) => {
+    console.log('Open file:', path.join(folderPath, fileName));
+    ipcRenderer.send('open-file', path.join(folderPath, fileName));
+};
 
 export const readFile = (fileName) => new Promise((resolve, reject) => {
     fs.readFile(fileName, (err, content) => {

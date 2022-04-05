@@ -18,6 +18,7 @@ import { EntryType, ProjectViewProps } from './types';
 import TagList from './TagList';
 
 import AttachmentPreview from './AttachmentPreview';
+import { openFile } from '../fileUtil';
 
 const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
   const { projectData, folderPath } = ProjectPropValues;
@@ -37,10 +38,10 @@ const ProjectGridView = (ProjectPropValues: ProjectViewProps) => {
     .map((entry) => entry.files.filter((f) => f.fileType !== 'url'))
     .flat();
 
-  const openFile = (fileName: string) => {
-    console.log('Open file:', path.join(folderPath, fileName));
-    ipcRenderer.send('open-file', path.join(folderPath, fileName));
-  };
+  // const openFile = (fileName: string) => {
+  //   console.log('Open file:', path.join(folderPath, fileName));
+  //   ipcRenderer.send('open-file', path.join(folderPath, fileName));
+  // };
 
   return (
     <div style={{ padding: '10px' }}>

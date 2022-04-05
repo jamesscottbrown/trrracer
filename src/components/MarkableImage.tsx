@@ -1,7 +1,5 @@
 import path from 'path';
 import React, { useEffect, useState } from 'react';
-
-
 import {
   Image,
   Box,
@@ -9,7 +7,6 @@ import {
   Button
 } from '@chakra-ui/react';
 import {IoIosFlag} from 'react-icons/fa'
-
 import ImageMarker, { Marker, MarkerComponentProps } from 'react-image-marker';
 import { useProjectState } from './ProjectContext';
 

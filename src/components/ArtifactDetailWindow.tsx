@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
 
-import { openFile } from './ProjectListView';
+import { openFile } from '../fileUtil';
 
 import TopTimeline from './TopTimeline';
 import ReadonlyEntry from './ReadonlyEntry';
