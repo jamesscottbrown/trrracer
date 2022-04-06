@@ -503,10 +503,11 @@ const appStateReducer = (state, action) => {
       const { newTag, entryIndex } = action;
 
       const existingTags = state.projectData.tags.map((k) => k.title);
-
       const newColor = pickTagColor(state.projectData.tags);
-
       let newTags;
+
+      console.log(newTag, entryIndex)
+
       if (!existingTags.includes(newTag.text)) {
         newTags = [
           ...state.projectData.tags,
@@ -564,6 +565,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'SELECTED_ARTIFACT': {
+      console.log('is this firing??');
       return {
         ...state,
         selectedArtifactEntry: action.selectedArtifactEntry,

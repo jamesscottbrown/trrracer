@@ -161,9 +161,28 @@ interface ProjectViewProps {
   setSelectedArtifactEntry: (e: any) => void;
 }
 
+interface EntryPropTypes {
+  entryData: EntryType;
+  entryIndex: number;
+  openFile: (a: string) => void;
+  updateEntryField: (
+    entryIndex: number,
+    fieldName: string,
+    newData: any
+  ) => void;
+  allTags: TagType[];
+  makeNonEditable: () => void;
+}
+
+interface ReactTag {
+  id: string;
+  text: string;
+}
+
 export {
   DeadlineType,
   EntryType,
+  EntryPropTypes,
   EntryTypeWithIndex,
   File,
   FileObj,
@@ -180,5 +199,6 @@ export {
   ResearchThread,
   ResearchThreadEvidence,
   ReactTagType,
+  ReactTag,
  
 };

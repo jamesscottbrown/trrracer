@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
 import { openFile } from '../fileUtil';
-import TopTimeline from './TopTimeline';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
-import type { ResearchThread, ResearchThreadEvidence } from './types';
-import ActivityWrap from './ActivityWrap';
-import ForceMagic from '../ForceMagic';
-import Bubbles from '../Bubbles';
+import type { ResearchThread, ResearchThreadEvidence, ReactTag, EntryPropTypes } from './types';
 import VerticalAxis from './VerticalAxis';
+import { WithContext as ReactTags } from 'react-tag-input';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -261,9 +258,26 @@ const DetailSidebar = (props: any) => {
     selectedArtifactEntry,
     selectedArtifactIndex,
   } = props;
-  const [{ researchThreads }, dispatch] = useProjectState();
+
+  const [{ researchThreads, projectData }, dispatch] = useProjectState();
+
+  const KeyCodes = {
+    comma: 188,
+    enter: 13,
+  };
+
+  console.log('projectData!!', projectData.entries[selectedArtifactEntry.index])
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
+  const [showTagAdd, setShowTagAdd] = useState(false);
+
+  const updateEntryField = (
+    entryIndex: number,
+    fieldName: string,
+    newValue: any
+  ) => {
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
+};
 
   const isArtifactInThread = researchThreads.research_threads.filter(
     (f: ResearchThread) => {
@@ -329,7 +343,40 @@ const DetailSidebar = (props: any) => {
 
       </Box>
       <Box>
-        <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>Activity Tags</div>
+        <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>{'Activity Tags'}
+        <Button
+          style={{marginLeft:'10px'}}
+          onClick={()=> {
+            showTagAdd ? setShowTagAdd(false) : setShowTagAdd(true);
+          }}
+        >{"Edit"}</Button>
+        </div>
+        {
+          showTagAdd && (
+            <div>
+              <ReactTags
+                tags={projectData.entries[selectedArtifactEntry.index].tags.map((t) => ({ id: t, text: t }))}
+                suggestions={projectData.tags.map((t) => ({ id: t.title, text: t.title }))}
+                delimiters={[KeyCodes.comma, KeyCodes.enter]}
+                handleDelete={(i: number) =>
+                  updateEntryField(
+                    selectedArtifactEntry.index,
+                    'tags',
+                    selectedArtifactEntry.tags.filter((_tag, index) => index !== i)
+                  )
+                }
+                handleAddition={(tag: ReactTag) => {
+                  dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex: selectedArtifactEntry.index });
+                  dispatch({
+                    type: 'SELECTED_ARTIFACT',
+                    selectedArtifactEntry: projectData.entries[selectedArtifactEntry.index],
+                    selectedArtifactIndex: selectedArtifactIndex,
+                  });
+                }}
+      />
+            </div>
+          )
+        }
         {selectedArtifactEntry.tags.map((t: any, i: number) => (
           <InteractiveActivityTag
             key={`it-${i}`}
@@ -480,7 +527,29 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             {`Go back to ${goBackView} view`}
           </Button>
           <Spacer/>
-          <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>{`Activity: ${selectedArtifactEntry.title}`}</div>
+          <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>
+            <Button
+            style={{marginRight:'10px'}}
+            onClick={()=> {
+              dispatch({
+                type: 'SELECTED_ARTIFACT',
+                selectedArtifactEntry: selectedArtifactEntry.index > 0 ? projectData.entries[selectedArtifactEntry.index - 1] : projectData.entries[projectData.entries.length - 1],
+                selectedArtifactIndex: 0,
+              });
+            }}
+            >{'<<'}</Button>
+            {` Activity: ${selectedArtifactEntry.title} `}
+            <Button
+              style={{marginLeft:'10px'}}
+              onClick={()=> {
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  selectedArtifactEntry: selectedArtifactEntry.index < projectData.entries.length - 1 ? projectData.entries[selectedArtifactEntry.index + 1] : projectData.entries[0],
+                  selectedArtifactIndex: 0,
+                });
+              }}
+            >{'>>'}</Button>
+            </div>
           <Spacer/>
           <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
         </Flex>
