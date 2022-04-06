@@ -72,8 +72,6 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
      */
     let nameCheck = file.name.split('.');
 
-    console.log('FILELIST',fileList)
-
     if (nameCheck[nameCheck.length - 1] === 'gdoc') {
       if (fs.existsSync(destination) && !sourceIsInProjectDir) {
         let newFile = {

@@ -80,7 +80,7 @@ const VerticalAxis = (projectProps: any) => {
     const svgEl = d3.select(svgRef.current);
     svgEl.selectAll('*').remove(); // Clear svg content before adding new elements
 
-    const svg = svgEl.append('g').attr('transform', `translate(90, 10)`);
+    const svg = svgEl.append('g').attr('transform', `translate(90, 20)`);
 
     const yAxis = d3.axisLeft(yScale).ticks(16).tickSize(10);
 
@@ -178,7 +178,6 @@ const VerticalAxis = (projectProps: any) => {
           .call(bY)
           .call(bY.move, [yScale(filteredActivitiesExtent[0]), yScale(filteredActivitiesExtent[1])]);
 
-        
         gBrush.select('.overlay').attr('opacity', 0.25);
 
         // Custom handlers
@@ -248,8 +247,18 @@ const VerticalAxis = (projectProps: any) => {
           .attr('y2', 0)
           .attr('stroke', 'black');
 
-          
-      }
+          let resetTest = svg.select('text.reset');
+
+          let reset = resetTest.empty() ? svg.append('text').classed('reset', true) : resetTest;
+      
+          reset.text('Reset Time')
+          .attr('transform', 'translate(-10, -11)')
+          .style('font-size', '12px')
+          .style('cursor','pointer')
+          .on('click', ()=> {
+            dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [null, null] })
+          })
+    }
 
     if(selectedArtifactEntry){
       if(hopArray){
@@ -260,8 +269,7 @@ const VerticalAxis = (projectProps: any) => {
         .attr('height', 10)
 
       }
-   
-      console.log(rects.data())
+
       rects
         .filter(f => f.title === selectedArtifactEntry.title)
         .attr('fill', 'red')
@@ -269,6 +277,9 @@ const VerticalAxis = (projectProps: any) => {
         .attr('height', 10)
         .attr('width', 40);
     }
+
+
+
   }, [height, filteredActivities, selectedArtifactEntry, hopArray]);
 
 
