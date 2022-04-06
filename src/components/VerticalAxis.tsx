@@ -255,7 +255,7 @@ const VerticalAxis = (projectProps: any) => {
       if(hopArray){
         console.log('hop',hopArray)
         rects.filter(f => hopArray.map(m=> m.title).includes(f.title))
-        .attr('fill', 'orange')
+        .attr('fill', 'purple')
         .attr('fill-opacity', 1)
         .attr('height', 10)
 
