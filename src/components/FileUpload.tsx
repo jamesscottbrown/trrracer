@@ -1,10 +1,9 @@
 /* eslint no-console: off */
 
 import { useDropzone } from 'react-dropzone';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FileObj } from './types';
-
 
 const baseStyle = {
   flex: 1,
@@ -43,23 +42,9 @@ interface FileUploadProps {
   msg: JSX.Element;
 }
 
-const createTwoButtonAlert = () =>
-    Alert.alert(
-      "Alert Title",
-      "My Alert Msg",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => console.log("OK Pressed") }
-      ],
-      { cancelable: false }
-    );
-
 const FileUpload = (props: FileUploadProps) => {
   const { containerStyle, saveFiles, msg } = props;
+
   const {
     getRootProps,
     getInputProps,
@@ -67,6 +52,7 @@ const FileUpload = (props: FileUploadProps) => {
     isDragAccept,
     isDragReject,
   } = useDropzone({
+    
     onDragOver: (event) => {
       // Without this function the drop event would fail to fire (but only sometimes)
       // Solution from https://stackoverflow.com/a/50233827
@@ -75,8 +61,10 @@ const FileUpload = (props: FileUploadProps) => {
     },
     // accept: '.pdf,.doc,.docx',
     onDropAccepted: (files) => {
+
       console.log('dropAccepted', files)
- 
+      alert('file accepted');
+      prompt('trst');
       //saveFiles(files);
     },
   });
