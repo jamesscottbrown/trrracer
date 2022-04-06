@@ -5,6 +5,8 @@ interface File {
   title: string;
   context: string;
   url?: string;
+  fileId?: string;
+  artifactType: string;
 }
 
 interface FileObj {
@@ -36,6 +38,8 @@ interface EntryTypeWithIndex {
   date: string;
   tags: string[];
   index: number;
+  quoteTags: string[];
+  isPrivate: boolean;
 }
 
 interface TagType {

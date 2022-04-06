@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FileObj } from './types';
 
+
 const baseStyle = {
   flex: 1,
   display: 'flex',
@@ -42,6 +43,21 @@ interface FileUploadProps {
   msg: JSX.Element;
 }
 
+const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Alert Title",
+      "My Alert Msg",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => console.log("OK Pressed") }
+      ],
+      { cancelable: false }
+    );
+
 const FileUpload = (props: FileUploadProps) => {
   const { containerStyle, saveFiles, msg } = props;
   const {
@@ -59,7 +75,9 @@ const FileUpload = (props: FileUploadProps) => {
     },
     // accept: '.pdf,.doc,.docx',
     onDropAccepted: (files) => {
-      saveFiles(files);
+      console.log('dropAccepted', files)
+ 
+      //saveFiles(files);
     },
   });
 

@@ -71,7 +71,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       flexFlow="row wrap"
       zIndex={1000}
       height={'100px'}
-      backgrounColor={'yellow'}
     >
       <Flex
         bg={useColorModeValue('white', 'gray.800')}

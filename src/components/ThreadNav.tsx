@@ -39,7 +39,7 @@ const MiniTimline = (props: any) => {
 
       const circTagged = circleG
       .selectAll('circle.associated')
-      .data(researchT.tagged_activities.flatMap(fm => fm.associatedActivities))
+      .data((researchT.tagged_activities && researchT.tagged_activities.length > 0) ? researchT.tagged_activities.flatMap(fm => fm.associatedActivities) : [])
       .join('circle')
       .attr('class', 'associated')
       .attr('cx', (d) => xScale(new Date(d.date)))
@@ -131,7 +131,6 @@ const ThreadNav = (threadProps: any) => {
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
                   opacity: checkIfSelectThread(i)
-                   
                 }}
                 onMouseEnter={() => {
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
@@ -252,6 +251,7 @@ const ThreadNav = (threadProps: any) => {
                     setName(null);
                     setDescription(null);
                     setShowCreateThread(false);
+                    console.log('creat threaddd', threadName, description)
                     dispatch({
                       type: 'CREATE_THREAD',
                       threadName,
