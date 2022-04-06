@@ -18,14 +18,15 @@ const GoogFileInit = (props: {
   const [state, dispatch] = useProjectState();
   const [showFileCreate, setShowFileCreate] = useState(false);
   const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
+  const [artifactType, setArtifactType] = useState('memo');
 
   const sendToFlask = async () => {
     setShowFileCreate(false);
 
     const response = await fetch(
-      `http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${entryIndex}/${state.projectData.title}`
+      `http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${artifactType}/${entryIndex}/${state.projectData.title}`
     );
-
+    
     const newData = await response.json();
 
     dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData });
@@ -37,6 +38,26 @@ const GoogFileInit = (props: {
     <div>
       {showFileCreate ? (
         <>
+         <Editable
+            defaultValue={artifactType}
+            startWithEditView
+            onChange={(val) => setArtifactType(val)}
+            w="420px"
+            boxShadow="xs"
+            p="4"
+            rounded="md"
+            bg="white"
+          >
+            <label>Artifact type:</label>
+            <EditablePreview
+        
+              border="1px"
+              borderColor="gray.200"
+              boxShadow="sm"
+              p="2"
+            />
+            <EditableInput display="inline" />
+          </Editable>
           <Editable
             defaultValue={googleFileName}
             startWithEditView

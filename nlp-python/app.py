@@ -130,8 +130,8 @@ def parse_eml(name, path):
 
 
 
-@app.route("/create_google_file/<string:name>/<string:type>/<string:entrynum>/<string:path>")
-def create_google(name, type, entrynum, path):
+@app.route("/create_google_file/<string:name>/<string:type>/<string:arttype>/<string:entrynum>/<string:path>")
+def create_google(name, type, arttype, entrynum, path):
 
     if path == 'EvoBio Design Study':
         final_path = DOCUMENT_PATH_EVO
@@ -150,12 +150,14 @@ def create_google(name, type, entrynum, path):
     blob_f = open(final_path + "trrrace.json", 'r')
     trrrace = json.load(blob_f)
 
+
     extension = "gdoc" if type == "document" else "gsheet"
 
     blob = {}
     blob['title'] = f'{name}.{extension}'
     blob["fileId"] = goog_id
     blob["fileType"] = extension
+    blob["artifactType"] = arttype
 
     trrrace["entries"][int(entrynum)]["files"].append(blob)
 
