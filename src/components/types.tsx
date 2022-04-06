@@ -12,6 +12,7 @@ interface File {
 interface FileObj {
   name: string;
   path: string;
+  artifactType: string;
 }
 
 interface URLAttachment {

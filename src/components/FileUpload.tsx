@@ -4,6 +4,9 @@ import { useDropzone } from 'react-dropzone';
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FileObj } from './types';
+const smalltalk = require('smalltalk');
+
+
 
 const baseStyle = {
   flex: 1,
@@ -45,6 +48,7 @@ interface FileUploadProps {
 const FileUpload = (props: FileUploadProps) => {
   const { containerStyle, saveFiles, msg } = props;
 
+
   const {
     getRootProps,
     getInputProps,
@@ -60,11 +64,25 @@ const FileUpload = (props: FileUploadProps) => {
       event.preventDefault();
     },
     // accept: '.pdf,.doc,.docx',
-    onDropAccepted: (files) => {
+    onDropAccepted: (files:any) => {
+     
+      console.log('dropAccepted', files[0].name)
 
-      console.log('dropAccepted', files)
-      alert('file accepted');
-      prompt('trst');
+      smalltalk
+      .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
+      .then((value) => {
+          console.log(value);
+          let newFiles= files.map(m=> {
+            m.artifactType = value;
+            return m;
+          })
+          console.log('newFiles',newFiles);
+          saveFiles(newFiles)
+      })
+      .catch(() => {
+          console.log('cancel');
+      });
+     
       //saveFiles(files);
     },
   });
@@ -83,8 +101,8 @@ const FileUpload = (props: FileUploadProps) => {
     <section className="container" style={{ ...containerStyle }}>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-
         <p>{msg}</p>
+
       </div>
     </section>
   );

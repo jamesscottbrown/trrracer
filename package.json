@@ -247,6 +247,7 @@
     "date-fns": "^2.23.0",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
+    "electron-prompt": "^1.7.0",
     "electron-updater": "^4.3.4",
     "eml-parser": "^1.0.6",
     "framer-motion": "^4",
@@ -274,8 +275,10 @@
     "regenerator-runtime": "^0.13.9",
     "respacer": "^1.1.0",
     "showdown": "^1.9.1",
+    "smalltalk": "^4.0.7",
     "source-map-support": "^0.5.19",
     "stopword": "^1.0.11",
+    "tiny-invariant": "^1.2.0",
     "uuid": "^8.3.2",
     "wndb-with-exceptions": "^3.0.2"
   },

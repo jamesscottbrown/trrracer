@@ -184,3 +184,37 @@ hr {
   margin-top: 0;
   margin-bottom: 16px;
 }
+
+.smalltalk{
+  position:absolute;
+  z-index:1000;
+  
+  top:200px;
+  bottom:200px;
+  left:200px;
+  right:200px;
+  background-color: aliceblue;
+  padding:10px;
+  min-height:200px;
+  box-shadow: 5px 5px 5px 1px #ccc;
+  border-radius: 5px;
+}
+
+.smalltalk div.page{
+  margin:auto;
+  width:200px;
+  padding:10px;
+}
+
+.smalltalk div.page header{
+  font-size: large;
+  font-weight: 700;
+}
+
+.smalltalk div.page button{
+  background-color: #777;
+  font-weight: 700;
+  color: #fff;
+  padding:5px 14px;
+  margin:5px
+}

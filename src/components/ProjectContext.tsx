@@ -72,12 +72,15 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
      */
     let nameCheck = file.name.split('.');
 
+    console.log('FILELIST',fileList)
+
     if (nameCheck[nameCheck.length - 1] === 'gdoc') {
       if (fs.existsSync(destination) && !sourceIsInProjectDir) {
         let newFile = {
           title: `${file.name}`,
           fileType: nameCheck[nameCheck.length - 1],
           context: 'null',
+          artifactType: file.artifactType,
         };
 
         newFiles = [...newFiles, newFile];
@@ -120,6 +123,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
               title: newName,
               fileType: nameCheck[nameCheck.length - 1],
               context: 'null',
+              artifactType: file.artifactType
             },
           ];
         }
@@ -545,6 +549,8 @@ const appStateReducer = (state, action) => {
     case 'ADD_FILES_TO_ENTRY': {
       const { fileList, entryIndex } = action;
       const currentFiles = state.projectData.entries[entryIndex].files;
+
+      console.log('filelist', fileList)
       const newFiles = [
         ...currentFiles,
         ...copyFiles(fileList, state.folderPath),
