@@ -399,6 +399,7 @@ const appStateReducer = (state, action) => {
         filterRT: null,
         filterQuery:null,
         query: null,
+        hopArray: [],
         goBackView: 'overview',
         artifactTypes: aTypes
       };
@@ -565,11 +566,12 @@ const appStateReducer = (state, action) => {
     }
 
     case 'SELECTED_ARTIFACT': {
-      console.log('is this firing??');
+      console.log('is this firing in hoparray??', action.hopArray);
       return {
         ...state,
         selectedArtifactEntry: action.selectedArtifactEntry,
         selectedArtifactIndex: action.selectedArtifactIndex,
+        hopArray: action.hopArray == Number ? hopArray : action.hopArray,
       };
     }
 

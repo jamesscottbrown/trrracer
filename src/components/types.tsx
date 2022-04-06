@@ -148,8 +148,10 @@ type ProjectState = {
   highlightedTag?: string;
   highlightedType?: string;
 
-  selectedArtifactEntry: EntryType; // ?
+  selectedArtifactEntry: EntryTypeWithIndex; // ?
   selectedArtifactIndex: number;
+
+  hopArray: any[];
 };
 
 interface ProjectViewProps {

@@ -44,14 +44,12 @@ const VerticalAxis = (projectProps: any) => {
 
   const { defineEvent, height, filteredActivities } = projectProps;
   const [
-    { projectData, selectedArtifactEntry, selectedArtifactIndex, researchThreads, selectedThread },
+    { projectData, selectedArtifactEntry, hopArray },
   dispatch] = useProjectState();
+
   const allActivities = projectData.entries;
 
-  console.log('USE PROJECT STATE', selectedArtifactEntry, selectedArtifactIndex);
-
   const width = 150;
-  
   const margin = height * 0.25;
 
   const yearMonth = dataStructureForTimeline(allActivities);
@@ -254,6 +252,15 @@ const VerticalAxis = (projectProps: any) => {
       }
 
     if(selectedArtifactEntry){
+      if(hopArray){
+        console.log('hop',hopArray)
+        rects.filter(f => hopArray.map(m=> m.title).includes(f.title))
+        .attr('fill', 'orange')
+        .attr('fill-opacity', 1)
+        .attr('height', 10)
+
+      }
+   
       console.log(rects.data())
       rects
         .filter(f => f.title === selectedArtifactEntry.title)
@@ -262,7 +269,7 @@ const VerticalAxis = (projectProps: any) => {
         .attr('height', 10)
         .attr('width', 40);
     }
-  }, [height, filteredActivities, selectedArtifactEntry]);
+  }, [height, filteredActivities, selectedArtifactEntry, hopArray]);
 
 
   return (

@@ -131,8 +131,10 @@ const FragmentToThread = (props: any) => {
 };
 const InteractiveActivityTag = (props: any) => {
   const { selectedArtifactEntry, index, tag } = props;
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ projectData, hopArray }, dispatch] = useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
+
+  console.log('hop array', hopArray);
 
   const tagMatches = projectData.entries.filter(
     (f: any) => f.tags.indexOf(tag) > -1
@@ -157,16 +159,20 @@ const InteractiveActivityTag = (props: any) => {
               .indexOf(selectedArtifactEntry.title);
 
             if (indexOfE === 0) {
+              const newHop = [...hopArray, tagMatches[tagMatches.length - 1]];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[tagMatches.length - 1],
                 selectedArtifactIndex: 0,
+                hopArray: newHop
               });
             } else {
+              const newHop = [ ...hopArray, tagMatches[indexOfE - 1] ];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE - 1],
                 selectedArtifactIndex: 0,
+                hopArray: newHop
               });
             }
           }}
@@ -191,16 +197,20 @@ const InteractiveActivityTag = (props: any) => {
               .map((m: any) => m.title)
               .indexOf(selectedArtifactEntry.title);
             if (indexOfE === tagMatches.length - 1) {
+              const newHop = [ ...hopArray, tagMatches[0] ];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[0],
                 selectedArtifactIndex: 0,
+                hopArray: newHop
               });
             } else {
+              const newHop = [ ...hopArray, tagMatches[indexOfE + 1] ];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE + 1],
                 selectedArtifactIndex: 0,
+                hopArray: newHop
               });
             }
           }}
@@ -234,10 +244,13 @@ const InteractiveActivityTag = (props: any) => {
                   }}
                   key={`match-${i}`}
                   onClick={()=> {
+                    const newHop = [ ...hopArray, t ];
+                    console.log('T in tags', t, newHop);
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: t,
                       selectedArtifactIndex: 0,
+                      hopArray: newHop
                     });
                   }}
                 >
@@ -471,7 +484,7 @@ const DetailSidebar = (props: any) => {
 
 const ArtifactDetailWindow = (props: DetailProps) => {
   const { setViewType, folderPath, filteredActivities } = props;
-  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView, projectData }, dispatch] =
+  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView, projectData, hopArray }, dispatch] =
     useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
@@ -520,6 +533,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: null,
                 selectedArtifactIndex: null,
+                hopArray: []
               });
               setViewType(goBackView);
             }}
@@ -531,10 +545,12 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
             style={{marginRight:'10px'}}
             onClick={()=> {
+              const newHop = [...hopArray, projectData.entries[(selectedArtifactEntry.index - 1)] ];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: selectedArtifactEntry.index > 0 ? projectData.entries[selectedArtifactEntry.index - 1] : projectData.entries[projectData.entries.length - 1],
                 selectedArtifactIndex: 0,
+                hopArray: newHop
               });
             }}
             >{'<<'}</Button>
@@ -542,10 +558,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{marginLeft:'10px'}}
               onClick={()=> {
+                let newHop = [...hopArray, projectData.entries[(selectedArtifactEntry.index + 1)] ];
+              
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
                   selectedArtifactEntry: selectedArtifactEntry.index < projectData.entries.length - 1 ? projectData.entries[selectedArtifactEntry.index + 1] : projectData.entries[0],
                   selectedArtifactIndex: 0,
+                  hopArray: newHop
                 });
               }}
             >{'>>'}</Button>

@@ -101,6 +101,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: entryData,
                       selectedArtifactIndex: i,
+                      hopArray:[entryData]
                     });
                   }}
                 >
