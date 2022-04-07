@@ -17,51 +17,60 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams
 from pdfminer.pdftypes import resolve1
 
-links = []
-with open("2020_infovis_insights.pdf", "rb") as fp:
-    parser = PDFParser(fp)
-    doc = PDFDocument(parser)
-    parser.set_document(doc)
+def extract_links_from_pdf(path):
+    print('PATH',path)
+    links = []
+    with open(path + "paper_2020_insights.pdf", "rb") as fp:
+        parser = PDFParser(fp)
+        doc = PDFDocument(parser)
+        parser.set_document(doc)
 
-    if not doc.is_extractable:
-        print(f"File {filename} is not extractable")
+        if not doc.is_extractable:
+            print(f"File is not extractable")
 
-    rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
+        rsrcmgr = PDFResourceManager()
+        laparams = LAParams()
+        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-    for i, page in enumerate(PDFPage.create_pages(doc)):
-        interpreter.process_page(page)
+        for i, page in enumerate(PDFPage.create_pages(doc)):
+            interpreter.process_page(page)
 
-        if page.annots:
-            for annotation in page.annots:
-                annotationDict = resolve1(annotation)
+            print('pageeeeeee',page.mediabox)
+            print('___________________________________')
 
-                try:
-                    # Skip over any annotations that are not links
-                    if str(annotationDict.get("Subtype")) != "/'Link'":
-                        continue
+            if page.annots:
+                for annotation in page.annots:
+                    annotationDict = resolve1(annotation)
 
-                    position = annotationDict["Rect"]
-                    uriDict = annotationDict["A"]
+                    try:
+                        # Skip over any annotations that are not links
+                        if str(annotationDict.get("Subtype")) != "/'Link'":
+                            continue
 
-                    # skip internal /'GoTo' links to figures/sections
-                    if str(uriDict["S"]) != "/'URI'":
-                        continue
+                        position = annotationDict["Rect"]
+                        uriDict = annotationDict["A"]
 
-                    # extract URLs, escaping any spaces
-                    uri = uriDict["URI"].decode("utf8").replace(" ", "%20")
+                        # skip internal /'GoTo' links to figures/sections
+                        if str(uriDict["S"]) != "/'URI'":
+                            continue
 
-                    # skip URLs that aren't to a trrrace view
-                    if "https://vdl.sci.utah.edu/trrrace/" not in uri:
-                        continue
+                        # extract URLs, escaping any spaces
+                        uri = uriDict["URI"].decode("utf8").replace(" ", "%20")
 
-                    links.append({"position": position, "url": uri, "page": i + 1})
-                    
-                except Exception as e:
-                    traceback.print_exc()
+                        # skip URLs that aren't to a trrrace view
+                        if "https://vdl.sci.utah.edu/trrrace/" not in uri:
+                            continue
 
-with open("links.json", "w") as fp:
-    json.dump(links, fp, indent=4)
+                        print('URI DICT', annotationDict, uriDict)
+
+                        links.append({"position": position, "url": uri, "page": i + 1, "pdf-dim": page.mediabox})
+                        
+                    except Exception as e:
+                        traceback.print_exc()
+
+    with open("links.json", "w") as fp:
+        json.dump(links, fp, indent=4)
+    
+    return links
 

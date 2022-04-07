@@ -15,10 +15,10 @@ const PaperView = (props:any) => {
 
     const perf = `${path.join(folderPath, 'paper_2020_trevo_CR (1).pdf')}`;
 
-    console.log('PERF',perf)
+    const filePath = path.join(folderPath, 'links.json');
+    const linkData = fs.readFileSync(filePath, { encoding: 'utf-8' });
 
-    const filePath = path.join(folderPath, 'trevo-html-test.html');
-    const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
+    console.log(JSON.parse(linkData))
  
     const [
         {
@@ -171,13 +171,13 @@ const PaperView = (props:any) => {
 
   
     return (
-        <Flex position="relative" top={100}>
+        <Flex position="relative" top={70}>
           <Box
             margin="8px"
             p={5}
             flex={1}
             flexDirection="column"
-            h="calc(100vh - 120px)"
+            h="calc(100vh - 80px)"
             overflow="auto"
           >
             <ThreadNav
@@ -185,7 +185,7 @@ const PaperView = (props:any) => {
               viewType="research threads"
             />
           </Box>
-          <Box flex={4} h="calc(100vh - 120px)" overflowY="auto" marginTop={15}>
+          <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
     
             <svg style={{display:'inline'}} ref={svgRef} width={360} height={'100%'}/>
 
@@ -202,7 +202,7 @@ const PaperView = (props:any) => {
                 </Document>
                 
                 <div id={"button-wrap"}>
-                  <p>
+                  <p style={{textAlign:'center', fontSize:'12px', padding:'5px'}}>
                     Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
                   </p>
                 <button 
@@ -211,7 +211,7 @@ const PaperView = (props:any) => {
                   onClick={previousPage}
                   style={{ 
                     marginRight: '10px',
-                    backgroundColor: '#3f51b5',
+                    backgroundColor: '#818589',
                     color: 'white',
                     border: 'none',
                     padding: '5px 10px',
@@ -227,7 +227,7 @@ const PaperView = (props:any) => {
                   onClick={nextPage}
                   style={{ 
                     marginRight: '10px',
-                    backgroundColor: '#3f51b5',
+                    backgroundColor: '#818589',
                     color: 'white',
                     border: 'none',
                     padding: '5px 10px',

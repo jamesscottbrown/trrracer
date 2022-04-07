@@ -35,14 +35,14 @@ hr {
 
 #button-wrap{
   position:absolute;
-  top:-6px;
+  top: 0px;
   right:220px;
 }
 
 /* For pdf */
 .react-pdf__Document {
   position:relative;
-  top:100px;
+  top:80px;
   right:10px;
   width:500px;
 }

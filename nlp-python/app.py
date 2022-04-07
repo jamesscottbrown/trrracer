@@ -12,6 +12,7 @@ import datetime
 import json
 import eml_parser
 from email import message_from_file, policy, parser
+from extract_links import extract_links_from_pdf
 
 
 app = Flask(__name__)
@@ -294,7 +295,19 @@ def yake_extract_words():
         
     
     #json.dump(ldamodel.print_topics(), outfile)
+@app.route("/parse_links/<string:path>")
+def parse_links(path):
 
+    # if path == 'EvoBio Design Study':
+    #     final_path = DOCUMENT_PATH_EVO
+        
+    # elif path == 'Jen':
+    #     final_path = DOCUMENT_PATH_JEN
+        
+    # else:
+    #     final_path = DOCUMENT_PATH_DERYA
+
+    extract_links_from_pdf(DOCUMENT_PATH_EVO)
 
           
 
