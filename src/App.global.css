@@ -60,7 +60,9 @@ hr {
   box-shadow: 5px 5px 5px 1px #ccc;
   border-radius: 5px;
   right:10px;
-  top:-10px
+  transform: translate(0, 0) rotate(0deg) !important;
+  top: 0px !important;
+  left: 0px !important;
 }
 
 .react-pdf__Page__annotations.annotationLayer {
