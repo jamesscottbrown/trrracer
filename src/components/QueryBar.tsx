@@ -28,6 +28,7 @@ const processDataQuery = (queryTerm:string, txtData:any, googleData:any, activit
         let tempText = textMatches.filter(t => t['entry-title'] === ent.title);
         if(tempText.length > 0){
             tempText.map((tt)=> {
+                console.log('tt',tt)
                 let txtArray = tt.text.split('. ')
                 let indexArray = [];
                 txtArray.forEach((t, i)=> {
@@ -36,7 +37,15 @@ const processDataQuery = (queryTerm:string, txtData:any, googleData:any, activit
                         if(i > 0){
                             con.push({style:null, context:txtArray[(i-1)]})
                         }
-                        con.push({style:'bold', context:txtArray[i]})
+
+                        let test = txtArray[i].split(queryTerm)
+
+                        con.push({style: null, context: test[0]})
+
+                        con.push({style:'bold', context: queryTerm})
+
+                        con.push({style: null, context: test[1]})
+
                         if(i < txtArray.length - 1){
                             con.push({style:null, context:txtArray[(i+1)]})
                         }
@@ -63,7 +72,13 @@ const processDataQuery = (queryTerm:string, txtData:any, googleData:any, activit
                         if(i > 0){
                             con.push({style:null, context:txtArray[(i-1)]})
                         }
-                        con.push({style:'bold', context:txtArray[i]})
+                        let test = txtArray[i].split(queryTerm);
+                       
+                        con.push({style: null, context: test[0]})
+                        con.push({style: 'bold', context: queryTerm})
+                        con.push({style: null, context: test[1]})
+
+
                         if(i < txtArray.length - 1){
                             con.push({style:null, context:txtArray[(i+1)]})
                         }

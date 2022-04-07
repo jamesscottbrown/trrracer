@@ -65,7 +65,7 @@ const LeftSidebar = (props:any) => {
   return (
     <Box
       margin="8px"
-      p={5}
+      style={{paddingLeft:5, paddingRight:5}}
       flex={1}
       flexDirection="column"
       h="calc(100vh - 130px)"
@@ -75,10 +75,10 @@ const LeftSidebar = (props:any) => {
     <Box
       marginLeft="3px"
       padding="3px"
-      height="60px"
+      height="30px"
     >
       <FormControl display='flex' alignItems='center' marginBottom={10}>
-        <FormLabel htmlFor='split-by' mb='0' textAlign={'right'}>
+        <FormLabel htmlFor='split-by' mb='0' textAlign={'right'} fontSize={'12px'}>
           Split bubbles to artifacts
         </FormLabel>
         <Switch id='split-by' 
@@ -92,10 +92,10 @@ const LeftSidebar = (props:any) => {
    <Box
     marginLeft="3px"
     padding="3px"
-    height="60px"
+    height="40px"
    >
       <FormControl display='flex' alignItems='center' marginBottom={10}>
-      <FormLabel htmlFor='split-by' mb='0' textAlign={'right'}>
+      <FormLabel htmlFor='split-by' mb='0' textAlign={'right'} fontSize={'12px'}>
         Group by research threads
       </FormLabel>
       <Switch id='split-by' 

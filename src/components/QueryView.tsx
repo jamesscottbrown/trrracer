@@ -86,6 +86,8 @@ const QueryView = (props: any) => {
     const {setViewType, projectData} = props;
     const [{query}, dispatch] = useProjectState();
 
+    console.log('query',query)
+
     return (
 
         <div>
@@ -131,7 +133,7 @@ const QueryView = (props: any) => {
                                                                     fontWeight: m.style ? 700 : 400,
                                                                     fontStyle:'italic',
                                                                     backgroundColor: m.style ? 'yellow' : '#ffffff',
-                                                                }}>{m.context}{'. '}</span>
+                                                                }}>{m.context}{m.style ? "" : '. '}</span>
                                                             ))
                                                         }
                                                     </div>
