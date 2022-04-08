@@ -13,7 +13,7 @@ import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 const PaperView = (props:any) => {
     const {folderPath} = props;
 
-    const perf = `${path.join(folderPath, 'paper_2020_trevo_CR (1).pdf')}`;
+    const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
 
     const filePath = path.join(folderPath, 'links.json');
     const linkData = fs.readFileSync(filePath, { encoding: 'utf-8' });
@@ -55,6 +55,7 @@ const PaperView = (props:any) => {
     const height = 900;
   
     const svgRef = React.useRef(null);
+    const annoSvgRef = React.useRef(null);
  
     const forced = new ForceMagic(projectData.entries, width, height, false);
     const checktool = d3.select('#tooltip');
@@ -148,9 +149,13 @@ const PaperView = (props:any) => {
           let annoTemp = anno.filter((a: any) => a[0] === i);
           pageRectData.push({pageIndex: i, anno: annoTemp.length > 0 ? annoTemp[0][1] : []})
         }
-        const rectHeight = 70;
+        const smallRectHeight = 70;
+        const bigRectHeight = 792;
+        const bigRectWidth = 612;
 
-        const yScale = d3.scaleLinear().domain([0, anno[0][1][0]['pdf-dim'][3]]).range([rectHeight, 0])
+        const yScaleSmall = d3.scaleLinear().domain([0, anno[0][1][0]['pdf-dim'][3]]).range([smallRectHeight, 0]);
+        const yScaleBig = d3.scaleLinear().domain([0, anno[0][1][0]['pdf-dim'][3]]).range([bigRectHeight, 0]);
+        const xScaleBig = d3.scaleLinear().domain([0, anno[0][1][0]['pdf-dim'][2]]).range([0, bigRectWidth]);
        
         let groupTest = d3.select(svgRef.current).select('.text-group');
 
@@ -159,16 +164,17 @@ const PaperView = (props:any) => {
         group.attr('transform', 'translate(240, 10)');
 
         let pages = group.selectAll('g.pages').data(pageRectData).join('g').classed('pages', true);
-        pages.attr('transform', (d, i)=> `translate(0, ${(i * (rectHeight + 5))})`)
+        pages.attr('transform', (d, i)=> `translate(0, ${(i * (smallRectHeight + 5))})`)
 
         let rect = pages.selectAll('rect.pag').data((d: any) => [d]).join('rect').classed('pag', true);
 
-        rect.attr('width', 50).attr('height', rectHeight)
+        rect.attr('width', 50).attr('height', smallRectHeight)
        
         rect.attr('fill', 'gray')
         rect.attr('fill-opacity', 0.5)
 
-        let annog = pages.selectAll('rect.anno')
+        let annog = pages
+        .selectAll('rect.anno')
         .data((d: any) => d.anno)
         .join("rect")
         .classed('anno', true);
@@ -177,14 +183,53 @@ const PaperView = (props:any) => {
         annog.attr('height', 5);
 
         annog.attr('y', (d)=> {
-          return yScale(d.position['1']);
+          return yScaleSmall(d.position['1']);
         });
         
         annog.attr('fill', researchThreads.research_threads[index].color);
 
         rect.filter((f:any) => f.pageIndex === pageNumber).attr('fill-opacity', 1);
 
-    }, [numPages, pageNumber])
+       
+        let svgAnno = d3.select(annoSvgRef.current);
+        svgAnno.selectAll('*').remove();
+
+       
+
+        if(pageRectData.length > 0){
+
+          let currentRectData = pageRectData.filter(f=> f.pageIndex === pageNumber)[0];
+
+          let overlayRect = svgAnno
+          .selectAll('rect.annotation_overlay')
+          .data(currentRectData? currentRectData.anno : [])
+          .join('rect')
+          .classed('annotation_overlay', true);
+
+          if(currentRectData){
+
+            overlayRect
+            .attr('width', (d:any)=> (d.position[2] - d.position[0]))
+            .attr('height', 10)
+            .attr('x', (d:any)=> (xScaleBig(d.position[0])))
+            .attr('y', (d:any)=> (yScaleBig(d.position[3])))
+            .attr('fill', researchThreads.research_threads[index].color)
+            .style('fill-opacity', .5);
+
+
+          }
+
+
+        
+
+        }
+        
+        
+
+
+
+
+    }, [numPages, pageNumber, anno])
 
   
     return (
@@ -203,9 +248,7 @@ const PaperView = (props:any) => {
             />
           </Box>
           <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
-    
             <svg style={{display:'inline'}} ref={svgRef} width={360} height={'100%'}/>
-
             <div 
               id="pdf-wrap"
               style={{
@@ -215,10 +258,12 @@ const PaperView = (props:any) => {
                 <Document 
                   file={perf} 
                   onLoadSuccess={onDocumentLoadSuccess}>
+                   <svg style={{position:'absolute', width:612, height:792, zIndex:1000}} ref={annoSvgRef}/>
                   <Page pageNumber={pageNumber} />
+                 
                 </Document>
                 
-                <div id={"button-wrap"}>
+                <div id={"button-wrap"} style={{zIndex:1050}}>
                   <p style={{textAlign:'center', fontSize:'12px', padding:'5px'}}>
                     Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
                   </p>

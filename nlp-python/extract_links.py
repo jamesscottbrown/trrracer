@@ -36,12 +36,13 @@ def extract_links_from_pdf(path):
         for i, page in enumerate(PDFPage.create_pages(doc)):
             interpreter.process_page(page)
 
-            print('pageeeeeee',page.mediabox)
-            print('___________________________________')
-
+        
             if page.annots:
                 for annotation in page.annots:
                     annotationDict = resolve1(annotation)
+
+                    print('anno', annotationDict)
+                    print('___________________________________')
 
                     try:
                         # Skip over any annotations that are not links
@@ -72,5 +73,5 @@ def extract_links_from_pdf(path):
     with open("links.json", "w") as fp:
         json.dump(links, fp, indent=4)
     
-    return links
+    return str(links)
 

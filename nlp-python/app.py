@@ -294,7 +294,7 @@ def yake_extract_words():
     # print(len(collocation_array), len(d_b_json["entries"]))
         
     
-    #json.dump(ldamodel.print_topics(), outfile)
+#http://127.0.0.1:5000/parse_links/EvoBio Design Study
 @app.route("/parse_links/<string:path>")
 def parse_links(path):
 
