@@ -170,7 +170,7 @@ const PaperView = (props:any) => {
 
         rect.attr('width', 50).attr('height', smallRectHeight)
        
-        rect.attr('fill', 'gray')
+        rect.attr('fill', '#C5C5C5')
         rect.attr('fill-opacity', 0.5)
 
         let annog = pages
@@ -186,15 +186,25 @@ const PaperView = (props:any) => {
           return yScaleSmall(d.position['1']);
         });
         
-        annog.attr('fill', researchThreads.research_threads[index].color);
+        annog.attr('fill', 'gray');
+        annog.attr('opacity', 0.4);
 
-        rect.filter((f:any) => f.pageIndex === pageNumber).attr('fill-opacity', 1);
+        let selectedPage = pages.filter((f:any) => f.pageIndex === pageNumber);
+
+        console.log('selected page', selectedPage);
+
+        selectedPage.selectAll('rect.pag')
+          .attr('fill', researchThreads.research_threads[index].color)
+          .attr('fill-opacity', 1);
+
+        selectedPage.selectAll('rect.anno')
+          .attr('fill', '#FFF')
+          .attr('opacity', .4);
 
        
         let svgAnno = d3.select(annoSvgRef.current);
         svgAnno.selectAll('*').remove();
 
-       
 
         if(pageRectData.length > 0){
 

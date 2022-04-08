@@ -260,15 +260,21 @@ const appStateReducer = (state, action) => {
    */
 
   const checkRtFile = (dir: any) => {
+
+    console.log('file path', dir[dir.length - 1] != '/');
+    let filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
+
     try {
-      return readProjectFile(dir, 'research_threads.json', null);
+      return readProjectFile(filePath, 'research_threads.json', null);
     } catch (e) {
       let rtOb = {
         title: action.projectData.title,
         research_threads: [],
       };
 
-      saveJSONRT(rtOb);
+      console.log('this is not a file here', rtOb)
+
+      saveJSONRT(rtOb, filePath);
       return rtOb;
     }
   };
@@ -288,9 +294,10 @@ const appStateReducer = (state, action) => {
     return { ...state, ProjectData: newProjectData };
   };
 
-  const saveJSONRT = (RTData: any) => {
+  const saveJSONRT = (RTData: any, dir: string) => {
+  
     fs.writeFileSync(
-      path.join(state.folderPath, 'research_threads.json'),
+      path.join(dir, 'research_threads.json'),
       JSON.stringify(RTData, null, 4),
       (err) => {
         if (err) {
@@ -306,42 +313,79 @@ const appStateReducer = (state, action) => {
 
   switch (action.type) {
     case 'SET_DATA': {
+
       const baseDir = action.folderName;
 
-      let newEntries;
       let roleData;
-      let google_data;
-      let txtData;
-      let aTypes;
+      let google_data: any;
+      let txt_data: any;
+      let artifact_types:any;
+      let google_em: any;
+      let google_comms: any;
+    
+      let newEntries = [...action.projectData.entries];
+
+      try{
+        google_em = readProjectFile(baseDir, 'goog_em.json', null);
+        console.log('yes to google em file');
+
+      }catch(e:any){
+        console.error('could not load google em file');
+        google_em = null;
+      }
+          
+      try{
+        google_data = readProjectFile(baseDir, 'goog_data.json', null);
+        console.log('yes to goog data file');
+      }catch(e:any){
+        console.error('could not load google data file');
+      }
+
+      try{
+        google_comms = readProjectFile(baseDir, 'goog_comms.json', null);
+        console.log('yes to goog comments');
+      }catch(e){
+        google_comms = null;
+        console.log('could not load goog comments');
+      }
+
+      try{
+        txt_data = readProjectFile(baseDir, 'text_data.json', null);
+        console.log('yes to txtData');
+      }catch(e){
+        txt_data = null;
+        console.error('could not load text data');
+      }
+      
+      try{
+        roleData = readProjectFile(baseDir, 'roles.json', null);
+        console.log('yes to role data');
+
+      }catch(e){
+        console.error('could not load role data');
+      }
+
+      try{
+        artifact_types = readProjectFile(baseDir, 'artifactTypes.json', null);
+        console.log('yes to artifact types data');
+
+      }catch(e){
+        artifact_types = null;
+        console.error('could not load artifact types');
+      }
 
       try {
-        const google_em = readProjectFile(baseDir, 'goog_em.json', null);
-
-        google_data = readProjectFile(baseDir, 'goog_data.json', null);
-
-        const text_data = readProjectFile(baseDir, 'text_data.json', null);
-        txtData = text_data;
-
-        const comment_data = readProjectFile(baseDir, 'goog_comms.json', null);
-
-        roleData = readProjectFile(baseDir, 'roles.json', null);
-
-        aTypes = readProjectFile(baseDir, 'artifactTypes.json', null);
 
         newEntries = action.projectData.entries.map((e, i) => {
           e.index = i;
-          e.key_txt = text_data['text-data'].filter(
-            (td) => td['entry-index'] === i
-          );
-          
-          let testArray = e.files.filter((f) => f.fileType === 'gdoc');
-          if (testArray.length > 0) {
-            e.files = e.files.map((ef) => {
-              if (ef.fileType === 'gdoc') {
-                ef.artifactType = 'notes'
-                ef.emphasized = google_em[ef.fileId];
-                ef.comments = comment_data[ef.fileId];
-              }
+          e.key_txt = txt_data ? txt_data['text-data'].filter((td) => td['entry-index'] === i) : [];
+
+          e.files = e.files.map((ef) => {
+            if (ef.fileType === 'gdoc') {
+              ef.artifactType = 'notes'
+              ef.emphasized = google_em ? google_em[ef.fileId] : [];
+              ef.comments = google_comms ? google_comms[ef.fileId] : [];
+            }
               // else if(ef.fileType === 'txt'){
               //   ef.artifactType = 'transcript';
               // }
@@ -359,9 +403,13 @@ const appStateReducer = (state, action) => {
               ef.artifactType = ef.artifactType ? ef.artifactType : "";
               return ef;
             });
-          }
+          // }
+
           return e;
         });
+
+        console.log('NEW ENTRIES???', newEntries)
+
       } catch (e) {
         newEntries = action.projectData.entries;
 
@@ -392,7 +440,7 @@ const appStateReducer = (state, action) => {
         folderPath: action.folderName,
         projectData: newProjectData,
         googleData: google_data,
-        txtData: txtData,
+        txtData: txt_data,
         researchThreads: research_threads,
         selectedThread: null,
         filterTags: [],
@@ -403,7 +451,7 @@ const appStateReducer = (state, action) => {
         query: null,
         hopArray: [],
         goBackView: 'overview',
-        artifactTypes: aTypes
+        artifactTypes: artifact_types
       };
     }
 

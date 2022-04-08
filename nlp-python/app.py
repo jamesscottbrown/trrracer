@@ -83,6 +83,7 @@ def write_blobs_to_file(blob, document_path):
 def index():
     return "nothing happening"
 
+#/get_google_comments/EvoBio Design Study
 @app.route("/get_google_comments/<string:path>")
 def get_google_comments(path):
 
@@ -128,8 +129,6 @@ def parse_eml(name, path):
     text = msg.get_body(preferencelist=('plain')).get_content()
 
     return text
-
-
 
 @app.route("/create_google_file/<string:name>/<string:type>/<string:arttype>/<string:entrynum>/<string:path>")
 def create_google(name, type, arttype, entrynum, path):
@@ -191,6 +190,8 @@ def extract_emphasized_from_google(path):
     json.dump(em_text, outfile)
     return em_text
 
+
+#/get_all_sig_blobs/EvoBio Design Study
 @app.route('/get_all_sig_blobs/<string:path>')
 def get_all_sig_blobs(path):
 
