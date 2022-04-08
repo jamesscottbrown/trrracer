@@ -17,8 +17,7 @@ const PaperView = (props:any) => {
 
     const filePath = path.join(folderPath, 'links.json');
     const linkData = fs.readFileSync(filePath, { encoding: 'utf-8' });
-
-    console.log(JSON.parse(linkData))
+    const anno = d3.groups(JSON.parse(linkData), d => d.page);
  
     const [
         {
@@ -28,8 +27,6 @@ const PaperView = (props:any) => {
         },
         dispatch,
       ] = useProjectState();
-
-    const [paragraphData, setParagraphData] = useState([]);
 
     let index = selectedThread ? selectedThread : 0;
 
@@ -61,6 +58,7 @@ const PaperView = (props:any) => {
  
     const forced = new ForceMagic(projectData.entries, width, height, false);
     const checktool = d3.select('#tooltip');
+
     const div = checktool.empty() ? 
       d3.select("body")
       .append("div")
@@ -88,7 +86,8 @@ const PaperView = (props:any) => {
       let nodes = forced.nodes.filter(f => researchThreads.research_threads[index].evidence.map(m=> m.activityTitle).includes(f.title)).map(m => {
         m.color = researchThreads.research_threads[index].color;
         return m;
-      })
+      });
+
       let notNodes = forced.nodes.filter(f => researchThreads.research_threads[index].evidence.map(m=> m.activityTitle).indexOf(f.title) === -1)
   
       let activityNot = wrap.selectAll('g.activity_not')
@@ -145,27 +144,45 @@ const PaperView = (props:any) => {
     useEffect(()=> {
 
         let pageRectData = []
-        for(let i = 0; i < numPages; i = i + 1){
-          pageRectData.push({pageIndex: (i + 1)})
+        for(let i = 1; i < numPages; i = i + 1){
+          let annoTemp = anno.filter((a: any) => a[0] === i);
+          pageRectData.push({pageIndex: i, anno: annoTemp.length > 0 ? annoTemp[0][1] : []})
         }
-        let test = d3.select("#divtext").selectAll('p').nodes()
-        setParagraphData(test.map(t => t.innerText))
+        const rectHeight = 70;
 
-        console.log('paragraph', d3.select(svgRef.current).node().getBoundingClienRect)
-
+        const yScale = d3.scaleLinear().domain([0, anno[0][1][0]['pdf-dim'][3]]).range([rectHeight, 0])
+       
         let groupTest = d3.select(svgRef.current).select('.text-group');
 
         let group = groupTest.empty() ? d3.select(svgRef.current).append('g').classed('text-group', true) : groupTest;
         
         group.attr('transform', 'translate(240, 10)');
-        let rect = group.selectAll('rect.text').data(pageRectData).join('rect').classed('text', true);
-        
-        rect.attr('width', 50).attr('height', 70)
-        rect.attr('y', (d, i)=> (i * 75))
+
+        let pages = group.selectAll('g.pages').data(pageRectData).join('g').classed('pages', true);
+        pages.attr('transform', (d, i)=> `translate(0, ${(i * (rectHeight + 5))})`)
+
+        let rect = pages.selectAll('rect.pag').data((d: any) => [d]).join('rect').classed('pag', true);
+
+        rect.attr('width', 50).attr('height', rectHeight)
+       
         rect.attr('fill', 'gray')
         rect.attr('fill-opacity', 0.5)
 
-        rect.filter(f => f.pageIndex === pageNumber).attr('fill-opacity', 1)
+        let annog = pages.selectAll('rect.anno')
+        .data((d: any) => d.anno)
+        .join("rect")
+        .classed('anno', true);
+
+        annog.attr('width', 50);
+        annog.attr('height', 5);
+
+        annog.attr('y', (d)=> {
+          return yScale(d.position['1']);
+        });
+        
+        annog.attr('fill', researchThreads.research_threads[index].color);
+
+        rect.filter((f:any) => f.pageIndex === pageNumber).attr('fill-opacity', 1);
 
     }, [numPages, pageNumber])
 
