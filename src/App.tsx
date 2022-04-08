@@ -29,10 +29,12 @@ const migrateTrrraceFormat = (projectData:any) => {
     ...projectData,
     entries: projectData.entries.map((e) => ({
       ...e,
-      files: [
+      files: 
+      e.urls? 
+      [
         ...e.files,
         ...e.urls.map((u) => ({ title: u.title, url: u.url, fileType: 'url' })),
-      ],
+      ] : [...e.files],
       tags: e.tags.map((t) => (typeof t === 'string' ? t : t.text)),
     })),
   };

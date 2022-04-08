@@ -386,23 +386,23 @@ const appStateReducer = (state, action) => {
               ef.emphasized = google_em ? google_em[ef.fileId] : [];
               ef.comments = google_comms ? google_comms[ef.fileId] : [];
             }
-              // else if(ef.fileType === 'txt'){
-              //   ef.artifactType = 'transcript';
-              // }
-              // else if(ef.fileType === 'eml'){
-              //   ef.artifactType = 'correspondence'
-              // }
-              //else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
-              //   ef.artifactType = 'data'
-              // }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
-              //   ef.artifactType = 'tool artifact'
-              // }
-              else if(ef.title.includes('Screen ')){
-                ef.artifactType = 'tool artifact';
-              }
-              ef.artifactType = ef.artifactType ? ef.artifactType : "";
-              return ef;
-            });
+            else if(ef.fileType === 'txt'){
+              ef.artifactType = 'transcript';
+            }
+            else if(ef.fileType === 'eml'){
+              ef.artifactType = 'correspondence'
+            }
+            else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
+              ef.artifactType = 'data'
+            }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
+              ef.artifactType = 'tool artifact'
+            }
+            else if(ef.title.includes('Screen ')){
+              ef.artifactType = 'tool artifact';
+            }
+            ef.artifactType = ef.artifactType ? ef.artifactType : "";
+            return ef;
+          });
           // }
 
           return e;
