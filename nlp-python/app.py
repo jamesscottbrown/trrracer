@@ -190,6 +190,24 @@ def extract_emphasized_from_google(path):
     json.dump(em_text, outfile)
     return em_text
 
+#/get_all_goog_blobs/EvoBio Design Study
+@app.route('/get_all_goog_blobs/<string:path>')
+def get_all_goog_blobs(path):
+
+    if path == 'EvoBio Design Study':
+        final_path = DOCUMENT_PATH_EVO
+        
+    elif path == 'Jen':
+        final_path = DOCUMENT_PATH_JEN
+    else:
+        final_path = DOCUMENT_PATH_DERYA
+
+    print('FINAL PATH',final_path)
+    # DOCUMENT_PATH_DERYA if path == 'derya' DOCUMENT_PATH_EVO elif path === '' else DOCUMENT_PATH_JEN 
+   
+    blob = extract_entry_text_to_blobs(final_path, 'google')
+
+    return jsonify(blob)
 
 #/get_all_sig_blobs/EvoBio Design Study
 @app.route('/get_all_sig_blobs/<string:path>')
@@ -206,7 +224,7 @@ def get_all_sig_blobs(path):
     print('FINAL PATH',final_path)
     # DOCUMENT_PATH_DERYA if path == 'derya' DOCUMENT_PATH_EVO elif path === '' else DOCUMENT_PATH_JEN 
    
-    blob = extract_entry_text_to_blobs(final_path)
+    blob = extract_entry_text_to_blobs(final_path, 'text')
 
     return jsonify(blob)
     

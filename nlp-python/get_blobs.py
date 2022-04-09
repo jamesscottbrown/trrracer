@@ -14,7 +14,7 @@ import spacy
 STOP = stopwords.words('english')
 from google_api import goog_auth, goog_doc_start, google_drive_start, get_doc_data_from_id_array
 
-def extract_entry_text_to_blobs(document_path):
+def extract_entry_text_to_blobs(document_path, data_type):
     
     cred = goog_auth()
     gdoc_service = goog_doc_start(cred)
@@ -22,15 +22,22 @@ def extract_entry_text_to_blobs(document_path):
     data_backbone = open(document_path + "trrrace.json", 'r')
     d_b_json = json.load(data_backbone)
 
-    fixed_entries = d_b_json["entries"] 
-    # fix_missing_file_type(d_b_json["entries"])
+    # fixed_entries = d_b_json["entries"] 
 
-    blob = {}
-    google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)
-    # text_data = make_file_for_text_data(fixed_entries, document_path)
+    print(d_b_json["entries"])
+    fixed_entries = fix_missing_file_type(d_b_json["entries"])
+    
 
+    if(data_type == 'google'):
+        google_data = make_file_for_google_data(fixed_entries, gdoc_service, document_path)         
+        return google_data
+    
+    elif data_type == 'text':
+        text_data = make_file_for_text_data(fixed_entries, document_path)
+        return text_data
 
-    return google_data
+    else:
+        return "no data"
 
 def fix_missing_file_type(entries):
     for en in entries:
@@ -61,28 +68,31 @@ def make_file_for_text_data(entries, document_path):
         for j in range(len(en["files"])):
             
             fil = en["files"][j]
-
-            if fil["fileType"] == "txt":
-                print("text file")
-
-                text_blob = {}
-                text_blob["entry-title"] = en["title"]
-                text_blob["entry-index"] = i
-                text_blob["file-index"] = j
-                text_blob["file-title"] = fil["title"]
-
-                file_t = open(document_path + fil["title"],'r')
-                filelines = list(file_t)
-                file_t.close()
-               
-                temp = ""
-                for f in filelines:
-                    temp = temp + f
-
-                text_blob['keywords'] = use_yake_for_text(temp)
-                text_blob["text"] = temp
+            
+            if "fileType" in fil:
+                if fil["fileType"] == "txt":
                     
-                entry_blobs_txt.append(text_blob)
+
+                    text_blob = {}
+                    text_blob["entry-title"] = en["title"]
+                    text_blob["entry-index"] = i
+                    text_blob["file-index"] = j
+                    text_blob["file-title"] = fil["title"]
+
+                    file_t = open(document_path + fil["title"],'r')
+                    filelines = list(file_t)
+                    file_t.close()
+                
+                    temp = ""
+                    for f in filelines:
+                        temp = temp + f
+
+                    text_blob['keywords'] = use_yake_for_text(temp)
+                    text_blob["text"] = temp
+                        
+                    entry_blobs_txt.append(text_blob)
+            else:
+                print(fil["title"])
     
 
 
@@ -125,16 +135,18 @@ def make_file_for_google_data(entries, gdoc_service, document_path):
         text_blob["file-array"] = []
 
         for f in en["files"]:
-         
-            if f["fileType"] == "gdoc" and "fileId" in f:
-                tblob = {}
-                tblob['title'] = f['title']
-                if f['fileId'] not in keeper.keys():
+            if "fileType" in f:
+                if f["fileType"] == "gdoc" and "fileId" in f:
+                    tblob = {}
+                    tblob['title'] = f['title']
+                    if f['fileId'] not in keeper.keys():
+                        
+                        goog_id_array.append(f['fileId'])
                     
-                    goog_id_array.append(f['fileId'])
-                
-            elif f["fileType"] == "txt":
-                print("text file")
+                # elif f["fileType"] == "txt":
+                    # print("text file")
+            else:
+                print('no file type', f)
 
     print('goog id array', goog_id_array)
     

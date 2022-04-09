@@ -356,7 +356,7 @@ const appStateReducer = (state, action) => {
         txt_data = null;
         console.error('could not load text data');
       }
-      
+
       try{
         roleData = readProjectFile(baseDir, 'roles.json', null);
         console.log('yes to role data');
@@ -382,24 +382,24 @@ const appStateReducer = (state, action) => {
 
           e.files = e.files.map((ef) => {
             if (ef.fileType === 'gdoc') {
-              ef.artifactType = 'notes'
+              // ef.artifactType = 'notes'
               ef.emphasized = google_em ? google_em[ef.fileId] : [];
               ef.comments = google_comms ? google_comms[ef.fileId] : [];
             }
-            else if(ef.fileType === 'txt'){
-              ef.artifactType = 'transcript';
-            }
-            else if(ef.fileType === 'eml'){
-              ef.artifactType = 'correspondence'
-            }
-            else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
-              ef.artifactType = 'data'
-            }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
-              ef.artifactType = 'tool artifact'
-            }
-            else if(ef.title.includes('Screen ')){
-              ef.artifactType = 'tool artifact';
-            }
+            // else if(ef.fileType === 'txt'){
+            //   ef.artifactType = 'transcript';
+            // }
+            // else if(ef.fileType === 'eml'){
+            //   ef.artifactType = 'correspondence'
+            // }
+            // else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
+            //   ef.artifactType = 'data'
+            // }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
+            //   ef.artifactType = 'tool artifact'
+            // }
+            // else if(ef.title.includes('Screen ')){
+            //   ef.artifactType = 'tool artifact';
+            // }
             ef.artifactType = ef.artifactType ? ef.artifactType : "";
             return ef;
           });
