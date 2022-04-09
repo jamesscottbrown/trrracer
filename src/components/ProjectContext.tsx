@@ -261,12 +261,14 @@ const appStateReducer = (state, action) => {
 
   const checkRtFile = (dir: any) => {
 
-    console.log('file path', dir[dir.length - 1] != '/');
+    console.log('file path check if has /', dir[dir.length - 1] != '/');
     let filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
-
+    console.log('filepath after / added',filePath)
     try {
-      return readProjectFile(filePath, 'research_threads.json', null);
+      console.log('rt file exists', filePath)
+      return readProjectFile(dir, 'research_threads.json', null);
     } catch (e) {
+      console.log('rt thread does not exist', filePath);
       let rtOb = {
         title: action.projectData.title,
         research_threads: [],
@@ -295,7 +297,7 @@ const appStateReducer = (state, action) => {
   };
 
   const saveJSONRT = (RTData: any, dir: string) => {
-  
+    console.log('dir',dir)
     fs.writeFileSync(
       path.join(dir, 'research_threads.json'),
       JSON.stringify(RTData, null, 4),
@@ -415,7 +417,7 @@ const appStateReducer = (state, action) => {
 
         return e;
       }
-
+      console.log('base dir in set data',baseDir)
       let research_threads = checkRtFile(baseDir);
 
     
@@ -476,7 +478,7 @@ const appStateReducer = (state, action) => {
       
       newRT.research_threads[threadIndex].associated_tags.push(tag);
 
-      return saveJSONRT(newRT);
+      return saveJSONRT(newRT, state.folderPath);
     }
 
     case 'QUERY_TERM': {
@@ -497,7 +499,7 @@ const appStateReducer = (state, action) => {
       };
       newRT.research_threads[threadIndex].evidence.push(newA);
 
-      return saveJSONRT(newRT);
+      return saveJSONRT(newRT, state.folderPath);
     }
 
     case 'ADD_ARTIFACT_TO_THREAD': {
@@ -515,7 +517,7 @@ const appStateReducer = (state, action) => {
       };
       newRT.research_threads[threadIndex].evidence.push(newA);
 
-      return saveJSONRT(newRT);
+      return saveJSONRT(newRT, state.folderPath);
     }
 
     case 'THREAD_FILTER': {
@@ -552,7 +554,7 @@ const appStateReducer = (state, action) => {
         anchors: [{ anchor_type: fragmentType, frag_type: fragment }],
       };
       newRT.research_threads[threadIndex].evidence.push(newA);
-      return saveJSONRT(newRT);
+      return saveJSONRT(newRT, state.folderPath);
     }
 
     case 'ADD_TAG_TO_ENTRY': {
@@ -672,7 +674,7 @@ const appStateReducer = (state, action) => {
 
       console.log('THREADOB', threadOb);
 
-      return saveJSONRT(newRT);
+      return saveJSONRT(newRT, state.folderPath);
     }
 
     case 'ADD_FILES': {
