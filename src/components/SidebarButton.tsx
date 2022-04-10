@@ -17,6 +17,7 @@ const SidebarButton = (sidebarProps: any) => {
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
+  const [mouseOnPop, setMouseOnPop] = useState(false);
 
   const closePopover = () => {
     setShowPopover(false);
@@ -39,9 +40,12 @@ const SidebarButton = (sidebarProps: any) => {
         onMouseLeave={() => {
           console.log('mouse leaving?')
           dispatch({ type: 'HIGHLIGHT_TAG', highlightedTag: null });
-          setShowPopover(false)
-          setBarColor('#FFFFFF');
-          
+          console.log('on mouse popover?', mouseOnPop);
+          if(!mouseOnPop){
+            setTimeout(()=> {setShowPopover(false)}, 3000)
+            // setShowPopover(false)
+            setBarColor('#FFFFFF');
+          }
         }}
         onClick={() => {
           console.log('tags filter check', filterTags);
@@ -79,7 +83,10 @@ const SidebarButton = (sidebarProps: any) => {
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
 
-        <PopoverBody>
+        <PopoverBody 
+          onMouseEnter={()=> setMouseOnPop(true)}
+          onMouseLeave={()=> setMouseOnPop(false)}
+        >
           {showThreadPop ? (
             <Box>
               {researchThreads &&
