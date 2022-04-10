@@ -43,7 +43,6 @@ const SidebarButton = (sidebarProps: any) => {
           console.log('on mouse popover?', mouseOnPop);
           if(!mouseOnPop){
             setTimeout(()=> {setShowPopover(false)}, 3000)
-            // setShowPopover(false)
             setBarColor('#FFFFFF');
           }
         }}

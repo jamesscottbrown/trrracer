@@ -23,7 +23,7 @@ const ActivityWrap = (props:any) => {
         viewType
     } = props;
 
-    const [{projectData}, dispatch] = useProjectState();
+    const [state, dispatch] = useProjectState();
 
     const myRef = useRef(null)
 
@@ -32,6 +32,10 @@ const ActivityWrap = (props:any) => {
             myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, [hoverActivity]);
+
+      useEffect(()=> {
+        console.log('projectData changed in activity wrap', state.projectData, index)
+      }, [state]);
 
     const updateEntryField = (
         entryIndex: number,
@@ -52,7 +56,7 @@ const ActivityWrap = (props:any) => {
               entryIndex={activityData.index}
               openFile={openFile}
               updateEntryField={updateEntryField}
-              allTags={projectData.tags}
+              allTags={state.projectData.tags}
               makeNonEditable={() => setEditableStatus(activityData.index, false)}
               viewType={viewType}
             />

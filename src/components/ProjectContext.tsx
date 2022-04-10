@@ -293,7 +293,7 @@ const appStateReducer = (state, action) => {
         }
       }
     );
-    return { ...state, ProjectData: newProjectData };
+    return { ...state, projectData: newProjectData };
   };
 
   const saveJSONRT = (RTData: any, dir: string) => {
@@ -598,7 +598,6 @@ const appStateReducer = (state, action) => {
       const { fileList, entryIndex } = action;
       const currentFiles = state.projectData.entries[entryIndex].files;
 
-      console.log('filelist', fileList)
       const newFiles = [
         ...currentFiles,
         ...copyFiles(fileList, state.folderPath),
@@ -782,9 +781,9 @@ const appStateReducer = (state, action) => {
           ? { ...d, [action.fieldName]: action.newValue }
           : d
       );
-
+      console.log('in project state', entries);
       const newProjectData = { ...state.projectData, entries };
-
+      console.log('new project data in project context',newProjectData)
       return saveJSON(newProjectData);
     }
 

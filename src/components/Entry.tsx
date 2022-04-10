@@ -123,12 +123,14 @@ const Entry = (props: EntryPropTypes) => {
     makeNonEditable,
   } = props;
 
-  const [state, dispatch] = useProjectState();
+  const [{projectData}, dispatch] = useProjectState();
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
+
+  console.log('entry data in entry', entryData, projectData.entries[entryIndex]);
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel
@@ -145,6 +147,7 @@ const Entry = (props: EntryPropTypes) => {
   const [showURL, setShowURL] = useState(false);
 
   const saveFiles = (fileList: FileObj[]) => {
+
     dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
     setShowFileUpload(false);
   };
@@ -360,29 +363,6 @@ const Entry = (props: EntryPropTypes) => {
         text="Create Google Sheet"
         entryIndex={entryIndex}
       />
-
-      {/* {showURL ?
-    <div>
-      <Button color="primary" onClick={()=>{
-        setShowURL(false)
-      }}>Cancel</Button>
-
-      <form>
-        <label>
-            <input onChange={handleChange} type="text" />
-        </label>
-      <Button onClick={()=> {
-        setShowURL(false)
-        addURL()
-      }}>Add</Button>
-      </form>
-    </div>
-    :
-    <Button color="primary" onClick={()=>{
-      setShowURL(true)
-    }}>Add URL</Button>
-    }  */}
-      {/* )} */}
 
       <br />
 

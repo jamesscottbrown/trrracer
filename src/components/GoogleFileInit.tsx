@@ -32,8 +32,6 @@ const GoogFileInit = (props: {
     dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData });
   };
 
-  console.log('STATE', state);
-
   return (
     <div>
       {showFileCreate ? (
