@@ -33,9 +33,6 @@ const ActivityWrap = (props:any) => {
         }
       }, [hoverActivity]);
 
-      useEffect(()=> {
-        console.log('projectData changed in activity wrap', state.projectData, index)
-      }, [state]);
 
     const updateEntryField = (
         entryIndex: number,

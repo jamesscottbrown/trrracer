@@ -9,6 +9,7 @@ import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
+import { sendToFlask } from '../flaskHelper';
 
 export const ProjectContext = createContext<DispatchType>();
 
@@ -608,7 +609,16 @@ const appStateReducer = (state, action) => {
 
       const newProjectData = { ...state.projectData, entries };
 
-      return saveJSON(newProjectData);
+      let newPD = saveJSON(newProjectData);
+      console.log('file list',fileList)
+      if(fileList.map(m=> m.type).includes('text/plain')){
+        console.log('has a text file!!')
+        sendToFlask(state.projectData.title).then((json)=> {
+          state.txtData = json;
+        })
+      }
+
+      return newPD//saveJSON(newProjectData);
     }
 
     case 'CREATED_GOOGLE_IN_ENTRY': {
@@ -624,7 +634,7 @@ const appStateReducer = (state, action) => {
     }
 
     case 'SELECTED_ARTIFACT': {
-      console.log('is this firing in hoparray??', action.hopArray);
+      
       return {
         ...state,
         selectedArtifactEntry: action.selectedArtifactEntry,
