@@ -613,7 +613,7 @@ const appStateReducer = (state, action) => {
       console.log('file list',fileList)
       if(fileList.map(m=> m.type).includes('text/plain')){
         console.log('has a text file!!')
-        sendToFlask(state.projectData.title).then((json)=> {
+        sendToFlask('get_all_sig_blobs', state.projectData.title).then((json)=> {
           state.txtData = json;
         })
       }

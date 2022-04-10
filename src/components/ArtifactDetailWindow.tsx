@@ -245,7 +245,6 @@ const InteractiveActivityTag = (props: any) => {
                   key={`match-${i}`}
                   onClick={()=> {
                     const newHop = [ ...hopArray, t ];
-                    console.log('T in tags', t, newHop);
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: t,

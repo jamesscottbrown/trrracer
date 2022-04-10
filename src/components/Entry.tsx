@@ -60,6 +60,7 @@ const EditDate = (props: EditDateTypes) => {
 
   return (
     <DatePicker
+      style={{cursor:'pointer'}}
       selected={new Date(date)}
       onChange={updateDate}
       dateFormat="dd MMMM yyyy"
@@ -144,10 +145,7 @@ const Entry = (props: EntryPropTypes) => {
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
-  const [showURL, setShowURL] = useState(false);
-
   const saveFiles = (fileList: FileObj[]) => {
-
     dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
     setShowFileUpload(false);
   };
@@ -183,7 +181,7 @@ const Entry = (props: EntryPropTypes) => {
   return (
     <div style={{ margin: 'auto' }}>
       <br />
-      <Heading as="h3">
+      <Heading as="h4">
         <Editable
           defaultValue={entryData.title}
           onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
@@ -223,16 +221,27 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
       </Heading>
       <br />
-      <Flex alignItems="center">
+      <Flex 
+      alignItems="center">
+        <span
+        style={{fontWeight:700}}
+        >{"Date Activity Happened: "}</span>
+        <div
+          style={{border:'1px solid gray', borderRadius:5, padding:5, cursor:'pointer'}}
+        >
         <EditDate
           date={entryData.date}
           entryIndex={entryIndex}
           updateEntryField={updateEntryField}
         />
+        </div>
+      
       </Flex>
 
       <br />
-
+      <span
+        style={{fontSize: 18, fontWeight: 700, display:'block'}}
+      >{"Tags: "}</span>
       <ReactTags
         tags={entryData.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
@@ -250,7 +259,9 @@ const Entry = (props: EntryPropTypes) => {
       />
 
       <br />
-
+      <span
+        style={{fontSize: 18, fontWeight: 700, display:'block'}}
+      >{"Description: "}</span>
       {showDescription ? (
         <div className="markdownEditorContainer">
           <ReactMde
@@ -287,7 +298,7 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
       <div style={{ marginTop: 10 }}>
-        <span style={{ fontSize: 24, fontWeight: 500 }}>Artifacts</span>
+        <span style={{ fontSize: 18, fontWeight: 700 }}>{'Artifacts: '}</span>
         <br />
         <UnorderedList>
           {files.map((file: File, j: any) => (
@@ -320,7 +331,8 @@ const Entry = (props: EntryPropTypes) => {
           ))}
         </UnorderedList>
       </div>
-
+      <br />
+      <span style={{ fontSize: 18, fontWeight: 700 }}>{'Add more artifacts: '}</span>
       {showFileUpload ? (
         <>
           <Flex
