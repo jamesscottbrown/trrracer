@@ -1,36 +1,6 @@
 import React, { useState } from 'react';
-
 import { Badge, Box, Tooltip } from '@chakra-ui/react';
-
 import PopComment from './PopComment';
-
-type CustomTooltipProps = {
-  badgeText: string;
-  hoverText: string;
-};
-const CustomTooltip = (props: CustomTooltipProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { badgeText, hoverText } = props;
-
-  if (isOpen) {
-    return (
-      <Tooltip placement="left" hasArrow label={hoverText} isOpen={isOpen}>
-        <Badge
-          style={{ margin: '3px' }}
-          onMouseOut={() => setIsOpen(false)}
-          onMouseLeave={() => setIsOpen(false)}
-        >
-          {badgeText}
-        </Badge>
-      </Tooltip>
-    );
-  }
-  return (
-    <Badge style={{ margin: '3px' }} onMouseOver={() => setIsOpen(true)}>
-      {badgeText}
-    </Badge>
-  );
-};
 
 const FileTextRender = (fileDataProps: any) => {
   const { fileData, keywordArray } = fileDataProps;

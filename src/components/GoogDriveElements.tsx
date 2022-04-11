@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
-const colorConvert = (codes: Object) => {
+const colorConvert = (codes: any) => {
   return `rgb(${255 * (codes.red ? codes.red : 0)},${
     255 * (codes.green ? codes.green : 0)
   },${255 * (codes.blue ? codes.blue : 0)})`;
@@ -16,8 +16,6 @@ const colorConvert = (codes: Object) => {
 
 const GoogInline = (googProps: any) => {
   const { sectionData } = googProps;
-
-  console.log('section data', sectionData.inlineObjectElement.inlineObjectId);
 
   return (
     <div>{` picture here! ${sectionData.inlineObjectElement.inlineObjectId} `}</div>

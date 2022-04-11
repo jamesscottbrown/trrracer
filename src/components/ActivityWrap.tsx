@@ -1,14 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
 import { useProjectState } from './ProjectContext';
-
-
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
-const { ipcRenderer } = require('electron');
-
-
 
 const ActivityWrap = (props:any) => {
     const {

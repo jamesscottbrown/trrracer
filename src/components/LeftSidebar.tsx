@@ -9,10 +9,8 @@ import {
   FormControl,
   Switch,
   FormLabel
-} from '@chakra-ui/react';
-
+} from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons';
-
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
@@ -21,7 +19,6 @@ import ThreadNav from './ThreadNav';
 const LeftSidebar = (props:any) => {
   const [{ projectData, researchThreads, artifactTypes }, dispatch] = useProjectState();
   const {setGroupBy, setSplitBubbs} = props;
-   // const [groupBy, setGroupBy] = useState({type:'research_threads', data: researchThreads.research_threads});
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({

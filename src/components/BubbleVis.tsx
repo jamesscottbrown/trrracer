@@ -1,17 +1,6 @@
 import path from 'path';
 import * as d3 from 'd3';
 import React, { useCallback, useEffect, useState } from 'react';
-
-import { extent } from 'd3-array';
-import { scaleTime } from 'd3-scale';
-import { timeFormat } from 'd3-time-format';
-
-import {
-  EntryType,
-  ProjectType,
-  ProjectViewProps,
-  TagType,
-} from './types';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';

@@ -30,7 +30,6 @@ const GoogFileInit = (props: {
     );
     
     const newData = await response.json();
-
     dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData });
   };
 

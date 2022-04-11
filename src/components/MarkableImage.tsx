@@ -1,8 +1,5 @@
-import path from 'path';
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
-  Box,
   Textarea,
   Button
 } from '@chakra-ui/react';

@@ -1,9 +1,7 @@
 import React from 'react';
-
 import DatePicker from 'react-datepicker';
 import { timeFormat } from 'd3-time-format';
 import { min, max } from 'd3-array';
-
 import { useProjectState } from './ProjectContext';
 import { EntryType } from './types';
 

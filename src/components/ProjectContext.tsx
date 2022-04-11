@@ -1,13 +1,9 @@
 import * as fs from 'fs';
-import { copyFileSync } from 'fs';
-
 const { google } = require('googleapis');
 import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { v4 as uuidv4 } from 'uuid';
-
 import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
-
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
 import { sendToFlask } from '../flaskHelper';
 
@@ -113,7 +109,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
 
         if (saveFile) {
           if (!sourceIsInProjectDir) {
-            copyFileSync(file.path, destination);
+            fs.copyFileSync(file.path, destination);
           }
           console.log(`${file.path} was copied to ${destination}`);
           newFiles = [
@@ -474,7 +470,7 @@ const appStateReducer = (state:any, action:any) => {
     }
 
     case 'ADD_EVENT':{
-      
+
       console.log(action.eventArray);
       return {...state, eventArray: action.eventArray }
     }

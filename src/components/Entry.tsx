@@ -9,9 +9,7 @@ import {
   UnorderedList,
   Flex,
 } from '@chakra-ui/react';
-
 import { DeleteIcon } from '@chakra-ui/icons';
-
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
 import {
@@ -21,17 +19,12 @@ import {
   FaPlus,
   FaTrashAlt,
 } from 'react-icons/fa';
-
 import { WithContext as ReactTags } from 'react-tag-input';
-
 import * as Showdown from 'showdown';
-
 import FileUpload from './FileUpload';
-
 import { EntryType, File, FileObj, TagType } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
-
 import URLList from './URLList';
 
 interface EditDateTypes {

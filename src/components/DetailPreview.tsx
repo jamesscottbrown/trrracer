@@ -1,9 +1,7 @@
 import path from 'path';
 import React from 'react';
-
 import { Image, Box } from '@chakra-ui/react';
 import type { TextEntry } from './types';
-
 import {
   GrDocumentCsv,
   GrDocumentWord,

@@ -1,7 +1,5 @@
 import path from 'path';
 import React, { useState } from 'react';
-import { ipcRenderer } from 'electron';
-
 import {
   Image
 } from '@chakra-ui/react';
