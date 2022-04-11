@@ -47,8 +47,6 @@ interface FileUploadProps {
 
 const FileUpload = (props: FileUploadProps) => {
   const { containerStyle, saveFiles, msg } = props;
-
-
   const {
     getRootProps,
     getInputProps,
@@ -71,12 +69,12 @@ const FileUpload = (props: FileUploadProps) => {
       smalltalk
       .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
       .then((value) => {
-          console.log(value);
+          
           let newFiles= files.map(m=> {
             m.artifactType = value;
             return m;
           })
-          console.log('newFiles',newFiles);
+      
           saveFiles(newFiles)
       })
       .catch(() => {

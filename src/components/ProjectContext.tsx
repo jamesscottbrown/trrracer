@@ -389,6 +389,16 @@ const appStateReducer = (state, action) => {
               ef.emphasized = google_em ? google_em[ef.fileId] : [];
               ef.comments = google_comms ? google_comms[ef.fileId] : [];
             }
+            // else if(ef.fileType === 'pdf'){
+            //   ef.artifactType = 'related work';
+            // }
+            // else if(ef.title.includes('.png')){
+            //   ef.artifactType = 'sketch';
+            // }
+
+            // else if(ef.title.includes('https:/')){
+            //   ef.artifactType = 'link';
+            // }
             // else if(ef.fileType === 'txt'){
             //   ef.artifactType = 'transcript';
             // }
