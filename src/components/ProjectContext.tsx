@@ -254,7 +254,7 @@ export const readProjectFile = (
   }
 };
 
-const appStateReducer = (state, action) => {
+const appStateReducer = (state:any, action:any) => {
   /**
    *  function for set data that checks to see if the file exists and if not, creates one.
    * research_threads = readProjectFile(baseDir, 'research_threads.json');
@@ -262,20 +262,17 @@ const appStateReducer = (state, action) => {
 
   const checkRtFile = (dir: any) => {
 
-    console.log('file path check if has /', dir[dir.length - 1] != '/');
     let filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
-    console.log('filepath after / added',filePath)
+  
     try {
-      console.log('rt file exists', filePath)
+      
       return readProjectFile(dir, 'research_threads.json', null);
     } catch (e) {
-      console.log('rt thread does not exist', filePath);
+  
       let rtOb = {
         title: action.projectData.title,
         research_threads: [],
       };
-
-      console.log('this is not a file here', rtOb)
 
       saveJSONRT(rtOb, filePath);
       return rtOb;
@@ -298,7 +295,7 @@ const appStateReducer = (state, action) => {
   };
 
   const saveJSONRT = (RTData: any, dir: string) => {
-    console.log('dir',dir)
+ 
     fs.writeFileSync(
       path.join(dir, 'research_threads.json'),
       JSON.stringify(RTData, null, 4),
@@ -421,8 +418,6 @@ const appStateReducer = (state, action) => {
           return e;
         });
 
-        console.log('NEW ENTRIES???', newEntries)
-
       } catch (e) {
         newEntries = action.projectData.entries;
 
@@ -464,7 +459,8 @@ const appStateReducer = (state, action) => {
         query: null,
         hopArray: [],
         goBackView: 'overview',
-        artifactTypes: artifact_types
+        artifactTypes: artifact_types,
+        eventArray:[]
       };
     }
 
@@ -475,6 +471,12 @@ const appStateReducer = (state, action) => {
       };
 
       return saveJSON(newProjectData);
+    }
+
+    case 'ADD_EVENT':{
+      
+      console.log(action.eventArray);
+      return {...state, eventArray: action.eventArray }
     }
 
     case 'UPDATE_GO_BACK':{

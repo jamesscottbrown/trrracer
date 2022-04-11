@@ -35,25 +35,23 @@ interface TopbarProps{
   setNewTitle: any;
   filteredActivityNames: any;
   filteredActivities:any;
+  defineEvent:Boolean;
+  setDefineEvent:(boo:any)=> void;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
   const [{ projectData, filterTags, filterRT }, dispatch] = useProjectState();
 
-  const [defineEvent, setDefineEvent] = useState<boolean>(false);
-
   const {
     viewType,
     setViewType,
-    reversedOrder,
-    setReversedOrder,
     newTitle,
     setNewTitle,
     filteredActivityNames,
-    filteredActivities
+    filteredActivities,
+    defineEvent,
+    setDefineEvent
   } = ProjectPropValues;
-
-  console.log('viewType', viewType)
 
   const addEntry = () => {
     dispatch({ type: 'ADD_ENTRY' });
@@ -110,7 +108,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         >
           {(viewType === 'activity view' || viewType === 'timeline' || viewType === 'overview') && (
             <>
-              <Button onClick={() => console.log('BUTTON PUSH')}>
+              <Button onClick={() => defineEvent ? setDefineEvent(false) : setDefineEvent(true)}>
                 Add events to timeline
               </Button>
             </>

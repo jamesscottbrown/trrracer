@@ -5,6 +5,8 @@ import * as d3 from 'd3';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { useProjectState } from './ProjectContext';
 
+const smalltalk = require('smalltalk');
+
 export const dataStructureForTimeline = (activityData: any) => {
   const years = d3.groups(activityData, (y: any) =>
     new Date(y.date).getFullYear()
@@ -42,9 +44,15 @@ export const jitter = (val: any) => Math.random() * val;
 const VerticalAxis = (projectProps: any) => {
   const svgRef = React.useRef(null);
 
-  const { defineEvent, height, filteredActivities } = projectProps;
+  const { 
+    height, 
+    filteredActivities,
+    setDefineEvent,
+    defineEvent
+  } = projectProps;
+
   const [
-    { projectData, selectedArtifactEntry, hopArray },
+    { projectData, selectedArtifactEntry, hopArray, eventArray },
   dispatch] = useProjectState();
 
   const allActivities = projectData.entries;
@@ -101,6 +109,15 @@ const VerticalAxis = (projectProps: any) => {
       .join('text')
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5)
+
+    let eventRects = svg.selectAll('rect.event').data(eventArray).join('rect').classed('event', true);
+    if(eventArray.length > 0){
+      eventRects.attr('y', (d, i)=> yScale(d.time[0]));
+      eventRects.attr('height', (d, i) => (yScale(d.time[1]) - yScale(d.time[0])));
+      eventRects.attr('width', 600)
+      eventRects.style('fill-opacity', .1);
+    }
+    
 
     let rects = svg.append('g').selectAll('rect.activity').data(allActivities).join('rect').classed('activity', true);
     rects.attr('width', 40).attr('height', 3);
@@ -278,9 +295,100 @@ const VerticalAxis = (projectProps: any) => {
         .attr('width', 40);
     }
 
+    if(defineEvent){
+
+      const brushedEvent = function (event, d) {
+        if (!event.selection && !event.sourceEvent) return;
+        const s0 = event.selection
+          ? event.selection
+          : [1, 2].fill(event.sourceEvent.offsetX);
+       
+        let s1 = s0;
+  
+        if (event.sourceEvent && event.type === 'end') {
+          s1 = event.selection;
+          d3.select(this).transition().call(event.target.move, s1);
+          
+         console.log([yScale.invert(event.selection[0]), yScale.invert(event.selection[1])])
+          
+          let start = yScale.invert(s1[0])
+                      .toLocaleDateString('en-us', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
+
+          let end = yScale.invert(s1[1])
+          .toLocaleDateString('en-us', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
+         
+         smalltalk
+         .prompt('Adding an Event', `from ${start} to ${end}`, 'Visit to Zanadu')
+         .then((value:string) => {
+            
+            let newEventArray = [...eventArray, {'event':value, time:[yScale.invert(s1[0]), yScale.invert(s1[1])]}]
+            dispatch({ type: 'ADD_EVENT', eventArray: newEventArray });
+            setDefineEvent(false);
+         })
+         .catch(() => {
+             console.log('cancel');
+         });
+          // 
+        }
+  
+        // move handlers
+        d3.selectAll('g.handles').attr('transform', (d) => {
+          const y = d == 'handle--o' ? s1[0] : s1[1];
+          return `translate(0, ${y})`;
+        });
+        
+        // update labels
+        d3.selectAll('g.handles')
+          .selectAll('text')
+          .attr('dy', 6)
+          .text((d, i) => {
+            let year =
+                d == 'handle--o'
+                  ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : yScale.invert(s1[1]).toLocaleDateString('en-us', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    });
+       
+            return year;
+          });
+  
+      };
+
+      const bY = d3
+      .brushY()
+      .handleSize(8)
+      .extent([
+        [0, 0],
+        [50, height - margin],
+      ])
+      .on('start brush end', brushedEvent);
+
+    const gBrush = svg
+      .append('g')
+      .call(bY)
+    }
 
 
-  }, [height, filteredActivities, selectedArtifactEntry, hopArray]);
+
+  }, [height, filteredActivities, selectedArtifactEntry, hopArray, defineEvent, eventArray]);
 
 
   return (

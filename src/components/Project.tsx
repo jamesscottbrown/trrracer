@@ -108,6 +108,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [showTool, setShowTool] = useState(false);
   const [groupBy, setGroupBy] = useState(null);
   const [splitBubbs, setSplitBubbs] = useState(false);
+  const [defineEvent, setDefineEvent] = useState<boolean>(false);
   
   // Update title when projectData changes.
   useEffect(() => {
@@ -359,6 +360,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           newTitle={newTitle}
           setNewTitle={setNewTitle}
           filteredActivityNames={null}
+          defineEvent={defineEvent}
+          setDefineEvent={setDefineEvent}
         />
         <Flex position="relative" top={130}>
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs}/>
@@ -369,6 +372,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
             flexAmount={2}
+            defineEvent={defineEvent}
+            setDefineEvent={setDefineEvent}
           />
           <Box flex="1.5" h="calc(100vh - 130px)" overflowY="auto">
             <ProjectListView

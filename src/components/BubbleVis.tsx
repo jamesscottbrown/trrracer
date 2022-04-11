@@ -28,8 +28,16 @@ interface BubbleProps {
 
 const BubbleVis = (props:BubbleProps) => {
 
-    const {filteredActivities, projectData, groupBy, splitBubbs, setHoverActivity, flexAmount} = props;
-    const [{artifactTypes, selectedThread, researchThreads, folderPath}] = useProjectState();
+    const {filteredActivities, 
+        projectData, 
+        groupBy, 
+        splitBubbs, 
+        setHoverActivity, 
+        flexAmount,
+        setDefineEvent,
+        defineEvent
+    } = props;
+    const [{artifactTypes, selectedThread, researchThreads, folderPath, eventArray}] = useProjectState();
 
     const [newHeight, setNewHeight] = useState('1000px');
 
@@ -79,7 +87,17 @@ const BubbleVis = (props:BubbleProps) => {
         let svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
 
-        let wrap = svg.append('g').attr('transform', 'translate(0, 50)');
+        let wrap = svg.append('g').attr('transform', 'translate(0, 70)');
+
+        let yScale = forced.yScale;
+
+        let eventRects = wrap.selectAll('rect.event').data(eventArray).join('rect').classed('event', true);
+        if(eventArray.length > 0){
+          eventRects.attr('y', (d, i)=> yScale(d.time[0]));
+          eventRects.attr('height', (d, i) => (yScale(d.time[1]) - yScale(d.time[0]))+ 6);
+          eventRects.attr('width', 100)
+          eventRects.style('fill-opacity', .1);
+        }
 
         let nodes = forced.nodes.filter(f=> {
             if(splitBubbs){
@@ -226,7 +244,6 @@ const BubbleVis = (props:BubbleProps) => {
             let bubbleNotHighlighted = new Bubbles(activityNot, false, splitBubbs, artifactTypes);
             let bubbleHighlighted = new Bubbles(activityGroups, true, splitBubbs, artifactTypes);
         
-            
             bubbleHighlighted.bubbles.on('mouseover', (event, d)=> {
                 d3.select(event.target).attr('r', (d.radius * 2)).attr('stroke', '#fff').attr('stroke-width', 2);
 
@@ -267,8 +284,6 @@ const BubbleVis = (props:BubbleProps) => {
                                                 <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`
                            }
                           
-                         
-                           
                              start = start + `</div>`
                              return start;
                         }else{
@@ -297,16 +312,19 @@ const BubbleVis = (props:BubbleProps) => {
                 .duration(500)
                 .style("opacity", 0);
             });
-
-            
         }
 
-    }, [filteredActivities, groupBy, splitBubbs])
+    }, [filteredActivities, groupBy, splitBubbs, eventArray])
 
     
     return (
         <div style={{flex:flexAmount}}>
-            <VerticalAxis filteredActivities={filteredActivities} height={height}/>
+            <VerticalAxis 
+                filteredActivities={filteredActivities} 
+                height={height}
+                setDefineEvent={setDefineEvent}
+                defineEvent={defineEvent}
+            />
             <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/>
         </div>
     )
