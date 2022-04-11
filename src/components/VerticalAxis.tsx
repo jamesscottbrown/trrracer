@@ -42,7 +42,7 @@ export const jitter = (val: any) => Math.random() * val;
 const VerticalAxis = (projectProps: any) => {
   const svgRef = React.useRef(null);
 
-  const { height, filteredActivities, setDefineEvent, defineEvent } =
+  const { height, filteredActivities, setDefineEvent, defineEvent, yScale, translateY } =
     projectProps;
 
   const [
@@ -70,11 +70,6 @@ const VerticalAxis = (projectProps: any) => {
   ].months.filter((f: any, i: number) => i < endIndex);
 
   React.useEffect(() => {
-    const yScale = d3
-      .scaleTime()
-      .domain(d3.extent(allActivities.map((m) => new Date(m.date))))
-      .range([0, height - margin])
-      .nice();
 
     const filteredActivitiesExtent = d3.extent(
       filteredActivities.map((m: any) => new Date(m.date))
@@ -84,7 +79,7 @@ const VerticalAxis = (projectProps: any) => {
     const svgEl = d3.select(svgRef.current);
     svgEl.selectAll('*').remove(); // Clear svg content before adding new elements
 
-    const svg = svgEl.append('g').attr('transform', `translate(90, 20)`);
+    const svg = svgEl.append('g').attr('transform', `translate(90, ${translateY})`);
 
     const yAxis = d3.axisLeft(yScale).ticks(16).tickSize(10);
 

@@ -4,12 +4,10 @@ import { scaleTime } from 'd3-scale';
 
 class ForceMagic {
   circleScale: any;
-
   yScale: any;
-
   nodes: any;
-
   simulation: any;
+  margin: any;
 
   constructor(
     projectEntries: any,
@@ -24,8 +22,10 @@ class ForceMagic {
           .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
           .range([5, 20]);
 
+    this.margin = height * .25;
+
     this.yScale = scaleTime()
-      .range([0, height - 70])
+      .range([0, height - this.margin])
       .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
 
     this.nodes = projectEntries.map((a: any) => {

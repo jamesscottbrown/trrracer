@@ -391,7 +391,7 @@ const DetailSidebar = (props: any) => {
                   selectedArtifactEntry.index,
                   'tags',
                   selectedArtifactEntry.tags.filter(
-                    (_tag, index) => index !== i
+                    (_tag: any, index: number) => index !== i
                   )
                 )
               }

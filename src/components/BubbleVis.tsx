@@ -1,6 +1,6 @@
 import path from 'path';
 import * as d3 from 'd3';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
@@ -31,10 +31,10 @@ const BubbleVis = (props: BubbleProps) => {
   ] = useProjectState();
 
   const [newHeight, setNewHeight] = useState('1000px');
+  const [translateY, setTranslateY] = useState(35);
 
   const width = 200;
   const height = +newHeight.split('px')[0];
-  const margin = height * 0.25;
 
   const svgRef = React.useRef(null);
 
@@ -59,7 +59,7 @@ const BubbleVis = (props: BubbleProps) => {
     : checktool;
 
   const bubbleData = splitBubbs
-    ? projectData.entries.flatMap((pd) => {
+    ? projectData.entries.flatMap((pd: any) => {
         const files = [...pd.files];
         files.map((f) => {
           f.activityTitle = pd.title;
@@ -70,7 +70,7 @@ const BubbleVis = (props: BubbleProps) => {
       })
     : projectData.entries;
 
-  const forced = new ForceMagic(bubbleData, width, height - margin, splitBubbs);
+  const forced = new ForceMagic(bubbleData, width, height, splitBubbs);
 
   useEffect(() => {
     if (svgRef.current) {
@@ -79,10 +79,9 @@ const BubbleVis = (props: BubbleProps) => {
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
-
-    const wrap = svg.append('g').attr('transform', 'translate(0, 70)');
-
-    const { yScale } = forced;
+    const wrap = svg.append('g').attr('transform', `translate(0, ${translateY})`);
+    const { yScale, margin } = forced;
+    setTranslateY(margin / 2);
 
     const eventRects = wrap
       .selectAll('rect.event')
@@ -90,30 +89,28 @@ const BubbleVis = (props: BubbleProps) => {
       .join('rect')
       .classed('event', true);
     if (eventArray.length > 0) {
-      eventRects.attr('y', (d, i) => yScale(d.time[0]));
+      eventRects.attr('y', (d: any) => yScale(d.time[0]));
       eventRects.attr(
         'height',
-        (d, i) => yScale(d.time[1]) - yScale(d.time[0]) + 6
+        (d: any) => yScale(d.time[1]) - yScale(d.time[0])
       );
-      eventRects.attr('width', 100);
+      eventRects.attr('width', 300);
       eventRects.style('fill-opacity', 0.1);
     }
 
-    const nodes = forced.nodes.filter((f) => {
+    const nodes = forced.nodes.filter((f: any) => {
       if (splitBubbs) {
-        return filteredActivities.map((m) => m.title).includes(f.activityTitle);
+        return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
       }
-      return filteredActivities.map((m) => m.title).includes(f.title);
-
-      // return filteredActivities.map(m=> m.title).includes(f.title);
+      return filteredActivities.map((m: any) => m.title).includes(f.title);
     });
 
     if (groupBy) {
-      const highlightedForFirst = forced.nodes.filter((f) =>
-        filteredActivities.map((m) => m.title).includes(f.title)
+      const highlightedForFirst = forced.nodes.filter((f: any) =>
+        filteredActivities.map((m: any) => m.title).includes(f.title)
       );
       const notHighlightedForFirst = forced.nodes.filter(
-        (f) => filteredActivities.map((m) => m.title).indexOf(f.title) == -1
+        (f: any) => filteredActivities.map((m: any) => m.title).indexOf(f.title) == -1
       );
 
       let groups = [
@@ -125,28 +122,28 @@ const BubbleVis = (props: BubbleProps) => {
         },
       ];
       if (groupBy.type === 'research_threads') {
-        const tempgroups = groupBy.data.map((m) => {
+        const tempgroups = groupBy.data.map((m: any) => {
           const group = { label: m.title, color: m.color };
           group.highlighted = nodes.filter(
-            (n) =>
-              m.evidence.map((e, i) => e.activityTitle).includes(n.title) ||
+            (n: any) =>
+              m.evidence.map((e: any) => e.activityTitle).includes(n.title) ||
               m.tagged_activities
-                .flatMap((fm) => fm.associatedActivities.map((m) => m.title))
+                .flatMap((fm: any) => fm.associatedActivities.map((m: any) => m.title))
                 .includes(n.title)
           );
-          group.highlighted = group.highlighted.map((h) => {
+          group.highlighted = group.highlighted.map((h: any) => {
             h.rtTitle = m.title;
             h.evidence =
-              m.evidence.filter((e, i) => e.activityTitle === h.title)
+              m.evidence.filter((e: any) => e.activityTitle === h.title)
                 .length === 0
                 ? null
-                : m.evidence.filter((e, i) => e.activityTitle === h.title);
+                : m.evidence.filter((e: any) => e.activityTitle === h.title);
             return h;
           });
 
           group.notHighlighted = nodes.filter(
-            (n) =>
-              m.evidence.map((e, i) => e.activityTitle).indexOf(n.title) === -1
+            (n: any) =>
+              m.evidence.map((e: any) => e.activityTitle).indexOf(n.title) === -1
           );
           return group;
         });
@@ -159,18 +156,18 @@ const BubbleVis = (props: BubbleProps) => {
           .join('g')
           .attr('class', 'group');
 
-        groupGroups.attr('transform', (d, i) => `translate(${i * 200}, 0)`);
+        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 200}, 0)`);
 
         const activityNotGroups = groupGroups
           .selectAll('g.activity_not')
-          .data((d) => d.notHighlighted)
+          .data((d: any) => d.notHighlighted)
           .join('g')
           .attr('class', 'activity_not');
 
         const activityHighlightGroups = groupGroups
           .selectAll('g.activity')
-          .data((d) => {
-            const temp = d.highlighted.map((m) => {
+          .data((d: any) => {
+            const temp = d.highlighted.map((m: any) => {
               m.color = d.color;
               return m;
             });
@@ -193,7 +190,7 @@ const BubbleVis = (props: BubbleProps) => {
         );
 
         bubbleHighlighted.bubbles
-          .on('mouseover', (event, d) => {
+          .on('mouseover', (event: any, d: any) => {
             d3.select(event.target)
               .attr('r', d.radius * 2)
               .attr('stroke', '#fff')
@@ -206,7 +203,7 @@ const BubbleVis = (props: BubbleProps) => {
               if (!d.evidence) {
                 start += `Activity: ${d.title} <br/>`;
 
-                d.files.forEach((f) => {
+                d.files.forEach((f: any) => {
                   start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
                 });
 
@@ -216,7 +213,7 @@ const BubbleVis = (props: BubbleProps) => {
                   ];
               } else {
                 start += `Research Thread: ${d.rtTitle} - Activity: ${d.title} <br/>`;
-                d.evidence.forEach((t) => {
+                d.evidence.forEach((t: any) => {
                   const type =
                     t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
                   const artifactTitle =
@@ -225,7 +222,7 @@ const BubbleVis = (props: BubbleProps) => {
                       : '';
                   start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
                   if (t.type === 'fragment') {
-                    t.anchors.map((an) => {
+                    t.anchors.map((an: any) => {
                       if (an.anchor_type === 'text') {
                         start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
                       }
@@ -244,35 +241,35 @@ const BubbleVis = (props: BubbleProps) => {
               .style('left', `${event.pageX}px`)
               .style('top', `${event.pageY - 28}px`);
           })
-          .on('mouseout', (event, d) => {
+          .on('mouseout', (event: any, d: any) => {
             d3.select(event.target).attr('r', d.radius).attr('stroke-width', 0);
             div.transition().duration(500).style('opacity', 0);
           });
       }
     } else {
-      const notNodes = forced.nodes.filter((f) => {
+      const notNodes = forced.nodes.filter((f: any) => {
         if (splitBubbs) {
           return (
-            filteredActivities.map((m) => m.title).indexOf(f.activityTitle) ===
+            filteredActivities.map((m:any) => m.title).indexOf(f.activityTitle) ===
             -1
           );
         }
-        return filteredActivities.map((m) => m.title).indexOf(f.title) === -1;
+        return filteredActivities.map((m:any) => m.title).indexOf(f.title) === -1;
       });
 
       const selectedNodes = forced.nodes
-        .filter((f) => {
+        .filter((f:any) => {
           if (splitBubbs) {
             return filteredActivities
-              .map((m) => m.title)
+              .map((m:any) => m.title)
               .includes(f.activityTitle);
           }
-          return filteredActivities.map((m) => m.title).includes(f.title);
+          return filteredActivities.map((m:any) => m.title).includes(f.title);
         })
         .map((m) => {
           if (splitBubbs) {
             const temp = artifactTypes.artifact_types.filter(
-              (f) => f.type === m.artifactType
+              (f:any) => f.type === m.artifactType
             );
             if (temp.length > 0) {
               m.color = temp[0].color;
@@ -339,7 +336,7 @@ const BubbleVis = (props: BubbleProps) => {
                         : '';
                     start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
                     if (t.type === 'fragment') {
-                      t.anchors.map((an) => {
+                      t.anchors.map((an:any) => {
                         if (an.anchor_type === 'text') {
                           start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
                         }
@@ -357,19 +354,18 @@ const BubbleVis = (props: BubbleProps) => {
                   });
                 } else {
                   start += `</br>
-                                                <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
+                    <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
                 }
 
                 start += `</div>`;
                 return start;
               }
-              d.files.forEach((f) => {
+              d.files.forEach((f:any) => {
                 start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
               });
             } else {
               console.log('dis a file', d);
             }
-
             return start;
           };
 
@@ -379,7 +375,7 @@ const BubbleVis = (props: BubbleProps) => {
             .style('left', `${event.pageX}px`)
             .style('top', `${event.pageY - 28}px`);
         })
-        .on('mouseout', (event, d) => {
+        .on('mouseout', (event:any, d:any) => {
           d3.select(event.target).attr('r', d.radius).attr('stroke-width', 0);
           div.transition().duration(500).style('opacity', 0);
         });
@@ -393,6 +389,8 @@ const BubbleVis = (props: BubbleProps) => {
         height={height}
         setDefineEvent={setDefineEvent}
         defineEvent={defineEvent}
+        yScale={forced.yScale}
+        translateY={translateY}
       />
       <svg
         ref={svgRef}

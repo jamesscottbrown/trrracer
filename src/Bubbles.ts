@@ -12,7 +12,7 @@ class Bubbles {
     this.parent = parentGroup;
     this.bubbles = parentGroup
       .selectAll('circle')
-      .data((d) => [d])
+      .data((d: any) => [d])
       .join('circle');
 
     this.artifactTypes = artifactTypes;

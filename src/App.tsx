@@ -3,7 +3,6 @@
 
 import React, { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-
 import fs from 'fs';
 import path from 'path';
 import { ipcRenderer } from 'electron';
@@ -18,7 +17,7 @@ import { useProjectState } from './components/ProjectContext';
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
-  
+
   return {
     ...projectData,
     entries: projectData.entries.map((e: any) => ({
