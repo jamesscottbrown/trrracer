@@ -1,10 +1,7 @@
 import React from 'react';
 import { Button } from '@chakra-ui/react';
-
 import { WithContext as ReactTags } from 'react-tag-input';
-
 import { RiFilterOffFill } from 'react-icons/ri';
-
 import { useProjectState } from './ProjectContext';
 import { TagType } from './types';
 

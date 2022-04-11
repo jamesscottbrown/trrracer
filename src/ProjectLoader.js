@@ -2,7 +2,7 @@
 
 import path from 'path';
 import getEmptyProject from './emptyProject';
-import *  as googleCred from '../assets/google_cred_desktop_app.json';
+import * as googleCred from '../assets/google_cred_desktop_app.json';
 
 const os = require('os');
 const fs = require('fs-extra');

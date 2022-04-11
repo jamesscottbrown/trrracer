@@ -11,7 +11,7 @@ const EmailRender = (props: any) => {
     const response = await fetch(
       `http://127.0.0.1:5000/parse_eml/${title}/${state.projectData.title}`
     );
-    let newData = await response.text();
+    const newData = await response.text();
     setEmailData(newData.split('>').filter((f) => f != ''));
   };
 
@@ -25,7 +25,7 @@ const EmailRender = (props: any) => {
           style={{ display: 'block' }}
           onMouseUp={() => {
             if (setFragSelected) {
-              let selObj = window.getSelection();
+              const selObj = window.getSelection();
               console.log('test', selObj);
               setFragSelected(selObj?.toString());
             } else {

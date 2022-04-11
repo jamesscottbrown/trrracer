@@ -28,7 +28,7 @@ const GoogFileInit = (props: {
     const response = await fetch(
       `http://127.0.0.1:5000/create_google_file/${googleFileName}/${fileType}/${artifactType}/${entryIndex}/${state.projectData.title}`
     );
-    
+
     const newData = await response.json();
     dispatch({ type: 'CREATED_GOOGLE_IN_ENTRY', newProjectData: newData });
   };
@@ -37,7 +37,7 @@ const GoogFileInit = (props: {
     <div>
       {showFileCreate ? (
         <>
-         <Editable
+          <Editable
             defaultValue={artifactType}
             startWithEditView
             onChange={(val) => setArtifactType(val)}
@@ -49,7 +49,6 @@ const GoogFileInit = (props: {
           >
             <label>Artifact type:</label>
             <EditablePreview
-        
               border="1px"
               borderColor="gray.200"
               boxShadow="sm"

@@ -54,7 +54,6 @@ interface ReactTagType {
   text: string;
 }
 
-
 interface DeadlineType {
   title: string;
   date: string;
@@ -157,6 +156,7 @@ type ProjectState = {
   selectedArtifactIndex: number;
 
   hopArray: any[];
+  eventArray: any[];
 };
 
 interface ProjectViewProps {
@@ -207,5 +207,4 @@ export {
   ResearchThreadEvidence,
   ReactTagType,
   ReactTag,
- 
 };

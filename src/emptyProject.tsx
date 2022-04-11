@@ -1,7 +1,6 @@
 import { ProjectType } from './components/types';
 
-function getEmptyProject(folderName): ProjectType {
- 
+function getEmptyProject(folderName:string): ProjectType {
   return {
     title: folderName,
     description: '',

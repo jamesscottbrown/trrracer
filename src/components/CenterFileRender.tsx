@@ -4,44 +4,45 @@ import path from 'path';
 import AttachmentPreview from './AttachmentPreview';
 import { openFile } from '../fileUtil';
 
-const LargeFileRender = (props:any) => {
+const LargeFileRender = (props: any) => {
   const { fileArray, folderPath, bgColor, numRendered, activity } = props;
 
   return (
     <div>
-       {activity && (<div style={{fontSize:13, fontWeight:600, width: 250}}>{activity.title}</div>)}
+      {activity && (
+        <div style={{ fontSize: 13, fontWeight: 600, width: 250 }}>
+          {activity.title}
+        </div>
+      )}
       <div
-      style={{
-        backgroundColor: bgColor,
-        width: 250,
-        borderRightWidth: 1,
-        borderRightColor: 'black',
-        paddingRight: 5,
-      }}
+        style={{
+          backgroundColor: bgColor,
+          width: 250,
+          borderRightWidth: 1,
+          borderRightColor: 'black',
+          paddingRight: 5,
+        }}
       >
-       
-        {
-          fileArray.map((fa:any, i:number)=> (
-            <div
-            key={`file-${i}`} style={{marginBottom:10}}>
-              {/* <span>{fa.title}</span> */}
-              <AttachmentPreview folderPath={folderPath} title={fa.title} openFile={openFile}/>
-            </div>
-          ))
-        }
+        {fileArray.map((fa: any, i: number) => (
+          <div key={`file-${i}`} style={{ marginBottom: 10 }}>
+            {/* <span>{fa.title}</span> */}
+            <AttachmentPreview
+              folderPath={folderPath}
+              title={fa.title}
+              openFile={openFile}
+            />
+          </div>
+        ))}
       </div>
-
     </div>
+  );
+};
 
-  )
-}
-
-const SmallFileRender = (props:any) => {
+const SmallFileRender = (props: any) => {
   const { fileArray, folderPath, bgColor, numRendered } = props;
   const dimensionCheck = (dim: string, fType: string) => {
     if (dim === 'width') {
       if (fType === 'url') {
-
         return numRendered > 60 ? 45 : 67;
       }
       return numRendered > 60 ? 40 : 60;
@@ -67,7 +68,7 @@ const SmallFileRender = (props:any) => {
     return 30;
   };
 
-  const getHeight = (previousValue:any, currentValue:any) =>
+  const getHeight = (previousValue: any, currentValue: any) =>
     ++previousValue + ++currentValue;
 
   const getSvgHeight = () => {
@@ -142,7 +143,6 @@ const SmallFileRender = (props:any) => {
           .style('padding-bottom', '92%');
       });
     }
-
   }, [fileArray]);
 
   return (
@@ -158,16 +158,28 @@ const SmallFileRender = (props:any) => {
       <svg width={44} height={getSvgHeight()} ref={svgRef} />
     </div>
   );
-
-}
+};
 
 const CenterFileRender = (fileArrayProps: any) => {
-  const { fileArray, folderPath, bgColor, numRendered, activity } = fileArrayProps;
-  
-  return (
-    numRendered > 50 ? 
-    <SmallFileRender fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered}/>
-    :<LargeFileRender activity={activity} fileArray={fileArray} folderPath={folderPath} bgColor={bgColor} numRendered={numRendered} />
-  )};
+  const { fileArray, folderPath, bgColor, numRendered, activity } =
+    fileArrayProps;
+
+  return numRendered > 50 ? (
+    <SmallFileRender
+      fileArray={fileArray}
+      folderPath={folderPath}
+      bgColor={bgColor}
+      numRendered={numRendered}
+    />
+  ) : (
+    <LargeFileRender
+      activity={activity}
+      fileArray={fileArray}
+      folderPath={folderPath}
+      bgColor={bgColor}
+      numRendered={numRendered}
+    />
+  );
+};
 
 export default CenterFileRender;

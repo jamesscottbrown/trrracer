@@ -1,19 +1,25 @@
 import path from 'path';
 import React, { useState } from 'react';
+import { Image } from '@chakra-ui/react';
+
 import {
-  Image
-} from '@chakra-ui/react';
-
-import { GrDocumentCsv, GrDocumentPpt, GrDocumentWord, GrDocumentText, GrDocumentExcel, 
-GrDocumentRtf, GrDocumentImage, GrChatOption, GrCluster } from 'react-icons/gr';
-import { ImFilePdf } from 'react-icons/im'
-
+  GrDocumentCsv,
+  GrDocumentPpt,
+  GrDocumentWord,
+  GrDocumentText,
+  GrDocumentExcel,
+  GrDocumentRtf,
+  GrDocumentImage,
+  GrChatOption,
+  GrCluster,
+} from 'react-icons/gr';
+import { ImFilePdf } from 'react-icons/im';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
   title: string;
   openFile: (title: string, fp: string) => void;
-  size:number;
+  size: number;
 }
 
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
@@ -36,46 +42,81 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
 
   if (title.endsWith('.csv')) {
-    return <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentCsv onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
-  if (title.endsWith('.ppt') || title.endsWith('.pptx') || title.endsWith('.key')) {
-    return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
+  if (
+    title.endsWith('.ppt') ||
+    title.endsWith('.pptx') ||
+    title.endsWith('.key')
+  ) {
+    return (
+      <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.doc') || title.endsWith('.docx')) {
-    return <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentWord onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.gdoc')) {
-    return <GrDocumentWord onClick={() => openFile(title, folderPath)} style={{width:60}} />;
+    return (
+      <GrDocumentWord
+        onClick={() => openFile(title, folderPath)}
+        style={{ width: 60 }}
+      />
+    );
   }
 
   if (title.endsWith('.gsheet')) {
-    return <GrDocumentExcel onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentExcel
+        onClick={() => openFile(title, folderPath)}
+        size={size}
+      />
+    );
   }
 
   if (title.endsWith('.txt')) {
-    return <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentText onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
-    if (title.endsWith('.phy') || title.endsWith('.nex')) {
-    return <GrCluster onClick={() => openFile(title, folderPath)} size={size} />;
+  if (title.endsWith('.phy') || title.endsWith('.nex')) {
+    return (
+      <GrCluster onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.rtf')) {
-    return <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentRtf onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
   if (title.endsWith('.eml')) {
-    return <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrChatOption onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.pdf')) {
-    return <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <ImFilePdf onClick={() => openFile(title, folderPath)} size={size} />
+    );
   }
 
   if (title.endsWith('.HEIC')) {
-    return <GrDocumentImage onClick={() => openFile(title, folderPath)} size={size} />;
+    return (
+      <GrDocumentImage
+        onClick={() => openFile(title, folderPath)}
+        size={size}
+      />
+    );
   }
   return (
     <Image

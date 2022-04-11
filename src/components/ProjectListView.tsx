@@ -1,11 +1,9 @@
-import path from 'path';
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup, Divider,  } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { Button, ButtonGroup } from '@chakra-ui/react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
 import { EntryTypeWithIndex, ProjectViewProps } from './types';
 import ActivityWrap from './ActivityWrap';
-
 
 const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
   const {
@@ -13,12 +11,12 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setViewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
-    selectedEntryIndex, 
+    selectedEntryIndex,
     setSelectedEntryIndex,
-    hoverActivity
+    hoverActivity,
   } = ProjectPropValues;
 
-  const [{projectData}, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_, x) => false)
@@ -35,19 +33,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     }
   }, [projectData]);
 
-
   useEffect(() => {
-
-    setEditable(
-      Array.from(Array(projectData.entries.length), (_, x) => false)
-    );
+    setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
     setEditableStatus(selectedEntryIndex, true);
-   
   }, [selectedEntryIndex]);
-
-  const addEntry = () => {
-    dispatch({ type: 'ADD_ENTRY' });
-  };
 
   const makeAllEditable = () => {
     setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
@@ -65,7 +54,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-
       <ButtonGroup style={{ display: 'inline' }}>
         {!editable.every((t) => t) && (
           <Button onClick={makeAllEditable} type="button">
@@ -83,11 +71,11 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       <br />
 
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
-        <ActivityWrap 
+        <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
-          activityData={activityData} 
+          activityData={activityData}
           editable={editable}
-          setEditableStatus={setEditableStatus} 
+          setEditableStatus={setEditableStatus}
           setViewType={setViewType}
           setSelectedArtifactIndex={setSelectedArtifactIndex}
           setSelectedArtifactEntry={setSelectedArtifactEntry}

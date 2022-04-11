@@ -1,5 +1,5 @@
 /* eslint no-console: off */
-////
+/// /
 
 import React, { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -15,27 +15,25 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
-const migrateTrrraceFormat = (projectData:any) => {
+const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
-  // console.log('project data',projectData)
-
-  // projectData.entries = projectData.entries.map(e => {
-  //   console.log('E', e);
-  //   return e
-  // });
-
+  
   return {
     ...projectData,
-    entries: projectData.entries.map((e) => ({
+    entries: projectData.entries.map((e: any) => ({
       ...e,
-      files: 
-      e.urls? 
-      [
-        ...e.files,
-        ...e.urls.map((u) => ({ title: u.title, url: u.url, fileType: 'url' })),
-      ] : [...e.files],
-      tags: e.tags.map((t) => (typeof t === 'string' ? t : t.text)),
+      files: e.urls
+        ? [
+            ...e.files,
+            ...e.urls.map((u :any) => ({
+              title: u.title,
+              url: u.url,
+              fileType: 'url',
+            })),
+          ]
+        : [...e.files],
+      tags: e.tags.map((t: any) => (typeof t === 'string' ? t : t.text)),
     })),
   };
 };

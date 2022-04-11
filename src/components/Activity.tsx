@@ -21,7 +21,6 @@ import { useProjectState } from './ProjectContext';
 import ActivitytoThread from './ActivityToThread';
 
 const Activity = (activityProps: any) => {
-  
   const { activity, folderPath, index, numRendered } = activityProps;
   const [{ highlightedTag, highlightedType, researchThreads }] =
     useProjectState();
@@ -45,7 +44,7 @@ const Activity = (activityProps: any) => {
     return (
       <Box
         key={`${activity.title}-${index}`}
-        minWidth={(numRendered > 20 ? 50 : 300)}
+        minWidth={numRendered > 20 ? 50 : 300}
         marginTop={2}
         marginLeft={4}
         className="activity"
@@ -112,7 +111,7 @@ const Activity = (activityProps: any) => {
                         threadIndex={tIndex}
                         activity={activity}
                         activityIndex={index}
-                      /> 
+                      />
                     </React.Fragment>
                   )
                 )

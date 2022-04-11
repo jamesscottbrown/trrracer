@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import reactDOMServer from 'react-dom/server';
 
 import {
   Button,
@@ -15,17 +14,13 @@ import {
   PopoverArrow,
   Box,
   SimpleGrid,
-  PopoverHeader,
-  PopoverFooter
+  PopoverFooter,
 } from '@chakra-ui/react';
-
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
-
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-import MarkdownIt from 'markdown-it';
 import { EntryType, TagType, File } from './types';
 import { useProjectState } from './ProjectContext';
 import ActivitytoThread from './ActivityToThread';
@@ -42,7 +37,7 @@ const converter = new Showdown.Converter({
   simplifiedAutoLink: true,
   strikethrough: true,
   tasklists: true,
-}); 
+});
 
 interface ReadonlyEntryFilePropTypes {
   entryData: EntryType;
@@ -63,33 +58,38 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <Box bg="#ececec" p={3}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
-            <div>
-            {
-            ['png', 'jpg', 'gif'].includes(file.fileType) && (
-              <AttachmentPreview
-                folderPath={folderPath}
-                title={file.title}
-                openFile={openFile}
-              />
-            )}
-          <div
-            style={{ fontSize: 18, fontWeight: 700, marginBottom: 5, width:75, display:'inline' }}
-          >
-          {' '}
-          {file.title}{' '}
-          </div>
-          <FaExternalLinkAlt
-          onClick={() => openFile(file.title, folderPath)}
-          title="Open file externally"
-          size="13px"
-          style={{ display: 'inline' }}
-          />
-          </div>
+              <div>
+                {['png', 'jpg', 'gif'].includes(file.fileType) && (
+                  <AttachmentPreview
+                    folderPath={folderPath}
+                    title={file.title}
+                    openFile={openFile}
+                  />
+                )}
+                <div
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    marginBottom: 5,
+                    width: 75,
+                    display: 'inline',
+                  }}
+                >
+                  {' '}
+                  {file.title}{' '}
+                </div>
+                <FaExternalLinkAlt
+                  onClick={() => openFile(file.title, folderPath)}
+                  title="Open file externally"
+                  size="13px"
+                  style={{ display: 'inline' }}
+                />
+              </div>
             </PopoverTrigger>
             <PopoverContent bg="white" color="gray">
               <PopoverArrow bg="white" />
@@ -101,7 +101,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: entryData,
                       selectedArtifactIndex: i,
-                      hopArray:[entryData]
+                      hopArray: [entryData],
                     });
                   }}
                 >
@@ -111,34 +111,35 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             </PopoverContent>
           </Popover>
         ) : (
-          <div
-          onMouseEnter={() => setShowPopover(true)}
-          >
-          {
-            ['png', 'jpg', 'gif'].includes(file.fileType) && (
+          <div onMouseEnter={() => setShowPopover(true)}>
+            {['png', 'jpg', 'gif'].includes(file.fileType) && (
               <AttachmentPreview
                 folderPath={folderPath}
                 title={file.title}
                 openFile={openFile}
               />
             )}
-          <div
-            style={{ fontSize: 18, fontWeight: 500, marginBottom: '5px', width:'50%', display:'inline' }}
-          >
-          {' '}
-          {file.title}{' '}
-          </div>
-          <FaExternalLinkAlt
-          onClick={() => openFile(file.title, folderPath)}
-          title="Open file externally"
-          size="13px"
-          style={{ display: 'inline' }}
-          />
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: 500,
+                marginBottom: '5px',
+                width: '50%',
+                display: 'inline',
+              }}
+            >
+              {' '}
+              {file.title}{' '}
+            </div>
+            <FaExternalLinkAlt
+              onClick={() => openFile(file.title, folderPath)}
+              title="Open file externally"
+              size="13px"
+              style={{ display: 'inline' }}
+            />
           </div>
         )}
-      
-       
-    
+
         {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ?
                 <AttachmentPreview
                   folderPath={folderPath}
@@ -147,53 +148,50 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
             } */}
       </Box>
-    </React.Fragment>
+    </>
   );
 };
 
-const ActivityTitlePopoverLogic = (props:any) => {
-
-  const { activityData, researchThreads} = props;
+const ActivityTitlePopoverLogic = (props: any) => {
+  const { activityData, researchThreads } = props;
 
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [activitySelected, setActivitySelected] = useState(false);
 
-
   const closePopover = () => {
-    if(!seeThreadAssign){
-    setShowPopover(false);
+    if (!seeThreadAssign) {
+      setShowPopover(false);
     }
   };
 
-  return (showPopover ? (
-      <Popover
-        isOpen={showPopover}
-        onClose={closePopover}
-        onMouseLeave={closePopover}
-      >
+  return showPopover ? (
+    <Popover
+      isOpen={showPopover}
+      onClose={closePopover}
+      onMouseLeave={closePopover}
+    >
       <PopoverTrigger>
         <Box
           key={`${activityData.title}-${activityData.index}`}
           marginTop={2}
-          style={{cursor:'pointer'}}
+          style={{ cursor: 'pointer' }}
           className="activity"
           onMouseLeave={() => {
-            if(!seeThreadAssign){
-              setTimeout(function(){ 
+            if (!seeThreadAssign) {
+              setTimeout(function () {
                 setActivitySelected(false);
-                closePopover(); 
+                closePopover();
               }, 3000);
             }
-            
           }}
         >
-           <div>{activityData.title}{' '}</div>
+          <div>{activityData.title} </div>
         </Box>
       </PopoverTrigger>
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
-       
+
         <PopoverBody>
           {seeThreadAssign && (
             <div>
@@ -207,9 +205,9 @@ const ActivityTitlePopoverLogic = (props:any) => {
                         threadIndex={tIndex}
                         activity={activityData}
                         activityIndex={activityData.index}
-                        setSeeThreadAssign={setSeeThreadAssign} 
+                        setSeeThreadAssign={setSeeThreadAssign}
                         closePopover={closePopover}
-                      /> 
+                      />
                     </React.Fragment>
                   )
                 )
@@ -232,24 +230,28 @@ const ActivityTitlePopoverLogic = (props:any) => {
         </PopoverFooter>
       </PopoverContent>
     </Popover>
-  ):
-  
-  <div 
-  style={{cursor:'pointer'}}
-  onMouseOver={()=> {
-    setShowPopover(true);
-  }}>{activityData.title}{' '}</div>)
-  
-}
+  ) : (
+    <div
+      style={{ cursor: 'pointer' }}
+      onMouseOver={() => {
+        setShowPopover(true);
+      }}
+    >
+      {activityData.title}{' '}
+    </div>
+  );
+};
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
-  if(entryData.description != ''){
-    const split = entryData.description.split(/(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/);
+  if (entryData.description != '') {
+    const split = entryData.description.split(
+      /(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/
+    );
   }
- 
+
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
       return f.associated_tags.indexOf(tagName) > -1;
@@ -277,12 +279,12 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           />
         )}
         {viewType != 'detail' && (
-          <ActivityTitlePopoverLogic 
+          <ActivityTitlePopoverLogic
             activityData={entryData}
             researchThreads={researchThreads}
           />
         )}
-        
+
         {makeEditable && (
           <Button leftIcon={<EditIcon />} onClick={makeEditable}>
             Edit
@@ -305,7 +307,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 marginRight="0.25em"
                 marginBottom="0.25em"
               >
-              {t}
+                {t}
               </Tag>
             ))}
           </>
@@ -313,14 +315,19 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </p>
       <br />
 
-     {
-       entryData.description != "" && (
-         <div
-         style={{fontSize:'12px', fontStyle:'italic', marginTop:'5px', marginBottom:5}}
-         >{entryData.description}
-         <br />
-         </div>
-       )}
+      {entryData.description != '' && (
+        <div
+          style={{
+            fontSize: '12px',
+            fontStyle: 'italic',
+            marginTop: '5px',
+            marginBottom: 5,
+          }}
+        >
+          {entryData.description}
+          <br />
+        </div>
+      )}
       {/* <br />
       {entryData.description && (
         <div

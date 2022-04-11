@@ -49,7 +49,6 @@ const styleSection = (sectionData: any, commentedOn: any) => {
 const GoogDriveSpans = (googProps: any) => {
   const { googEl, index, comments } = googProps;
 
-  
   const temp = comments.filter((f: any) =>
     googEl.textRun.content.includes(f.quotedFileContent.value)
   );
@@ -80,7 +79,10 @@ const GoogDriveSpans = (googProps: any) => {
 const GoogDriveParagraph = (parProps: any) => {
   const { parData, index, comments } = parProps;
 
-  const getHeading = (styling: GoogleParagraphStyle, content: GoogleDocParagraph) => {
+  const getHeading = (
+    styling: GoogleParagraphStyle,
+    content: GoogleDocParagraph
+  ) => {
     if (styling.namedStyleType.includes('1'))
       return (
         <span

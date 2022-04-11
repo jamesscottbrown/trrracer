@@ -4,9 +4,8 @@ import { useDropzone } from 'react-dropzone';
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FileObj } from './types';
+
 const smalltalk = require('smalltalk');
-
-
 
 const baseStyle = {
   flex: 1,
@@ -54,7 +53,6 @@ const FileUpload = (props: FileUploadProps) => {
     isDragAccept,
     isDragReject,
   } = useDropzone({
-    
     onDragOver: (event) => {
       // Without this function the drop event would fail to fire (but only sometimes)
       // Solution from https://stackoverflow.com/a/50233827
@@ -62,26 +60,24 @@ const FileUpload = (props: FileUploadProps) => {
       event.preventDefault();
     },
     // accept: '.pdf,.doc,.docx',
-    onDropAccepted: (files:any) => {
-     
-      console.log('dropAccepted', files[0].name)
+    onDropAccepted: (files: any) => {
+      console.log('dropAccepted', files[0].name);
 
       smalltalk
-      .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
-      .then((value) => {
-          
-          let newFiles= files.map(m=> {
+        .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
+        .then((value) => {
+          const newFiles = files.map((m) => {
             m.artifactType = value;
             return m;
-          })
-      
-          saveFiles(newFiles)
-      })
-      .catch(() => {
+          });
+
+          saveFiles(newFiles);
+        })
+        .catch(() => {
           console.log('cancel');
-      });
-     
-      //saveFiles(files);
+        });
+
+      // saveFiles(files);
     },
   });
 
@@ -100,7 +96,6 @@ const FileUpload = (props: FileUploadProps) => {
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         <p>{msg}</p>
-
       </div>
     </section>
   );

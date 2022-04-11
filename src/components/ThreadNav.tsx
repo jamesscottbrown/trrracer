@@ -3,7 +3,8 @@ import { Box, Button, Input, Textarea } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
-import { jitter } from './TopTimeline';
+
+export const jitter = (val: any) => Math.random() * val;
 
 const MiniTimline = (props: any) => {
   const { researchT, activities } = props;
@@ -13,7 +14,7 @@ const MiniTimline = (props: any) => {
   React.useEffect(() => {
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(activities.map((m) => new Date(m.date))))
+      .domain(d3.extent(activities.map((m: any) => new Date(m.date))))
       .range([0, 150])
       .nice();
 
@@ -31,18 +32,22 @@ const MiniTimline = (props: any) => {
       .selectAll('circle')
       .data(activities)
       .join('circle')
-      .attr('cx', (d) => xScale(new Date(d.date)))
+      .attr('cx', (d: any) => xScale(new Date(d.date)))
       .attr('cy', () => jitter(10))
       .attr('r', 3)
       .attr('fill', 'gray')
       .attr('fill-opacity', 0.1);
 
-      const circTagged = circleG
+    const circTagged = circleG
       .selectAll('circle.associated')
-      .data((researchT.tagged_activities && researchT.tagged_activities.length > 0) ? researchT.tagged_activities.flatMap(fm => fm.associatedActivities) : [])
+      .data(
+        researchT.tagged_activities && researchT.tagged_activities.length > 0
+          ? researchT.tagged_activities.flatMap((fm: any) => fm.associatedActivities)
+          : []
+      )
       .join('circle')
       .attr('class', 'associated')
-      .attr('cx', (d) => xScale(new Date(d.date)))
+      .attr('cx', (d: any) => xScale(new Date(d.date)))
       .attr('cy', () => jitter(10))
       .attr('r', 3)
       .attr('fill', researchT.color)
@@ -53,14 +58,12 @@ const MiniTimline = (props: any) => {
       .data(researchT.evidence)
       .join('circle')
       .attr('class', 'research')
-      .attr('cx', (d) => xScale(new Date(d.dob)))
+      .attr('cx', (d: any) => xScale(new Date(d.dob)))
       .attr('cy', () => jitter(10))
       .attr('r', 4.5)
       .attr('fill', researchT.color)
       .attr('fill-opacity', 1)
       .attr('stroke', '#ffffff');
-
-  
   }, [activities]);
 
   return (
@@ -74,18 +77,15 @@ const ThreadNav = (threadProps: any) => {
   const [{ projectData, selectedArtifactIndex, selectedThread }, dispatch] =
     useProjectState();
 
-  const checkIfSelectThread = (i:any)=> {
-    
-    if(selectedThread != null){
-      if(i != selectedThread){
-        return 0.5
-      }else{
-        return 1;
+  const checkIfSelectThread = (i: any) => {
+    if (selectedThread != null) {
+      if (i != selectedThread) {
+        return 0.5;
       }
-    }else{
-      return 1
+      return 1;
     }
-  }
+    return 1;
+  };
 
   const [showThreads, setShowThreads] = useState(false);
   const [showCreateThread, setShowCreateThread] = useState(false);
@@ -93,12 +93,12 @@ const ThreadNav = (threadProps: any) => {
   const [threadName, setName] = React.useState(null);
   const [description, setDescription] = React.useState(null);
 
-  const handleNameChange = (e) => {
+  const handleNameChange = (e: any) => {
     const inputValue = e.target.value;
     setName(inputValue);
   };
 
-  const handleDescriptionChange = (e) => {
+  const handleDescriptionChange = (e: any) => {
     const inputValue = e.target.value;
     setDescription(inputValue);
   };
@@ -130,19 +130,21 @@ const ThreadNav = (threadProps: any) => {
                 style={{
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
-                  opacity: checkIfSelectThread(i)
+                  opacity: checkIfSelectThread(i),
                 }}
                 onMouseEnter={() => {
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
                 }}
                 onMouseLeave={() => {
-                  console.log('need to add this to project context and highlight timline with activities')
+                  console.log(
+                    'need to add this to project context and highlight timline with activities'
+                  );
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: null });
                 }}
-                onClick={()=> {
-                  dispatch({type:'THREAD_FILTER', filterRT: rt})
+                onClick={() => {
+                  dispatch({ type: 'THREAD_FILTER', filterRT: rt });
                 }}
-                >
+              >
                 <span
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
@@ -153,7 +155,7 @@ const ThreadNav = (threadProps: any) => {
                   <FaFillDrip style={{ color: rt.color, display: 'inline' }} />
                 </span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
-                {rt.associated_tags.map((t, i) => (
+                {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}
                     style={{
@@ -172,7 +174,6 @@ const ThreadNav = (threadProps: any) => {
                 {viewType === 'detail' && (
                   <div>
                     <Box key={`in-thread-${i}`}>
-                      {/* <span>{rt.title}<FaFill style={{color: rt.color, display:"inline", marginLeft:5}}/></span> */}
                       <div style={{ padding: 5, borderLeft: '1px solid gray' }}>
                         {rt.evidence.map((e: any, j: number) => (
                           <React.Fragment key={`evid-${j}`}>
@@ -251,7 +252,7 @@ const ThreadNav = (threadProps: any) => {
                     setName(null);
                     setDescription(null);
                     setShowCreateThread(false);
-                    console.log('creat threaddd', threadName, description)
+                    console.log('creat threaddd', threadName, description);
                     dispatch({
                       type: 'CREATE_THREAD',
                       threadName,

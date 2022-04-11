@@ -1,7 +1,6 @@
 import path from 'path';
 import React from 'react';
 import { Image, Box } from '@chakra-ui/react';
-import type { TextEntry } from './types';
 import {
   GrDocumentCsv,
   GrDocumentWord,
@@ -10,6 +9,7 @@ import {
   GrDocumentImage,
   GrCluster,
 } from 'react-icons/gr';
+import type { TextEntry } from './types';
 import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
@@ -21,14 +21,20 @@ interface DetailPreviewPropsType {
   activity: any;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
-  artifactIndex:number;
+  artifactIndex: number;
 }
 
-
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { setFragSelected, folderPath, artifact, activity, artifactIndex, openFile } = props;
+  const {
+    setFragSelected,
+    folderPath,
+    artifact,
+    activity,
+    artifactIndex,
+    openFile,
+  } = props;
   const [{ googleData, txtData }] = useProjectState();
- 
+
   // let title = artifact.title;
 
   const { title } = artifact;
@@ -154,7 +160,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     );
   }
   if (title.endsWith('.eml')) {
-    return <EmailRender setFragSelected={setFragSelected} title={title} />
+    return <EmailRender setFragSelected={setFragSelected} title={title} />;
   }
 
   if (title.endsWith('.pdf')) {
@@ -176,7 +182,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     );
   }
   if (title.endsWith('.png')) {
-    return <MarkableImage activity={activity} artifactIndex={artifactIndex} imgPath={`file://${path.join(folderPath, title)}`}/>
+    return (
+      <MarkableImage
+        activity={activity}
+        artifactIndex={artifactIndex}
+        imgPath={`file://${path.join(folderPath, title)}`}
+      />
+    );
   }
   // imgPath, activity, artifactIndex
   return (

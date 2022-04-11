@@ -53,7 +53,7 @@ const EditDate = (props: EditDateTypes) => {
 
   return (
     <DatePicker
-      style={{cursor:'pointer'}}
+      style={{ cursor: 'pointer' }}
       selected={new Date(date)}
       onChange={updateDate}
       dateFormat="dd MMMM yyyy"
@@ -117,14 +117,18 @@ const Entry = (props: EntryPropTypes) => {
     makeNonEditable,
   } = props;
 
-  const [{projectData}, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
 
-  console.log('entry data in entry', entryData, projectData.entries[entryIndex]);
+  console.log(
+    'entry data in entry',
+    entryData,
+    projectData.entries[entryIndex]
+  );
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel
@@ -214,27 +218,28 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
       </Heading>
       <br />
-      <Flex 
-      alignItems="center">
-        <span
-        style={{fontWeight:700}}
-        >{"Date Activity Happened: "}</span>
+      <Flex alignItems="center">
+        <span style={{ fontWeight: 700 }}>{'Date Activity Happened: '}</span>
         <div
-          style={{border:'1px solid gray', borderRadius:5, padding:5, cursor:'pointer'}}
+          style={{
+            border: '1px solid gray',
+            borderRadius: 5,
+            padding: 5,
+            cursor: 'pointer',
+          }}
         >
-        <EditDate
-          date={entryData.date}
-          entryIndex={entryIndex}
-          updateEntryField={updateEntryField}
-        />
+          <EditDate
+            date={entryData.date}
+            entryIndex={entryIndex}
+            updateEntryField={updateEntryField}
+          />
         </div>
-      
       </Flex>
 
       <br />
-      <span
-        style={{fontSize: 18, fontWeight: 700, display:'block'}}
-      >{"Tags: "}</span>
+      <span style={{ fontSize: 18, fontWeight: 700, display: 'block' }}>
+        {'Tags: '}
+      </span>
       <ReactTags
         tags={entryData.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
@@ -252,9 +257,9 @@ const Entry = (props: EntryPropTypes) => {
       />
 
       <br />
-      <span
-        style={{fontSize: 18, fontWeight: 700, display:'block'}}
-      >{"Description: "}</span>
+      <span style={{ fontSize: 18, fontWeight: 700, display: 'block' }}>
+        {'Description: '}
+      </span>
       {showDescription ? (
         <div className="markdownEditorContainer">
           <ReactMde
@@ -325,7 +330,9 @@ const Entry = (props: EntryPropTypes) => {
         </UnorderedList>
       </div>
       <br />
-      <span style={{ fontSize: 18, fontWeight: 700 }}>{'Add more artifacts: '}</span>
+      <span style={{ fontSize: 18, fontWeight: 700 }}>
+        {'Add more artifacts: '}
+      </span>
       {showFileUpload ? (
         <>
           <Flex

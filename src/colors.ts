@@ -1,6 +1,3 @@
-import { TagType } from './components/types';
-import { useProjectState } from './components/ProjectContext';
-
 // This function is based on https://stackoverflow.com/a/41491220
 const textColor = (bgColor) => {
   const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;

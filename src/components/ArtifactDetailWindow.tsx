@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
+import { WithContext as ReactTags } from 'react-tag-input';
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
-import type { ResearchThread, ResearchThreadEvidence, ReactTag, EntryPropTypes } from './types';
+import type {
+  ResearchThread,
+  ResearchThreadEvidence,
+  ReactTag,
+  EntryPropTypes,
+} from './types';
 import VerticalAxis from './VerticalAxis';
-import { WithContext as ReactTags } from 'react-tag-input';
 
 interface DetailProps {
   setViewType: (view: string) => void;
   folderPath: string;
   projectData: any;
-  filteredActivities:any;
+  filteredActivities: any;
 }
 
 const ArtifactToThread = (props: any) => {
@@ -69,7 +74,7 @@ const ArtifactToThread = (props: any) => {
 };
 
 const FragmentToThread = (props: any) => {
-  const [ , dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
 
   const {
     thread,
@@ -164,15 +169,15 @@ const InteractiveActivityTag = (props: any) => {
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[tagMatches.length - 1],
                 selectedArtifactIndex: 0,
-                hopArray: newHop
+                hopArray: newHop,
               });
             } else {
-              const newHop = [ ...hopArray, tagMatches[indexOfE - 1] ];
+              const newHop = [...hopArray, tagMatches[indexOfE - 1]];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE - 1],
                 selectedArtifactIndex: 0,
-                hopArray: newHop
+                hopArray: newHop,
               });
             }
           }}
@@ -197,20 +202,20 @@ const InteractiveActivityTag = (props: any) => {
               .map((m: any) => m.title)
               .indexOf(selectedArtifactEntry.title);
             if (indexOfE === tagMatches.length - 1) {
-              const newHop = [ ...hopArray, tagMatches[0] ];
+              const newHop = [...hopArray, tagMatches[0]];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[0],
                 selectedArtifactIndex: 0,
-                hopArray: newHop
+                hopArray: newHop,
               });
             } else {
-              const newHop = [ ...hopArray, tagMatches[indexOfE + 1] ];
+              const newHop = [...hopArray, tagMatches[indexOfE + 1]];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE + 1],
                 selectedArtifactIndex: 0,
-                hopArray: newHop
+                hopArray: newHop,
               });
             }
           }}
@@ -240,16 +245,16 @@ const InteractiveActivityTag = (props: any) => {
                     fontSize: 10,
                     borderBottom: '1px solid black',
                     padding: 3,
-                    cursor:'pointer'
+                    cursor: 'pointer',
                   }}
                   key={`match-${i}`}
-                  onClick={()=> {
-                    const newHop = [ ...hopArray, t ];
+                  onClick={() => {
+                    const newHop = [...hopArray, t];
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: t,
                       selectedArtifactIndex: 0,
-                      hopArray: newHop
+                      hopArray: newHop,
                     });
                   }}
                 >
@@ -278,7 +283,10 @@ const DetailSidebar = (props: any) => {
     enter: 13,
   };
 
-  console.log('projectData!!', projectData.entries[selectedArtifactEntry.index])
+  console.log(
+    'projectData!!',
+    projectData.entries[selectedArtifactEntry.index]
+  );
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
@@ -289,7 +297,7 @@ const DetailSidebar = (props: any) => {
     newValue: any
   ) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
-};
+  };
 
   const isArtifactInThread = researchThreads.research_threads.filter(
     (f: ResearchThread) => {
@@ -317,8 +325,8 @@ const DetailSidebar = (props: any) => {
       h="calc(100vh - 150px)"
       overflow="auto"
     >
-      <Box flex="2" overflowY="auto">  
-        <Box style={{marginBottom:20}}>
+      <Box flex="2" overflowY="auto">
+        <Box style={{ marginBottom: 20 }}>
           <div>
             <span style={{ fontSize: 20, fontWeight: 700 }}>
               {`Artifacts associated with ${selectedArtifactEntry.title}`}
@@ -330,65 +338,79 @@ const DetailSidebar = (props: any) => {
             borderLeftWidth="1px"
             padding="3px"
           >
-          {selectedArtifactEntry.files.map((f: any, i: number) => (
-            <React.Fragment key={`fi-${f.title}-${i}`}>
-              {i === selectedArtifactIndex ? (
-                <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                  {selectedArtifactEntry.files[i].title}
-                </div>
-              ) : (
-                <div
-                style={{cursor:'pointer'}}
-                onClick={()=>{
-                  dispatch({
-                    type: 'SELECTED_ARTIFACT',
-                    selectedArtifactEntry: selectedArtifactEntry,
-                    selectedArtifactIndex: i,
-                  });
-                }}
-                >{selectedArtifactEntry.files[i].title}</div>
-              )}
-            </React.Fragment>
-          ))}
+            {selectedArtifactEntry.files.map((f: any, i: number) => (
+              <React.Fragment key={`fi-${f.title}-${i}`}>
+                {i === selectedArtifactIndex ? (
+                  <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                    {selectedArtifactEntry.files[i].title}
+                  </div>
+                ) : (
+                  <div
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      dispatch({
+                        type: 'SELECTED_ARTIFACT',
+                        selectedArtifactEntry,
+                        selectedArtifactIndex: i,
+                      });
+                    }}
+                  >
+                    {selectedArtifactEntry.files[i].title}
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </Box>
         </Box>
-
       </Box>
       <Box>
-        <div style={{ fontSize: 20, fontWeight: 700, marginTop:20 }}>{'Activity Tags'}
-        <Button
-          style={{marginLeft:'10px'}}
-          onClick={()=> {
-            showTagAdd ? setShowTagAdd(false) : setShowTagAdd(true);
-          }}
-        >{"Edit"}</Button>
+        <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
+          Activity Tags
+          <Button
+            style={{ marginLeft: '10px' }}
+            onClick={() => {
+              showTagAdd ? setShowTagAdd(false) : setShowTagAdd(true);
+            }}
+          >
+            Edit
+          </Button>
         </div>
-        {
-          showTagAdd && (
-            <div>
-              <ReactTags
-                tags={projectData.entries[selectedArtifactEntry.index].tags.map((t) => ({ id: t, text: t }))}
-                suggestions={projectData.tags.map((t) => ({ id: t.title, text: t.title }))}
-                delimiters={[KeyCodes.comma, KeyCodes.enter]}
-                handleDelete={(i: number) =>
-                  updateEntryField(
-                    selectedArtifactEntry.index,
-                    'tags',
-                    selectedArtifactEntry.tags.filter((_tag, index) => index !== i)
+        {showTagAdd && (
+          <div>
+            <ReactTags
+              tags={projectData.entries[selectedArtifactEntry.index].tags.map(
+                (t) => ({ id: t, text: t })
+              )}
+              suggestions={projectData.tags.map((t) => ({
+                id: t.title,
+                text: t.title,
+              }))}
+              delimiters={[KeyCodes.comma, KeyCodes.enter]}
+              handleDelete={(i: number) =>
+                updateEntryField(
+                  selectedArtifactEntry.index,
+                  'tags',
+                  selectedArtifactEntry.tags.filter(
+                    (_tag, index) => index !== i
                   )
-                }
-                handleAddition={(tag: ReactTag) => {
-                  dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex: selectedArtifactEntry.index });
-                  dispatch({
-                    type: 'SELECTED_ARTIFACT',
-                    selectedArtifactEntry: projectData.entries[selectedArtifactEntry.index],
-                    selectedArtifactIndex: selectedArtifactIndex,
-                  });
-                }}
-      />
-            </div>
-          )
-        }
+                )
+              }
+              handleAddition={(tag: ReactTag) => {
+                dispatch({
+                  type: 'ADD_TAG_TO_ENTRY',
+                  newTag: tag,
+                  entryIndex: selectedArtifactEntry.index,
+                });
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  selectedArtifactEntry:
+                    projectData.entries[selectedArtifactEntry.index],
+                  selectedArtifactIndex,
+                });
+              }}
+            />
+          </div>
+        )}
         {selectedArtifactEntry.tags.map((t: any, i: number) => (
           <InteractiveActivityTag
             key={`it-${i}`}
@@ -483,8 +505,16 @@ const DetailSidebar = (props: any) => {
 
 const ArtifactDetailWindow = (props: DetailProps) => {
   const { setViewType, folderPath, filteredActivities } = props;
-  const [{ selectedArtifactEntry, selectedArtifactIndex, goBackView, projectData, hopArray }, dispatch] =
-    useProjectState();
+  const [
+    {
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+      goBackView,
+      projectData,
+      hopArray,
+    },
+    dispatch,
+  ] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
@@ -532,44 +562,67 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: null,
                 selectedArtifactIndex: null,
-                hopArray: []
+                hopArray: [],
               });
               setViewType(goBackView);
             }}
           >
             {`Go back to ${goBackView} view`}
           </Button>
-          <Spacer/>
-          <div style={{fontSize:18, alignContent:'center', paddingTop:5}}>
+          <Spacer />
+          <div style={{ fontSize: 18, alignContent: 'center', paddingTop: 5 }}>
             <Button
-            style={{marginRight:'10px'}}
-            onClick={()=> {
-              const newHop = [...hopArray, projectData.entries[(selectedArtifactEntry.index - 1)] ];
-              dispatch({
-                type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: selectedArtifactEntry.index > 0 ? projectData.entries[selectedArtifactEntry.index - 1] : projectData.entries[projectData.entries.length - 1],
-                selectedArtifactIndex: 0,
-                hopArray: newHop
-              });
-            }}
-            >{'<<'}</Button>
-            {` Activity: ${selectedArtifactEntry.title} `}
-            <Button
-              style={{marginLeft:'10px'}}
-              onClick={()=> {
-                let newHop = [...hopArray, projectData.entries[(selectedArtifactEntry.index + 1)] ];
-              
+              style={{ marginRight: '10px' }}
+              onClick={() => {
+                const newHop = [
+                  ...hopArray,
+                  projectData.entries[selectedArtifactEntry.index - 1],
+                ];
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: selectedArtifactEntry.index < projectData.entries.length - 1 ? projectData.entries[selectedArtifactEntry.index + 1] : projectData.entries[0],
+                  selectedArtifactEntry:
+                    selectedArtifactEntry.index > 0
+                      ? projectData.entries[selectedArtifactEntry.index - 1]
+                      : projectData.entries[projectData.entries.length - 1],
                   selectedArtifactIndex: 0,
-                  hopArray: newHop
+                  hopArray: newHop,
                 });
               }}
-            >{'>>'}</Button>
-            </div>
-          <Spacer/>
-          <div style={{fontSize:18, fontWeight:700, alignContent:'center', paddingTop:5}}>{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
+            >
+              {'<<'}
+            </Button>
+            {` Activity: ${selectedArtifactEntry.title} `}
+            <Button
+              style={{ marginLeft: '10px' }}
+              onClick={() => {
+                const newHop = [
+                  ...hopArray,
+                  projectData.entries[selectedArtifactEntry.index + 1],
+                ];
+
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  selectedArtifactEntry:
+                    selectedArtifactEntry.index < projectData.entries.length - 1
+                      ? projectData.entries[selectedArtifactEntry.index + 1]
+                      : projectData.entries[0],
+                  selectedArtifactIndex: 0,
+                  hopArray: newHop,
+                });
+              }}
+            >
+              {'>>'}
+            </Button>
+          </div>
+          <Spacer />
+          <div
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              alignContent: 'center',
+              paddingTop: 5,
+            }}
+          >{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
         </Flex>
       </Box>
       <Flex
@@ -578,16 +631,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         bottom={0}
         height="calc(100% - 150px)"
       >
-      <DetailSidebar
-        fragSelected={fragSelected}
-        setFragSelected={setFragSelected}
-        selectedArtifactEntry={selectedArtifactEntry}
-        selectedArtifactIndex={selectedArtifactIndex}
-      />
+        <DetailSidebar
+          fragSelected={fragSelected}
+          setFragSelected={setFragSelected}
+          selectedArtifactEntry={selectedArtifactEntry}
+          selectedArtifactIndex={selectedArtifactIndex}
+        />
 
-      <div style={{flex:1}}>
-            <VerticalAxis filteredActivities={filteredActivities} height={height}/>
-            {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
+        <div style={{ flex: 1 }}>
+          <VerticalAxis
+            filteredActivities={filteredActivities}
+            height={height}
+          />
+          {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
 
         <Box flex="4">
@@ -610,11 +666,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               justifyContent: 'center',
               alignItems: 'stretch',
               height: '90%',
-              paddingLeft:20,
-              paddingRight:20
+              paddingLeft: 20,
+              paddingRight: 20,
             }}
           >
-
             <DetailPreview
               setFragSelected={setFragSelected}
               folderPath={folderPath}
@@ -623,10 +678,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               artifactIndex={selectedArtifactIndex}
               openFile={openFile}
             />
-
           </Flex>
         </Box>
-
       </Flex>
     </div>
     // </div>
