@@ -29,8 +29,12 @@ const BubbleVis = (props: BubbleProps) => {
   const [
     { artifactTypes, selectedThread, researchThreads, folderPath, projectData },
   ] = useProjectState();
+  
+  console.log('projectData in bubble vis',projectData)
 
-  const eventArray = projectData.eventArray;
+  const {eventArray} = projectData;
+
+  console.log('event arrayyyyyy', eventArray)
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [translateY, setTranslateY] = useState(35);
@@ -81,23 +85,41 @@ const BubbleVis = (props: BubbleProps) => {
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
+
     const wrap = svg.append('g').attr('transform', `translate(0, ${translateY})`);
     const { yScale, margin } = forced;
     setTranslateY(margin / 2);
 
-    const eventRects = wrap
-      .selectAll('rect.event')
-      .data(eventArray)
-      .join('rect')
-      .classed('event', true);
+    console.log('event array right before render?',eventArray)
+
+    const eventRectGroups = wrap
+    .selectAll('g.event')
+    .data(eventArray)
+    .join('g')
+    .classed('event', true);
+
     if (eventArray.length > 0) {
-      eventRects.attr('y', (d: any) => yScale(d.time[0]));
-      eventRects.attr(
+
+        eventRectGroups.attr('transform', (d)=> `translate(0, ${yScale(new Date(d.time[0]))})`)
+        const eventRects = eventRectGroups.selectAll('rect').data(d => [d]).join('rect');
+
+        eventRects.attr(
         'height',
-        (d: any) => yScale(d.time[1]) - yScale(d.time[0])
-      );
-      eventRects.attr('width', 300);
-      eventRects.style('fill-opacity', 0.1);
+        (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+        );
+
+        eventRects.attr('width', 600);
+        eventRects.style('fill-opacity', 0.1);
+
+        let eventText = eventRectGroups
+        .selectAll('text')
+        .data(d => [d])
+        .join('text')
+        .text(d => d.event);
+
+        eventText.attr('x', 170);
+        eventText.style('font-size', 10);
+        eventText.style('fill', 'gray')
     }
 
     const nodes = forced.nodes.filter((f: any) => {
@@ -396,7 +418,8 @@ const BubbleVis = (props: BubbleProps) => {
       />
       <svg
         ref={svgRef}
-        width="calc(100% - 200px)"
+        width="calc(100% - 160px)"
+        // width="500px"
         height={height}
         style={{ display: 'inline' }}
       />

@@ -51,7 +51,7 @@ const VerticalAxis = (projectProps: any) => {
   ] = useProjectState();
 
   const allActivities = projectData.entries;
-  const eventArray = projectData.eventArray;
+  const { eventArray } = projectData;
 
   const width = 150;
   const margin = height * 0.25;
@@ -71,7 +71,6 @@ const VerticalAxis = (projectProps: any) => {
   ].months.filter((f: any, i: number) => i < endIndex);
 
   React.useEffect(() => {
-
     const filteredActivitiesExtent = d3.extent(
       filteredActivities.map((m: any) => new Date(m.date))
     );
@@ -102,16 +101,23 @@ const VerticalAxis = (projectProps: any) => {
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
 
-    const eventRects = svg
-      .selectAll('rect.event')
+    const eventRectGroups = svg
+      .selectAll('g.event')
       .data(eventArray)
-      .join('rect')
+      .join('g')
       .classed('event', true);
+
+    
+
     if (eventArray.length > 0) {
-      eventRects.attr('y', (d: any) => yScale(d.time[0]));
+
+      eventRectGroups.attr('transform', (d)=> `translate(0, ${yScale(new Date(d.time[0]))})`)
+      const eventRects = eventRectGroups.selectAll('rect').data(d => [d]).join('rect');
+      // eventRects.attr('y', (d: any) => yScale(new Date(d.time[0])));
+
       eventRects.attr(
         'height',
-        (d: any) => yScale(d.time[1]) - yScale(d.time[0])
+        (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
       );
       eventRects.attr('width', 600);
       eventRects.style('fill-opacity', 0.1);

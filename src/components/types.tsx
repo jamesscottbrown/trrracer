@@ -64,8 +64,7 @@ interface ProjectType {
   description: string;
   tags: TagType[];
   entries: EntryType[];
-  topics: [];
-  deadlines: DeadlineType[];
+  eventArray: any[];
 }
 
 type ResearchThreadEvidence = {
@@ -156,7 +155,7 @@ type ProjectState = {
   selectedArtifactIndex: number;
 
   hopArray: any[];
-  eventArray: any[];
+  
 };
 
 interface ProjectViewProps {

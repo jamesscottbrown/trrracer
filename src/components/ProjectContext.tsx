@@ -273,6 +273,7 @@ const appStateReducer = (state: any, action: any) => {
   };
 
   const saveJSON = (newProjectData: any) => {
+    console.log('new projectdata', newProjectData)
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
       JSON.stringify(newProjectData, null, 4),
