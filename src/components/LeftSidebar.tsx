@@ -9,7 +9,10 @@ import {
   FormControl,
   Switch,
   FormLabel,
+  color,
 } from '@chakra-ui/react';
+
+import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
@@ -36,13 +39,16 @@ const LeftSidebar = (props: any) => {
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
+      
       return { title: ty[0], matches: ty[1].length };
     });
 
   const aTypes = d3
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
-      return { title: ty[0] ? ty[0] : 'undefined', matches: ty[1].length };
+      let colorTest = artifactTypes.artifact_types.filter(f => f.type === ty[0])
+      console.log('artifact types', artifactTypes);
+      return { title: ty[0] ? ty[0] : 'undefined', matches: ty[1].length, color: colorTest.length > 0 ? colorTest[0].color : 'gray'};
     });
 
   const sortedTypes = types.sort((a, b) => b.matches - a.matches);
@@ -147,7 +153,7 @@ const LeftSidebar = (props: any) => {
                     dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
                   }
                 }}
-              >{`${m.title} (${m.matches})`}</MenuItem>
+              >{`${m.title} (${m.matches})`}<FaFillDrip style={{ color: m.color, display: 'inline' }}/></MenuItem>
             ))}
           </MenuList>
         </Menu>
