@@ -10,6 +10,7 @@ import {
   Switch,
   FormLabel,
 } from '@chakra-ui/react';
+
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';

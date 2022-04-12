@@ -46,11 +46,12 @@ const VerticalAxis = (projectProps: any) => {
     projectProps;
 
   const [
-    { projectData, selectedArtifactEntry, hopArray, eventArray },
+    { projectData, selectedArtifactEntry, hopArray },
     dispatch,
   ] = useProjectState();
 
   const allActivities = projectData.entries;
+  const eventArray = projectData.eventArray;
 
   const width = 150;
   const margin = height * 0.25;

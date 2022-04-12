@@ -433,6 +433,7 @@ const appStateReducer = (state: any, action: any) => {
         ...action.projectData,
         entries: newEntries,
         roles: roleData,
+        eventArray: action.projectData.eventArray ? action.projectData.eventArray : []
       };
 
       return {
@@ -451,7 +452,7 @@ const appStateReducer = (state: any, action: any) => {
         hopArray: [],
         goBackView: 'overview',
         artifactTypes: artifact_types,
-        eventArray: [],
+        // eventArray: [],
       };
     }
 
@@ -466,7 +467,11 @@ const appStateReducer = (state: any, action: any) => {
 
     case 'ADD_EVENT': {
       console.log(action.eventArray);
-      return { ...state, eventArray: action.eventArray };
+      const newProjectData = {
+        ...state.projectData,
+        eventArray: action.eventArray,
+      };
+      return saveJSON(newProjectData);
     }
 
     case 'UPDATE_GO_BACK': {

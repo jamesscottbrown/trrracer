@@ -6,6 +6,7 @@ import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
 
+
 interface BubbleProps {
   filteredActivities: any;
   projectData: any;
@@ -18,7 +19,6 @@ interface BubbleProps {
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
-    projectData,
     groupBy,
     splitBubbs,
     setHoverActivity,
@@ -27,8 +27,10 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
   const [
-    { artifactTypes, selectedThread, researchThreads, folderPath, eventArray },
+    { artifactTypes, selectedThread, researchThreads, folderPath, projectData },
   ] = useProjectState();
+
+  const eventArray = projectData.eventArray;
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [translateY, setTranslateY] = useState(35);
