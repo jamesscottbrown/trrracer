@@ -107,20 +107,19 @@ const VerticalAxis = (projectProps: any) => {
       .join('g')
       .classed('event', true);
 
-    
-
     if (eventArray.length > 0) {
 
       eventRectGroups.attr('transform', (d)=> `translate(0, ${yScale(new Date(d.time[0]))})`)
       const eventRects = eventRectGroups.selectAll('rect').data(d => [d]).join('rect');
-      // eventRects.attr('y', (d: any) => yScale(new Date(d.time[0])));
 
       eventRects.attr(
         'height',
         (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
       );
+
       eventRects.attr('width', 600);
       eventRects.style('fill-opacity', 0.1);
+      
     }
 
     const rects = svg
@@ -129,6 +128,7 @@ const VerticalAxis = (projectProps: any) => {
       .data(allActivities)
       .join('rect')
       .classed('activity', true);
+
     rects.attr('width', 40).attr('height', 3);
     rects.attr('y', (d: any) => yScale(new Date(d.date)));
 
@@ -329,6 +329,9 @@ const VerticalAxis = (projectProps: any) => {
     }
 
     if (defineEvent) {
+
+      let text;
+
       const brushedEvent = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
         const s0 = event.selection
@@ -423,6 +426,30 @@ const VerticalAxis = (projectProps: any) => {
         .on('start brush end', brushedEvent);
 
       const gBrush = svg.append('g').call(bY);
+
+      svg.on('mousemove', (event)=> {
+        let textTest = svg.select('text.hover-text');
+        text = textTest.empty() ? svg.append('text').classed('hover-text', true) : textTest;
+        let position = (event.offsetY - 120);
+        text.text(yScale.invert(position));
+        text.attr('y', position - 20);
+        text.attr('x', -30);
+        text.style('font-size', 11);
+        text.style('font-weight', 800);
+        
+      })
+      svg.on('mouseleave', (event)=> {
+        let textTest = svg.select('text.hover-text');
+        textTest.remove();
+        // text = textTest.empty() ? svg.append('text').classed('hover-text', true) : textTest;
+        // let position = (event.offsetY - 120);
+        // text.text(yScale.invert(position));
+        // text.attr('y', position - 20);
+        // text.attr('x', -30);
+        // text.style('font-size', 11);
+        // text.style('font-weight', 800);
+        
+      })
     }
   }, [
     height,

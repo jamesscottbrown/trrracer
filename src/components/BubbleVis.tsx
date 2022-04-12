@@ -113,13 +113,13 @@ const BubbleVis = (props: BubbleProps) => {
 
         let eventText = eventRectGroups
         .selectAll('text')
-        .data(d => [d])
+        .data((d) => [d])
         .join('text')
-        .text(d => d.event);
+        .text((d) => d.event);
 
         eventText.attr('x', 170);
         eventText.style('font-size', 10);
-        eventText.style('fill', 'gray')
+        eventText.style('fill', 'gray');
     }
 
     const nodes = forced.nodes.filter((f: any) => {
