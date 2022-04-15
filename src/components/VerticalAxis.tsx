@@ -302,7 +302,7 @@ const VerticalAxis = (projectProps: any) => {
 
       reset
         .text('Reset Time')
-        .attr('transform', 'translate(-10, -11)')
+        .attr('transform', 'translate(-10, -30)')
         .style('font-size', '12px')
         .style('cursor', 'pointer')
         .on('click', () => {
@@ -312,7 +312,6 @@ const VerticalAxis = (projectProps: any) => {
 
     if (selectedArtifactEntry) {
       if (hopArray) {
-        console.log('hop', hopArray);
         rects
           .filter((f) => hopArray.map((m) => m.title).includes(f.title))
           .attr('fill', 'purple')
