@@ -77,6 +77,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
           fileType: nameCheck[nameCheck.length - 1],
           context: 'null',
           artifactType: file.artifactType,
+          artifact_uid: uuidv4()
         };
 
         newFiles = [...newFiles, newFile];
@@ -227,6 +228,7 @@ async function copyGoogle(file: any, fileList: any) {
             fileType: nameF[nameF.length - 1],
             context: 'null',
             fileId: response.data.id,
+            artifact_uid: uuidv4()
           };
 
           fileList = [...fileList, newFile];
@@ -371,6 +373,7 @@ const appStateReducer = (state: any, action: any) => {
             : [];
 
           e.files = e.files.map((ef) => {
+           
             if (ef.fileType === 'gdoc') {
               // ef.artifactType = 'notes'
               ef.emphasized = google_em ? google_em[ef.fileId] : [];
@@ -427,7 +430,7 @@ const appStateReducer = (state: any, action: any) => {
           return rt;
         }
       );
-
+      
       research_threads.research_threads = entriesAssociated;
 
       const newProjectData = {
@@ -467,13 +470,25 @@ const appStateReducer = (state: any, action: any) => {
     }
 
     case 'ADD_EVENT': {
-      console.log(action.eventArray);
+      // let newEntries = state.projectData.entries.map(en => {
+      //   en.activity_uid = uuidv4();
+
+      //   en.files.map(ef => {
+      //     ef.artifact_uid = uuidv4();
+      //     return ef;
+      //   });
+
+      //   return en;
+      // })
+      
       const newProjectData = {
         ...state.projectData,
+        // entries: newEntries,
         eventArray: action.eventArray,
       };
       return saveJSON(newProjectData);
     }
+
 
     case 'UPDATE_GO_BACK': {
       return {
@@ -781,6 +796,7 @@ const appStateReducer = (state: any, action: any) => {
         date: new Date().toISOString(),
         tags: [],
         urls: [],
+        activity_uid: uuidv4()
       };
 
       const newProjectData = {

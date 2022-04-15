@@ -29,6 +29,7 @@ interface EntryType {
   tags: string[];
   quoteTags: string[];
   isPrivate: boolean;
+  artifact_uid: string;
 }
 
 interface EntryTypeWithIndex {
@@ -41,6 +42,7 @@ interface EntryTypeWithIndex {
   index: number;
   quoteTags: string[];
   isPrivate: boolean;
+  artifact_uid: string;
 }
 
 interface TagType {

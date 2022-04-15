@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Flex, Spacer, SimpleGrid, Button, color } from '@chakra-ui/react';
 
-import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 import * as d3 from 'd3';
 
@@ -301,11 +301,6 @@ const ThreadView = () => {
     svg.selectAll('*').remove();
 
     const wrap = svg.append('g').attr('transform', 'translate(0, 20)');
-
-    console.log(
-      'research threads',
-      researchThreads.research_threads[selectedThread]
-    );
 
     const nodes = forced.nodes
       .filter((f) =>
