@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Input, Textarea } from '@chakra-ui/react';
+import { Box, Button, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
@@ -110,14 +110,11 @@ const ThreadNav = (threadProps: any) => {
       {(viewType === 'activity view' || viewType === 'overview') && (
         <div
           style={headerStyle}
-          onClick={() => {
-            showThreads ? setShowThreads(false) : setShowThreads(true);
-          }}
+          // onClick={() => {
+          //   showThreads ? setShowThreads(false) : setShowThreads(true);
+          // }}
         >
           <span style={{ display: 'inline' }}>Research Threads</span>
-          {/* <span style={{ display: 'inline' }}>
-            {showThreads ? <FaEye /> : <FaEyeSlash />}
-          </span> */}
         </div>
       )}
 
@@ -153,7 +150,19 @@ const ThreadNav = (threadProps: any) => {
                 >
                   {`${rt.title} `}
                   <FaFillDrip style={{ color: rt.color, display: 'inline' }} />
-                  <Button size={'xs'}>Cite this thread</Button>
+                  <Popover>
+                    <PopoverTrigger>
+                    <Button 
+                      size={'xs'}
+                    >Cite this thread</Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverBody>
+                        copy this ref: {rt.rt_id}
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                  
                 </span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (
