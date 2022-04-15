@@ -47,7 +47,7 @@ const LeftSidebar = (props: any) => {
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
       let colorTest = artifactTypes.artifact_types.filter(f => f.type === ty[0])
-      console.log('artifact types', artifactTypes);
+      
       return { title: ty[0] ? ty[0] : 'undefined', matches: ty[1].length, color: colorTest.length > 0 ? colorTest[0].color : 'gray'};
     });
 
@@ -89,7 +89,7 @@ const LeftSidebar = (props: any) => {
           <Switch
             id="split-by"
             onChange={(event) => {
-              console.log(event.target);
+          
               event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
             }}
           />

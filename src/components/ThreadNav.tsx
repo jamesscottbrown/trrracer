@@ -143,14 +143,16 @@ const ThreadNav = (threadProps: any) => {
                 }}
               >
                 <span
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', display:'inline' }}
                   onClick={() => {
                     dispatch({ type: 'SELECTED_THREAD', selectedThread: i });
                   }}
                 >
                   {`${rt.title} `}
                   <FaFillDrip style={{ color: rt.color, display: 'inline' }} />
-                  <Popover>
+                </span>
+                <span>
+                <Popover>
                     <PopoverTrigger>
                     <Button 
                       size={'xs'}
@@ -162,7 +164,6 @@ const ThreadNav = (threadProps: any) => {
                       </PopoverBody>
                     </PopoverContent>
                   </Popover>
-                  
                 </span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (

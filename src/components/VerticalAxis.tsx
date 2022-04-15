@@ -53,7 +53,7 @@ const VerticalAxis = (projectProps: any) => {
   const allActivities = projectData.entries;
   const { eventArray } = projectData;
 
-  const width = 150;
+  const width = 130;
   const margin = height * 0.25;
 
   const yearMonth = dataStructureForTimeline(allActivities);
@@ -79,9 +79,9 @@ const VerticalAxis = (projectProps: any) => {
     const svgEl = d3.select(svgRef.current);
     svgEl.selectAll('*').remove(); // Clear svg content before adding new elements
 
-    const svg = svgEl.append('g').attr('transform', `translate(90, ${translateY})`);
+    const svg = svgEl.append('g').attr('transform', `translate(60, ${translateY})`);
 
-    const yAxis = d3.axisLeft(yScale).ticks(16).tickSize(10);
+    const yAxis = d3.axisLeft(yScale).ticks(22).tickSize(10);
 
     const yAxisGroup = svg
       .append('g')
@@ -118,40 +118,44 @@ const VerticalAxis = (projectProps: any) => {
       );
 
       eventRects.attr('width', 600);
-      eventRects.style('fill-opacity', 0.1);
+      eventRects.style('fill-opacity', 0.05);
       
     }
 
-    const rects = svg
+    // if(selectedArtifactEntry){
+      const rects = svg
       .append('g')
       .selectAll('rect.activity')
       .data(allActivities)
       .join('rect')
       .classed('activity', true);
 
-    rects.attr('width', 40).attr('height', 3);
-    rects.attr('y', (d: any) => yScale(new Date(d.date)));
+      rects.attr('width', 30).attr('height', 3);
+      rects.attr('y', (d: any) => yScale(new Date(d.date)));
 
-    rects
-      .filter((r: any) => {
-        return (
-          new Date(r.date) >= filteredActivitiesExtent[0] &&
-          new Date(r.date) <= filteredActivitiesExtent[1]
-        );
-      })
-      .attr('fill', 'gray')
-      .style('fill-opacity', 0.3);
+      rects
+        .filter((r: any) => {
+          return (
+            new Date(r.date) >= filteredActivitiesExtent[0] &&
+            new Date(r.date) <= filteredActivitiesExtent[1]
+          );
+        })
+        .attr('fill', 'gray')
+        .style('fill-opacity', 0.2);
 
-    rects
-      .filter((r: any) => {
-        return (
-          new Date(r.date) < filteredActivitiesExtent[0] ||
-          new Date(r.date) > filteredActivitiesExtent[1]
-        );
-      })
-      .attr('fill', 'red')
-      .style('fill-opacity', 0.08);
+      rects
+        .filter((r: any) => {
+          return (
+            new Date(r.date) < filteredActivitiesExtent[0] ||
+            new Date(r.date) > filteredActivitiesExtent[1]
+          );
+        })
+        .attr('fill', 'red')
+        .style('fill-opacity', 0.08);
 
+    // }
+
+  
     if (!defineEvent && !selectedArtifactEntry) {
       const triangle = d3.symbol().size(100).type(d3.symbolTriangle);
 
@@ -211,7 +215,7 @@ const VerticalAxis = (projectProps: any) => {
         .handleSize(8)
         .extent([
           [0, 0],
-          [50, height - margin],
+          [40, height - margin],
         ])
         .on('start brush end', brushed);
 
@@ -290,7 +294,7 @@ const VerticalAxis = (projectProps: any) => {
         .attr('class', (d: any) => `line ${d}`)
         .attr('x1', 0)
         .attr('y1', 0)
-        .attr('x2', 50)
+        .attr('x2', 40)
         .attr('y2', 0)
         .attr('stroke', 'black');
 
@@ -324,7 +328,7 @@ const VerticalAxis = (projectProps: any) => {
         .attr('fill', 'red')
         .style('fill-opacity', 1)
         .attr('height', 10)
-        .attr('width', 40);
+        .attr('width', 30);
     }
 
     if (defineEvent) {
@@ -420,7 +424,7 @@ const VerticalAxis = (projectProps: any) => {
         .handleSize(8)
         .extent([
           [0, 0],
-          [50, height - margin],
+          [40, height - margin],
         ])
         .on('start brush end', brushedEvent);
 

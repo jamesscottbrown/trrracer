@@ -109,7 +109,7 @@ const BubbleVis = (props: BubbleProps) => {
         );
 
         eventRects.attr('width', 600);
-        eventRects.style('fill-opacity', 0.1);
+        eventRects.style('fill-opacity', 0.05);
 
         let eventText = eventRectGroups
         .selectAll('text')
@@ -117,7 +117,7 @@ const BubbleVis = (props: BubbleProps) => {
         .join('text')
         .text((d) => d.event);
 
-        eventText.attr('x', 170);
+        eventText.attr('x', 200);
         eventText.style('font-size', 10);
         eventText.style('fill', 'gray');
     }
