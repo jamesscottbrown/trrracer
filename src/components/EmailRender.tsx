@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
 import * as fs from 'fs';
 import path from 'path';
-const  EmlParser = require('eml-parser');
+// const  EmlParser = require('eml-parser');
 
 
 const EmailRender = (props: any) => {
@@ -21,32 +21,32 @@ const EmailRender = (props: any) => {
 
   // sendToFlask();
 
-  new EmlParser(fs.createReadStream(`${path.join(state.folderPath, title)}`))
-.parseEml()
-.then(result  => {
-	// properties in result object:
-	// {
-	//	"attachments": [],
-	//	"headers": {},
-	//	"headerLines": [],
-	//	"html": "",
-	//	"text": "",
-	//	"textAsHtml": "",
-	//	"subject": "",
-	//	"references": "",
-	//	"date": "",
-	//	"to": {},
-	//	"from": {},
-	//	"cc": {},
-	//	"messageId": "",
-	//	"inReplyTo": ""
-	// }
-	console.log('RESULT',result.html);
-  setEmailData(result.html)
-})
-.catch(err  => {
-	console.log(err);
-})
+//   new EmlParser(fs.createReadStream(`${path.join(state.folderPath, title)}`))
+// .parseEml()
+// .then(result  => {
+// 	// properties in result object:
+// 	// {
+// 	//	"attachments": [],
+// 	//	"headers": {},
+// 	//	"headerLines": [],
+// 	//	"html": "",
+// 	//	"text": "",
+// 	//	"textAsHtml": "",
+// 	//	"subject": "",
+// 	//	"references": "",
+// 	//	"date": "",
+// 	//	"to": {},
+// 	//	"from": {},
+// 	//	"cc": {},
+// 	//	"messageId": "",
+// 	//	"inReplyTo": ""
+// 	// }
+// 	console.log('RESULT',result.html);
+//   setEmailData(result.html)
+// })
+// .catch(err  => {
+// 	console.log(err);
+// })
 
   return (
     <div 
