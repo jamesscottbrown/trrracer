@@ -5,6 +5,7 @@ import path from 'path';
 import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
 import { sendToFlask } from '../flaskHelper';
+import { TextFileHandler } from '../textFileHandler';
 
 const { google } = require('googleapis');
 
@@ -649,14 +650,14 @@ const appStateReducer = (state: any, action: any) => {
       const newPD = saveJSON(newProjectData);
       console.log('file list', fileList);
       if (fileList.map((m) => m.type).includes('text/plain')) {
-        console.log('has a text file!!');
-        sendToFlask('get_all_sig_blobs', state.projectData.title).then(
-          (json) => {
-            state.txtData = json;
-          }
-        );
+      //   console.log('has a text file!!');
+      //   sendToFlask('get_all_sig_blobs', state.projectData.title).then(
+      //     (json) => {
+      //       state.txtData = json;
+      //     }
+          TextFileHandler(fileList, state.folderPath)
+        // );
       }
-
       return newPD; // saveJSON(newProjectData);
     }
 
