@@ -30,11 +30,9 @@ const BubbleVis = (props: BubbleProps) => {
     { artifactTypes, selectedThread, researchThreads, folderPath, projectData },
   ] = useProjectState();
   
-  console.log('projectData in bubble vis',projectData)
 
   const {eventArray} = projectData;
 
-  console.log('event arrayyyyyy', eventArray)
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [translateY, setTranslateY] = useState(35);

@@ -15,6 +15,7 @@ import {
   Box,
   SimpleGrid,
   PopoverFooter,
+  Badge,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
@@ -223,9 +224,17 @@ const ActivityTitlePopoverLogic = (props: any) => {
               <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
             </Box>
           ) : (
+            <>
             <Button onClick={() => setSeeThreadAssign(true)}>
               Add this activity to a thread.
             </Button>
+            <br/>
+            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this activity:</span>
+            <Badge
+            style={{wordWrap:'break-word'}}
+            >{activityData.activity_uid}</Badge>
+            </>
+            
           )}
         </PopoverFooter>
       </PopoverContent>

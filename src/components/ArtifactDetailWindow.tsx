@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Popover, PopoverContent, PopoverTrigger, PopoverBody, Badge } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
+import * as d3 from 'd3';
 import type {
   ResearchThread,
   ResearchThreadEvidence,
@@ -364,6 +365,12 @@ const DetailSidebar = (props: any) => {
         </Box>
       </Box>
       <Box>
+        <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
+        <Badge
+        style={{wordWrap:'break-word'}}
+        >{selectedArtifactEntry.files[selectedArtifactIndex].artifact_uid}</Badge>
+        </Box>
+      <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
           Activity Tags
           <Button
@@ -525,6 +532,15 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const svgRef = React.useRef(null);
   const [fragSelected, setFragSelected] = useState(null);
 
+  const [newHeight, setNewHeight] = useState('1000px');
+
+  const viewheight = +newHeight.split('px')[0];
+  const margin = viewheight * .15;
+
+  const yScale = d3.scaleTime()
+  .range([0, viewheight - margin])
+  .domain(d3.extent(projectData.entries.map((e: any) => new Date(e.date))));
+
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
@@ -642,6 +658,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           <VerticalAxis
             filteredActivities={filteredActivities}
             height={height}
+            setDefineEvent={null}
+            defineEvent={null}
+            yScale={yScale}
+            translateY={(margin / 2)}
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
