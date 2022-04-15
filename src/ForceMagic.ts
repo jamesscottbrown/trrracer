@@ -22,7 +22,7 @@ class ForceMagic {
           .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
           .range([5, 20]);
 
-    this.margin = height * .25;
+    this.margin = height * .15;
 
     this.yScale = scaleTime()
       .range([0, height - this.margin])

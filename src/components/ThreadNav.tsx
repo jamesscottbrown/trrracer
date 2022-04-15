@@ -115,9 +115,9 @@ const ThreadNav = (threadProps: any) => {
           }}
         >
           <span style={{ display: 'inline' }}>Research Threads</span>
-          <span style={{ display: 'inline' }}>
+          {/* <span style={{ display: 'inline' }}>
             {showThreads ? <FaEye /> : <FaEyeSlash />}
-          </span>
+          </span> */}
         </div>
       )}
 
@@ -153,6 +153,7 @@ const ThreadNav = (threadProps: any) => {
                 >
                   {`${rt.title} `}
                   <FaFillDrip style={{ color: rt.color, display: 'inline' }} />
+                  <Button size={'xs'}>Cite this thread</Button>
                 </span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (

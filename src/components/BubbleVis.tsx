@@ -88,7 +88,7 @@ const BubbleVis = (props: BubbleProps) => {
 
     const wrap = svg.append('g').attr('transform', `translate(0, ${translateY})`);
     const { yScale, margin } = forced;
-    setTranslateY(margin / 2);
+    setTranslateY(margin / 3);
 
     console.log('event array right before render?',eventArray)
 
