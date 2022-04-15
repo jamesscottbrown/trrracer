@@ -3,13 +3,21 @@ import { useProjectState } from './ProjectContext';
 import * as fs from 'fs';
 import path from 'path';
 // const  EmlParser = require('eml-parser');
+// const emlformat = require('eml-format');
 
 
 const EmailRender = (props: any) => {
   const { title, setFragSelected } = props;
 
   const [state] = useProjectState();
-  const [emailData, setEmailData] = useState('');
+  const [emailData, setEmailData] = useState('Email failed to load');
+
+//   var eml = fs.readFileSync(path.join(state.folderPath, title), "utf-8");
+//     emlformat.read(eml, function(error, data) {
+//       if (error) return console.log(error);
+//       // fs.writeFileSync("sample.json", JSON.stringify(data, " ", 2));
+//       console.log('data',data);
+// });
 
   // const sendToFlask = async () => {
   //   const response = await fetch(
