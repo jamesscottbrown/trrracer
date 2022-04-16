@@ -119,16 +119,14 @@ const Entry = (props: EntryPropTypes) => {
 
   const [{ projectData }, dispatch] = useProjectState();
 
+  //console.log('filterRT',filterRT)
+
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
 
-  console.log(
-    'entry data in entry',
-    entryData,
-    projectData.entries[entryIndex]
-  );
+
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel

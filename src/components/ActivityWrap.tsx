@@ -4,6 +4,7 @@ import { useProjectState } from './ProjectContext';
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
+import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
 
 const ActivityWrap = (props: any) => {
   const {
@@ -35,23 +36,50 @@ const ActivityWrap = (props: any) => {
   ) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
+  if(editable[activityData.index]){
 
-  return (
-    <div ref={myRef}>
-      {editable[activityData.index] ? (
-        <Entry
-          /* eslint-disable-next-line react/no-array-index-key */
-          key={`en-${activityData.title}-${activityData.index}-${index}`}
-          entryData={activityData}
-          entryIndex={activityData.index}
-          openFile={openFile}
-          updateEntryField={updateEntryField}
-          allTags={state.projectData.tags}
-          makeNonEditable={() => setEditableStatus(activityData.index, false)}
-          viewType={viewType}
+    return (
+      <div ref={myRef}>
+      
+          <Entry
+            /* eslint-disable-next-line react/no-array-index-key */
+            key={`en-${activityData.title}-${activityData.index}-${index}`}
+            entryData={activityData}
+            entryIndex={activityData.index}
+            openFile={openFile}
+            updateEntryField={updateEntryField}
+            allTags={state.projectData.tags}
+            makeNonEditable={() => setEditableStatus(activityData.index, false)}
+            viewType={viewType}
+          />
+        <Divider marginTop="1em" marginBottom="1em" />
+      </div>
+    );
+
+  }else if(state.filterRT){
+
+    return (
+      <div ref={myRef}>
+         <ThreadedReadonlyEntry
+            /* eslint-disable-next-line react/no-array-index-key */
+            key={`ro-${activityData.title}-${activityData.index}-${index}`}
+            entryData={activityData}
+            openFile={openFile}
+            setViewType={setViewType}
+            setSelectedArtifactIndex={setSelectedArtifactIndex}
+            setSelectedArtifactEntry={setSelectedArtifactEntry}
+            makeEditable={() => setEditableStatus(activityData.index, true)}
+            viewType={viewType}
         />
-      ) : (
-        <ReadonlyEntry
+        <Divider marginTop="1em" marginBottom="1em" />
+      </div>
+    );
+
+  }else{
+
+    return (
+      <div ref={myRef}>
+         <ReadonlyEntry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`ro-${activityData.title}-${activityData.index}-${index}`}
           entryData={activityData}
@@ -62,11 +90,43 @@ const ActivityWrap = (props: any) => {
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
         />
-      )}
+        <Divider marginTop="1em" marginBottom="1em" />
+      </div>
+    );
 
-      <Divider marginTop="1em" marginBottom="1em" />
-    </div>
-  );
+  }
+
+  // return (
+  //   <div ref={myRef}>
+  //     {editable[activityData.index] ? (
+  //       <Entry
+  //         /* eslint-disable-next-line react/no-array-index-key */
+  //         key={`en-${activityData.title}-${activityData.index}-${index}`}
+  //         entryData={activityData}
+  //         entryIndex={activityData.index}
+  //         openFile={openFile}
+  //         updateEntryField={updateEntryField}
+  //         allTags={state.projectData.tags}
+  //         makeNonEditable={() => setEditableStatus(activityData.index, false)}
+  //         viewType={viewType}
+  //       />
+  //     ) : (
+  //       <ReadonlyEntry
+  //         /* eslint-disable-next-line react/no-array-index-key */
+  //         key={`ro-${activityData.title}-${activityData.index}-${index}`}
+  //         entryData={activityData}
+  //         openFile={openFile}
+  //         setViewType={setViewType}
+  //         setSelectedArtifactIndex={setSelectedArtifactIndex}
+  //         setSelectedArtifactEntry={setSelectedArtifactEntry}
+  //         makeEditable={() => setEditableStatus(activityData.index, true)}
+  //         viewType={viewType}
+  //       />
+  //     )}
+
+  //     <Divider marginTop="1em" marginBottom="1em" />
+  //   </div>
+  // );
 };
 
 export default ActivityWrap;

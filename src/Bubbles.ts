@@ -22,11 +22,11 @@ class Bubbles {
       .attr('cy', (d: any) => d.y)
       .attr('cx', (d: any) => d.x);
 
-    if (highlighted) {
-      this.bubbles.attr('fill', (d: any) => d.color);
-    } else {
-      this.bubbles.attr('fill', 'gray').attr('fill-opacity', 0.25);
-    }
+    // if (highlighted) {
+    //   this.bubbles.attr('fill', (d: any) => d.color);
+    // } else {
+    //   this.bubbles.attr('fill', 'gray').attr('fill-opacity', 0.25);
+    // }
   }
 }
 

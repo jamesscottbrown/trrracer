@@ -26,13 +26,13 @@ const BubbleVis = (props: BubbleProps) => {
     setDefineEvent,
     defineEvent,
   } = props;
+
   const [
-    { artifactTypes, selectedThread, researchThreads, folderPath, projectData },
+    { artifactTypes, selectedThread, researchThreads, folderPath, projectData, filterRT },
   ] = useProjectState();
   
-
+ 
   const {eventArray} = projectData;
-
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [translateY, setTranslateY] = useState(35);
@@ -87,8 +87,6 @@ const BubbleVis = (props: BubbleProps) => {
     const wrap = svg.append('g').attr('transform', `translate(0, ${translateY})`);
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);
-
-    console.log('event array right before render?',eventArray)
 
     const eventRectGroups = wrap
     .selectAll('g.event')
@@ -204,6 +202,9 @@ const BubbleVis = (props: BubbleProps) => {
           splitBubbs,
           artifactTypes
         );
+        
+        bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2);
+
         const bubbleHighlighted = new Bubbles(
           activityHighlightGroups,
           true,
@@ -211,12 +212,30 @@ const BubbleVis = (props: BubbleProps) => {
           artifactTypes
         );
 
+        bubbleHighlighted.bubbles.attr('fill', (d)=> {
+          let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
+          return color;
+        });
+
+        if(filterRT){
+          let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+
+          bubbleHighlighted.bubbles.filter(b => {
+            return tagChecker.includes(b.title);
+          }).attr('fill-opacity', .6);
+  
+          bubbleHighlighted.bubbles.filter(b => {
+            return tagChecker.indexOf(b.title) === -1;
+          }).attr('stroke', 'black')
+          .attr('stroke-width', 2)
+        }
+
         bubbleHighlighted.bubbles
           .on('mouseover', (event: any, d: any) => {
             d3.select(event.target)
               .attr('r', d.radius * 2)
-              .attr('stroke', '#fff')
-              .attr('stroke-width', 2);
+              // .attr('stroke', '#fff')
+              // .attr('stroke-width', 2)
 
             setHoverActivity(d);
 
@@ -264,7 +283,8 @@ const BubbleVis = (props: BubbleProps) => {
               .style('top', `${event.pageY - 28}px`);
           })
           .on('mouseout', (event: any, d: any) => {
-            d3.select(event.target).attr('r', d.radius).attr('stroke-width', 0);
+            d3.select(event.target).attr('r', d.radius)
+            //.attr('stroke-width', 0);
             div.transition().duration(500).style('opacity', 0);
           });
       }
@@ -298,7 +318,11 @@ const BubbleVis = (props: BubbleProps) => {
             } else {
               m.color = 'black';
             }
+          } else if(selectedThread){
+            // console.log('selectedThread!!', researchThreads?.research_threads[selectedThread].color)
+            m.color = researchThreads?.research_threads[selectedThread].color;
           } else {
+
             m.color = 'gray';
           }
 
@@ -323,6 +347,9 @@ const BubbleVis = (props: BubbleProps) => {
         splitBubbs,
         artifactTypes
       );
+
+      bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2);
+
       const bubbleHighlighted = new Bubbles(
         activityGroups,
         true,
@@ -330,12 +357,30 @@ const BubbleVis = (props: BubbleProps) => {
         artifactTypes
       );
 
+      bubbleHighlighted.bubbles.attr('fill', (d)=> {
+        let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
+        return color;
+      });
+
+      if(filterRT){
+        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+
+        bubbleHighlighted.bubbles.filter(b => {
+          return tagChecker.includes(b.title);
+        }).attr('fill-opacity', .6);
+
+        bubbleHighlighted.bubbles.filter(b => {
+          return tagChecker.indexOf(b.title) === -1;
+        }).attr('stroke', 'black')
+        .attr('stroke-width', 2)
+      }
+
       bubbleHighlighted.bubbles
         .on('mouseover', (event, d) => {
           d3.select(event.target)
             .attr('r', d.radius * 2)
-            .attr('stroke', '#fff')
-            .attr('stroke-width', 2);
+            // .attr('stroke', '#fff')
+            // .attr('stroke-width', 2)
 
           setHoverActivity(d);
 
@@ -398,7 +443,8 @@ const BubbleVis = (props: BubbleProps) => {
             .style('top', `${event.pageY - 28}px`);
         })
         .on('mouseout', (event:any, d:any) => {
-          d3.select(event.target).attr('r', d.radius).attr('stroke-width', 0);
+          d3.select(event.target).attr('r', d.radius)
+          //.attr('stroke-width', 0);
           div.transition().duration(500).style('opacity', 0);
         });
     }
