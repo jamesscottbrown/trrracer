@@ -526,7 +526,7 @@ const appStateReducer = (state: any, action: any) => {
         type: 'activity',
         dob: activity.date,
         activity_index: activityIndex,
-        title: activity.title,
+        activityTitle: activity.title,
         rationale,
       };
       newRT.research_threads[threadIndex].evidence.push(newA);
