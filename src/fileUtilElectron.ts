@@ -40,3 +40,6 @@ export function decodeAttachment(input) {
 
   return atob(encodeURI(input.replace(/-/g, '+').replace(/_/g, '/')));
 }
+
+export const readFileSync = (filePath: string) =>
+  fs.readFileSync(filePath, { encoding: 'utf-8' });
