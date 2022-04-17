@@ -60,11 +60,11 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
   return (
     <>
-      <Box bg="#ececec" p={3} opacity={.5} marginTop={1}>
+      <Box bg="#ececec" p={3} marginTop={1}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
-              <div>
+              <div style={{opacity:1}}>
                 {['png', 'jpg', 'gif'].includes(file.fileType) && (
                   <AttachmentPreview
                     folderPath={folderPath}
@@ -112,14 +112,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
             </PopoverContent>
           </Popover>
         ) : (
-          <div onMouseEnter={() => setShowPopover(true)}>
-            {/* {['png', 'jpg', 'gif'].includes(file.fileType) && (
-              <AttachmentPreview
-                folderPath={folderPath}
-                title={file.title}
-                openFile={openFile}
-              />
-            )} */}
+          <div onMouseEnter={() => setShowPopover(true)} style={{opacity:.5}}>
             <div
               style={{
                 fontSize: 14,
@@ -318,6 +311,8 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             ))}
           </div>
           <div style={{display:'inline'}}>
+
+
             <Popover>
             <PopoverTrigger>
               <Badge>{nonThreadedTags.length}{" More Tags"}</Badge>
