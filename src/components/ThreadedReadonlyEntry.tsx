@@ -60,11 +60,11 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
   return (
     <>
-      <Box bg="#ececec" p={3} opacity={.5}>
+      <Box bg="#ececec" p={3} marginTop={1}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
-              <div>
+              <div style={{opacity:1}}>
                 {['png', 'jpg', 'gif'].includes(file.fileType) && (
                   <AttachmentPreview
                     folderPath={folderPath}
@@ -74,7 +74,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
                 )}
                 <div
                   style={{
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: 700,
                     marginBottom: 5,
                     width: 75,
@@ -112,17 +112,10 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
             </PopoverContent>
           </Popover>
         ) : (
-          <div onMouseEnter={() => setShowPopover(true)}>
-            {['png', 'jpg', 'gif'].includes(file.fileType) && (
-              <AttachmentPreview
-                folderPath={folderPath}
-                title={file.title}
-                openFile={openFile}
-              />
-            )}
+          <div onMouseEnter={() => setShowPopover(true)} style={{opacity:.5}}>
             <div
               style={{
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: 500,
                 marginBottom: '5px',
                 width: '50%',
@@ -148,7 +141,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, fileData, folderPath } = props;
+  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i, dispatch } = props;
 
   return(
     <Box bg="#ececec" p={3}>
@@ -162,8 +155,40 @@ const ThreadedArtifact = (props:any) => {
         }}
         className="threaded-file"
       >
-        {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
-        {fileData.title}{' '}
+          <Popover>
+            <PopoverTrigger>
+              <span style={{cursor:'pointer'}}>
+              {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
+              {fileData.title}{' '}
+                <FaExternalLinkAlt
+                  onClick={() => openFile(fileData.title, folderPath)}
+                  title="Open file externally"
+                  size="13px"
+                  style={{ display: 'inline' }}
+                />
+              </span>
+            </PopoverTrigger>
+            <PopoverContent bg="white" color="gray">
+              <PopoverArrow bg="white" />
+              <PopoverBody>
+                <Button
+                  onClick={() => {
+                    setViewType('detail view');
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: entryData,
+                      selectedArtifactIndex: i,
+                      hopArray: [entryData],
+                    });
+                  }}
+                >
+                  See artifact in detail.
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+   
+       
         <div
         style={{marginTop:10}}
         >{"Why this was included: "}</div>
@@ -174,7 +199,7 @@ const ThreadedArtifact = (props:any) => {
                   <AttachmentPreview
                     folderPath={folderPath}
                     title={fileData.title}
-                    //openFile={openFile}
+                    openFile={null}
                   />
                 )}
       </div>
@@ -229,16 +254,13 @@ const ActivityTitleLogic = (props:any) => {
 }
 
 const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
+
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
+
   const [{ projectData, researchThreads, filterRT, folderPath }] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
-
- 
- 
   let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
-
-  
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
@@ -253,8 +275,9 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
   let otherFiles = files.filter(f => activitiesAsEvidence.map(m=> m.artifactTitle).indexOf(f.title) === -1)
   let threadedActivity = isEntryInThread.filter(f => f.type === 'activity');
-
-
+  
+  let threadedTags = entryData.tags.filter(f => selectedThread.associated_tags.includes(f));
+  let nonThreadedTags = entryData.tags.filter(f => selectedThread.associated_tags.indexOf(f) === -1);
 
   if (entryData.description != '') {
     const split = entryData.description.split(
@@ -269,8 +292,6 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
     if (tagFil.length > 0) return tagFil[tagFil.length - 1].color;
     return '#D4D4D4';
   };
-
-
 
   // Cache the results of converting markdown to HTML, to avoid re-converting on every render
   const descriptionHTML = useMemo(() => {
@@ -296,9 +317,13 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
         {makeEditable && (
           <Button leftIcon={<EditIcon />} onClick={makeEditable}>
-            Edit (THIS IS RT VERSION)
+            Edit
           </Button>
         )}
+
+        <Button
+        style={{backgroundColor: '#ff726f'}}
+        >Remove from thread</Button>
       </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
@@ -309,7 +334,8 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
           <b>No tags.</b>
         ) : (
           <>
-            {entryData.tags.map((t) => (
+          <div style={{display:'inline'}}>
+          {threadedTags.map((t) => (
               <Tag
                 key={t}
                 backgroundColor={checkTagColor(t)}
@@ -319,6 +345,41 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                 {t}
               </Tag>
             ))}
+          </div>
+          <div style={{display:'inline'}}>
+
+
+            <Popover>
+            <PopoverTrigger>
+              <Badge>{nonThreadedTags.length}
+              {threadedTags.length > 0 ? " More Tags": "Tags"}</Badge>
+            </PopoverTrigger>
+
+            <PopoverContent bg="white" color="gray">
+              <PopoverArrow bg="white" />
+              <PopoverBody>
+                <>
+                {
+                    nonThreadedTags.map(nt => (
+                      <Tag
+                        key={nt}
+                        backgroundColor={checkTagColor(nt)}
+                        marginRight="0.25em"
+                        marginBottom="0.25em"
+                        style={{padding:'5px', cursor:'pointer'
+                      }}
+                      >
+                        {nt}
+                      </Tag>
+                      
+                    ))
+                  }
+                </>
+                  
+              </PopoverBody>
+            </PopoverContent>
+            </Popover>
+            </div>
           </>
         )}
       </p>
@@ -349,8 +410,11 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             key={`threaded-${i}`}
             isEntryInThread={isEntryInThread} 
             selectedThread={selectedThread} 
+            openFile={openFile}
             fileData={f}
             folderPath={folderPath}
+            i={i} 
+            entryData={entryData}
           />
         ))
         }
