@@ -5,6 +5,7 @@ import path from 'path';
 import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
 import { sendToFlask } from '../flaskHelper';
+import { TextFileHandler } from '../textFileHandler';
 
 const { google } = require('googleapis');
 
@@ -249,7 +250,7 @@ export const readProjectFile = (
   if (!fileType) {
     return JSON.parse(fileContents);
   }
-  console.log('this is a text file', fileContents);
+ 
 };
 
 const appStateReducer = (state: any, action: any) => {
@@ -275,7 +276,7 @@ const appStateReducer = (state: any, action: any) => {
   };
 
   const saveJSON = (newProjectData: any) => {
-    console.log('new projectdata', newProjectData)
+    
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
       JSON.stringify(newProjectData, null, 4),
@@ -418,20 +419,20 @@ const appStateReducer = (state: any, action: any) => {
       console.log('base dir in set data', baseDir);
       const research_threads = checkRtFile(baseDir);
 
-      const entriesAssociated = [...research_threads.research_threads].map(
-        (rt) => {
-          rt.tagged_activities = [...rt.associated_tags].map((at) => {
-            const matchOb = { tag: at };
-            matchOb.associatedActivities = newEntries.filter((f) =>
-              f.tags.includes(at)
-            );
-            return matchOb;
-          });
-          return rt;
-        }
-      );
+      // const entriesAssociated = [...research_threads.research_threads].map(
+      //   (rt) => {
+      //     rt.tagged_activities = [...rt.associated_tags].map((at) => {
+      //       const matchOb = { tag: at };
+      //       matchOb.associatedActivities = newEntries.filter((f) =>
+      //         f.tags.includes(at)
+      //       );
+      //       return matchOb;
+      //     });
+      //     return rt;
+      //   }
+      // );
       
-      research_threads.research_threads = entriesAssociated;
+      // research_threads.research_threads = entriesAssociated;
 
       const newProjectData = {
         ...action.projectData,
@@ -525,7 +526,7 @@ const appStateReducer = (state: any, action: any) => {
         type: 'activity',
         dob: activity.date,
         activity_index: activityIndex,
-        title: activity.title,
+        activityTitle: activity.title,
         rationale,
       };
       newRT.research_threads[threadIndex].evidence.push(newA);
@@ -553,17 +554,19 @@ const appStateReducer = (state: any, action: any) => {
 
     case 'THREAD_FILTER': {
       if (action.filterRT) {
+        console.log('action in filter', action.filterRT.associated_tags);
+        let associatedByTags = state.projectData.entries.filter(f => {
+          let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
+          return test.length > 0;
+        })
         return {
           ...state,
           filterRT: {
             title: action.filterRT.title,
             key: action.filterRT.evidence.map((m) => m.activityTitle),
             associatedKey:
-              action.filterRT.tagged_activities &&
-              action.filterRT.tagged_activities.length > 0
-                ? action.filterRT.tagged_activities.flatMap((fm) =>
-                    fm.associatedActivities.map((a) => a.title)
-                  )
+            associatedByTags.length > 0
+                ? associatedByTags.map(as => as.title)
                 : [],
           },
         };
@@ -602,7 +605,7 @@ const appStateReducer = (state: any, action: any) => {
       const newColor = pickTagColor(state.projectData.tags);
       let newTags;
 
-      console.log(newTag, entryIndex);
+     
 
       if (!existingTags.includes(newTag.text)) {
         newTags = [
@@ -647,16 +650,16 @@ const appStateReducer = (state: any, action: any) => {
       const newProjectData = { ...state.projectData, entries };
 
       const newPD = saveJSON(newProjectData);
-      console.log('file list', fileList);
+      
       if (fileList.map((m) => m.type).includes('text/plain')) {
-        console.log('has a text file!!');
-        sendToFlask('get_all_sig_blobs', state.projectData.title).then(
-          (json) => {
-            state.txtData = json;
-          }
-        );
+  
+      //   sendToFlask('get_all_sig_blobs', state.projectData.title).then(
+      //     (json) => {
+      //       state.txtData = json;
+      //     }
+          TextFileHandler(fileList, state.folderPath)
+        // );
       }
-
       return newPD; // saveJSON(newProjectData);
     }
 
@@ -719,7 +722,7 @@ const appStateReducer = (state: any, action: any) => {
       const newRT = state.researchThreads;
       newRT.research_threads.push(threadOb);
 
-      console.log('THREADOB', threadOb);
+     
 
       return saveJSONRT(newRT, state.folderPath);
     }
@@ -830,9 +833,9 @@ const appStateReducer = (state: any, action: any) => {
           ? { ...d, [action.fieldName]: action.newValue }
           : d
       );
-      console.log('in project state', entries);
+     
       const newProjectData = { ...state.projectData, entries };
-      console.log('new project data in project context', newProjectData);
+      
       return saveJSON(newProjectData);
     }
 
@@ -878,7 +881,7 @@ const appStateReducer = (state: any, action: any) => {
     }
 
     case 'UPDATE_FILTER_TAGS': {
-      console.log('update filter', action.filterTags);
+     
       return { ...state, filterTags: action.filterTags };
     }
 
@@ -913,7 +916,7 @@ const appStateReducer = (state: any, action: any) => {
     }
 
     case 'HOVER_THREAD': {
-      console.log('actionnnnn', action.researchThreadHover);
+   
 
       return {
         ...state,

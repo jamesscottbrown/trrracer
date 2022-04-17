@@ -70,7 +70,11 @@ const VerticalAxis = (projectProps: any) => {
     yearMonth.length - 1
   ].months.filter((f: any, i: number) => i < endIndex);
 
+
+
   React.useEffect(() => {
+
+    console.log('ARE tHERe FILETERED ACTIVITIES??', filteredActivities);
     const filteredActivitiesExtent = d3.extent(
       filteredActivities.map((m: any) => new Date(m.date))
     );
@@ -255,6 +259,7 @@ const VerticalAxis = (projectProps: any) => {
         .attr('dy', -2)
         .text((d) => {
           if (d === 'handle--o') {
+            console.log('sanity check filtered activities extent', filteredActivitiesExtent)
             return filteredActivitiesExtent[0].toLocaleDateString('en-us', {
               weekday: 'long',
               year: 'numeric',

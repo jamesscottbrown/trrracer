@@ -73,7 +73,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       })
       .map((e: EntryType, index: number) => ({ ...e, index }));
 
-    console.log('filterRT in project', filterRT);
+    console.log('filterRT in project LOOK HERE', filterRT);
 
     const rtFiltered = typeFiltered.filter((entryData: any) => {
       if (filterRT) {

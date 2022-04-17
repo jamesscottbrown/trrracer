@@ -58,6 +58,7 @@ const EmailRender = (props: any) => {
 
   return (
     <div 
+    style={{ height: '95%', overflow: 'auto' }}
     dangerouslySetInnerHTML={{__html: emailData}}
     />
     // <div style={{ height: '90%', overflow: 'auto' }}>
