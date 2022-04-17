@@ -35,12 +35,10 @@ const TopTimeline = (projectProps:any)=>{
     let height = 100;
     let margin = 200
 
-    const monthGroups = d3.groups(activity, k => new Date(k.date).getMonth())
-
     let years = d3.groups(activity, y => new Date(y.date).getFullYear())
 
-    let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year, yi) => {
-  
+    let yearMonth = years.sort((a, b) => a[0] - b[0]).map((year) => {
+
       let mon = d3.groups(year[1], m => new Date(m.date).getMonth())
   
       let wrapper = new Array(12).fill({}).map((m, i)=> {
@@ -125,7 +123,7 @@ const TopTimeline = (projectProps:any)=>{
             return scale.domain().slice(iMin, iMax)
           }
 
-          const brushed = function(event, d) {
+          const brushed = function(event) {
 
             if (!event.selection && !event.sourceEvent) return;
             const s0 = event.selection ? event.selection : [1, 2].fill(event.sourceEvent.offsetX),
@@ -149,7 +147,7 @@ const TopTimeline = (projectProps:any)=>{
              // update labels
              d3.selectAll('g.handles').selectAll('text')
               .attr('dx', d0.length > 1 ? 0 : 6)
-              .text((d, i) => {
+              .text((d) => {
                 let year;
                 if (d0.length > 1) {
                   year = d == 'handle--o' ? xScale.invert(s1[0]) : xScale.invert(s1[1]);

@@ -70,7 +70,7 @@ const HoverTitle = (props: any) => {
 };
 
 const QueryView = (props: any) => {
-  const { setViewType, projectData } = props;
+  const { setViewType } = props;
   const [{ query }, dispatch] = useProjectState();
 
   console.log('query', query);

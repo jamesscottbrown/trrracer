@@ -12,14 +12,13 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     selectedEntryIndex,
-    setSelectedEntryIndex,
     hoverActivity,
   } = ProjectPropValues;
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ projectData }] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
-    Array.from(Array(projectData.entries.length), (_, x) => false)
+    Array.from(Array(projectData.entries.length), () => false)
   );
 
   useEffect(() => {
@@ -28,22 +27,22 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       setEditable([...editable, true]);
     } else if (editable.length !== projectData.entries.length) {
       setEditable(
-        Array.from(Array(projectData.entries.length), (_, x) => false)
+        Array.from(Array(projectData.entries.length), () => false)
       );
     }
   }, [projectData]);
 
   useEffect(() => {
-    setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
+    setEditable(Array.from(Array(projectData.entries.length), () => false));
     setEditableStatus(selectedEntryIndex, true);
   }, [selectedEntryIndex]);
 
   const makeAllEditable = () => {
-    setEditable(Array.from(Array(projectData.entries.length), (_, x) => true));
+    setEditable(Array.from(Array(projectData.entries.length), () => true));
   };
 
   const makeAllNonEditable = () => {
-    setEditable(Array.from(Array(projectData.entries.length), (_, x) => false));
+    setEditable(Array.from(Array(projectData.entries.length), () => false));
   };
 
   const setEditableStatus = (index: number, isEditable: boolean) => {

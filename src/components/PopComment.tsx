@@ -116,7 +116,7 @@ const PopComment = (props) => {
   };
 
   const { data, spanType } = props;
-  const [state, dispatch] = useProjectState();
+  const [state] = useProjectState();
 
   const anonName = (name, type) => {
     const anon = state.projectData.roles[name];

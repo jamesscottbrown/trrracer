@@ -18,8 +18,7 @@ const PaperView = (props: any) => {
   const linkData = fs.readFileSync(filePath, { encoding: 'utf-8' });
   const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
-  const [{ projectData, researchThreads, selectedThread }, dispatch] =
-    useProjectState();
+  const [{ projectData, researchThreads, selectedThread }] = useProjectState();
 
   const index = selectedThread || 0;
 
@@ -43,7 +42,6 @@ const PaperView = (props: any) => {
     changePage(1);
   }
 
-  const headerStyle = { fontSize: '30px', fontWeight: 700, marginBottom: 20 };
   const width = 200;
   const height = 900;
 
@@ -107,7 +105,6 @@ const PaperView = (props: any) => {
       .join('g')
       .attr('class', 'activity');
 
-    const bubbleNotHighlighted = new Bubbles(activityNot, false, false, null);
     const bubbleHighlighted = new Bubbles(activityGroups, true, false, null);
 
     bubbleHighlighted.bubbles

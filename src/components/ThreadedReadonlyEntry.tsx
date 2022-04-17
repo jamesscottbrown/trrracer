@@ -148,7 +148,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, fileData, folderPath } = props;
+  const { fileData, folderPath } = props;
 
   return(
     <Box bg="#ececec" p={3}>
@@ -230,7 +230,7 @@ const ActivityTitleLogic = (props:any) => {
 
 const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
-  const [{ projectData, researchThreads, filterRT, folderPath }] = useProjectState();
+  const [{ researchThreads, filterRT, folderPath }] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
 
@@ -254,13 +254,6 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
   let otherFiles = files.filter(f => activitiesAsEvidence.map(m=> m.artifactTitle).indexOf(f.title) === -1)
   let threadedActivity = isEntryInThread.filter(f => f.type === 'activity');
 
-
-
-  if (entryData.description != '') {
-    const split = entryData.description.split(
-      /(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/
-    );
-  }
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
