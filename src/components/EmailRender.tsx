@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
-import * as fs from 'fs';
-import path from 'path';
+// import * as fs from 'fs';
+// import path from 'path';
 // const  EmlParser = require('eml-parser');
 // const emlformat = require('eml-format');
 

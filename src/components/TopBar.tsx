@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
-import { FileObj, ProjectViewProps } from './types';
+import { FileObj } from './types';
 import ViewTypeControl from './ViewTypeControl';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';

@@ -14,17 +14,14 @@ import {
   PopoverArrow,
   Box,
   SimpleGrid,
-  PopoverFooter,
-  Badge,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-import { EntryType, TagType, File } from './types';
+import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
-import ActivitytoThread from './ActivityToThread';
 
 interface EntryPropTypes {
   entryData: EntryType;

@@ -9,10 +9,9 @@ import {
   FormControl,
   Switch,
   FormLabel,
-  color,
 } from '@chakra-ui/react';
 
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
+import { FaFillDrip } from 'react-icons/fa';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
