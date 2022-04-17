@@ -141,7 +141,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, openFile, fileData, folderPath } = props;
+  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i, dispatch } = props;
 
   return(
     <Box bg="#ececec" p={3}>
@@ -155,8 +155,40 @@ const ThreadedArtifact = (props:any) => {
         }}
         className="threaded-file"
       >
-        {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
-        {fileData.title}{' '}
+          <Popover>
+            <PopoverTrigger>
+              <span style={{cursor:'pointer'}}>
+              {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
+              {fileData.title}{' '}
+                <FaExternalLinkAlt
+                  onClick={() => openFile(fileData.title, folderPath)}
+                  title="Open file externally"
+                  size="13px"
+                  style={{ display: 'inline' }}
+                />
+              </span>
+            </PopoverTrigger>
+            <PopoverContent bg="white" color="gray">
+              <PopoverArrow bg="white" />
+              <PopoverBody>
+                <Button
+                  onClick={() => {
+                    setViewType('detail view');
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: entryData,
+                      selectedArtifactIndex: i,
+                      hopArray: [entryData],
+                    });
+                  }}
+                >
+                  See artifact in detail.
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+   
+       
         <div
         style={{marginTop:10}}
         >{"Why this was included: "}</div>
@@ -285,9 +317,13 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
         {makeEditable && (
           <Button leftIcon={<EditIcon />} onClick={makeEditable}>
-            Edit (THIS IS RT VERSION)
+            Edit
           </Button>
         )}
+
+        <Button
+        style={{backgroundColor: '#ff726f'}}
+        >Remove from thread</Button>
       </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
@@ -315,7 +351,8 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
             <Popover>
             <PopoverTrigger>
-              <Badge>{nonThreadedTags.length}{" More Tags"}</Badge>
+              <Badge>{nonThreadedTags.length}
+              {threadedTags.length > 0 ? " More Tags": "Tags"}</Badge>
             </PopoverTrigger>
 
             <PopoverContent bg="white" color="gray">
@@ -324,15 +361,17 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                 <>
                 {
                     nonThreadedTags.map(nt => (
-                      // <Tag
-                      //   key={nt}
-                      //   backgroundColor={checkTagColor(nt)}
-                      //   marginRight="0.25em"
-                      //   marginBottom="0.25em"
-                      // >
-                      //   {nt}
-                      // </Tag>
-                      <span>{nt}</span>
+                      <Tag
+                        key={nt}
+                        backgroundColor={checkTagColor(nt)}
+                        marginRight="0.25em"
+                        marginBottom="0.25em"
+                        style={{padding:'5px', cursor:'pointer'
+                      }}
+                      >
+                        {nt}
+                      </Tag>
+                      
                     ))
                   }
                 </>
@@ -374,6 +413,8 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             openFile={openFile}
             fileData={f}
             folderPath={folderPath}
+            i={i} 
+            entryData={entryData}
           />
         ))
         }
