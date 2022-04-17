@@ -148,9 +148,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, fileData } = props;
-
- 
+  const { isEntryInThread, selectedThread, fileData, folderPath } = props;
 
   return(
     <Box bg="#ececec" p={3}>
@@ -166,6 +164,19 @@ const ThreadedArtifact = (props:any) => {
       >
         {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
         {fileData.title}{' '}
+        <div
+        style={{marginTop:10}}
+        >{"Why this was included: "}</div>
+        <div
+          style={{fontWeight: 200}}
+        >{fileData.threadPart.rationale}</div>
+          {['png', 'jpg', 'gif'].includes(fileData.fileType) && (
+                  <AttachmentPreview
+                    folderPath={folderPath}
+                    title={fileData.title}
+                    //openFile={openFile}
+                  />
+                )}
       </div>
 
     </Box>
@@ -219,7 +230,7 @@ const ActivityTitleLogic = (props:any) => {
 
 const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
-  const [{ projectData, researchThreads, filterRT }] = useProjectState();
+  const [{ projectData, researchThreads, filterRT, folderPath }] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
 
@@ -339,6 +350,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             isEntryInThread={isEntryInThread} 
             selectedThread={selectedThread} 
             fileData={f}
+            folderPath={folderPath}
           />
         ))
         }
