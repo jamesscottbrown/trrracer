@@ -248,10 +248,9 @@ const BubbleVis = (props: BubbleProps) => {
                   start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
                 });
 
-                if (d.rtTitle)
-                  [
-                    (start += `</br><div style="font-weight:700">This activity is tagged with a tag associated with ${d.rtTitle}</div>`),
-                  ];
+                if (d.rtTitle) {
+                  start += `</br><div style='font-weight:700'>This activity is tagged with a tag associated with ${d.rtTitle}</div>`;
+                }
               } else {
                 start += `Research Thread: ${d.rtTitle} - Activity: ${d.title} <br/>`;
                 d.evidence.forEach((t: any) => {
