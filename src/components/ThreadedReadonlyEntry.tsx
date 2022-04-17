@@ -188,12 +188,26 @@ const ThreadedArtifact = (props:any) => {
             </PopoverContent>
           </Popover>
    
-       
+        {
+          fileData.threadPart.type === 'fragment' && (
+            <div style={{fontWeight:300, fontSize:14}}>
+              {fileData.threadPart.anchors.map( (m, j) => (
+                <React.Fragment key={`frag-${j}`}>
+                {m.anchor_type === 'text' ?
+                <span style={{backgroundColor:'yellow'}}>{m.frag_type}</span> :
+                <span>{"Image anchors"}</span>  
+                }
+                </React.Fragment>
+                
+              ))}
+            </div>
+          )
+        }
         <div
         style={{marginTop:10}}
         >{"Why this was included: "}</div>
         <div
-          style={{fontWeight: 200}}
+          style={{fontWeight: 300, fontSize: 14}}
         >{fileData.threadPart.rationale}</div>
           {['png', 'jpg', 'gif'].includes(fileData.fileType) && (
                   <AttachmentPreview
