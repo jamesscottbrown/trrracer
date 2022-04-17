@@ -60,7 +60,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
   return (
     <>
-      <Box bg="#ececec" p={3} opacity={.5}>
+      <Box bg="#ececec" p={3} opacity={.5} marginTop={1}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
@@ -74,7 +74,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
                 )}
                 <div
                   style={{
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: 700,
                     marginBottom: 5,
                     width: 75,
@@ -113,16 +113,16 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
           </Popover>
         ) : (
           <div onMouseEnter={() => setShowPopover(true)}>
-            {['png', 'jpg', 'gif'].includes(file.fileType) && (
+            {/* {['png', 'jpg', 'gif'].includes(file.fileType) && (
               <AttachmentPreview
                 folderPath={folderPath}
                 title={file.title}
                 openFile={openFile}
               />
-            )}
+            )} */}
             <div
               style={{
-                fontSize: 18,
+                fontSize: 14,
                 fontWeight: 500,
                 marginBottom: '5px',
                 width: '50%',
@@ -148,7 +148,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, fileData, folderPath } = props;
+  const { isEntryInThread, selectedThread, openFile, fileData, folderPath } = props;
 
   return(
     <Box bg="#ececec" p={3}>
@@ -174,7 +174,7 @@ const ThreadedArtifact = (props:any) => {
                   <AttachmentPreview
                     folderPath={folderPath}
                     title={fileData.title}
-                    //openFile={openFile}
+                    openFile={null}
                   />
                 )}
       </div>
@@ -229,16 +229,13 @@ const ActivityTitleLogic = (props:any) => {
 }
 
 const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
+
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
+
   const [{ projectData, researchThreads, filterRT, folderPath }] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
-
- 
- 
   let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
-
-  
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
@@ -253,8 +250,9 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
   let otherFiles = files.filter(f => activitiesAsEvidence.map(m=> m.artifactTitle).indexOf(f.title) === -1)
   let threadedActivity = isEntryInThread.filter(f => f.type === 'activity');
-
-
+  
+  let threadedTags = entryData.tags.filter(f => selectedThread.associated_tags.includes(f));
+  let nonThreadedTags = entryData.tags.filter(f => selectedThread.associated_tags.indexOf(f) === -1);
 
   if (entryData.description != '') {
     const split = entryData.description.split(
@@ -269,8 +267,6 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
     if (tagFil.length > 0) return tagFil[tagFil.length - 1].color;
     return '#D4D4D4';
   };
-
-
 
   // Cache the results of converting markdown to HTML, to avoid re-converting on every render
   const descriptionHTML = useMemo(() => {
@@ -309,7 +305,8 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
           <b>No tags.</b>
         ) : (
           <>
-            {entryData.tags.map((t) => (
+          <div style={{display:'inline'}}>
+          {threadedTags.map((t) => (
               <Tag
                 key={t}
                 backgroundColor={checkTagColor(t)}
@@ -319,6 +316,36 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                 {t}
               </Tag>
             ))}
+          </div>
+          <div style={{display:'inline'}}>
+            <Popover>
+            <PopoverTrigger>
+              <Badge>{nonThreadedTags.length}{" More Tags"}</Badge>
+            </PopoverTrigger>
+
+            <PopoverContent bg="white" color="gray">
+              <PopoverArrow bg="white" />
+              <PopoverBody>
+                <>
+                {
+                    nonThreadedTags.map(nt => (
+                      // <Tag
+                      //   key={nt}
+                      //   backgroundColor={checkTagColor(nt)}
+                      //   marginRight="0.25em"
+                      //   marginBottom="0.25em"
+                      // >
+                      //   {nt}
+                      // </Tag>
+                      <span>{nt}</span>
+                    ))
+                  }
+                </>
+                  
+              </PopoverBody>
+            </PopoverContent>
+            </Popover>
+            </div>
           </>
         )}
       </p>
@@ -349,6 +376,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             key={`threaded-${i}`}
             isEntryInThread={isEntryInThread} 
             selectedThread={selectedThread} 
+            openFile={openFile}
             fileData={f}
             folderPath={folderPath}
           />
