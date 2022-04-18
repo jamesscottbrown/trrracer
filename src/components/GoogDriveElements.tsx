@@ -26,7 +26,7 @@ const styleSection = (sectionData: any, commentedOn: any) => {
   const styleOb = { display: 'inline' };
 
   if (sectionData.textRun.textStyle) {
-    Object.keys(sectionData.textRun.textStyle).forEach((m, i) => {
+    Object.keys(sectionData.textRun.textStyle).forEach((m) => {
       if (m === 'italic') styleOb.fontStyle = 'italic';
       if (m === 'bold') styleOb.fontWeight = 'bold';
       if (m === 'backgroundColor') {

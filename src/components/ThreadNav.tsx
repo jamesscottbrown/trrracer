@@ -28,7 +28,7 @@ const MiniTimline = (props: any) => {
 
     circleG.attr('transform', 'translate(0, 0)');
 
-    const circles = circleG
+    circleG
       .selectAll('circle')
       .data(activities)
       .join('circle')
@@ -38,7 +38,7 @@ const MiniTimline = (props: any) => {
       .attr('fill', 'gray')
       .attr('fill-opacity', 0.1);
 
-    const circTagged = circleG
+    circleG
       .selectAll('circle.associated')
       .data(
         researchT.tagged_activities && researchT.tagged_activities.length > 0
@@ -53,7 +53,7 @@ const MiniTimline = (props: any) => {
       .attr('fill', researchT.color)
       .attr('fill-opacity', 0.5);
 
-    const circleResearch = circleG
+    circleG
       .selectAll('circle.research')
       .data(researchT.evidence)
       .join('circle')
@@ -87,7 +87,6 @@ const ThreadNav = (threadProps: any) => {
     return 1;
   };
 
-  const [showThreads, setShowThreads] = useState(false);
   const [showCreateThread, setShowCreateThread] = useState(false);
 
   const [threadName, setName] = React.useState(null);

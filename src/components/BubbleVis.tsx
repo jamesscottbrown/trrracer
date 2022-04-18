@@ -212,7 +212,7 @@ const BubbleVis = (props: BubbleProps) => {
           artifactTypes
         );
 
-        bubbleHighlighted.bubbles.attr('fill', (d)=> {
+        bubbleHighlighted.bubbles.attr('fill', () => {
           let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
           return color;
         });
@@ -357,7 +357,7 @@ const BubbleVis = (props: BubbleProps) => {
         artifactTypes
       );
 
-      bubbleHighlighted.bubbles.attr('fill', (d)=> {
+      bubbleHighlighted.bubbles.attr('fill', () => {
         let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
         return color;
       });

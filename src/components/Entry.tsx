@@ -117,7 +117,7 @@ const Entry = (props: EntryPropTypes) => {
     makeNonEditable,
   } = props;
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{}, dispatch] = useProjectState();
 
   //console.log('filterRT',filterRT)
 

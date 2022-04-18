@@ -253,15 +253,8 @@ const ActivityTitlePopoverLogic = (props: any) => {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
-  const [{ projectData, researchThreads, filterRT }] = useProjectState();
+  const [{ researchThreads }] = useProjectState();
 
-  
-
-  if (entryData.description != '') {
-    const split = entryData.description.split(
-      /(^.*?[a-z]{2,}[.!?])\s+\W*[A-Z]/
-    );
-  }
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {

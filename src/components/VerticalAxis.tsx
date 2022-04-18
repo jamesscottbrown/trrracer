@@ -404,7 +404,7 @@ const VerticalAxis = (projectProps: any) => {
         d3.selectAll('g.handles')
           .selectAll('text')
           .attr('dy', 6)
-          .text((d, i) => {
+          .text((d) => {
             const year =
               d == 'handle--o'
                 ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
@@ -433,7 +433,6 @@ const VerticalAxis = (projectProps: any) => {
         ])
         .on('start brush end', brushedEvent);
 
-      const gBrush = svg.append('g').call(bY);
 
       svg.on('mousemove', (event)=> {
         let textTest = svg.select('text.hover-text');
@@ -446,7 +445,7 @@ const VerticalAxis = (projectProps: any) => {
         text.style('font-weight', 800);
         
       })
-      svg.on('mouseleave', (event)=> {
+      svg.on('mouseleave', () => {
         let textTest = svg.select('text.hover-text');
         textTest.remove();
         // text = textTest.empty() ? svg.append('text').classed('hover-text', true) : textTest;

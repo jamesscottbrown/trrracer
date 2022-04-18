@@ -527,9 +527,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const width = 200;
   const height = 900;
-  const svgRef = React.useRef(null);
   const [fragSelected, setFragSelected] = useState(null);
 
   const [newHeight, setNewHeight] = useState('1000px');
@@ -547,7 +545,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       setEditable([...editable, true]);
     } else if (editable.length !== projectData.entries.length) {
       setEditable(
-        Array.from(Array(projectData.entries.length), (_, x) => false)
+        Array.from(Array(projectData.entries.length), (_) => false)
       );
     }
   }, [projectData]);

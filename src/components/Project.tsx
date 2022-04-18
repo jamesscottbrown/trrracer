@@ -25,15 +25,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterDates,
       filterQuery,
       filterRT,
-      goBackView,
-      researchThreads,
-      artifactTypes,
     },
   ] = useProjectState();
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
-  const [selectedEntryIndex, setSelectedEntryIndex] = useState(-1);
   const [filteredActivities, setfilteredActivities] = useState(
     projectData.entries
   );

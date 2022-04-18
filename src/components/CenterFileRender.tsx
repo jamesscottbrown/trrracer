@@ -5,7 +5,7 @@ import AttachmentPreview from './AttachmentPreview';
 import { openFile } from '../fileUtil';
 
 const LargeFileRender = (props: any) => {
-  const { fileArray, folderPath, bgColor, numRendered, activity } = props;
+  const { fileArray, folderPath, bgColor, activity } = props;
 
   return (
     <div>
@@ -58,15 +58,6 @@ const SmallFileRender = (props: any) => {
 
   const svgRef = React.useRef(null);
 
-  const getRectHeight = (fileD: any) => {
-    if (fileD.fileType === 'eml') {
-      return 15;
-    }
-    if (fileD.fileType === 'url') {
-      return 5;
-    }
-    return 30;
-  };
 
   const getHeight = (previousValue: any, currentValue: any) =>
     ++previousValue + ++currentValue;
@@ -124,8 +115,7 @@ const SmallFileRender = (props: any) => {
 
         const newPath = `thumbs/${newName[0]}.png`;
 
-        const defs = d3
-          .select(n[i])
+        d3.select(n[i])
           .append('defs')
           .append('pattern')
           .attr('id', `image${im.title}`)

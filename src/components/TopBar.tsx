@@ -41,7 +41,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setViewType,
     newTitle,
     setNewTitle,
-    filteredActivityNames,
     filteredActivities,
     defineEvent,
     setDefineEvent,
@@ -51,9 +50,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch({ type: 'ADD_ENTRY' });
   };
 
-  const saveFiles = (fileList: FileObj[]) => {
-    dispatch({ type: 'ADD_FILES', fileList });
-  };
 
   return (
     <Box
