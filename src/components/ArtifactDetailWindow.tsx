@@ -75,6 +75,67 @@ const ArtifactToThread = (props: any) => {
     </Box>
   );
 };
+const FragmentToBookmark = (props: any) => {
+  const [, dispatch] = useProjectState();
+
+  const {
+    thread,
+    threadIndex,
+    activity,
+    artifactIndex,
+    fragSelected,
+    setFragSelected,
+  } = props;
+
+  const [showDesc, setShowDesc] = useState(false);
+  const [threadRat, setThreadRat] = useState(null);
+
+  const handleDescriptionChange = (e: any) => {
+    const inputValue = e.target.value;
+    setThreadRat(inputValue);
+  };
+
+  return (
+    <Box
+      key={`t-${threadIndex}`}
+      style={{
+        border: '1px solid gray',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        onClick={() => (showDesc ? setShowDesc(false) : setShowDesc(true))}
+      >{`Add to "${thread.title}"`}</div>
+      {showDesc && (
+        <>
+          <Textarea
+            placeholder="Why are you including this?"
+            onChange={handleDescriptionChange}
+          />
+          <Button
+            onClick={() => {
+              setShowDesc(false);
+              dispatch({
+                type: 'ADD_FRAGMENT_TO_THREAD',
+                activity,
+                rationale: threadRat,
+                artifactIndex,
+                threadIndex,
+                fragment: fragSelected,
+                fragmentType: 'text',
+              });
+              setFragSelected(null);
+            }}
+          >
+            Add
+          </Button>
+        </>
+      )}
+    </Box>
+  );
+};
 
 const FragmentToThread = (props: any) => {
   const [, dispatch] = useProjectState();
@@ -438,6 +499,38 @@ const DetailSidebar = (props: any) => {
           <span style={{ backgroundColor: '#FFFBC8' }}>{fragSelected}</span>
         </div>
       )}
+
+<Box
+        style={{
+          backgroundColor: '#ececec',
+          borderRadius: 5,
+          marginTop: 15,
+          marginBottom: 15,
+        }}
+      >
+      <span
+          style={{
+            fontSize: 17,
+            fontWeight: 700,
+            cursor: 'pointer',
+            padding: 3,
+            textAlign: 'center',
+          }}
+          onClick={() => {
+            dispatch({
+              type: 'BOOKMARK_FRAGMENT',
+              selectedArtifactEntry: selectedArtifactEntry,
+              selectedArtifactIndex: selectedArtifactIndex,
+              bookmarkFragment: fragSelected,
+            });
+          }}
+        >
+          {fragSelected && (
+            'Bookmark this fragment'
+          )}
+        </span>
+      </Box>
+
       <Box
         style={{
           backgroundColor: '#ececec',
@@ -461,7 +554,7 @@ const DetailSidebar = (props: any) => {
           {fragSelected
             ? 'Add this fragment to a thread +'
             : 'Add this artifact to a thread +'}
-        </span>
+        </span>      
         <div>
           {showThreadAdd && (
             <>
@@ -499,7 +592,6 @@ const DetailSidebar = (props: any) => {
           )}{' '}
         </div>
       </Box>
-
       <Box>
         {isArtifactInThread.length > 0 && (
           <div>
