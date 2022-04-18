@@ -137,7 +137,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
           <BubbleVis
             filteredActivities={filteredActivities}
-            projectData={projectData}
             groupBy={groupBy}
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
@@ -192,7 +191,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
           <BubbleVis
             filteredActivities={filteredActivities}
-            projectData={projectData}
             groupBy={groupBy}
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}

@@ -4,9 +4,17 @@ import { FaPlus, FaFillDrip } from 'react-icons/fa';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 
+import type { EntryType, ResearchThread } from './types';
+
+
 export const jitter = (val: any) => Math.random() * val;
 
-const MiniTimline = (props: any) => {
+type MiniTimelineProps = {
+  researchT: any;
+  activities: EntryType[];
+};
+
+const MiniTimline = (props: MiniTimelineProps) => {
   const { researchT, activities } = props;
 
   const lilSVG = React.useRef(null);
@@ -72,7 +80,13 @@ const MiniTimline = (props: any) => {
     </div>
   );
 };
-const ThreadNav = (threadProps: any) => {
+
+type ThreadNavProps = {
+  researchTs: ResearchThread[];
+  viewType: string; // TODO: tighten to specific values
+};
+
+const ThreadNav = (threadProps: ThreadNavProps) => {
   const { researchTs, viewType } = threadProps;
   const [{ projectData, selectedArtifactIndex, selectedThread }, dispatch] =
     useProjectState();

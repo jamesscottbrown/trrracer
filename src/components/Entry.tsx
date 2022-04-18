@@ -62,7 +62,13 @@ const EditDate = (props: EditDateTypes) => {
   );
 };
 
-const FileContext = (props: any) => {
+type FileContextProps = {
+  file: File;
+  entryIndex: number;
+  fileIndex: number;
+};
+
+const FileContext = (props: FileContextProps) => {
   const { file, entryIndex, fileIndex } = props;
 
   const [, dispatch] = useProjectState();

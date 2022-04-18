@@ -5,15 +5,17 @@ import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
+import type { EntryType } from './types';
 
 
 interface BubbleProps {
-  filteredActivities: any;
-  projectData: any;
+  filteredActivities: EntryType[];
   groupBy: any;
   splitBubbs: boolean;
   setHoverActivity: (ent: any) => void;
   flexAmount: number;
+  setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
+  defineEvent: boolean;
 }
 
 const BubbleVis = (props: BubbleProps) => {
