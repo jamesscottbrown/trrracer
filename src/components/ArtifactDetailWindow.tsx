@@ -607,7 +607,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 });
               }}
             >
-              {'<<'}
+              <FaArrowLeft />
             </Button>
             {` Activity: ${selectedArtifactEntry.title} `}
             <Button
@@ -629,7 +629,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 });
               }}
             >
-              {'>>'}
+              <FaArrowRight />
             </Button>
           </div>
           <Spacer />
