@@ -5,7 +5,7 @@ import path from 'path';
 import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { EntryType, File, FileObj, TagType, ProjectState } from './types';
 import { sendToFlask } from '../flaskHelper';
-import { TextFileHandler } from '../textFileHandler';
+// import { TextFileHandler } from '../textFileHandler';
 
 const { google } = require('googleapis');
 
@@ -657,7 +657,7 @@ const appStateReducer = (state: any, action: any) => {
       //     (json) => {
       //       state.txtData = json;
       //     }
-          TextFileHandler(fileList, state.folderPath)
+          // TextFileHandler(fileList, state.folderPath)
         // );
       }
       return newPD; // saveJSON(newProjectData);

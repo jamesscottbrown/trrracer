@@ -14,6 +14,7 @@ import {
   PopoverArrow,
   Box,
   SimpleGrid,
+  Badge
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
