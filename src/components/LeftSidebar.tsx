@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-import { FaFillDrip } from 'react-icons/fa';
+import { FaCalculator, FaFillDrip, FaSortAlphaUp } from 'react-icons/fa';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
@@ -35,6 +35,17 @@ const LeftSidebar = (props: any) => {
     matches: artifacts.length,
   });
 
+  const tags = projectData.tags.map((t) => {
+    t.matches = projectData.entries.filter((f) => {
+      return f.tags.indexOf(t.title) > -1;
+    });
+    return t;
+  });
+
+ // const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
+
+  const [ sortedTags, setSortedTags ] = useState(tags.sort((a, b) => b.matches.length - a.matches.length))
+  
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
@@ -56,14 +67,14 @@ const LeftSidebar = (props: any) => {
   const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
   sortedArtTypes.push({ title: 'all', matches: artifacts.length });
 
-  const tags = projectData.tags.map((t) => {
-    t.matches = projectData.entries.filter((f) => {
-      return f.tags.indexOf(t.title) > -1;
-    });
-    return t;
-  });
+  // const tags = projectData.tags.map((t) => {
+  //   t.matches = projectData.entries.filter((f) => {
+  //     return f.tags.indexOf(t.title) > -1;
+  //   });
+  //   return t;
+  // });
 
-  const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
+  // const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
 
   return (
@@ -88,7 +99,6 @@ const LeftSidebar = (props: any) => {
           <Switch
             id="split-by"
             onChange={(event) => {
-          
               event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
             }}
           />
@@ -159,7 +169,23 @@ const LeftSidebar = (props: any) => {
       </Box>
       <br />
 
-      <span style={headerStyle}>{`${tags.length} Tags`}</span>
+      <span style={headerStyle}>{`${tags.length} Tags`} 
+      <FaSortAlphaUp 
+        style={{display:'inline-block', marginLeft:'5px'}} 
+        onClick={()=>  {
+          console.log('click alpha')
+          let temp = tags.sort((a, b) => a.title.localeCompare(b.title))
+          console.log(temp);
+          setSortedTags(temp) }}
+        />
+      <FaCalculator 
+        style={{display:'inline-block', marginLeft:'5px'}} 
+        onClick={()=> {
+          console.log('click freq')
+          let temp = tags.sort((a, b) => b.matches.length - a.matches.length)
+          setSortedTags(temp)}}
+        />
+      </span>
       <br />
       <Box
         marginLeft="3px"

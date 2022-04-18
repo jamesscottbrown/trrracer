@@ -26,9 +26,6 @@ const SidebarButton = (sidebarProps: any) => {
   return(
 
     <Popover
-      // isOpen={showPopover}
-      // onClose={closePopover}
-      // onMouseLeave={closePopover}
       trigger='hover'
     >
       <PopoverTrigger>
