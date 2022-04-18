@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea, Badge } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 import ThreadNav from './ThreadNav';
+
 import * as d3 from 'd3';
 import type {
   ResearchThread,
@@ -153,6 +156,8 @@ const InteractiveActivityTag = (props: any) => {
         backgroundColor: '#D3D3D3',
         borderRadius: 5,
         margin: 5,
+        verticalAlign: 'middle',
+        lineHeight: 'normal',
       }}
     >
       <Flex>
@@ -182,7 +187,7 @@ const InteractiveActivityTag = (props: any) => {
             }
           }}
         >
-          {'<< '}
+          <FaArrowLeft />
         </span>
         <Spacer />
         <span
@@ -220,7 +225,7 @@ const InteractiveActivityTag = (props: any) => {
             }
           }}
         >
-          {' >>'}
+          <FaArrowRight />
         </span>
       </Flex>
       {expandedTag && (
