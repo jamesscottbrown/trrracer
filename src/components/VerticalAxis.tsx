@@ -339,6 +339,9 @@ const VerticalAxis = (projectProps: any) => {
     if (defineEvent) {
 
       let text;
+      let bGroup = svg.append('g')
+      
+      let bRect = bGroup.append('rect').attr('width', 40).attr('height', height-margin).attr('fill-opacity', 0);
 
       const brushedEvent = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
@@ -351,11 +354,6 @@ const VerticalAxis = (projectProps: any) => {
         if (event.sourceEvent && event.type === 'end') {
           s1 = event.selection;
           d3.select(this).transition().call(event.target.move, s1);
-
-          console.log([
-            yScale.invert(event.selection[0]),
-            yScale.invert(event.selection[1]),
-          ]);
 
           const start = yScale.invert(s1[0]).toLocaleDateString('en-us', {
             weekday: 'long',
@@ -433,8 +431,10 @@ const VerticalAxis = (projectProps: any) => {
         ])
         .on('start brush end', brushedEvent);
 
+      bGroup.call(bY)
 
-      svg.on('mousemove', (event)=> {
+
+      bGroup.on('mousemove', (event)=> {
         let textTest = svg.select('text.hover-text');
         text = textTest.empty() ? svg.append('text').classed('hover-text', true) : textTest;
         let position = (event.offsetY - 120);
@@ -445,7 +445,7 @@ const VerticalAxis = (projectProps: any) => {
         text.style('font-weight', 800);
         
       })
-      svg.on('mouseleave', () => {
+      bGroup.on('mouseleave', () => {
         let textTest = svg.select('text.hover-text');
         textTest.remove();
         // text = textTest.empty() ? svg.append('text').classed('hover-text', true) : textTest;
