@@ -1,17 +1,12 @@
 /* eslint no-console: off */
 /// /
 
-
-// This is the entrypoint for the React app displayed in the Electron App. It *is* able to use node and electron APIs.
+// This is the entrypoint for the React app displayed in the Web App. It *is not* able to use node and electron APIs.
 
 import React, { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import fs from 'fs';
-import path from 'path';
-import { ipcRenderer } from 'electron';
 
 import Project from './components/Project';
-import Splash from './components/Splash';
 
 import './App.global.css';
 
@@ -28,7 +23,7 @@ const migrateTrrraceFormat = (projectData: any) => {
       files: e.urls
         ? [
             ...e.files,
-            ...e.urls.map((u :any) => ({
+            ...e.urls.map((u: any) => ({
               title: u.title,
               url: u.url,
               fileType: 'url',
@@ -42,42 +37,20 @@ const migrateTrrraceFormat = (projectData: any) => {
 
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
-
   const [{ projectData }, dispatch] = useProjectState();
-  const [noProjectSelected, setNoProjectSelected] = useState<boolean>(false);
-  const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
-  ipcRenderer.on('projectPath', (_event, folderName) => {
-    console.log('Received project path:', folderName);
+  setPath('http:localhost:8080'); // TODO: make not a constant
 
-    setPath(folderName);
-
-    const filePath = path.join(folderName, 'trrrace.json');
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.log(`Error reading file from disk: ${err}`);
-      } else {
-        // parse JSON string to JSON object
+  if (folderPath && !projectData) {
+    fetch(`${folderPath}/trrrace.json`)
+      .then((res) => res.json())
+      .then((data) =>
         dispatch({
           type: 'SET_DATA',
-          folderName,
+          folderPath,
           projectData: migrateTrrraceFormat(JSON.parse(data)),
-        });
-      }
-    });
-  });
-
-  ipcRenderer.on('noProjectSelected', (_event, newRecentPaths) => {
-    setNoProjectSelected(true);
-    setRecentPaths(newRecentPaths);
-  });
-
-  if (noProjectSelected) {
-    return (
-      <ChakraProvider>
-        <Splash recentPaths={recentPaths} />
-      </ChakraProvider>
-    );
+        })
+      );
   }
 
   if (!projectData) {
