@@ -22,9 +22,11 @@ import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
 import ActivitytoThread from './ActivityToThread';
+
+import type { EntryType, File, ResearchThreadData } from './types';
+
 
 interface EntryPropTypes {
   entryData: EntryType;
@@ -153,7 +155,12 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   );
 };
 
-const ActivityTitlePopoverLogic = (props: any) => {
+type ActivityTitlePopoverLogicProps = {
+  activityData: EntryType;
+  researchThreads: ResearchThreadData | undefined;
+}
+
+const ActivityTitlePopoverLogic = (props: ActivityTitlePopoverLogicProps) => {
   const { activityData, researchThreads } = props;
 
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Textarea, Button } from '@chakra-ui/react';
 import ImageMarker, { Marker, MarkerComponentProps } from 'react-image-marker';
 import { useProjectState } from './ProjectContext';
+import { EntryType } from './types';
 
 const CustomMarker = (props: MarkerComponentProps) => {
   return (
@@ -28,7 +29,13 @@ const CustomMarker = (props: MarkerComponentProps) => {
   );
 };
 
-const MarkableImage = (props: any) => {
+type MarkableImageProps = {
+  imgPath: string;
+  activity: EntryType;
+  artifactIndex: number;
+};
+
+const MarkableImage = (props: MarkableImageProps) => {
   const [{}, dispatch] = useProjectState();
   const { imgPath, activity, artifactIndex } = props;
   console.log(imgPath, activity, artifactIndex);

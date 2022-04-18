@@ -5,8 +5,21 @@ import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
 import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
+import { EntryTypeWithIndex } from './types';
 
-const ActivityWrap = (props: any) => {
+type ActivityWrapPropType = {
+  activityData: EntryTypeWithIndex;
+  editable: boolean[];
+  setEditableStatus: (index: number, isEditable: boolean) => void;
+  setViewType: (v: any) => void;
+  setSelectedArtifactIndex: number;
+  setSelectedArtifactEntry: (e: any) => void;
+  index: number;
+  hoverActivity: any;
+  viewType: string;
+};
+
+const ActivityWrap = (props: ActivityWrapPropType) => {
   const {
     activityData,
     editable,
