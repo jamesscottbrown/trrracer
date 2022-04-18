@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import * as fs from 'fs';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import path from 'path';
@@ -9,13 +8,15 @@ import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 
-const PaperView = (props: any) => {
+import { readFileSync } from '../fileUtil';
+
+const PaperView = async (props: any) => {
   const { folderPath } = props;
 
   const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
 
   const filePath = path.join(folderPath, 'links.json');
-  const linkData = fs.readFileSync(filePath, { encoding: 'utf-8' });
+  const linkData = readFileSync(filePath);
   const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();
