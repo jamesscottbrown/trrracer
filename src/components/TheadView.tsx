@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Spacer, SimpleGrid, Button, color } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid, Button } from '@chakra-ui/react';
 
 import { FaExternalLinkAlt } from 'react-icons/fa';
 

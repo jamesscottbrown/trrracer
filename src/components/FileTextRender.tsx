@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Badge, Box, Tooltip } from '@chakra-ui/react';
 import PopComment from './PopComment';
 

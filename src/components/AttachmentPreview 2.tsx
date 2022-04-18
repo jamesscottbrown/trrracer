@@ -1,5 +1,5 @@
 import path from 'path';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image } from '@chakra-ui/react';
 
 import {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Popover, PopoverContent, PopoverTrigger, PopoverBody, Badge } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Badge } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
@@ -11,7 +11,6 @@ import type {
   ResearchThread,
   ResearchThreadEvidence,
   ReactTag,
-  EntryPropTypes,
 } from './types';
 import VerticalAxis from './VerticalAxis';
 

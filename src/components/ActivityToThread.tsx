@@ -1,5 +1,5 @@
 import { Box, Button, Textarea } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useProjectState } from './ProjectContext';
 
 const ActivitytoThread = (props: any) => {

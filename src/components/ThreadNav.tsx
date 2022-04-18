@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash, FaPlus, FaFillDrip, FaFill } from 'react-icons/fa';
+import { FaPlus, FaFillDrip } from 'react-icons/fa';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as fs from 'fs';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';

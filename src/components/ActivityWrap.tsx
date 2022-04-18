@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
 import { useProjectState } from './ProjectContext';
 import Entry from './Entry';

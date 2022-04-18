@@ -1,24 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Box,
   Flex,
   useColorModeValue,
-  Heading,
-  Spacer,
-  useBreakpointValue,
-  useDisclosure,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button
 } from '@chakra-ui/react';
-import {
-  Search2Icon,
-  SearchIcon
-} from '@chakra-ui/icons';
-import { EntryType, FileObj, ProjectViewProps } from './types';
 import * as d3 from "d3";
-import { getIndexOfMonth, monthDiff } from '../timeHelperFunctions';
+import { getIndexOfMonth } from '../timeHelperFunctions';
 
 const calcAxis = (axisProps: any) => {
 
