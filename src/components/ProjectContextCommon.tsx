@@ -229,6 +229,39 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         return newPD;
       }
+
+      // dispatch({
+      //   type: 'REMOVE_BOOKMARK',
+      //   selectedArtifactEntry: selectedArtifactEntry,
+      //   selectedArtifactIndex: selectedArtifactIndex,
+      //   fragIndex: i
+      // });
+      case 'REMOVE_BOOKMARK':{
+
+        console.log('remove bookmark fragment', action.fragIndex)
+        let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks// ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
+        let entryIndex = action.selectedArtifactEntry.index;
+        bookmarks = bookmarks.filter((f, i) => i != action.fragIndex);//.push({ 'fragment': action.bookmarkFragment })
+
+        const currentFiles = state.projectData.entries[entryIndex].files.map((f, i)=> {
+          if(i === action.selectedArtifactIndex){
+            f.bookmarks = bookmarks;
+          }
+          return f;
+        });
+
+        const entries = state.projectData.entries.map(
+          (d: EntryType, i: number) =>
+            entryIndex === i ? { ...d, files: currentFiles } : d
+        );
+
+        const newProjectData = { ...state.projectData, entries };
+
+        const newPD = saveJSON(newProjectData, state);
+
+        return newPD;
+
+      }
       
       case 'ADD_EVENT': {
         const newProjectData = {

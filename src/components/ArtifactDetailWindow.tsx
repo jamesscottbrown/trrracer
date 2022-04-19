@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Badge } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
 
@@ -775,9 +775,30 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               />
               <Box>
                 {
-                  selectedArtifactEntry.files[selectedArtifactIndex].bookmarks ? selectedArtifactEntry.files[selectedArtifactIndex].bookmarks.map((f)=> (
-                    <FaMapPin />
-                  )) : <div></div>
+                  selectedArtifactEntry.files[selectedArtifactIndex].bookmarks && (
+                    selectedArtifactEntry.files[selectedArtifactIndex].bookmarks.map((f, i)=> (
+                    // 
+                    <Tag
+                      size={'md'}
+                      key={`pin-${i}`}
+                      borderRadius='full'
+                      variant='solid'
+                      colorScheme='green'
+                      style={{cursor:'pointer'}}
+                    > 
+                    <TagLabel><FaMapPin/></TagLabel>
+                    <TagCloseButton
+                      onClick={()=> {
+                        dispatch({
+                          type: 'REMOVE_BOOKMARK',
+                          selectedArtifactEntry: selectedArtifactEntry,
+                          selectedArtifactIndex: selectedArtifactIndex,
+                          fragIndex: i
+                        });
+                      }}
+                    />
+                  </Tag>
+                  )) )
                 }
               </Box>
             </Flex>
