@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea, Badge } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
 
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
@@ -773,6 +773,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   selectedArtifactEntry.files[selectedArtifactIndex]
                 }
               />
+              <Box>
+                {
+                  selectedArtifactEntry.files[selectedArtifactIndex].bookmarks ? selectedArtifactEntry.files[selectedArtifactIndex].bookmarks.map((f)=> (
+                    <FaMapPin />
+                  )) : <div></div>
+                }
+              </Box>
             </Flex>
           )}
 
