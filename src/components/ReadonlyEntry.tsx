@@ -62,7 +62,43 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
 
   return (
     <>
-      <Box bg="#ececec" p={3}>
+    <Box bg="#ececec" p={3}>
+    {['png', 'jpg', 'gif'].includes(file.fileType) && (
+                  <AttachmentPreview
+                    folderPath={folderPath}
+                    title={file.title}
+                    openFile={openFile}
+                  />
+                )}
+      <div
+      style={{marginTop:'8px'}}
+      >{file.title}{' '}
+      <FaExternalLinkAlt
+                  onClick={() => openFile(file.title, folderPath)}
+                  title="Open file externally"
+                  size="13px"
+                  style={{ display: 'inline' }}
+                />
+      <Button 
+        size={'xs'}
+        
+        style={{
+          marginLeft:'7px',
+          color:'#ffffff',
+          backgroundColor:'gray'
+        }}
+        onClick={() => {
+          setViewType('detail view');
+          dispatch({
+            type: 'SELECTED_ARTIFACT',
+            selectedArtifactEntry: entryData,
+            selectedArtifactIndex: i,
+            hopArray: [entryData],
+          });
+        }}
+      >See in detail</Button>
+      </div>
+      {/* <Box bg="#ececec" p={3}>
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
@@ -150,7 +186,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   openFile={openFile}
                 /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
             } */}
-      </Box>
+      </Box> 
     </>
   );
 };
@@ -289,15 +325,24 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             style={{ display: 'inline', fill: 'lightgrey' }}
           />
         )}
-        {viewType != 'detail' && (
+       
+       {/* <div>{entryData.title} </div> */}
+       
+         {viewType != 'detail' && (
           <ActivityTitlePopoverLogic
             activityData={entryData}
             researchThreads={researchThreads}
           />
+          // <Button
+          //   style={{marginLeft:'5px'}}
+          // >See artifact in Detail</Button>
         )}
-
-        {makeEditable && (
-          <Button leftIcon={<EditIcon />} onClick={makeEditable}>
+         {makeEditable && (
+          <Button 
+          leftIcon={<EditIcon />} 
+          onClick={makeEditable}
+          style={{display:'inline'}}
+          >
             Edit
           </Button>
         )}
