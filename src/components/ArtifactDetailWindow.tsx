@@ -786,7 +786,11 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                       colorScheme='green'
                       style={{cursor:'pointer'}}
                     > 
-                    <TagLabel><FaMapPin/></TagLabel>
+                    <TagLabel
+                      onClick={()=> {
+                        setFragSelected(f.fragment);
+                      }}
+                    ><FaMapPin/></TagLabel>
                     <TagCloseButton
                       onClick={()=> {
                         dispatch({

@@ -252,9 +252,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
         const newProjectData = { ...state.projectData, entries };
 
         const newPD = saveJSON(newProjectData, state);
-
         return newPD;
-
       }
       
       case 'ADD_EVENT': {
