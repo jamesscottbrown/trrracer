@@ -230,12 +230,6 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
         return newPD;
       }
 
-      // dispatch({
-      //   type: 'REMOVE_BOOKMARK',
-      //   selectedArtifactEntry: selectedArtifactEntry,
-      //   selectedArtifactIndex: selectedArtifactIndex,
-      //   fragIndex: i
-      // });
       case 'REMOVE_BOOKMARK':{
 
         console.log('remove bookmark fragment', action.fragIndex)
