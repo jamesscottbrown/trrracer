@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-import { FaCalculator, FaFillDrip, FaSortAlphaUp } from 'react-icons/fa';
+import { FaCalculator, FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
@@ -171,15 +171,23 @@ const LeftSidebar = (props: any) => {
 
       <span style={headerStyle}>{`${tags.length} Tags`} 
       <FaSortAlphaUp 
-        style={{display:'inline-block', marginLeft:'5px'}} 
+        style={{
+          display:'inline-block', 
+          marginLeft:'5px',
+          cursor:'pointer'
+        }} 
         onClick={()=>  {
           console.log('click alpha')
           let temp = tags.sort((a, b) => a.title.localeCompare(b.title))
           console.log(temp);
           setSortedTags(temp) }}
         />
-      <FaCalculator 
-        style={{display:'inline-block', marginLeft:'5px'}} 
+      <FaSortAmountDown 
+        style={{
+          display:'inline-block', 
+          marginLeft:'5px',
+          cursor:'pointer'
+        }} 
         onClick={()=> {
           console.log('click freq')
           let temp = tags.sort((a, b) => b.matches.length - a.matches.length)

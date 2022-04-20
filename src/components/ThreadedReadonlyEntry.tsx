@@ -320,14 +320,17 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             ))}
           </div>
           <div style={{display:'inline'}}>
-
-
             <Popover
               trigger={'hover'}
             >
             <PopoverTrigger>
               <Badge
-                style={{cursor:'pointer'}}
+                style={{
+                  cursor:'pointer', 
+                  paddingLeft:'5px', 
+                  paddingRight:'5px', 
+                  paddingTop:'2px', 
+                  paddingBottom:'2px'}}
               >{nonThreadedTags.length}
               {threadedTags.length > 0 ? " More Tags": "Tags"}</Badge>
             </PopoverTrigger>
