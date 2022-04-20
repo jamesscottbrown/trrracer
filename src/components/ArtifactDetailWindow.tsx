@@ -819,6 +819,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           >
             <DetailPreview
               setFragSelected={setFragSelected}
+              fragSelected={fragSelected}
               folderPath={folderPath}
               artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
               activity={selectedArtifactEntry}

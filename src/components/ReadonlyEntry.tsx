@@ -54,12 +54,6 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { entryData, openFile, setViewType, file, i } = props;
   const [{ folderPath }, dispatch] = useProjectState();
 
-  const [showPopover, setShowPopover] = useState(false);
-
-  const closePopover = () => {
-    setShowPopover(false);
-  };
-
   return (
     <>
     <Box bg="#ececec" p={3}>
@@ -325,17 +319,11 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             style={{ display: 'inline', fill: 'lightgrey' }}
           />
         )}
-       
-       {/* <div>{entryData.title} </div> */}
-       
          {viewType != 'detail' && (
           <ActivityTitlePopoverLogic
             activityData={entryData}
             researchThreads={researchThreads}
           />
-          // <Button
-          //   style={{marginLeft:'5px'}}
-          // >See artifact in Detail</Button>
         )}
          {makeEditable && (
           <Button 

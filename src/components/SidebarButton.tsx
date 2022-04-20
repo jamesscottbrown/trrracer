@@ -18,10 +18,6 @@ const SidebarButton = (sidebarProps: any) => {
   const [showThreadPop, setShowThreadPop] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [mouseOnPop, setMouseOnPop] = useState(false);
-
-  
-  
-  
   
   return(
 

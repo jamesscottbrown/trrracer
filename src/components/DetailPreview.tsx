@@ -21,12 +21,14 @@ interface DetailPreviewPropsType {
   activity: any;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
+  fragSelected:any;
   artifactIndex: number;
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const {
     setFragSelected,
+    fragSelected,
     folderPath,
     artifact,
     activity,

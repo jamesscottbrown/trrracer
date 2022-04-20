@@ -50,89 +50,63 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
   const { entryData, openFile, setViewType, file, i } = props;
   const [{ folderPath }, dispatch] = useProjectState();
 
-  const [showPopover, setShowPopover] = useState(false);
-
-  const closePopover = () => {
-    setShowPopover(false);
-  };
+  const [onHover, setOnHover] = useState(false);
 
   return (
     <>
-      <Box bg="#ececec" p={3} marginTop={1}>
-        {showPopover ? (
-          <Popover isOpen={showPopover} onClose={closePopover}>
-            <PopoverTrigger>
-              <div style={{opacity:1}}>
-                {['png', 'jpg', 'gif'].includes(file.fileType) && (
-                  <AttachmentPreview
-                    folderPath={folderPath}
-                    title={file.title}
-                    openFile={openFile}
-                  />
-                )}
-                <div
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 700,
-                    marginBottom: 5,
-                    width: 75,
-                    display: 'inline',
-                  }}
-                >
-                  {' '}
-                  {file.title}{' '}
-                </div>
-                <FaExternalLinkAlt
-                  onClick={() => openFile(file.title, folderPath)}
-                  title="Open file externally"
-                  size="13px"
-                  style={{ display: 'inline' }}
-                />
-              </div>
-            </PopoverTrigger>
-            <PopoverContent bg="white" color="gray">
-              <PopoverArrow bg="white" />
-              <PopoverBody>
-                <Button
-                  onClick={() => {
-                    setViewType('detail view');
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: entryData,
-                      selectedArtifactIndex: i,
-                      hopArray: [entryData],
-                    });
-                  }}
-                >
-                  See artifact in detail.
-                </Button>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <div onMouseEnter={() => setShowPopover(true)} style={{opacity:.5}}>
-            <div
-              style={{
-                fontSize: 14,
-                fontWeight: 500,
-                marginBottom: '5px',
-                width: '50%',
-                display: 'inline',
-              }}
-            >
-              {' '}
-              {file.title}{' '}
-            </div>
-            <FaExternalLinkAlt
-              onClick={() => openFile(file.title, folderPath)}
-              title="Open file externally"
-              size="13px"
-              style={{ display: 'inline' }}
-            />
-          </div>
-        )}
-
-      </Box>
+    <Box 
+    bg="#ececec" 
+    p={3} 
+    marginTop={1} 
+    opacity={onHover ? 1 : .4}
+    onMouseOver={()=> setOnHover(true)}
+    onMouseOut={()=> setOnHover(false)}
+    >
+      <div
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          marginBottom: 5,
+          width: 75,
+          display: 'inline',
+          cursor: 'pointer'
+        }}
+      >
+        {' '}
+        {file.title}{' '}
+      
+      <FaExternalLinkAlt
+        onClick={() => openFile(file.title, folderPath)}
+        title="Open file externally"
+        size="13px"
+        style={{ display: 'inline' }}
+      />
+      <Button 
+        size={'xs'}
+        style={{
+          marginLeft:'7px',
+          color:'#ffffff',
+          backgroundColor:'gray'
+        }}
+        onClick={() => {
+          setViewType('detail view');
+          dispatch({
+            type: 'SELECTED_ARTIFACT',
+            selectedArtifactEntry: entryData,
+            selectedArtifactIndex: i,
+            hopArray: [entryData],
+          });
+        }}
+      >See in detail</Button>
+      </div>
+      {(['png', 'jpg', 'gif'].includes(file.fileType) && onHover) && (
+        <AttachmentPreview
+          folderPath={folderPath}
+          title={file.title}
+          openFile={openFile}
+        />
+      )}
+    </Box> 
     </>
   );
 };
@@ -144,64 +118,50 @@ const ThreadedArtifact = (props:any) => {
 
   return(
     <Box bg="#ececec" p={3}>
-      <div
-        style={{
-          fontSize: 18,
-          fontWeight: 700,
-          marginBottom: 5,
-          width: 75,
-          display: 'inline',
-        }}
-        className="threaded-file"
-      >
-          <Popover>
-            <PopoverTrigger>
-              <span style={{cursor:'pointer'}}>
-              {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
-              {fileData.title}{' '}
-                <FaExternalLinkAlt
-                  onClick={() => openFile(fileData.title, folderPath)}
-                  title="Open file externally"
-                  size="13px"
-                  style={{ display: 'inline' }}
-                />
-              </span>
-            </PopoverTrigger>
-            <PopoverContent bg="white" color="gray">
-              <PopoverArrow bg="white" />
-              <PopoverBody>
-                <Button
-                  onClick={() => {
-                    setViewType('detail view');
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: entryData,
-                      selectedArtifactIndex: i,
-                      hopArray: [entryData],
-                    });
-                  }}
-                >
-                  See artifact in detail.
-                </Button>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-   
-        {
-          fileData.threadPart.type === 'fragment' && (
-            <div style={{fontWeight:300, fontSize:14}}>
-              {fileData.threadPart.anchors.map( (m, j) => (
-                <React.Fragment key={`frag-${j}`}>
-                {m.anchor_type === 'text' ?
-                <span style={{backgroundColor:'yellow'}}>{m.frag_type}</span> :
-                <span>{"Image anchors"}</span>  
-                }
-                </React.Fragment>
-                
-              ))}
-            </div>
-          )
-        }
+      <span style={{cursor:'pointer'}}>
+          {fileData.threadPart.type === "fragment" ? "Fragment of artifact: " : "Threaded artifact: " }
+          {fileData.title}{' '}
+            <FaExternalLinkAlt
+              onClick={() => openFile(fileData.title, folderPath)}
+              title="Open file externally"
+              size="13px"
+              style={{ display: 'inline' }}
+            />
+            <Button 
+              size={'xs'}
+              style={{
+                marginLeft:'7px',
+                color:'#ffffff',
+                backgroundColor:'gray'
+              }}
+              onClick={() => {
+                setViewType('detail view');
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  selectedArtifactEntry: entryData,
+                  selectedArtifactIndex: i,
+                  hopArray: [entryData],
+                });
+              }}
+            >See in detail</Button>
+      </span>
+        <div>
+          {
+            fileData.threadPart.type === 'fragment' && (
+              <div style={{fontWeight:300, fontSize:14}}>
+                {fileData.threadPart.anchors.map( (m, j) => (
+                  <React.Fragment key={`frag-${j}`}>
+                  {m.anchor_type === 'text' ?
+                  <span style={{backgroundColor:'yellow'}}>{m.frag_type}</span> :
+                  <span>{"Image anchors"}</span>  
+                  }
+                  </React.Fragment>
+                  
+                ))}
+              </div>
+            )}
+        </div>
+
         <div
         style={{marginTop:10}}
         >{"Why this was included: "}</div>
@@ -209,14 +169,12 @@ const ThreadedArtifact = (props:any) => {
           style={{fontWeight: 300, fontSize: 14}}
         >{fileData.threadPart.rationale}</div>
           {['png', 'jpg', 'gif'].includes(fileData.fileType) && (
-                  <AttachmentPreview
-                    folderPath={folderPath}
-                    title={fileData.title}
-                    openFile={null}
-                  />
-                )}
-      </div>
-
+            <AttachmentPreview
+              folderPath={folderPath}
+              title={fileData.title}
+              openFile={null}
+            />
+          )}
     </Box>
 
   )
@@ -324,13 +282,19 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         )}
 
         {makeEditable && (
-          <Button leftIcon={<EditIcon />} onClick={makeEditable}>
+          <Button 
+            size={'sm'}
+            leftIcon={<EditIcon />} 
+            onClick={makeEditable}>
             Edit
           </Button>
         )}
 
         <Button
-        style={{backgroundColor: '#ff726f'}}
+          size={'sm'}
+          style={{
+            marginLeft:'5px',
+            backgroundColor: '#ff726f'}}
         >Remove from thread</Button>
       </span>
 
@@ -349,6 +313,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                 backgroundColor={checkTagColor(t)}
                 marginRight="0.25em"
                 marginBottom="0.25em"
+                style={{color: checkTagColor(t) === '#3932a3' ? '#fff' : 'black'}}
               >
                 {t}
               </Tag>
@@ -357,9 +322,13 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
           <div style={{display:'inline'}}>
 
 
-            <Popover>
+            <Popover
+              trigger={'hover'}
+            >
             <PopoverTrigger>
-              <Badge>{nonThreadedTags.length}
+              <Badge
+                style={{cursor:'pointer'}}
+              >{nonThreadedTags.length}
               {threadedTags.length > 0 ? " More Tags": "Tags"}</Badge>
             </PopoverTrigger>
 
@@ -379,7 +348,6 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                       >
                         {nt}
                       </Tag>
-                      
                     ))
                   }
                 </>
