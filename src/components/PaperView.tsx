@@ -16,7 +16,7 @@ const PaperView = async (props: any) => {
   const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
 
   const filePath = path.join(folderPath, 'links.json');
-  const linkData = readFileSync(filePath);
+  const linkData = readFileSync(`${folderPath}links.json`);
   const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();

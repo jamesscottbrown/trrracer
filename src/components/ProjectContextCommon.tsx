@@ -190,8 +190,17 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           hopArray: [],
           goBackView: 'overview',
           artifactTypes: artifact_types,
-          // eventArray: [],
+          threadTypeFilterArray: [
+            { type:'activity', show:true },
+            { type:'artifact', show:true },
+            { type:'fragment', show:true },
+            { type:'tags', show:true }
+          ],
         };
+      }
+
+      case 'UPDATE_RT_TYPE_SHOWN': {
+        return {...state, threadTypeFilterArray : action.threadTypeFilterArray}
       }
 
       case 'UPDATE_TITLE': {
@@ -209,7 +218,6 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks.push({ 'fragment': action.bookmarkFragment })
 
-       
         const currentFiles = state.projectData.entries[entryIndex].files.map((f, i)=> {
           if(i === action.selectedArtifactIndex){
             f.bookmarks = bookmarks;
@@ -217,16 +225,13 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           return f;
         });
 
-        
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
             entryIndex === i ? { ...d, files: currentFiles } : d
         );
 
         const newProjectData = { ...state.projectData, entries };
-
         const newPD = saveJSON(newProjectData, state);
-
         return newPD;
       }
 
@@ -327,16 +332,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           let associatedByTags = state.projectData.entries.filter(f => {
             let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
             return test.length > 0;
-          })
+          });
+          let associatedTest = associatedByTags.length > 0 ? associatedByTags.map(as => as.title).filter(at => action.filterRT.evidence.map((m) => m.activityTitle).indexOf(at) === -1) : []
           return {
             ...state,
             filterRT: {
               title: action.filterRT.title,
               key: action.filterRT.evidence.map((m) => m.activityTitle),
-              associatedKey:
-              associatedByTags.length > 0
-                  ? associatedByTags.map(as => as.title)
-                  : [],
+              associatedKey: associatedTest
             },
           };
         }

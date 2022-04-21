@@ -25,6 +25,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterDates,
       filterQuery,
       filterRT,
+      threadTypeFilterArray,
+      researchThreads
     },
   ] = useProjectState();
   const [viewType, setViewType] = useState<string>('overview');
@@ -81,14 +83,38 @@ const Project = (ProjectPropValues: ProjectProps) => {
       return typeFiltered;
     });
 
+    const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
+      if (filterRT) {
+        let nono = [];
+        let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
+        
+        threadTypeFilterArray.forEach((ty, i)=> {
+          if(!ty.show){
+            if(ty.type != 'tags'){
+              let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
+              nono = [...nono, exclude];
+              
+            }else{
+              nono = [...nono, ...filterRT.associatedKey.filter(as => filterRT.key.indexOf(as) === -1)]
+            }
+          }
+        });
+        console.log('NONO', nono)
+        return (
+          nono.indexOf(entryData.title) === -1 
+        );
+      }
+      return typeFiltered;
+    });
+
     const timeFiltered =
       filterDates[0] != null && filterDates[1] != null
-        ? rtFiltered.filter(
+        ? rtTypesFiltered.filter(
             (f) =>
               new Date(f.date) >= filterDates[0] &&
               new Date(f.date) <= filterDates[1]
           )
-        : rtFiltered;
+        : rtTypesFiltered;
 
     timeFiltered.sort(
       (a, b) =>
@@ -109,6 +135,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     filterDates,
     filterRT,
     filterQuery,
+    threadTypeFilterArray,
   ]);
 
   if (viewType === 'query') {

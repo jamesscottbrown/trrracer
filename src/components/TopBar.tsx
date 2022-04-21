@@ -10,6 +10,8 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
+  Tag,
+  TagLabel,
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
@@ -34,7 +36,9 @@ interface TopbarProps {
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-  const [{ projectData, filterTags, filterRT }, dispatch] = useProjectState();
+  const [{ projectData, filterTags, filterRT, researchThreads, threadTypeFilterArray }, dispatch] = useProjectState();
+
+ // console.log('filtersssss', filterRT, researchThreads.research_threads.filter(f => f.title === filterRT.title))
 
   const {
     viewType,
@@ -50,6 +54,12 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch({ type: 'ADD_ENTRY' });
   };
 
+  let chosenThread = filterRT ? researchThreads.research_threads.filter(f => f.title === filterRT.title)[0] : null;
+ 
+  let threadTypeGroups = threadTypeFilterArray.map((ty)=> {
+    ty.matches = ty.type === 'tags' ?  (filterRT? filterRT.associatedKey : null) : chosenThread?.evidence.filter(f => f.type === ty.type);
+    return ty;
+  })
 
   return (
     <Box
@@ -155,15 +165,15 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   padding: 5,
                 }}
               >
-                <span>{`Research Thread: ${filterRT.title}`}</span>
-                <span
-                  onClick={() => {
-                    dispatch({
-                      type: 'THREAD_FILTER',
-                      filterRT: null,
-                    });
-                  }}
-                  style={{ padding: 5, cursor: 'pointer', fontWeight: 700 }}
+              <span>{`Research Thread: ${filterRT.title}`}</span>
+              <span
+                onClick={() => {
+                  dispatch({
+                    type: 'THREAD_FILTER',
+                    filterRT: null,
+                  });
+                }}
+                style={{ padding: 5, cursor: 'pointer', fontWeight: 700 }}
                 >
                   x
                 </span>
@@ -193,7 +203,41 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             >
               <FaPlus /> Add activity
             </Button>
+            {filterRT && (
+              <div style={{
+                backgroundColor:'#fff',
+                paddingTop:'10px',
+                }}>
+              {threadTypeGroups.map((tg, i)=> (
+                <Tag
+                style={{
+                  marginRight:'5px',
+                  cursor:'pointer',
+                  backgroundColor: chosenThread.color,
+                  color: chosenThread.color === '#3932a3' ? '#fff' : 'black',
+                  opacity: (tg.show && tg.matches.length > 0) ? 1 : 0.4,
+                }}
+                onClick={()=>{
+                  let temp = threadTypeFilterArray.map(m => {
+                    if(m.type === tg.type){
+                      m.show ? m.show = false : m.show = true;
+                    }
+                    return m;
+                  })
+                  dispatch({ type: 'UPDATE_RT_TYPE_SHOWN', threadTypeFilterArray: temp })
+                }}
+                >
+                  <TagLabel>
+                    {`${tg.type} : ${tg.matches.length}`}
+                  </TagLabel>
+                  </Tag>
+              ))
+              }
+              </div> 
+            )}
           </div>
+          
+
         )}
       </Flex>
     </Box>
