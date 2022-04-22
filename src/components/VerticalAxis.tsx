@@ -74,7 +74,6 @@ const VerticalAxis = (projectProps: any) => {
 
   React.useEffect(() => {
 
-    console.log('ARE tHERe FILETERED ACTIVITIES??', filteredActivities);
     const filteredActivitiesExtent = d3.extent(
       filteredActivities.map((m: any) => new Date(m.date))
     );

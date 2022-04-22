@@ -203,7 +203,7 @@ const InteractiveActivityTag = (props: any) => {
   const [{ projectData, hopArray }, dispatch] = useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
 
-  console.log('hop array', hopArray);
+ 
 
   const tagMatches = projectData.entries.filter(
     (f: any) => f.tags.indexOf(tag) > -1
@@ -335,6 +335,7 @@ const InteractiveActivityTag = (props: any) => {
   );
 };
 const DetailSidebar = (props: any) => {
+
   const {
     fragSelected,
     setFragSelected,
@@ -349,10 +350,8 @@ const DetailSidebar = (props: any) => {
     enter: 13,
   };
 
-  console.log(
-    'projectData!!',
-    projectData.entries[selectedArtifactEntry.index]
-  );
+  console.log('IN DETAIL SIDEBAR', selectedArtifactEntry, selectedArtifactIndex)
+ 
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
@@ -517,7 +516,7 @@ const DetailSidebar = (props: any) => {
             textAlign: 'center',
           }}
           onClick={() => {
-            console.log('click book',selectedArtifactEntry)
+         
             dispatch({
               type: 'BOOKMARK_FRAGMENT',
               selectedArtifactEntry: selectedArtifactEntry,
@@ -623,6 +622,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
+
+  console.log('IN DETAIL VIEW', selectedArtifactEntry, selectedArtifactIndex)
+  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
 
   const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
@@ -733,7 +735,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               alignContent: 'center',
               paddingTop: 5,
             }}
-          >{`Artifact: ${selectedArtifactEntry.files[selectedArtifactIndex].title}`}</div>
+          >{`Artifact: ${selectedArtifact ? selectedArtifact.title : "No artifacts with this activity"}`}</div>
         </Flex>
       </Box>
       <Flex
@@ -760,23 +762,24 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
-
-        <Box flex="4">
-          {(selectedArtifactEntry.files[selectedArtifactIndex].fileType ===
-            'txt' ||
-            selectedArtifactEntry.files[selectedArtifactIndex].fileType ===
-              'gdoc') && (
-            <Flex p={5} width="100%" alignItems="center" alignContent="center">
+        {
+          selectedArtifact && (
+            <Box flex="4">
+              {(selectedArtifact.fileType ===
+                'txt' ||
+                selectedArtifact.fileType ===
+                  'gdoc') && (
+                <Flex p={5} width="100%" alignItems="center" alignContent="center">
               <QueryBar
                 marginLeft={60}
                 artifactData={
-                  selectedArtifactEntry.files[selectedArtifactIndex]
+                  selectedArtifact
                 }
               />
               <Box>
                 {
-                  selectedArtifactEntry.files[selectedArtifactIndex].bookmarks && (
-                    selectedArtifactEntry.files[selectedArtifactIndex].bookmarks.map((f, i)=> (
+                  selectedArtifact.bookmarks && (
+                    selectedArtifact.bookmarks.map((f, i)=> (
                     // 
                     <Tag
                       size={'md'}
@@ -808,26 +811,33 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             </Flex>
           )}
 
-          <Flex
-            style={{
-              justifyContent: 'center',
-              alignItems: 'stretch',
-              height: '90%',
-              paddingLeft: 20,
-              paddingRight: 20,
-            }}
-          >
-            <DetailPreview
-              setFragSelected={setFragSelected}
-              fragSelected={fragSelected}
-              folderPath={folderPath}
-              artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
-              activity={selectedArtifactEntry}
-              artifactIndex={selectedArtifactIndex}
-              openFile={openFile}
-            />
-          </Flex>
-        </Box>
+            <Flex
+              style={{
+                justifyContent: 'center',
+                alignItems: 'stretch',
+                height: '90%',
+                paddingLeft: 20,
+                paddingRight: 20,
+              }}
+            >
+              {
+                selectedArtifact ?
+                <DetailPreview
+                  setFragSelected={setFragSelected}
+                  fragSelected={fragSelected}
+                  folderPath={folderPath}
+                  artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
+                  activity={selectedArtifactEntry}
+                  artifactIndex={selectedArtifactIndex}
+                  openFile={openFile}
+                /> : <div>{'No Artifact for this activity'}</div>
+              }
+              
+            </Flex>
+          </Box>
+          )
+        }
+        
       </Flex>
     </div>
     // </div>
