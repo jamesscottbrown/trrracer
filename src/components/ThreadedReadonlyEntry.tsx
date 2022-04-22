@@ -394,6 +394,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             folderPath={folderPath}
             i={i} 
             entryData={entryData}
+            setViewType={setViewType}
           />
         ))
         }

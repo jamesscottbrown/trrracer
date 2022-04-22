@@ -53,7 +53,7 @@ const VerticalAxis = (projectProps: any) => {
   const allActivities = projectData.entries;
   const { eventArray } = projectData;
 
-  const width = 130;
+  const width = selectedArtifactEntry ? 250 : 130;
   const margin = height * 0.25;
 
   const yearMonth = dataStructureForTimeline(allActivities);
@@ -321,12 +321,51 @@ const VerticalAxis = (projectProps: any) => {
 
     if (selectedArtifactEntry) {
       if (hopArray) {
-        rects
+        let hoppedRects  = rects
           .filter((f) => hopArray.map((m) => m.title).includes(f.title))
           .attr('fill', 'purple')
           .attr('fill-opacity', 1)
           .attr('height', 10);
+
+          console.log(hoppedRects);
+
+          function buildArc (link) {
+            const arcH = 30;
+            // This code builds up the SVG arc path element
+            const arcPath = ['M',            // start the path
+                    arcH, (link.Source + 4),        // declare the (x,y) of where to start
+                    'A',                     // specify an eliptical curve
+                    (link.Source - link.Target)/3, ',',    // xradius: height of arc is proportional to start - end
+                    (link.Source - link.Target)/3,         // yradius 
+                     0, 0, ",",              // rotation of ellipse is 0 along x and y; see arc url for details
+                     link.Source < link.Target ? 1: 0,     // make all arcs curve above the nodes; see arc documentation
+                     arcH, (link.Target + 4)]         // declare (x,y) of endpoint
+                  .join(' ');                // convert the bracketed array into a string
+            return arcPath;
+          };
+
+          let links = [];
+
+          for(let i = 1; i < hopArray.length; i ++){
+            let start = yScale(new Date(hopArray[i - 1].date));
+            let end = yScale(new Date(hopArray[i].date));
+            let temp = {Source: start, Target: end}
+            links.push(temp);
+          }
+
+          console.log(links);
+
+          let arcs = svg.selectAll('path.arc')
+            .data(links)
+            .join('path')
+            .attr('class', 'arc')
+            .attr('d', d => buildArc(d))
+
+          arcs.attr('fill', 'none')
+          .attr('stroke', 'gray')
       }
+
+
 
       rects
         .filter((f) => f.title === selectedArtifactEntry.title)

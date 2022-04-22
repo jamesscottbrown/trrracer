@@ -206,7 +206,9 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             {filterRT && (
               <div style={{
                 backgroundColor:'#fff',
-                paddingTop:'10px',
+                paddingTop:'20px',
+                paddingLeft:'20px',
+                paddingRight:'20px',
                 }}>
               {threadTypeGroups.map((tg, i)=> (
                 <Tag
