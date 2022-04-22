@@ -351,7 +351,7 @@ const DetailSidebar = (props: any) => {
   };
 
   console.log('IN DETAIL SIDEBAR', selectedArtifactEntry, selectedArtifactIndex)
- 
+  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry[selectedArtifactIndex] : null;
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
@@ -428,12 +428,17 @@ const DetailSidebar = (props: any) => {
           </Box>
         </Box>
       </Box>
-      <Box>
-        <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-        <Badge
-        style={{wordWrap:'break-word'}}
-        >{selectedArtifactEntry.files[selectedArtifactIndex].artifact_uid}</Badge>
-        </Box>
+      {
+        selectedArtifact && (
+          <Box>
+            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
+            <Badge
+            style={{wordWrap:'break-word'}}
+            >{selectedArtifact ?  selectedArtifact.artifact_uid : "No Artifact to Cite"}</Badge>
+          </Box>
+        )
+      }
+     
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
           Activity Tags

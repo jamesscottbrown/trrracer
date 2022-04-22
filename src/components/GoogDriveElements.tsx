@@ -16,7 +16,6 @@ const colorConvert = (codes: any) => {
 
 const GoogInline = (googProps: any) => {
   const { sectionData } = googProps;
-
   return (
     <div>{` picture here! ${sectionData.inlineObjectElement.inlineObjectId} `}</div>
   );
@@ -50,7 +49,7 @@ const GoogDriveSpans = (googProps: any) => {
   const { googEl, index, comments } = googProps;
 
   const temp = comments.filter((f: any) =>
-    googEl.textRun.content.includes(f.quotedFileContent.value)
+    (googEl.textRun && googEl.textRun.content.includes(f.quotedFileContent.value))
   );
 
   return temp.length > 0 ? (
@@ -94,7 +93,7 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-          {content.elements[0].textRun.content}
+          {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
         </span>
       );
     if (styling.namedStyleType.includes('2'))
@@ -108,7 +107,7 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-          {content.elements[0].textRun.content}
+           {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
         </span>
       );
     if (styling.namedStyleType.includes('3'))
@@ -122,11 +121,11 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-          {content.elements[0].textRun.content}
+           {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
         </span>
       );
   };
-
+  console.log('paragraphData', parData);
   return parData.paragraph.paragraphStyle.namedStyleType.includes('HEADING') ? (
     <div>{getHeading(parData.paragraph.paragraphStyle, parData.paragraph)}</div>
   ) : (
