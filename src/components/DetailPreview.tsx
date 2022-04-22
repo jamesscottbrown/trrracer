@@ -35,9 +35,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     artifactIndex,
     openFile,
   } = props;
-  const [{ googleData, txtData }] = useProjectState();
 
-  // let title = artifact.title;
+  const [{ googleData, txtData }] = useProjectState();
 
   const { title } = artifact;
 
@@ -73,7 +72,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     // return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
     return (
       <embed
-        style={{ height: '90%' }}
+        style={{ height: 'auto', width:'90%' }}
         src={`file://${path.join(folderPath, title)}`}
         type="application/pdf"
       />

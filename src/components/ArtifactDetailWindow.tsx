@@ -504,7 +504,7 @@ const DetailSidebar = (props: any) => {
         </div>
       )}
 
-<Box
+    <Box
         style={{
           backgroundColor: '#ececec',
           borderRadius: 5,
@@ -628,7 +628,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  console.log('IN DETAIL VIEW', selectedArtifactEntry, selectedArtifactIndex)
   const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
 
   const height = 900;
