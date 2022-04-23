@@ -2,10 +2,8 @@ import {
   openFile,
   readFile,
   writeFile,
-  decode,
-  decodeAttachment,
   readFileSync,
-  filePath,
+  joinPath,
 } from './fileUtilElectron';
 
 /*
@@ -13,12 +11,24 @@ import {
   openFile,
   readFile,
   writeFile,
-  decode,
-  decodeAttachment,
   readFileSync,
-  filePath,
+  joinPath,
 } from './fileUtilWeb';
- */
+*/
+
+function decode(input) {
+  if (!input) return '';
+  const decodedBase64 = atob(input.replace(/-/g, '+').replace(/_/g, '/'));
+  const escaped = escape(decodedBase64);
+  return decodeURIComponent(escaped);
+}
+
+function decodeAttachment(input) {
+  if (!input) return '';
+
+  return atob(encodeURI(input.replace(/-/g, '+').replace(/_/g, '/')));
+}
+
 
 export {
   openFile,
@@ -27,5 +37,5 @@ export {
   decode,
   decodeAttachment,
   readFileSync,
-  filePath,
+  joinPath,
 };

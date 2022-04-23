@@ -28,18 +28,6 @@ export const writeFile = (fileName, content) =>
     });
   });
 
-export function decode(input) {
-  if (!input) return '';
-  const decodedBase64 = atob(input.replace(/-/g, '+').replace(/_/g, '/'));
-  const escaped = escape(decodedBase64);
-  return decodeURIComponent(escaped);
-}
-
-export function decodeAttachment(input) {
-  if (!input) return '';
-
-  return atob(encodeURI(input.replace(/-/g, '+').replace(/_/g, '/')));
-}
 
 export const readFileSync = (filePath: string) =>
   fs.readFileSync(filePath, { encoding: 'utf-8' });
