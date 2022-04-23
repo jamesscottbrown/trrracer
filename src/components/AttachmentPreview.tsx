@@ -127,7 +127,6 @@
 
 // export default AttachmentPreview;
 
-import path from 'path';
 import React from 'react';
 import { Image } from '@chakra-ui/react';
 
@@ -143,6 +142,8 @@ import {
   GrCluster,
 } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
+
+import { joinPath } from '../fileUtil';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -161,13 +162,13 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   ) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={`file://${path.join(folderPath, title)}`} controls />;
+    return <video src={`file://${joinPath(folderPath, title)}`} controls />;
   }
 
   if (title.endsWith('.mp3') || title.endsWith('.ogg')) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <audio src={`file://${path.join(folderPath, title)}`} controls />;
+    return <audio src={`file://${joinPath(folderPath, title)}`} controls />;
   }
 
   if (title.endsWith('.csv')) {
@@ -249,7 +250,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
   return (
     <Image
-      src={`file://${path.join(folderPath, title)}`}
+      src={`file://${joinPath(folderPath, title)}`}
       onClick={() => openFile(title, folderPath)}
     />
   );

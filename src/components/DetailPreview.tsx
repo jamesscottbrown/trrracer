@@ -1,4 +1,3 @@
-import path from 'path';
 import React from 'react';
 import { Image, Box } from '@chakra-ui/react';
 import {
@@ -14,6 +13,8 @@ import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
+
+import { joinPath } from '../fileUtil';
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -47,13 +48,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   ) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={`file://${path.join(folderPath, title)}`} controls />;
+    return <video src={`file://${joinPath(folderPath, title)}`} controls />;
   }
 
   if (title.endsWith('.mp3') || title.endsWith('.ogg')) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <audio src={`file://${path.join(folderPath, title)}`} controls />;
+    return <audio src={`file://${joinPath(folderPath, title)}`} controls />;
   }
 
   const size = '65%';
@@ -73,7 +74,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return (
       <embed
         style={{ height: 'auto', width:'90%' }}
-        src={`file://${path.join(folderPath, title)}`}
+        src={`file://${joinPath(folderPath, title)}`}
         type="application/pdf"
       />
     );
@@ -168,7 +169,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return (
       <embed
         style={{ height: '90%' }}
-        src={`file://${path.join(folderPath, title)}`}
+        src={`file://${joinPath(folderPath, title)}`}
         type="application/pdf"
       />
     );
@@ -187,7 +188,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       <MarkableImage
         activity={activity}
         artifactIndex={artifactIndex}
-        imgPath={`file://${path.join(folderPath, title)}`}
+        imgPath={`file://${joinPath(folderPath, title)}`}
       />
     );
   }
@@ -197,7 +198,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       htmlWidth="90%"
       htmlHeight="auto"
       fit="contain"
-      src={`file://${path.join(folderPath, title)}`}
+      src={`file://${joinPath(folderPath, title)}`}
       onClick={ () => {
         !setFragSelected
           ? openFile(title, folderPath)

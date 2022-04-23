@@ -43,3 +43,7 @@ export function decodeAttachment(input) {
 
 export const readFileSync = (filePath: string) =>
   fs.readFileSync(filePath, { encoding: 'utf-8' });
+
+export function joinPath(...args){
+  return path.join(args);
+};

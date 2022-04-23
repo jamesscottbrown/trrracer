@@ -5,6 +5,7 @@ import {
   decode,
   decodeAttachment,
   readFileSync,
+  filePath,
 } from './fileUtilElectron';
 
 /*
@@ -15,6 +16,7 @@ import {
   decode,
   decodeAttachment,
   readFileSync,
+  filePath,
 } from './fileUtilWeb';
  */
 
@@ -25,4 +27,5 @@ export {
   decode,
   decodeAttachment,
   readFileSync,
+  filePath,
 };

@@ -1,7 +1,7 @@
-import path from 'path';
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
 import { useProjectState } from './ProjectContext';
+import { joinPath} from '../fileUtil';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
@@ -413,7 +413,7 @@ const BubbleVis = (props: BubbleProps) => {
                     start += `<div>Rationale: ${t.rationale}<div>`;
 
                     if (t.artifactTitle.includes('.png')) {
-                      start += `<img src="${path.join(
+                      start += `<img src="${joinPath(
                         folderPath,
                         t.artifactTitle
                       )}" style="width:500px; height:auto"

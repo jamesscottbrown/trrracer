@@ -1,21 +1,21 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
-import path from 'path';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
+import { joinPath } from '../fileUtil';
 
 import { readFileSync } from '../fileUtil';
 
 const PaperView = async (props: any) => {
   const { folderPath } = props;
 
-  const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
+  const perf = `${joinPath(folderPath, 'paper_2020_insights.pdf')}`;
 
-  const filePath = path.join(folderPath, 'links.json');
+  const filePath = joinPath(folderPath, 'links.json');
   const linkData = readFileSync(`${folderPath}links.json`);
   const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
