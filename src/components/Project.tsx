@@ -262,6 +262,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
+
+  return null;
 };
 
 export default Project;
