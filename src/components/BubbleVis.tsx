@@ -7,7 +7,6 @@ import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
 import type { EntryType } from './types';
 
-
 interface BubbleProps {
   filteredActivities: EntryType[];
   groupBy: any;
@@ -33,7 +32,6 @@ const BubbleVis = (props: BubbleProps) => {
     { artifactTypes, selectedThread, researchThreads, folderPath, projectData, filterRT },
   ] = useProjectState();
   
- 
   const {eventArray} = projectData;
 
   const [newHeight, setNewHeight] = useState('1000px');
@@ -85,7 +83,8 @@ const BubbleVis = (props: BubbleProps) => {
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
-
+    const underWrap = svg.append('g').classed('path-wrap', true)
+    underWrap.attr('transform', `translate(0, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
     const wrap = svg.append('g').attr('transform', `translate(0, ${translateY})`);
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);
@@ -205,7 +204,11 @@ const BubbleVis = (props: BubbleProps) => {
           artifactTypes
         );
         
-        bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2);
+        bubbleNotHighlighted.bubbles
+          .attr('fill', 'gray')
+          .attr('fill-opacity', .2)
+          // .attr('stroke', 'gray')
+          // .attr('stroke-width', 1);
 
         const bubbleHighlighted = new Bubbles(
           activityHighlightGroups,
@@ -224,7 +227,9 @@ const BubbleVis = (props: BubbleProps) => {
 
           bubbleHighlighted.bubbles.filter(b => {
             return tagChecker.includes(b.title);
-          }).attr('fill-opacity', .6);
+          }).attr('fill-opacity', .6)
+            .attr('stroke', 'gray')
+            .attr('stroke-width', 1);
   
           bubbleHighlighted.bubbles.filter(b => {
             return tagChecker.indexOf(b.title) === -1;
@@ -349,7 +354,9 @@ const BubbleVis = (props: BubbleProps) => {
         artifactTypes
       );
 
-      bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2);
+      bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2)
+      // .attr('stroke', 'gray')
+      // .attr('stroke-width', 1);
 
       const bubbleHighlighted = new Bubbles(
         activityGroups,
@@ -368,12 +375,14 @@ const BubbleVis = (props: BubbleProps) => {
 
         bubbleHighlighted.bubbles.filter(b => {
           return tagChecker.includes(b.title);
-        }).attr('fill-opacity', .6);
+        }).attr('fill-opacity', .6)
+          .attr('stroke', 'gray')
+          .attr('stroke-width', 1);
 
         bubbleHighlighted.bubbles.filter(b => {
           return tagChecker.indexOf(b.title) === -1;
         }).attr('stroke', 'black')
-        .attr('stroke-width', 2)
+        .attr('stroke-width', 2);
       }
 
       bubbleHighlighted.bubbles
@@ -448,7 +457,28 @@ const BubbleVis = (props: BubbleProps) => {
           //.attr('stroke-width', 0);
           div.transition().duration(500).style('opacity', 0);
         });
+
+      let linkData = [];
+      
+      let sort = bubbleHighlighted.bubbles.sort((a, b)=> a.data().date - b.data().date);
+      console.log('sort',sort);
+
+      for(let i = 0; i < sort.nodes().length; i = i+1){
+        let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i])
+        linkData.push([bubbSel.attr('cx'), bubbSel.attr('cy')])
+      }
+
+      var lineGenerator = d3.line();
+      var pathString = lineGenerator(linkData);
+
+      underWrap.append('path')
+        .attr('d', pathString)
+        .attr('fill', 'none')
+        .attr('stroke', 'gray')
+        .attr('stroke-width', 1);
     }
+
+
   }, [filteredActivities, groupBy, splitBubbs, eventArray]);
 
   return (

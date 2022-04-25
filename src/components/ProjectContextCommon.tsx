@@ -3,6 +3,12 @@ import { sendToFlask } from '../flaskHelper';
 
 import { EntryType, TagType } from './types';
 
+import {toVFile, readSync} from 'to-vfile';
+import {toString} from 'nlcst-to-string'
+import {retext} from 'retext'
+import retextPos from 'retext-pos'
+import retextKeywords from 'retext-keywords'
+
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
     '#B80000',
@@ -69,7 +75,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_em = readProjectFile(baseDir, 'goog_em.json', null);
-          console.log('yes to google em file');
+         // console.log('yes to google em file');
         } catch (e: any) {
           console.error('could not load google em file');
           google_em = null;
@@ -77,14 +83,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_data = readProjectFile(baseDir, 'goog_data.json', null);
-          console.log('yes to goog data file');
+         // console.log('yes to goog data file');
         } catch (e: any) {
           console.error('could not load google data file');
         }
 
         try {
           google_comms = readProjectFile(baseDir, 'goog_comms.json', null);
-          console.log('yes to goog comments');
+          //console.log('yes to goog comments');
         } catch (e) {
           google_comms = null;
           console.log('could not load goog comments');
@@ -92,7 +98,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           txt_data = readProjectFile(baseDir, 'text_data.json', null);
-          console.log('yes to txtData');
+         // console.log('yes to txtData');
         } catch (e) {
           txt_data = null;
           console.error('could not load text data');
@@ -100,31 +106,55 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           roleData = readProjectFile(baseDir, 'roles.json', null);
-          console.log('yes to role data');
+         // console.log('yes to role data');
         } catch (e) {
           console.error('could not load role data');
         }
 
         try {
           artifact_types = readProjectFile(baseDir, 'artifactTypes.json', null);
-          console.log('yes to artifact types data');
+         // console.log('yes to artifact types data');
         } catch (e) {
           artifact_types = null;
           console.error('could not load artifact types');
         }
 
         try {
-          newEntries = action.projectData.entries.map((e, i) => {
+          newEntries = action.projectData.entries.map((e:any, i:number) => {
             e.index = i;
             e.key_txt = txt_data
               ? txt_data['text-data'].filter((td) => td['entry-index'] === i)
               : [];
 
-            e.files = e.files.map((ef) => {
+            e.files = e.files.map((ef:any, j:number) => {
               if (ef.fileType === 'gdoc') {
                 // ef.artifactType = 'notes'
                 ef.emphasized = google_em ? google_em[ef.fileId] : [];
                 ef.comments = google_comms ? google_comms[ef.fileId] : [];
+              }else if(ef.fileType === 'txt'){
+
+                // if(j < 2){
+
+                //   const file = readSync(`${baseDir}/${ef.title}`)
+
+                //   retext()
+                //     .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+                //     .use(retextKeywords)
+                //     .process(file)
+                //     .then((file) => {
+                    
+                //       ef.keywords = file.data.keywords;
+                //       ef.keyPhrases = file.data.keyphrases;
+                //     // file.data.keywords.forEach((keyword) => {
+                //     //   console.log(toString(keyword.matches[0].node))
+                //     // })
+
+                // //     console.log('Key-phrases:')
+                // //     file.data.keyphrases.forEach((phrase) => {
+                // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
+                // //     })
+                //   })
+                // }
               }
               // else if(ef.fileType === 'pdf'){
               //   ef.artifactType = 'related work';
@@ -151,6 +181,10 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
               //   ef.artifactType = 'tool artifact';
               // }
               ef.artifactType = ef.artifactType ? ef.artifactType : '';
+              if(ef.fileType === 'txt'){
+                console.log('FILE WITH KEYS?', ef);
+              }
+              
               return ef;
             });
             // }
@@ -355,6 +389,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           fragment,
           fragmentType,
         } = action;
+
         const newRT = state.researchThreads;
         const newA = {
           type: 'fragment',

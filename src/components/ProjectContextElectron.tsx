@@ -8,7 +8,6 @@ import { EntryType, File, FileObj, ProjectState } from './types';
 // import { appStateReducer } from './ProjectContextCommon';
 import { getAppStateReducer } from './ProjectContextCommon';
 
-
 const { google } = require('googleapis');
 
 export const ProjectContext = createContext<DispatchType>();

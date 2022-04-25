@@ -20,7 +20,7 @@ class ForceMagic {
       : d3
           .scaleLinear()
           .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
-          .range([5, 20]);
+          .range([2, 20]);
 
     this.margin = height * .15;
 
@@ -55,7 +55,7 @@ class ForceMagic {
       )
       .force(
         'collision',
-        d3.forceCollide().radius((d: any) => d.radius + 1)
+        d3.forceCollide().radius((d: any) => d.radius + 3)
       );
 
     for (let i = 0; i < 120; ++i) this.simulation.tick();

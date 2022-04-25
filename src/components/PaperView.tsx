@@ -8,16 +8,19 @@ import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 
-import { readFileSync } from '../fileUtil';
+// import { readFileSync } from '../fileUtil';
+import {readSync} from 'to-vfile';
 
 const PaperView = async (props: any) => {
   const { folderPath } = props;
-
+  console.log('folderPath',folderPath)
   const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
 
   const filePath = path.join(folderPath, 'links.json');
-  const linkData = readFileSync(`${folderPath}links.json`);
-  const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
+  const linkData = readSync(`${folderPath}/links.json`);//readFileSync(`${folderPath}links.json`);
+
+  console.log('link', linkData.value)
+  const anno = d3.groups(JSON.parse(linkData.value.toString()), (d) => d.page);
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();
 
