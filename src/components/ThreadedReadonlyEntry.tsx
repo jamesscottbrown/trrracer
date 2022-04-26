@@ -17,7 +17,8 @@ import {
   Badge
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
+import { GiSewingString } from 'react-icons/gi';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
@@ -115,6 +116,9 @@ const ThreadedArtifact = (props:any) => {
 
   const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i, dispatch } = props;
 
+  const [{researchThreads}] = useProjectState();
+
+  
 
   return(
     <Box bg="#ececec" p={3}>
@@ -184,44 +188,11 @@ const ThreadedArtifact = (props:any) => {
 const ActivityTitleLogic = (props:any) => {
 
   const { isEntryInThread, selectedThread, entryData } = props;
-
-  if(isEntryInThread.length === 0){
     return (
-      <div>
+      <div style={{display:'inline'}}>
         <span>{entryData.title}</span>
-        <div style={{fontSize:15, display:'block', marginTop:10, marginBottom:10}}>
-          {'This activity has a tag associated with'} {selectedThread.title}
-        </div> 
-      </div>
-      
-    )
-  }else{
-
-    return(
-      <div>
-        <span>{entryData.title}</span>
-          {
-            isEntryInThread.map((m, i)=> (
-              <div 
-              key={`artifact-threaded-${i}`}
-              style={{ fontSize:15, display:'block', marginTop:10, marginBottom:10 }}>
-                {
-                  (m.type === 'fragment' || m.type === 'artifact') ? 
-                    <>
-                     {'An artifact from this activity is threaded in'} {selectedThread.title}
-                    </>
-                    : 
-                    <>
-                      {'This activity is threaded in'} {selectedThread.title}
-                    </>
-                }
-              </div> 
-            ))
-          }
       </div>
     )
-
-  }
 }
 
 const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
@@ -266,6 +237,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
+      <div style={{padding:10}}>
       <span style={{ fontSize: 22, fontWeight: 'bold' }}>
         {entryData.isPrivate && (
           <FaLock
@@ -278,24 +250,28 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
          
           <div>
             <ActivityTitleLogic isEntryInThread={isEntryInThread} selectedThread={selectedThread} entryData={entryData} /> 
+            <div style={{display:"inline", float:'right'}}>
+            {makeEditable && (
+                    <Button 
+                      size={'sm'}
+                      leftIcon={<EditIcon />} 
+                      onClick={makeEditable}>
+                      Edit
+                    </Button>
+                  )}
+
+                  <Button
+                    size={'sm'}
+                    style={{
+                      marginLeft:'5px',
+                      backgroundColor: '#ff726f'}}
+                  ><FaTrash />
+                  </Button> 
+            </div>
           </div>
         )}
-
-        {makeEditable && (
-          <Button 
-            size={'sm'}
-            leftIcon={<EditIcon />} 
-            onClick={makeEditable}>
-            Edit
-          </Button>
-        )}
-
-        <Button
-          size={'sm'}
-          style={{
-            marginLeft:'5px',
-            backgroundColor: '#ff726f'}}
-        >Remove from thread</Button>
+  
+        
       </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
@@ -340,14 +316,14 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
               <PopoverBody>
                 <>
                 {
-                    nonThreadedTags.map(nt => (
-                      <Tag
-                        key={nt}
-                        backgroundColor={checkTagColor(nt)}
-                        marginRight="0.25em"
-                        marginBottom="0.25em"
-                        style={{padding:'5px', cursor:'pointer'
-                      }}
+                  nonThreadedTags.map(nt => (
+                    <Tag
+                      key={nt}
+                      backgroundColor={checkTagColor(nt)}
+                      marginRight="0.25em"
+                      marginBottom="0.25em"
+                      style={{padding:'5px', cursor:'pointer'
+                    }}
                       >
                         {nt}
                       </Tag>
@@ -363,6 +339,9 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         )}
       </p>
       <br />
+      </div>
+
+
       {
         threadedActivity.length > 0 && (
           <div>{threadedActivity[0].rationale}</div>
@@ -383,7 +362,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         </div>
       )}
   
-      <SimpleGrid columns={1} spacing={3}>
+      <SimpleGrid columns={1} spacing={1}>
         {threadedFiles.map((f, i) => (
           <ThreadedArtifact 
             key={`threaded-${i}`}
@@ -399,7 +378,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         ))
         }
         </SimpleGrid>
-        <SimpleGrid columns={1} spacing={3}>
+        <SimpleGrid columns={1} spacing={1}>
         {
           otherFiles.map((f, i)=> (
             <ReadonlyArtifact
@@ -414,10 +393,12 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         }
       </SimpleGrid>
       {urls.length > 0 && (
-        <>
-          <Heading as="h3" size="lg">
+        <div
+          style={{padding:10}}
+        >
+          <span style={{fontSize: 16, fontWeight:800}}>
             URLs
-          </Heading>
+          </span>
           <UnorderedList>
             {urls.map((url, i) => (
               <ListItem key={`${url.url}-${i}`}>
@@ -430,7 +411,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
               </ListItem>
             ))}
           </UnorderedList>
-        </>
+        </div>
       )}
     </Box>
   );

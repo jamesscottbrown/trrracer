@@ -48,7 +48,7 @@ class ForceMagic {
 
     this.simulation = d3
       .forceSimulation(this.nodes)
-      .force('x', d3.forceX().x(width / 2))
+      .force('x', d3.forceX().x(width))
       .force(
         'y',
         d3.forceY().y((d) => this.yScale(new Date(d.date)))
