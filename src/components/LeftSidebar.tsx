@@ -133,11 +133,8 @@ const LeftSidebar = (props: any) => {
       />
       <br />
       <Box
-        marginLeft="3px"
         marginTop="10px"
         marginBottom="10px"
-        borderLeftColor="black"
-        borderLeftWidth="1px"
         padding="3px"
       >
         <Menu>

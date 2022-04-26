@@ -97,7 +97,13 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
   }else{
 
     return (
-      <div ref={myRef}>
+      <div ref={myRef}
+        style={{
+          border:".5px solid gray", 
+          borderRadius:6,
+          margin:5,
+          boxShadow: "3px 3px 8px #A3AAAF"
+          }}>
          <ReadonlyEntry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`ro-${activityData.title}-${activityData.index}-${index}`}
@@ -109,7 +115,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
         />
-        <Divider marginTop="1em" marginBottom="1em" />
+        
       </div>
     );
 

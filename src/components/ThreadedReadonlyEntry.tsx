@@ -14,11 +14,12 @@ import {
   PopoverArrow,
   Box,
   SimpleGrid,
-  Badge
+  Badge,
+  Tooltip
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
-import { GiSewingString } from 'react-icons/gi';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
@@ -187,7 +188,7 @@ const ThreadedArtifact = (props:any) => {
 
 const ActivityTitleLogic = (props:any) => {
 
-  const { isEntryInThread, selectedThread, entryData } = props;
+  const { entryData } = props;
     return (
       <div style={{display:'inline'}}>
         <span>{entryData.title}</span>
@@ -259,14 +260,18 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
                       Edit
                     </Button>
                   )}
-
-                  <Button
-                    size={'sm'}
-                    style={{
-                      marginLeft:'5px',
-                      backgroundColor: '#ff726f'}}
-                  ><FaTrash />
-                  </Button> 
+                  <Tooltip label="Remove from thread">
+                    <Button
+                      size={'sm'}
+                      style={{
+                        marginLeft:'5px'
+                        // backgroundColor: '#ff726f',
+                        // borderRadius: 30
+                      }}
+                    ><GiCancel size={18}/>
+                    </Button> 
+                  </Tooltip>
+                 
             </div>
           </div>
         )}
