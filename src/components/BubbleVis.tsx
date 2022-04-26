@@ -108,15 +108,18 @@ const BubbleVis = (props: BubbleProps) => {
         eventRects.attr('width', 600);
         eventRects.style('fill-opacity', 0.05);
 
-        let eventText = eventRectGroups
-        .selectAll('text')
-        .data((d) => [d])
-        .join('text')
-        .text((d) => d.event);
-
-        eventText.attr('x', 200);
-        eventText.style('font-size', 10);
-        eventText.style('fill', 'gray');
+        if(!groupBy){
+          let eventText = eventRectGroups
+          .selectAll('text')
+          .data((d) => [d])
+          .join('text')
+          .text((d) => d.event);
+  
+          eventText.attr('x', 200);
+          eventText.style('font-size', 10);
+          eventText.style('fill', 'gray');
+        }
+     
     }
 
     const nodes = forced.nodes.filter((f: any) => {
@@ -143,9 +146,10 @@ const BubbleVis = (props: BubbleProps) => {
         },
       ];
       if (groupBy.type === 'research_threads') {
+
         const tempgroups = groupBy.data.map((m: any) => {
           const group = { label: m.title, color: m.color };
-          group.highlighted = nodes.filter(
+          group.highlighted = [...nodes].filter(
             (n: any) =>
               m.evidence.map((e: any) => e.activityTitle).includes(n.title) ||
               m.tagged_activities
@@ -177,7 +181,9 @@ const BubbleVis = (props: BubbleProps) => {
           .join('g')
           .attr('class', 'group');
 
-        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 200}, 0)`);
+        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 170}, 0)`);
+
+        let underGroup = groupGroups.append('g');
 
         const activityNotGroups = groupGroups
           .selectAll('g.activity_not')
@@ -207,8 +213,6 @@ const BubbleVis = (props: BubbleProps) => {
         bubbleNotHighlighted.bubbles
           .attr('fill', 'gray')
           .attr('fill-opacity', .2)
-          // .attr('stroke', 'gray')
-          // .attr('stroke-width', 1);
 
         const bubbleHighlighted = new Bubbles(
           activityHighlightGroups,
@@ -217,12 +221,103 @@ const BubbleVis = (props: BubbleProps) => {
           artifactTypes
         );
 
-        bubbleHighlighted.bubbles.attr('fill', () => {
-          let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
-          return color;
+        bubbleHighlighted.bubbles.attr('fill', (d) => d.color);
+
+        let rt = researchThreads?.research_threads.map(m => {
+          let evid = m.evidence.map(e => e.activityTitle)
+          return {rtTitle: m.title, dataTitle: evid};
+        })
+
+        bubbleHighlighted.bubbles.filter(f => {
+          let tempCheck = rt?.filter(r => r.rtTitle === f.rtTitle)[0];
+          return tempCheck?.dataTitle.indexOf(f.title) === -1;
+        }).attr('fill-opacity', .6).attr('stroke', 'gray').attr('stroke-width', 1)
+
+        bubbleHighlighted.bubbles.filter(f => {
+          let tempCheck = rt?.filter(r => r.rtTitle === f.rtTitle)[0];
+          return tempCheck?.dataTitle.indexOf(f.title) > -1;
+        }).attr('stroke', 'black').attr('stroke-width', 2);
+
+        let rtConnect = []
+
+        rt?.forEach((r, i)=> {
+
+          let linkData = [];
+
+          let filterRTNodes = bubbleHighlighted.bubbles.filter(f=> f.rtTitle === r.rtTitle);
+
+          rtConnect.push({title:r.rtTitle, names: filterRTNodes.data().map(m => m.title)})
+      
+          for(let j = 0; j < filterRTNodes.nodes().length; j = j+1){
+            let bubbSel = d3.select(filterRTNodes.nodes()[j]);
+            linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
+          }
+          
+         var lineGeneratorToo = d3.line();
+          linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
+          var pathString = lineGeneratorToo(linkData.map(m=> m.coord));
+
+          underGroup.filter(ug => ug.label === r.rtTitle).append('path')
+            .attr('d', pathString)
+            .attr('fill', 'none')
+            .attr('stroke', 'gray')
+            .attr('stroke-width', 1)//.attr('transform', `translate(${i * 170}, 0)`);
         });
 
+
+        
+        let nameSet = new Set(rtConnect.flatMap(fm => fm.names))
+
+        let test = Array.from(nameSet).filter(ns => {
+          let temp = rtConnect.flatMap(fm => fm.names).filter(fl => fl === ns);
+          return temp.length > 2;
+        })
+
+        
+        console.log('TEST', test);
+
+        test.forEach((t, tIndex) => {
+          let tPath = []
+          let multiBubbles = bubbleHighlighted.bubbles.filter(f=> t === f.title);
+          console.log('SVG', svg.node().getBoundingClientRect())
+          let sub = svg.node().getBoundingClientRect();
+
+          for(let mi = 0; mi < multiBubbles.nodes().length; mi = mi + 1){
+            let tmp = multiBubbles.nodes()[mi].getBoundingClientRect();
+            let trp = d3.select(multiBubbles.nodes()[mi])
+          
+            // tPath.push([tmp.x, tmp.y])
+            tPath.push([tmp.x - sub.x, trp.attr('cy')])
+          }
+
+          var lineGeneratorDoo = d3.line();
+          var pathString = lineGeneratorDoo(tPath);
+
+         
+
+          let moveX = (sub.x - 170)
+
+          let conWrap = underWrap
+          .append('g').classed('con', true)//.attr('transform', `translate(170, 0)`);;
+
+          conWrap
+          .append('path')
+            .attr('d', pathString)
+            .attr('fill', 'none')
+            .attr('stroke', 'gray')
+            .style("stroke-dasharray", ("3, 3"))
+            .attr('stroke-width', 1)
+
+
+        
+        })
+
+        let multiBubbles = bubbleHighlighted.bubbles.filter(f=> test.includes(f.title));
+
+        console.log(multiBubbles.nodes())
+
         if(filterRT){
+
           let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
           bubbleHighlighted.bubbles.filter(b => {
@@ -383,6 +478,23 @@ const BubbleVis = (props: BubbleProps) => {
           return tagChecker.indexOf(b.title) === -1;
         }).attr('stroke', 'black')
         .attr('stroke-width', 2);
+
+      let linkData = [];
+      
+      for(let i = 0; i < bubbleHighlighted.bubbles.nodes().length; i = i+1){
+        let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i]);
+        linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
+      }
+
+      var lineGenerator = d3.line();
+      linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
+      var pathString = lineGenerator(linkData.map(m=> m.coord));
+
+      underWrap.append('path')
+        .attr('d', pathString)
+        .attr('fill', 'none')
+        .attr('stroke', 'gray')
+        .attr('stroke-width', 1);
       }
 
       bubbleHighlighted.bubbles
@@ -458,24 +570,6 @@ const BubbleVis = (props: BubbleProps) => {
           div.transition().duration(500).style('opacity', 0);
         });
 
-      let linkData = [];
-      
-      let sort = bubbleHighlighted.bubbles.sort((a, b)=> a.data().date - b.data().date);
-      console.log('sort',sort);
-
-      for(let i = 0; i < sort.nodes().length; i = i+1){
-        let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i])
-        linkData.push([bubbSel.attr('cx'), bubbSel.attr('cy')])
-      }
-
-      var lineGenerator = d3.line();
-      var pathString = lineGenerator(linkData);
-
-      underWrap.append('path')
-        .attr('d', pathString)
-        .attr('fill', 'none')
-        .attr('stroke', 'gray')
-        .attr('stroke-width', 1);
     }
 
 
