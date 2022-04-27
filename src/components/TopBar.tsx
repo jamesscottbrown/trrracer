@@ -63,7 +63,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       right={0}
       flexFlow="row wrap"
       zIndex={1000}
-      height="100px"
+      height="80px"
     >
       <Flex
         bg={useColorModeValue('white', 'gray.800')}
@@ -121,10 +121,10 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             </Button>
           </div>
           )}
-
-       
       </Flex>
-      <Flex style={{ height: 70 }}>
+      <Flex style={{ 
+        backgroundColor:'red',
+        height: filterTags.length > 0 ? 70 : 0 }}>
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
             {filterTags.length > 0 &&

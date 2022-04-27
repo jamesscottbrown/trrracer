@@ -278,8 +278,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setDefineEvent={setDefineEvent}
         />
         <Flex position="relative" top={`${fromTop}px`}>
-          <LeftSidebar />
+          <LeftSidebar fromTop={fromTop} />
           <BubbleVis
+            fromTop={fromTop}
             filteredActivities={filteredActivities}
             groupBy={groupBy}
             setGroupBy={setGroupBy}

@@ -19,9 +19,11 @@ import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
-import { MdBorderLeft } from 'react-icons/md';
 
 const LeftSidebar = (props: any) => {
+  
+  const {fromTop} = props;
+
   const [{ projectData, researchThreads, artifactTypes }, dispatch] =
     useProjectState();
  
@@ -77,53 +79,13 @@ const LeftSidebar = (props: any) => {
       style={{ paddingLeft: 5, paddingRight: 5 }}
       flex={1}
       flexDirection="column"
-      h="calc(100vh - 130px)"
+      h={`calc(100vh - ${(fromTop + 5)}px)`}
       overflow="auto"
       borderRight={'1px solid #A3AAAF'}
       boxShadow={"0 3px 8px #A3AAAF"}
       p={3}
     >
-      {/* <Box marginLeft="3px" padding="3px" height="30px">
-        <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Split bubbles to artifacts
-          </FormLabel>
-          <Switch
-            id="split-by"
-            onChange={(event) => {
-              event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
-            }}
-          />
-        </FormControl>
-      </Box>
-      <Box marginLeft="3px" padding="3px" height="40px">
-        <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Group by research threads
-          </FormLabel>
-          <Switch
-            id="split-by"
-            onChange={(event) => {
-              event.target.checked
-                ? setGroupBy({
-                    type: 'research_threads',
-                    data: researchThreads.research_threads,
-                  })
-                : setGroupBy(null);
-            }}
-          />
-        </FormControl>
-      </Box> */}
+    
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType="overview"

@@ -307,9 +307,6 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke', 'gray')
             .style("stroke-dasharray", ("3, 3"))
             .attr('stroke-width', 1)
-
-
-        
         })
 
         let multiBubbles = bubbleHighlighted.bubbles.filter(f=> test.includes(f.title));
