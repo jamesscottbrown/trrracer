@@ -92,7 +92,15 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
       return (
-        <Box style={{ overflowY: 'scroll', height: '100%', display: 'inline' }}>
+        <Box style={{ 
+          overflowY: 'scroll', 
+          height: '100%', 
+          display: 'inline', 
+          boxShadow:"3px 3px 8px #A3AAAF",
+          border:"1px solid #A3AAAF",
+          borderRadius:6,
+          padding:10,
+          }}>
           <div
             onMouseUp={() => {
               if (setFragSelected) {
@@ -102,7 +110,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 console.log('mouseup');
               }
             }}
-            style={{ height: '90%', overflow: 'auto' }}
+            style={{ height: '100%', overflow: 'auto' }}
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph

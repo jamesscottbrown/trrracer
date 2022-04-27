@@ -54,8 +54,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch({ type: 'ADD_ENTRY' });
   };
 
-
-
   return (
     <Box
       position="fixed"
