@@ -54,12 +54,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch({ type: 'ADD_ENTRY' });
   };
 
-  let chosenThread = filterRT ? researchThreads.research_threads.filter(f => f.title === filterRT.title)[0] : null;
- 
-  let threadTypeGroups = threadTypeFilterArray.map((ty)=> {
-    ty.matches = ty.type === 'tags' ?  (filterRT? filterRT.associatedKey : null) : chosenThread?.evidence.filter(f => f.type === ty.type);
-    return ty;
-  })
+
 
   return (
     <Box
@@ -107,7 +102,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   viewType === 'overview') && (
           <div
             style={{
-              right: '10px',
+              float:'right',
               fontSize: 24,
               fontWeight: 700,
               textAlign: 'end',
@@ -130,7 +125,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
        
       </Flex>
       <Flex style={{ height: 70 }}>
- 
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
             {filterTags.length > 0 &&
@@ -188,57 +182,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             )}
           </Box>
         </Flex>
-        {(viewType === 'activity view' ||
-          viewType === 'timeline' ||
-          viewType === 'overview') && (
-          <div
-            style={{
-              position: 'fixed',
-              top: '70px',
-              right: '10px',
-              fontSize: 24,
-              fontWeight: 700,
-              textAlign: 'end',
-            }}
-          >
-            {filterRT && (
-              <div style={{
-                backgroundColor:'#fff',
-                paddingTop:'20px',
-                paddingLeft:'20px',
-                paddingRight:'20px',
-                }}>
-              {threadTypeGroups.map((tg, i)=> (
-                <Tag
-                style={{
-                  marginRight:'5px',
-                  cursor:'pointer',
-                  backgroundColor: chosenThread.color,
-                  color: chosenThread.color === '#3932a3' ? '#fff' : 'black',
-                  opacity: (tg.show && tg.matches.length > 0) ? 1 : 0.4,
-                }}
-                onClick={()=>{
-                  let temp = threadTypeFilterArray.map(m => {
-                    if(m.type === tg.type){
-                      m.show ? m.show = false : m.show = true;
-                    }
-                    return m;
-                  })
-                  dispatch({ type: 'UPDATE_RT_TYPE_SHOWN', threadTypeFilterArray: temp })
-                }}
-                >
-                  <TagLabel>
-                    {`${tg.type} : ${tg.matches.length}`}
-                  </TagLabel>
-                  </Tag>
-              ))
-              }
-              </div> 
-            )}
-          </div>
-          
-
-        )}
       </Flex>
     </Box>
   );

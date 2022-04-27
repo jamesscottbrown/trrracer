@@ -53,21 +53,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-      <ButtonGroup style={{ display: 'inline' }}>
-        {!editable.every((t) => t) && (
-          <Button onClick={makeAllEditable} type="button">
-            <FaEye />
-            Show edit controls for all activities
-          </Button>
-        )}
-        {!editable.every((t) => !t) && (
-          <Button onClick={makeAllNonEditable} type="button">
-            <FaEyeSlash /> Hide edit controls for all activities
-          </Button>
-        )}
-      </ButtonGroup>
-
-      <br />
 
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap

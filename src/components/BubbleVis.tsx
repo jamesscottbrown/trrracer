@@ -576,7 +576,7 @@ const BubbleVis = (props: BubbleProps) => {
   }, [filteredActivities, groupBy, splitBubbs, eventArray]);
 
   return (
-    <div style={{ flex: flexAmount }}>
+    <div style={{ flex: flexAmount, paddingTop:'10px' }}>
       <div
         style={{width:'100%'}}
       >
