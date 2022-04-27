@@ -214,12 +214,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
           defineEvent={defineEvent}
           setDefineEvent={setDefineEvent}
         />
-        <Flex position="relative" top={130}>
-          <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
+        <Flex position="relative" top={'100px'}>
+          <LeftSidebar />
           <BubbleVis
             filteredActivities={filteredActivities}
             groupBy={groupBy}
+            setGroupBy={setGroupBy}
             splitBubbs={splitBubbs}
+            setSplitBubbs={setSplitBubbs}
             setHoverActivity={setHoverActivity}
             flexAmount={2}
             defineEvent={defineEvent}

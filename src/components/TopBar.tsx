@@ -92,38 +92,45 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             <EditableInput />
           </Editable>
         </Heading>
-        <Spacer />
+        <div style={{ marginLeft: '20px', marginRight:'20px' }}>
+          <ViewTypeControl viewType={viewType} setViewType={setViewType} />
+        </div>
+        
         <QueryBar
           artifactData={null}
           setViewType={setViewType}
           filteredActivities={filteredActivities}
         />
 
-        <div style={{ float: 'right' }}>
-          <ViewTypeControl viewType={viewType} setViewType={setViewType} />
-        </div>
+        {(viewType === 'activity view' ||
+                  viewType === 'timeline' ||
+                  viewType === 'overview') && (
+          <div
+            style={{
+              right: '10px',
+              fontSize: 24,
+              fontWeight: 700,
+              textAlign: 'end',
+            }}
+          >
+           <div
+           style={{display:'inline-block', fontSize:"14px"}}
+           >{`${filteredActivities.length} Activities Shown  `}</div> 
+            <Button
+              marginLeft="3px"
+              alignSelf="end"
+              onClick={addEntry}
+              type="button"
+            >
+              <FaPlus /> Add activity
+            </Button>
+          </div>
+          )}
+
+       
       </Flex>
       <Flex style={{ height: 70 }}>
-        <Box
-          style={{ height: 60, padding: '3px' }}
-          flex={1.1}
-          bg={useColorModeValue('white', 'gray.800')}
-          color={useColorModeValue('gray.600', 'white')}
-        >
-          {(viewType === 'activity view' ||
-            viewType === 'timeline' ||
-            viewType === 'overview') && (
-            <>
-              <Button
-                onClick={() =>
-                  defineEvent ? setDefineEvent(false) : setDefineEvent(true)
-                }
-              >
-                Add events to timeline
-              </Button>
-            </>
-          )}
-        </Box>
+ 
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
             {filterTags.length > 0 &&
@@ -194,15 +201,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               textAlign: 'end',
             }}
           >
-            {`${filteredActivities.length} Activities Shown  `}
-            <Button
-              marginLeft="3px"
-              alignSelf="end"
-              onClick={addEntry}
-              type="button"
-            >
-              <FaPlus /> Add activity
-            </Button>
             {filterRT && (
               <div style={{
                 backgroundColor:'#fff',

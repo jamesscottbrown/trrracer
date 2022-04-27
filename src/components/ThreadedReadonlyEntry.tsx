@@ -205,6 +205,10 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
   let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
 
+  let isEntryInAnyThreads = researchThreads.research_threads.filter(f=> {
+    let temp = f.evidence.map(m=> m.activityTitle).filter(ev => entryData.title === ev)
+    return temp.length > 0});
+
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');
 
@@ -343,7 +347,26 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
           </>
         )}
       </p>
-      <br />
+      {
+        isEntryInAnyThreads.map(m => (
+          <Tooltip label={`Threaded in ${m.title}`}>
+          <div
+          style={{
+            fontSize:20, 
+            backgroundColor: m.color, 
+            borderRadius:50, 
+            width:26, 
+            display:'inline-block', 
+            padding:3,
+            margin:3,
+            opacity: m.title === selectedThread.title ? 1 : .4
+          }}
+          ><GiSewingString size={'20px'}/>
+          </div>
+          </Tooltip>
+         
+        ))
+      }
       </div>
 
 

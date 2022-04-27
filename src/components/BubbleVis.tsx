@@ -6,10 +6,15 @@ import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
 import type { EntryType } from './types';
+import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
+
+
 
 interface BubbleProps {
   filteredActivities: EntryType[];
+  setGroupBy:(gb:any)=> void;
   groupBy: any;
+  setSplitBubbs: (b:boolean)=> void;
   splitBubbs: boolean;
   setHoverActivity: (ent: any) => void;
   flexAmount: number;
@@ -21,7 +26,9 @@ const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
     groupBy,
+    setGroupBy,
     splitBubbs,
+    setSplitBubbs,
     setHoverActivity,
     flexAmount,
     setDefineEvent,
@@ -264,17 +271,12 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke-width', 1)//.attr('transform', `translate(${i * 170}, 0)`);
         });
 
-
-        
         let nameSet = new Set(rtConnect.flatMap(fm => fm.names))
 
         let test = Array.from(nameSet).filter(ns => {
           let temp = rtConnect.flatMap(fm => fm.names).filter(fl => fl === ns);
           return temp.length > 2;
         })
-
-        
-        console.log('TEST', test);
 
         test.forEach((t, tIndex) => {
           let tPath = []
@@ -292,8 +294,6 @@ const BubbleVis = (props: BubbleProps) => {
 
           var lineGeneratorDoo = d3.line();
           var pathString = lineGeneratorDoo(tPath);
-
-         
 
           let moveX = (sub.x - 170)
 
@@ -577,6 +577,62 @@ const BubbleVis = (props: BubbleProps) => {
 
   return (
     <div style={{ flex: flexAmount }}>
+      <div
+        style={{width:'100%'}}
+      >
+        <Button
+          size={'sm'}
+          style={{fontSize:"12px"}}
+          onClick={() =>
+            defineEvent ? setDefineEvent(false) : setDefineEvent(true)
+          }
+        >
+          Add events to timeline
+        </Button>
+       
+        <Box marginLeft="50px" padding="3px" height="30px" display={'inline-block'}>
+        <FormControl display="flex" alignItems="center" marginBottom={10}>
+          <FormLabel
+            htmlFor="split-by"
+            mb="0"
+            textAlign="right"
+            fontSize="12px"
+          >
+            Split bubbles to artifacts
+          </FormLabel>
+          <Switch
+            id="split-by"
+            onChange={(event) => {
+              event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
+            }}
+          />
+        </FormControl>
+      </Box>
+      <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
+        <FormControl display="flex" alignItems="center" marginBottom={10}>
+          <FormLabel
+            htmlFor="split-by"
+            mb="0"
+            textAlign="right"
+            fontSize="12px"
+          >
+            Group by research threads
+          </FormLabel>
+          <Switch
+            id="split-by"
+            onChange={(event) => {
+              event.target.checked
+                ? setGroupBy({
+                    type: 'research_threads',
+                    data: researchThreads.research_threads,
+                  })
+                : setGroupBy(null);
+            }}
+          />
+        </FormControl> 
+      </Box>
+           
+      </div>
       <VerticalAxis
         filteredActivities={filteredActivities}
         height={height}

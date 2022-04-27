@@ -11,18 +11,20 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-import { FaCalculator, FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
+import { MdBorderLeft } from 'react-icons/md';
 
 const LeftSidebar = (props: any) => {
   const [{ projectData, researchThreads, artifactTypes }, dispatch] =
     useProjectState();
-  const { setGroupBy, setSplitBubbs } = props;
+ 
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({
@@ -66,27 +68,22 @@ const LeftSidebar = (props: any) => {
 
   const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
   sortedArtTypes.push({ title: 'all', matches: artifacts.length });
-
-  // const tags = projectData.tags.map((t) => {
-  //   t.matches = projectData.entries.filter((f) => {
-  //     return f.tags.indexOf(t.title) > -1;
-  //   });
-  //   return t;
-  // });
-
-  // const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
 
   return (
     <Box
+      borderRadius={6}
       margin="8px"
       style={{ paddingLeft: 5, paddingRight: 5 }}
       flex={1}
       flexDirection="column"
       h="calc(100vh - 130px)"
       overflow="auto"
+      borderRight={'1px solid #A3AAAF'}
+      boxShadow={"0 3px 8px #A3AAAF"}
+      p={3}
     >
-      <Box marginLeft="3px" padding="3px" height="30px">
+      {/* <Box marginLeft="3px" padding="3px" height="30px">
         <FormControl display="flex" alignItems="center" marginBottom={10}>
           <FormLabel
             htmlFor="split-by"
@@ -126,7 +123,7 @@ const LeftSidebar = (props: any) => {
             }}
           />
         </FormControl>
-      </Box>
+      </Box> */}
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType="overview"

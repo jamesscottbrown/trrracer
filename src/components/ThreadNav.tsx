@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Button, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
+import { Box, Button, Divider, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
 import { FaPlus, FaFillDrip } from 'react-icons/fa';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 
@@ -133,7 +134,14 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
 
       <Box>
         {researchTs ? (
-          <Box style={{ marginTop: 10, marginBottom: 10 }}>
+          <Box style={{ 
+            marginTop: 10, 
+            marginBottom: 10
+            // border:".5px solid gray", 
+            // borderRadius:6,
+            // margin:5,
+            // boxShadow: "3px 3px 8px #A3AAAF"
+            }}>
             {researchTs.map((rt: any, i: number) => (
               <div
                 key={`rt-${i}`}
@@ -141,7 +149,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
                   opacity: checkIfSelectThread(i),
-                }}
+              }}
                 onMouseEnter={() => {
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
                 }}
@@ -162,7 +170,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   }}
                 >
                   {`${rt.title} `}
-                  <FaFillDrip style={{ color: rt.color, display: 'inline' }} />
+                  <GiSewingString size={'16px'} style={{ color: rt.color, display: 'inline' }} />
                 </span>
                 <span>
                 <Popover>
@@ -229,7 +237,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     </Box>
                   </div>
                 )}
+                <Divider />
               </div>
+            
+            
             ))}
           </Box>
         ) : (
