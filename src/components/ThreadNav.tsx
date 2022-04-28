@@ -136,7 +136,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
         {researchTs ? (
           <Box style={{ 
             marginTop: 10, 
-            marginBottom: 10
+            marginBottom: 10,
             // border:".5px solid gray", 
             // borderRadius:6,
             // margin:5,
@@ -149,6 +149,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
                   opacity: checkIfSelectThread(i),
+                  marginTop:10,
+                  marginBottom:10
               }}
                 onMouseEnter={() => {
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
@@ -164,7 +166,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 }}
               >
                 <span
-                  style={{ cursor: 'pointer', display:'inline' }}
+                  style={{ 
+                    
+                    cursor: 'pointer', 
+                    display:'inline' }}
                   onClick={() => {
                     dispatch({ type: 'SELECTED_THREAD', selectedThread: i });
                   }}

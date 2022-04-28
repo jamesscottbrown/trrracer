@@ -75,7 +75,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
       <div 
         ref={myRef} 
         style={{
-          border:".5px solid gray", 
+          border:".5px solid #A3AAAF", 
           borderRadius:6,
           margin:5,
           boxShadow: "3px 3px 8px #A3AAAF"
@@ -99,7 +99,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     return (
       <div ref={myRef}
         style={{
-          border:".5px solid gray", 
+          border:".5px solid #A3AAAF", 
           borderRadius:6,
           margin:5,
           boxShadow: "3px 3px 8px #A3AAAF"
