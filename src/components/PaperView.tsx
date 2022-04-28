@@ -11,16 +11,16 @@ import Bubbles from '../Bubbles';
 // import { readFileSync } from '../fileUtil';
 import {readSync} from 'to-vfile';
 
-const PaperView = async (props: any) => {
+const PaperView = (props: any) => {
   const { folderPath } = props;
-  console.log('folderPath',folderPath)
+
+  console.log('folderpath',folderPath)
+
   const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
-
-  const filePath = path.join(folderPath, 'links.json');
-  const linkData = readSync(`${folderPath}/links.json`);//readFileSync(`${folderPath}links.json`);
-
-  console.log('link', linkData.value)
+  const linkData = readSync(`${folderPath}/links.json`);
   const anno = d3.groups(JSON.parse(linkData.value.toString()), (d) => d.page);
+
+  console.log('ANNOO',anno)
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();
 
@@ -122,7 +122,6 @@ const PaperView = async (props: any) => {
           const test = researchThreads.research_threads[index].evidence.filter(
             (f) => f.activityTitle === d.title
           );
-          // );
 
           let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>`;
           test.forEach((t) => {
@@ -168,6 +167,8 @@ const PaperView = async (props: any) => {
         anno: annoTemp.length > 0 ? annoTemp[0][1] : [],
       });
     }
+
+    console.log('page rect data', pageRectData);
     const smallRectHeight = 70;
     const bigRectHeight = 792;
     const bigRectWidth = 612;
@@ -256,105 +257,105 @@ const PaperView = async (props: any) => {
         .join('rect')
         .classed('annotation_overlay', true);
 
-      if (currentRectData) {
-        overlayRect
-          .attr('width', (d: any) => d.position[2] - d.position[0])
-          .attr('height', 10)
-          .attr('x', (d: any) => xScaleBig(d.position[0]))
-          .attr('y', (d: any) => yScaleBig(d.position[3]))
-          .attr('fill', researchThreads.research_threads[index].color)
-          .style('fill-opacity', 0.5);
+        if (currentRectData) {
+          overlayRect
+            .attr('width', (d: any) => d.position[2] - d.position[0])
+            .attr('height', 10)
+            .attr('x', (d: any) => xScaleBig(d.position[0]))
+            .attr('y', (d: any) => yScaleBig(d.position[3]))
+            .attr('fill', researchThreads.research_threads[index].color)
+            .style('fill-opacity', 0.5);
+        }
       }
-    }
-  }, [numPages, pageNumber, anno]);
-
-  return (
-    <Flex position="relative" top={70}>
-      <Box
-        margin="8px"
-        p={5}
-        flex={1}
-        flexDirection="column"
-        h="calc(100vh - 80px)"
-        overflow="auto"
-      >
-        <ThreadNav
-          researchTs={researchThreads ? researchThreads.research_threads : null}
-          viewType="research threads"
-        />
-      </Box>
-      <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
-        <svg
-          style={{ display: 'inline' }}
-          ref={svgRef}
-          width={360}
-          height="100%"
-        />
-        <div
-          id="pdf-wrap"
-          style={{
-            width: '650px',
-            height: 'auto',
-          }}
+    }, [numPages, pageNumber, anno]);
+  
+    return (
+      <Flex position="relative" top={70}>
+        <Box
+          margin="8px"
+          p={5}
+          flex={1}
+          flexDirection="column"
+          h="calc(100vh - 80px)"
+          overflow="auto"
         >
-          <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
-            <svg
-              style={{
-                position: 'absolute',
-                width: 612,
-                height: 792,
-                zIndex: 1000,
-              }}
-              ref={annoSvgRef}
-            />
-            <Page pageNumber={pageNumber} />
-          </Document>
-
-          <div id="button-wrap" style={{ zIndex: 1050 }}>
-            <p
-              style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}
-            >
-              Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-            </p>
-            <button
-              type="button"
-              disabled={pageNumber <= 1}
-              onClick={previousPage}
-              style={{
-                marginRight: '10px',
-                backgroundColor: '#818589',
-                color: 'white',
-                border: 'none',
-                padding: '5px 10px',
-                width: '100px',
-                cursor: 'pointer',
-                boxShadow: '2px 2px 2px 1px #ccc',
-              }}
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              disabled={pageNumber >= numPages}
-              onClick={nextPage}
-              style={{
-                marginRight: '10px',
-                backgroundColor: '#818589',
-                color: 'white',
-                border: 'none',
-                padding: '5px 10px',
-                width: '100px',
-                cursor: 'pointer',
-                boxShadow: '2px 2px 2px 1px #ccc',
-              }}
-            >
-              Next
-            </button>
+          <ThreadNav
+            researchTs={researchThreads ? researchThreads.research_threads : null}
+            viewType="research threads"
+          />
+        </Box>
+        <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
+          <svg
+            style={{ display: 'inline' }}
+            ref={svgRef}
+            width={360}
+            height="100%"
+          />
+          <div
+            id="pdf-wrap"
+            style={{
+              width: '650px',
+              height: 'auto',
+            }}
+          >
+            <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
+              <svg
+                style={{
+                  position: 'absolute',
+                  width: 612,
+                  height: 792,
+                  zIndex: 1000,
+                }}
+                ref={annoSvgRef}
+              />
+              <Page pageNumber={pageNumber} />
+            </Document>
+  
+            <div id="button-wrap" style={{ zIndex: 1050 }}>
+              <p
+                style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}
+              >
+                Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
+              </p>
+              <button
+                type="button"
+                disabled={pageNumber <= 1}
+                onClick={previousPage}
+                style={{
+                  marginRight: '10px',
+                  backgroundColor: '#818589',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  width: '100px',
+                  cursor: 'pointer',
+                  boxShadow: '2px 2px 2px 1px #ccc',
+                }}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                disabled={pageNumber >= numPages}
+                onClick={nextPage}
+                style={{
+                  marginRight: '10px',
+                  backgroundColor: '#818589',
+                  color: 'white',
+                  border: 'none',
+                  padding: '5px 10px',
+                  width: '100px',
+                  cursor: 'pointer',
+                  boxShadow: '2px 2px 2px 1px #ccc',
+                }}
+              >
+                Next
+              </button>
+            </div>
           </div>
-        </div>
-      </Box>
-    </Flex>
-  );
-};
-
-export default PaperView;
+        </Box>
+      </Flex>
+    );
+  };
+  
+  export default PaperView;
