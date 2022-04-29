@@ -7,6 +7,7 @@ import Bubbles from '../Bubbles';
 import VerticalAxis from './VerticalAxis';
 import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
+import { calcCircles } from '../PackMagic';
 
 
 
@@ -49,6 +50,8 @@ const BubbleVis = (props: BubbleProps) => {
 
   const svgRef = React.useRef(null);
 
+  let packedCircData = calcCircles(projectData.entries);
+
   const checktool = d3.select('#tooltip');
 
   const div = checktool.empty()
@@ -81,7 +84,9 @@ const BubbleVis = (props: BubbleProps) => {
       })
     : projectData.entries;
 
-  const forced = new ForceMagic(bubbleData, width, height, splitBubbs);
+  const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
+
+  console.log('FORCED',forced)
 
   useEffect(() => {
     if (svgRef.current) {
@@ -427,148 +432,173 @@ const BubbleVis = (props: BubbleProps) => {
           return m;
         });
 
-      const activityNot = wrap
-        .selectAll('g.activity_not')
-        .data(notNodes)
-        .join('g')
-        .attr('class', 'activity_not');
-
-      const activityGroups = wrap
+      let allActivityGroups = wrap
         .selectAll('g.activity')
-        .data(selectedNodes)
+        .data(forced.nodes)
         .join('g')
         .attr('class', 'activity');
 
-      const bubbleNotHighlighted = new Bubbles(
-        activityNot,
-        false,
-        splitBubbs,
-        artifactTypes
-      );
+      allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-      bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2)
-      // .attr('stroke', 'gray')
-      // .attr('stroke-width', 1);
-
-      const bubbleHighlighted = new Bubbles(
-        activityGroups,
+      let activityBubbles = new Bubbles(
+        allActivityGroups,
         true,
-        splitBubbs,
-        artifactTypes
+        'all-activities'
       );
 
-      bubbleHighlighted.bubbles.attr('fill', () => {
-        let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
-        return color;
-      });
-
-      if(filterRT){
-        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
-
-        bubbleHighlighted.bubbles.filter(b => {
-          return tagChecker.includes(b.title);
-        }).attr('fill-opacity', .6)
-          .attr('stroke', 'gray')
-          .attr('stroke-width', 1);
-
-        bubbleHighlighted.bubbles.filter(b => {
-          return tagChecker.indexOf(b.title) === -1;
-        }).attr('stroke', 'black')
-        .attr('stroke-width', 2);
-
-      let linkData = [];
       
-      for(let i = 0; i < bubbleHighlighted.bubbles.nodes().length; i = i+1){
-        let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i]);
-        linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
+      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2);
+      activityBubbles.bubbles.on('mouseover', (event, d) => {
+        d3.select(event.target).attr('fill', 'gray');
+      });
+      //.attr("stroke" ,'gray').attr('stroke-width', .5).attr('stroke-dasharray', "2,2");
+      
+      let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
+      artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
+      
+      // const activityNot = wrap
+      //   .selectAll('g.activity_not')
+      //   .data(notNodes)
+      //   .join('g')
+      //   .attr('class', 'activity_not');
+
+      
+
+      // const activityGroups = wrap
+      //   .selectAll('g.activity')
+      //   .data(selectedNodes)
+      //   .join('g')
+      //   .attr('class', 'activity');
+
+      // activityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+      
+      // const bubbleNotHighlighted = new Bubbles(
+      //   activityNot,
+      //   false
+      // );
+
+      // bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2)
+      // // .attr('stroke', 'gray')
+      // // .attr('stroke-width', 1);
+
+      // const bubbleHighlighted = new Bubbles(
+      //   activityGroups,
+      //   true
+      // );
+
+      // bubbleHighlighted.bubbles.attr('fill', () => {
+      //   let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
+      //   return color;
+      // });
+
+    //   if(filterRT){
+    //     let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+
+    //     bubbleHighlighted.bubbles.filter(b => {
+    //       return tagChecker.includes(b.title);
+    //     }).attr('fill-opacity', .6)
+    //       .attr('stroke', 'gray')
+    //       .attr('stroke-width', 1);
+
+    //     bubbleHighlighted.bubbles.filter(b => {
+    //       return tagChecker.indexOf(b.title) === -1;
+    //     }).attr('stroke', 'black')
+    //     .attr('stroke-width', 2);
+
+    //   let linkData = [];
+      
+    //   for(let i = 0; i < bubbleHighlighted.bubbles.nodes().length; i = i+1){
+    //     let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i]);
+    //     linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
+    //   }
+
+    //   var lineGenerator = d3.line();
+    //   linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
+    //   var pathString = lineGenerator(linkData.map(m=> m.coord));
+
+    //   underWrap.append('path')
+    //     .attr('d', pathString)
+    //     .attr('fill', 'none')
+    //     .attr('stroke', 'gray')
+    //     .attr('stroke-width', 1);
+    //   }
+
+    //   bubbleHighlighted.bubbles
+    //     .on('mouseover', (event, d) => {
+    //       d3.select(event.target)
+    //         .attr('r', d.radius * 2)
+    //         // .attr('stroke', '#fff')
+    //         // .attr('stroke-width', 2)
+
+    //       setHoverActivity(d);
+
+    //       const htmlForm = () => {
+    //         let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
+    //                                 ${d.date} <br/></div>`;
+    //         if (!splitBubbs) {
+    //           if (selectedThread != null) {
+    //             const test = researchThreads.research_threads[
+    //               selectedThread
+    //             ].evidence.filter((f) => f.activityTitle === d.title);
+
+    //             if (test.length > 0) {
+    //               test.forEach((t) => {
+    //                 const type =
+    //                   t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
+    //                 const artifactTitle =
+    //                   t.type === 'fragment' || t.type === 'artifact'
+    //                     ? `: ${t.artifactTitle}`
+    //                     : '';
+    //                 start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
+    //                 if (t.type === 'fragment') {
+    //                   t.anchors.map((an:any) => {
+    //                     if (an.anchor_type === 'text') {
+    //                       start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
+    //                     }
+    //                   });
+    //                 }
+    //                 start += `<div>Rationale: ${t.rationale}<div>`;
+
+    //                 if (t.artifactTitle.includes('.png')) {
+    //                   start += `<img src="${path.join(
+    //                     folderPath,
+    //                     t.artifactTitle
+    //                   )}" style="width:500px; height:auto"
+    //                                 />`;
+    //                 }
+    //               });
+    //             } else {
+    //               start += `</br>
+    //                 <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
+    //             }
+
+    //             start += `</div>`;
+    //             return start;
+    //           }
+    //           d.files.forEach((f:any) => {
+    //             start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
+    //           });
+    //         } else {
+    //           console.log('dis a file', d);
+    //         }
+    //         return start;
+    //       };
+
+    //       div.transition().duration(200).style('opacity', 0.9);
+    //       div
+    //         .html(htmlForm)
+    //         .style('left', `${event.pageX}px`)
+    //         .style('top', `${event.pageY - 28}px`);
+    //     })
+    //     .on('mouseout', (event:any, d:any) => {
+    //       d3.select(event.target).attr('r', d.radius)
+    //       //.attr('stroke-width', 0);
+    //       div.transition().duration(500).style('opacity', 0);
+    //     });
+
+    // }
       }
-
-      var lineGenerator = d3.line();
-      linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
-      var pathString = lineGenerator(linkData.map(m=> m.coord));
-
-      underWrap.append('path')
-        .attr('d', pathString)
-        .attr('fill', 'none')
-        .attr('stroke', 'gray')
-        .attr('stroke-width', 1);
-      }
-
-      bubbleHighlighted.bubbles
-        .on('mouseover', (event, d) => {
-          d3.select(event.target)
-            .attr('r', d.radius * 2)
-            // .attr('stroke', '#fff')
-            // .attr('stroke-width', 2)
-
-          setHoverActivity(d);
-
-          const htmlForm = () => {
-            let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
-                                    ${d.date} <br/></div>`;
-            if (!splitBubbs) {
-              if (selectedThread != null) {
-                const test = researchThreads.research_threads[
-                  selectedThread
-                ].evidence.filter((f) => f.activityTitle === d.title);
-
-                if (test.length > 0) {
-                  test.forEach((t) => {
-                    const type =
-                      t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-                    const artifactTitle =
-                      t.type === 'fragment' || t.type === 'artifact'
-                        ? `: ${t.artifactTitle}`
-                        : '';
-                    start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-                    if (t.type === 'fragment') {
-                      t.anchors.map((an:any) => {
-                        if (an.anchor_type === 'text') {
-                          start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-                        }
-                      });
-                    }
-                    start += `<div>Rationale: ${t.rationale}<div>`;
-
-                    if (t.artifactTitle.includes('.png')) {
-                      start += `<img src="${path.join(
-                        folderPath,
-                        t.artifactTitle
-                      )}" style="width:500px; height:auto"
-                                    />`;
-                    }
-                  });
-                } else {
-                  start += `</br>
-                    <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
-                }
-
-                start += `</div>`;
-                return start;
-              }
-              d.files.forEach((f:any) => {
-                start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
-              });
-            } else {
-              console.log('dis a file', d);
-            }
-            return start;
-          };
-
-          div.transition().duration(200).style('opacity', 0.9);
-          div
-            .html(htmlForm)
-            .style('left', `${event.pageX}px`)
-            .style('top', `${event.pageY - 28}px`);
-        })
-        .on('mouseout', (event:any, d:any) => {
-          d3.select(event.target).attr('r', d.radius)
-          //.attr('stroke-width', 0);
-          div.transition().duration(500).style('opacity', 0);
-        });
-
-    }
-
 
   }, [filteredActivities, groupBy, splitBubbs, eventArray]);
 

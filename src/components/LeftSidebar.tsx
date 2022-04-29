@@ -74,7 +74,6 @@ const LeftSidebar = (props: any) => {
 
   return (
     <Box
-      borderRadius={6}
       margin="8px"
       style={{ paddingLeft: 5, paddingRight: 5 }}
       flex={1}
@@ -83,6 +82,7 @@ const LeftSidebar = (props: any) => {
       overflow="auto"
       borderRight={'1px solid #A3AAAF'}
       boxShadow={"0 3px 8px #A3AAAF"}
+      borderRadius={6}
       p={3}
     >
     

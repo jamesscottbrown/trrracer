@@ -5,28 +5,24 @@ class Bubbles {
 
   constructor(
     parentGroup: any,
-    highlighted: boolean,
-    splitBubbs: boolean,
-    artifactTypes: any
+    artifactTypes: any,
+    className: any,
   ) {
     this.parent = parentGroup;
     this.bubbles = parentGroup
-      .selectAll('circle')
+      .selectAll(`circle.${className}`)
       .data((d: any) => [d])
-      .join('circle');
+      .join('circle').classed(`${className}`, true);
 
     this.artifactTypes = artifactTypes;
 
     this.bubbles
-      .attr('r', (d: any) => d.radius)
-      .attr('cy', (d: any) => d.y)
-      .attr('cx', (d: any) => d.x);
+      .attr('r', (d:any) => d.radius)
+      // .attr('cy', (d: any) => d.y)
+      // .attr('cx', (d: any) => d.x);
+      .attr('cy', 0)
+      .attr('cx', 0);
 
-    // if (highlighted) {
-    //   this.bubbles.attr('fill', (d: any) => d.color);
-    // } else {
-    //   this.bubbles.attr('fill', 'gray').attr('fill-opacity', 0.25);
-    // }
   }
 }
 

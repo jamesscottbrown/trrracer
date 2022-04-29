@@ -42,7 +42,7 @@ class ForceMagic {
       node.artifactType = splitBool ? a.artifactType : null;
       node.urls = a.urls;
       node.year = a.year;
-      node.radius = splitBool ? 5 : this.circleScale(a.files.length);
+      node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);
       return node;
     });
 

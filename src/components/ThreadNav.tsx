@@ -137,10 +137,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
           <Box style={{ 
             marginTop: 10, 
             marginBottom: 10,
-            // border:".5px solid gray", 
-            // borderRadius:6,
-            // margin:5,
-            // boxShadow: "3px 3px 8px #A3AAAF"
+          
             }}>
             {researchTs.map((rt: any, i: number) => (
               <div
