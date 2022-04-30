@@ -152,6 +152,14 @@ interface AttachmentPreviewPropsType {
   size: number;
 }
 
+const url = (folderPath: string, title: string) => {
+  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+    return `${joinPath(folderPath, title)}`;
+  } else {
+    return url(folderPath, title);
+  }
+};
+
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const { folderPath, title, openFile, size } = props;
 
@@ -162,13 +170,13 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   ) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={`file://${joinPath(folderPath, title)}`} controls />;
+    return <video src={url(folderPath, title)} controls />;
   }
 
   if (title.endsWith('.mp3') || title.endsWith('.ogg')) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <audio src={`file://${joinPath(folderPath, title)}`} controls />;
+    return <audio src={url(folderPath, title)} controls />;
   }
 
   if (title.endsWith('.csv')) {
@@ -250,7 +258,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
   return (
     <Image
-      src={`file://${joinPath(folderPath, title)}`}
+      src={url(folderPath, title)}
       onClick={() => openFile(title, folderPath)}
     />
   );

@@ -16,6 +16,14 @@ import MarkableImage from './MarkableImage';
 
 import { joinPath } from '../fileUtil';
 
+const url = (folderPath: string, title: string) => {
+  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+    return `${joinPath(folderPath, title)}`;
+  } else {
+    return url(folderPath, title);
+  }
+};
+
 interface DetailPreviewPropsType {
   folderPath: string;
   artifact: any;
@@ -48,13 +56,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   ) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={`file://${joinPath(folderPath, title)}`} controls />;
+    return <video src={url(folderPath, title)} controls />;
   }
 
   if (title.endsWith('.mp3') || title.endsWith('.ogg')) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <audio src={`file://${joinPath(folderPath, title)}`} controls />;
+    return <audio src={url(folderPath, title)} controls />;
   }
 
   const size = '65%';
@@ -74,7 +82,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return (
       <embed
         style={{ height: 'auto', width:'90%' }}
-        src={`file://${joinPath(folderPath, title)}`}
+        src={url(folderPath, title)}
         type="application/pdf"
       />
     );
@@ -169,7 +177,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     return (
       <embed
         style={{ height: '90%' }}
-        src={`file://${joinPath(folderPath, title)}`}
+        src={url(folderPath, title)}
         type="application/pdf"
       />
     );
@@ -188,7 +196,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       <MarkableImage
         activity={activity}
         artifactIndex={artifactIndex}
-        imgPath={`file://${joinPath(folderPath, title)}`}
+        imgPath={url(folderPath, title)}
       />
     );
   }
@@ -198,7 +206,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       htmlWidth="90%"
       htmlHeight="auto"
       fit="contain"
-      src={`file://${joinPath(folderPath, title)}`}
+      src={url(folderPath, title)}
       onClick={ () => {
         !setFragSelected
           ? openFile(title, folderPath)
