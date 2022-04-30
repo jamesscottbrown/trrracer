@@ -39,16 +39,19 @@ export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
 
-  setPath('http:localhost:8080'); // TODO: make not a constant
+  if (!folderPath){
+    setPath('http://localhost:8081'); // TODO: make not a constant
+  }
 
   if (folderPath && !projectData) {
     fetch(`${folderPath}/trrrace.json`)
-      .then((res) => res.json())
+      .then((res) => res.json()) // ?
       .then((data) =>
         dispatch({
           type: 'SET_DATA',
-          folderPath,
-          projectData: migrateTrrraceFormat(JSON.parse(data)),
+          dispatch,
+          folderName: folderPath,
+          projectData: migrateTrrraceFormat(data),
         })
       );
   }

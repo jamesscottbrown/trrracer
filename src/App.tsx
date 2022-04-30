@@ -60,6 +60,7 @@ export default function App() {
         // parse JSON string to JSON object
         dispatch({
           type: 'SET_DATA',
+          dispatch,
           folderName,
           projectData: migrateTrrraceFormat(JSON.parse(data)),
         });
