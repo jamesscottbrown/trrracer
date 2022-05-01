@@ -378,15 +378,6 @@ const BubbleVis = (props: BubbleProps) => {
           });
       }
     } else {
-      // const notNodes = forced.nodes.filter((f: any) => {
-      //   if (splitBubbs) {
-      //     return (
-      //       filteredActivities.map((m:any) => m.title).indexOf(f.activityTitle) ===
-      //       -1
-      //     );
-      //   }
-      //   return filteredActivities.map((m:any) => m.title).indexOf(f.title) === -1;
-      // });
 
       // const selectedNodes = forced.nodes
       //   .filter((f:any) => {
@@ -439,7 +430,7 @@ const BubbleVis = (props: BubbleProps) => {
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-      let highlightedActivities = allActivityGroups.filter(ac => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       highlightedActivities.select('.all-activities')
       .on('mouseover', (event, d) => {
         d3.select(event.target).attr('fill', 'gray');
@@ -450,6 +441,12 @@ const BubbleVis = (props: BubbleProps) => {
       let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
 
       highlightedCircles.attr('fill', 'gray');
+      
+      // () => {
+      //     let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
+      //     return color;
+      // });
+
       highlightedCircles.on('mouseover', (event, d) => {
         console.log('WHAT IS THIS', d);
       });
@@ -465,8 +462,6 @@ const BubbleVis = (props: BubbleProps) => {
       //   .data(notNodes)
       //   .join('g')
       //   .attr('class', 'activity_not');
-
-      
 
       // const activityGroups = wrap
       //   .selectAll('g.activity')
@@ -496,110 +491,110 @@ const BubbleVis = (props: BubbleProps) => {
       //   return color;
       // });
 
-    //   if(filterRT){
-    //     let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+      if(filterRT){
+        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
-    //     bubbleHighlighted.bubbles.filter(b => {
-    //       return tagChecker.includes(b.title);
-    //     }).attr('fill-opacity', .6)
-    //       .attr('stroke', 'gray')
-    //       .attr('stroke-width', 1);
+        highlightedActivities.filter(b => {
+          return tagChecker.includes(b.title);
+        }).attr('fill-opacity', .6)
+          .attr('stroke', 'gray')
+          .attr('stroke-width', 1);
 
-    //     bubbleHighlighted.bubbles.filter(b => {
-    //       return tagChecker.indexOf(b.title) === -1;
-    //     }).attr('stroke', 'black')
-    //     .attr('stroke-width', 2);
+        highlightedActivities.filter(b => {
+          return tagChecker.indexOf(b.title) === -1;
+        }).attr('stroke', 'black')
+        .attr('stroke-width', 2);
 
-    //   let linkData = [];
+      let linkData = [];
       
-    //   for(let i = 0; i < bubbleHighlighted.bubbles.nodes().length; i = i+1){
-    //     let bubbSel = d3.select(bubbleHighlighted.bubbles.nodes()[i]);
-    //     linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
-    //   }
+      for(let i = 0; i < highlightedActivities.select('circle.all-activities').nodes().length; i = i+1){
+        let bubbSel = d3.select(highlightedActivities.select('circle.all-activities').nodes()[i]);
+        linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
+      }
 
-    //   var lineGenerator = d3.line();
-    //   linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
-    //   var pathString = lineGenerator(linkData.map(m=> m.coord));
+      var lineGenerator = d3.line();
+      linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
+      var pathString = lineGenerator(linkData.map(m=> m.coord));
 
-    //   underWrap.append('path')
-    //     .attr('d', pathString)
-    //     .attr('fill', 'none')
-    //     .attr('stroke', 'gray')
-    //     .attr('stroke-width', 1);
-    //   }
+      underWrap.append('path')
+        .attr('d', pathString)
+        .attr('fill', 'none')
+        .attr('stroke', 'gray')
+        .attr('stroke-width', 1);
+    }
 
-    //   bubbleHighlighted.bubbles
-    //     .on('mouseover', (event, d) => {
-    //       d3.select(event.target)
-    //         .attr('r', d.radius * 2)
-    //         // .attr('stroke', '#fff')
-    //         // .attr('stroke-width', 2)
+    highlightedActivities
+        .on('mouseover', (event, d) => {
+          d3.select(event.target).select('.all-activities')
+            .attr('r', d.radius * 1.3)
+            // .attr('stroke', '#fff')
+            // .attr('stroke-width', 2)
 
-    //       setHoverActivity(d);
+          setHoverActivity(d);
 
-    //       const htmlForm = () => {
-    //         let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
-    //                                 ${d.date} <br/></div>`;
-    //         if (!splitBubbs) {
-    //           if (selectedThread != null) {
-    //             const test = researchThreads.research_threads[
-    //               selectedThread
-    //             ].evidence.filter((f) => f.activityTitle === d.title);
+          const htmlForm = () => {
+            let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
+                                    ${d.date} <br/></div>`;
+            if (!splitBubbs) {
+              if (selectedThread != null) {
+                const test = researchThreads.research_threads[
+                  selectedThread
+                ].evidence.filter((f) => f.activityTitle === d.title);
 
-    //             if (test.length > 0) {
-    //               test.forEach((t) => {
-    //                 const type =
-    //                   t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-    //                 const artifactTitle =
-    //                   t.type === 'fragment' || t.type === 'artifact'
-    //                     ? `: ${t.artifactTitle}`
-    //                     : '';
-    //                 start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-    //                 if (t.type === 'fragment') {
-    //                   t.anchors.map((an:any) => {
-    //                     if (an.anchor_type === 'text') {
-    //                       start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-    //                     }
-    //                   });
-    //                 }
-    //                 start += `<div>Rationale: ${t.rationale}<div>`;
+                if (test.length > 0) {
+                  test.forEach((t) => {
+                    const type =
+                      t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
+                    const artifactTitle =
+                      t.type === 'fragment' || t.type === 'artifact'
+                        ? `: ${t.artifactTitle}`
+                        : '';
+                    start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
+                    if (t.type === 'fragment') {
+                      t.anchors.map((an:any) => {
+                        if (an.anchor_type === 'text') {
+                          start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
+                        }
+                      });
+                    }
+                    start += `<div>Rationale: ${t.rationale}<div>`;
 
-    //                 if (t.artifactTitle.includes('.png')) {
-    //                   start += `<img src="${path.join(
-    //                     folderPath,
-    //                     t.artifactTitle
-    //                   )}" style="width:500px; height:auto"
-    //                                 />`;
-    //                 }
-    //               });
-    //             } else {
-    //               start += `</br>
-    //                 <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
-    //             }
+                    if (t.artifactTitle.includes('.png')) {
+                      start += `<img src="${path.join(
+                        folderPath,
+                        t.artifactTitle
+                      )}" style="width:500px; height:auto"
+                                    />`;
+                    }
+                  });
+                } else {
+                  start += `</br>
+                    <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
+                }
 
-    //             start += `</div>`;
-    //             return start;
-    //           }
-    //           d.files.forEach((f:any) => {
-    //             start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
-    //           });
-    //         } else {
-    //           console.log('dis a file', d);
-    //         }
-    //         return start;
-    //       };
+                start += `</div>`;
+                return start;
+              }
+              d.files.forEach((f:any) => {
+                start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
+              });
+            } else {
+              console.log('dis a file', d);
+            }
+            return start;
+          };
 
-    //       div.transition().duration(200).style('opacity', 0.9);
-    //       div
-    //         .html(htmlForm)
-    //         .style('left', `${event.pageX}px`)
-    //         .style('top', `${event.pageY - 28}px`);
-    //     })
-    //     .on('mouseout', (event:any, d:any) => {
-    //       d3.select(event.target).attr('r', d.radius)
-    //       //.attr('stroke-width', 0);
-    //       div.transition().duration(500).style('opacity', 0);
-    //     });
+          div.transition().duration(200).style('opacity', 0.9);
+          div
+            .html(htmlForm)
+            .style('left', `${event.pageX}px`)
+            .style('top', `${event.pageY - 28}px`);
+        })
+        .on('mouseout', (event:any, d:any) => {
+          d3.select(event.target).attr('r', d.radius)
+          //.attr('stroke-width', 0);
+          div.transition().duration(500).style('opacity', 0);
+        });
 
     // }
       }
