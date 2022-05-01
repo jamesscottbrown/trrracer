@@ -72,21 +72,7 @@ const BubbleVis = (props: BubbleProps) => {
         .style('pointer-events', 'none')
     : checktool;
 
-  const bubbleData = splitBubbs
-    ? projectData.entries.flatMap((pd: any) => {
-        const files = [...pd.files];
-        files.map((f) => {
-          f.activityTitle = pd.title;
-          f.date = pd.date;
-          return f;
-        });
-        return files;
-      })
-    : projectData.entries;
-
   const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
-
-  console.log('FORCED',forced)
 
   useEffect(() => {
     if (svgRef.current) {
@@ -134,12 +120,12 @@ const BubbleVis = (props: BubbleProps) => {
      
     }
 
-    const nodes = forced.nodes.filter((f: any) => {
-      if (splitBubbs) {
-        return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
-      }
-      return filteredActivities.map((m: any) => m.title).includes(f.title);
-    });
+    // const nodes = forced.nodes.filter((f: any) => {
+    //   if (splitBubbs) {
+    //     return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
+    //   }
+    //   return filteredActivities.map((m: any) => m.title).includes(f.title);
+    // });
 
     if (groupBy) {
       const highlightedForFirst = forced.nodes.filter((f: any) =>
@@ -392,45 +378,45 @@ const BubbleVis = (props: BubbleProps) => {
           });
       }
     } else {
-      const notNodes = forced.nodes.filter((f: any) => {
-        if (splitBubbs) {
-          return (
-            filteredActivities.map((m:any) => m.title).indexOf(f.activityTitle) ===
-            -1
-          );
-        }
-        return filteredActivities.map((m:any) => m.title).indexOf(f.title) === -1;
-      });
+      // const notNodes = forced.nodes.filter((f: any) => {
+      //   if (splitBubbs) {
+      //     return (
+      //       filteredActivities.map((m:any) => m.title).indexOf(f.activityTitle) ===
+      //       -1
+      //     );
+      //   }
+      //   return filteredActivities.map((m:any) => m.title).indexOf(f.title) === -1;
+      // });
 
-      const selectedNodes = forced.nodes
-        .filter((f:any) => {
-          if (splitBubbs) {
-            return filteredActivities
-              .map((m:any) => m.title)
-              .includes(f.activityTitle);
-          }
-          return filteredActivities.map((m:any) => m.title).includes(f.title);
-        })
-        .map((m) => {
-          if (splitBubbs) {
-            const temp = artifactTypes.artifact_types.filter(
-              (f:any) => f.type === m.artifactType
-            );
-            if (temp.length > 0) {
-              m.color = temp[0].color;
-            } else {
-              m.color = 'black';
-            }
-          } else if(selectedThread){
-            // console.log('selectedThread!!', researchThreads?.research_threads[selectedThread].color)
-            m.color = researchThreads?.research_threads[selectedThread].color;
-          } else {
+      // const selectedNodes = forced.nodes
+      //   .filter((f:any) => {
+      //     if (splitBubbs) {
+      //       return filteredActivities
+      //         .map((m:any) => m.title)
+      //         .includes(f.activityTitle);
+      //     }
+      //     return filteredActivities.map((m:any) => m.title).includes(f.title);
+      //   })
+      //   .map((m) => {
+      //     if (splitBubbs) {
+      //       const temp = artifactTypes.artifact_types.filter(
+      //         (f:any) => f.type === m.artifactType
+      //       );
+      //       if (temp.length > 0) {
+      //         m.color = temp[0].color;
+      //       } else {
+      //         m.color = 'black';
+      //       }
+      //     } else if(selectedThread){
+      //       // console.log('selectedThread!!', researchThreads?.research_threads[selectedThread].color)
+      //       m.color = researchThreads?.research_threads[selectedThread].color;
+      //     } else {
 
-            m.color = 'gray';
-          }
+      //       m.color = 'gray';
+      //     }
 
-          return m;
-        });
+      //     return m;
+      //   });
 
       let allActivityGroups = wrap
         .selectAll('g.activity')
@@ -446,15 +432,33 @@ const BubbleVis = (props: BubbleProps) => {
         'all-activities'
       );
 
+      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', 'gray').attr('stroke-width', .2);
       
-      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2);
-      activityBubbles.bubbles.on('mouseover', (event, d) => {
-        d3.select(event.target).attr('fill', 'gray');
-      });
       //.attr("stroke" ,'gray').attr('stroke-width', .5).attr('stroke-dasharray', "2,2");
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
+
+      let highlightedActivities = allActivityGroups.filter(ac => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      highlightedActivities.select('.all-activities')
+      .on('mouseover', (event, d) => {
+        d3.select(event.target).attr('fill', 'gray');
+      }).on('mouseout', (event, d) => {
+        d3.select(event.target).attr('fill', '#fff');
+      });
+
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+
+      highlightedCircles.attr('fill', 'gray');
+      highlightedCircles.on('mouseover', (event, d) => {
+        console.log('WHAT IS THIS', d);
+      });
+
+      let hiddenCircles = allActivityGroups.filter(ac => {
+        return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
+      .selectAll('circle.artifact');
+
+      hiddenCircles.attr('fill', 'gray').attr('fill-opacity', .3);
       
       // const activityNot = wrap
       //   .selectAll('g.activity_not')
