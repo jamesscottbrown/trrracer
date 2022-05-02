@@ -47,6 +47,7 @@ const ResearchThreadTypeTags = (rttt:any) => {
     }}>
     {threadTypeGroups.map((tg, i)=> (
       <Tag
+      key={`r-t-t-t-i${i}`}
       style={{
         marginRight:'15px',
         cursor:'pointer',

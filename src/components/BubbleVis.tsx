@@ -8,6 +8,7 @@ import VerticalAxis from './VerticalAxis';
 import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
+import { MdSelectAll } from 'react-icons/md';
 
 
 
@@ -423,7 +424,7 @@ const BubbleVis = (props: BubbleProps) => {
         'all-activities'
       );
 
-      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', 'gray').attr('stroke-width', .2);
+      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
       
       //.attr("stroke" ,'gray').attr('stroke-width', .5).attr('stroke-dasharray', "2,2");
       
@@ -441,11 +442,6 @@ const BubbleVis = (props: BubbleProps) => {
       let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
 
       highlightedCircles.attr('fill', 'gray');
-      
-      // () => {
-      //     let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
-      //     return color;
-      // });
 
       highlightedCircles.on('mouseover', (event, d) => {
         console.log('WHAT IS THIS', d);
@@ -456,62 +452,39 @@ const BubbleVis = (props: BubbleProps) => {
       .selectAll('circle.artifact');
 
       hiddenCircles.attr('fill', 'gray').attr('fill-opacity', .3);
-      
-      // const activityNot = wrap
-      //   .selectAll('g.activity_not')
-      //   .data(notNodes)
-      //   .join('g')
-      //   .attr('class', 'activity_not');
-
-      // const activityGroups = wrap
-      //   .selectAll('g.activity')
-      //   .data(selectedNodes)
-      //   .join('g')
-      //   .attr('class', 'activity');
-
-      // activityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-
-      
-      // const bubbleNotHighlighted = new Bubbles(
-      //   activityNot,
-      //   false
-      // );
-
-      // bubbleNotHighlighted.bubbles.attr('fill', 'gray').attr('fill-opacity', .2)
-      // // .attr('stroke', 'gray')
-      // // .attr('stroke-width', 1);
-
-      // const bubbleHighlighted = new Bubbles(
-      //   activityGroups,
-      //   true
-      // );
-
-      // bubbleHighlighted.bubbles.attr('fill', () => {
-      //   let color = researchThreads.research_threads[selectedThread] ? researchThreads.research_threads[selectedThread].color : 'gray';
-      //   return color;
-      // });
 
       if(filterRT){
         let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
-        highlightedActivities.filter(b => {
-          return tagChecker.includes(b.title);
-        }).attr('fill-opacity', .6)
-          .attr('stroke', 'gray')
-          .attr('stroke-width', 1);
-
-        highlightedActivities.filter(b => {
-          return tagChecker.indexOf(b.title) === -1;
-        }).attr('stroke', 'black')
-        .attr('stroke-width', 2);
+        
 
       let linkData = [];
-      
-      for(let i = 0; i < highlightedActivities.select('circle.all-activities').nodes().length; i = i+1){
-        let bubbSel = d3.select(highlightedActivities.select('circle.all-activities').nodes()[i]);
-        linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
-      }
 
+     
+
+      researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
+        let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
+        
+        let chosenActivityData = temp.select('.all-activities').data()[0];
+
+        if(f.type === 'activity'){
+          temp.select('.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color);
+        
+        }else if(f.type === 'artifact' || f.type === 'fragment'){
+      
+          let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
+         
+          temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle).attr('fill', researchThreads?.research_threads[selectedThread].color);
+          
+          let adjustedX = (+artifactCoord.attr('cx') < 0) ? (chosenActivityData.x - artifactCoord.attr('cx')) : (chosenActivityData.x + artifactCoord.attr('cx'));
+          let adjustedY = (+artifactCoord.attr('cy') < 0) ? (chosenActivityData.y - artifactCoord.attr('cy')) : (chosenActivityData.y - (artifactCoord.attr('cy')));
+          console.log('adjusted Y??', adjustedY, 'chosenactivity', chosenActivityData.y, artifactCoord.attr('cy'));
+          linkData.push({coord: [adjustedX, adjustedY], date: chosenActivityData.date})
+        }
+      })
+
+      console.log('highlighted activities', researchThreads?.research_threads[selectedThread], filterRT)
+      
       var lineGenerator = d3.line();
       linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
       var pathString = lineGenerator(linkData.map(m=> m.coord));
