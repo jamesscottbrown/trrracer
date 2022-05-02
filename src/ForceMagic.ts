@@ -56,14 +56,14 @@ class ForceMagic {
 
     this.simulation = d3
       .forceSimulation(this.nodes)
-      .force('x', d3.forceX().x(width))
+      .force('x', d3.forceX().x(width/2))
       .force(
         'y',
         d3.forceY().y((d) => this.yScale(new Date(d.date))).strength(1)
       )
       .force(
         'collision',
-        d3.forceCollide().radius((d: any) => d.radius + 3)
+        d3.forceCollide().radius((d: any) => d.radius + 2)
       ).stop();
 
     for (let i = 0; i < 120; ++i) this.simulation.tick();

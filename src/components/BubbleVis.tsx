@@ -136,45 +136,24 @@ const BubbleVis = (props: BubbleProps) => {
       //   (f: any) => filteredActivities.map((m: any) => m.title).indexOf(f.title) == -1
       // );
 
-      let groups = [];
+      
     
       if (groupBy.type === 'research_threads') {
 
-        const tempgroups = groupBy.data.map((m: any) => {
-          const group = { label: m.title, color: m.color };
-        //   group.highlighted = [...nodes].filter(
-        //     (n: any) =>
-        //       m.evidence.map((e: any) => e.activityTitle).includes(n.title) ||
-        //       m.tagged_activities
-        //         .flatMap((fm: any) => fm.associatedActivities.map((m: any) => m.title))
-        //         .includes(n.title)
-        //   );
-        //   group.highlighted = group.highlighted.map((h: any) => {
-        //     h.rtTitle = m.title;
-        //     h.evidence =
-        //       m.evidence.filter((e: any) => e.activityTitle === h.title)
-        //         .length === 0
-        //         ? null
-        //         : m.evidence.filter((e: any) => e.activityTitle === h.title);
-        //     return h;
-        //   });
-
-        //   group.notHighlighted = nodes.filter(
-        //     (n: any) =>
-        //       m.evidence.map((e: any) => e.activityTitle).indexOf(n.title) === -1
-        //   );
-        //   return group;
+        const groupRTDATA = groupBy.data.map((m: any) => {
+          console.log(m)
+          return { label: m.title, color: m.color };
         });
 
-        groups = [...groups, ...tempgroups];
+       
 
         const groupGroups = wrap
           .selectAll('g.group')
-          .data(groups)
+          .data(groupRTDATA)
           .join('g')
           .attr('class', 'group');
 
-        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 170}, 0)`);
+        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 200}, 0)`);
 
         let allActivityGroups = groupGroups
         .selectAll('g.activity')
@@ -187,38 +166,37 @@ const BubbleVis = (props: BubbleProps) => {
 
       let underGroup = groupGroups.append('g');
 
+      // allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+      let activityBubbles = new Bubbles(
+        allActivityGroups,
+        true,
+        'all-activities'
+      );
+
+      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
+      let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
+      artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
+
+      let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      
+    
+
+      groupGroups.each((d, i, n)=> {
+        console.log('each', d3.select(n[i]));
+        let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
+        let rtActivities = chosenRT.evidence.map(m => m.activityTitle);
+        let colorCirc = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.includes(c.title));
+        colorCirc.attr('fill', d.color);
+
+        let notColA = d3.select(n[i]).selectAll('.activity').filter(c => rtActivities.indexOf(c.title) === -1);
+        notColA.selectAll('.artifact').attr('fill', '#d3d3d3');
+        let notCol = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.indexOf(c.title) === -1);
+        notCol.attr('fill', '#d3d3d3');
+      })
+
       }
     } else {
-
-      // const selectedNodes = forced.nodes
-      //   .filter((f:any) => {
-      //     if (splitBubbs) {
-      //       return filteredActivities
-      //         .map((m:any) => m.title)
-      //         .includes(f.activityTitle);
-      //     }
-      //     return filteredActivities.map((m:any) => m.title).includes(f.title);
-      //   })
-      //   .map((m) => {
-      //     if (splitBubbs) {
-      //       const temp = artifactTypes.artifact_types.filter(
-      //         (f:any) => f.type === m.artifactType
-      //       );
-      //       if (temp.length > 0) {
-      //         m.color = temp[0].color;
-      //       } else {
-      //         m.color = 'black';
-      //       }
-      //     } else if(selectedThread){
-      //       // console.log('selectedThread!!', researchThreads?.research_threads[selectedThread].color)
-      //       m.color = researchThreads?.research_threads[selectedThread].color;
-      //     } else {
-
-      //       m.color = 'gray';
-      //     }
-
-      //     return m;
-      //   });
 
       let allActivityGroups = wrap
         .selectAll('g.activity')
