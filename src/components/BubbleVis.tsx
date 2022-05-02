@@ -121,55 +121,49 @@ const BubbleVis = (props: BubbleProps) => {
      
     }
 
-    // const nodes = forced.nodes.filter((f: any) => {
-    //   if (splitBubbs) {
-    //     return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
-    //   }
-    //   return filteredActivities.map((m: any) => m.title).includes(f.title);
-    // });
+    const nodes = forced.nodes.filter((f: any) => {
+      if (splitBubbs) {
+        return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
+      }
+      return filteredActivities.map((m: any) => m.title).includes(f.title);
+    });
 
     if (groupBy) {
-      const highlightedForFirst = forced.nodes.filter((f: any) =>
-        filteredActivities.map((m: any) => m.title).includes(f.title)
-      );
-      const notHighlightedForFirst = forced.nodes.filter(
-        (f: any) => filteredActivities.map((m: any) => m.title).indexOf(f.title) == -1
-      );
+      // const highlightedForFirst = forced.nodes.filter((f: any) =>
+      //   filteredActivities.map((m: any) => m.title).includes(f.title)
+      // );
+      // const notHighlightedForFirst = forced.nodes.filter(
+      //   (f: any) => filteredActivities.map((m: any) => m.title).indexOf(f.title) == -1
+      // );
 
-      let groups = [
-        {
-          label: 'all',
-          color: 'gray',
-          highlighted: highlightedForFirst,
-          notHighlighted: notHighlightedForFirst,
-        },
-      ];
+      let groups = [];
+    
       if (groupBy.type === 'research_threads') {
 
         const tempgroups = groupBy.data.map((m: any) => {
           const group = { label: m.title, color: m.color };
-          group.highlighted = [...nodes].filter(
-            (n: any) =>
-              m.evidence.map((e: any) => e.activityTitle).includes(n.title) ||
-              m.tagged_activities
-                .flatMap((fm: any) => fm.associatedActivities.map((m: any) => m.title))
-                .includes(n.title)
-          );
-          group.highlighted = group.highlighted.map((h: any) => {
-            h.rtTitle = m.title;
-            h.evidence =
-              m.evidence.filter((e: any) => e.activityTitle === h.title)
-                .length === 0
-                ? null
-                : m.evidence.filter((e: any) => e.activityTitle === h.title);
-            return h;
-          });
+        //   group.highlighted = [...nodes].filter(
+        //     (n: any) =>
+        //       m.evidence.map((e: any) => e.activityTitle).includes(n.title) ||
+        //       m.tagged_activities
+        //         .flatMap((fm: any) => fm.associatedActivities.map((m: any) => m.title))
+        //         .includes(n.title)
+        //   );
+        //   group.highlighted = group.highlighted.map((h: any) => {
+        //     h.rtTitle = m.title;
+        //     h.evidence =
+        //       m.evidence.filter((e: any) => e.activityTitle === h.title)
+        //         .length === 0
+        //         ? null
+        //         : m.evidence.filter((e: any) => e.activityTitle === h.title);
+        //     return h;
+        //   });
 
-          group.notHighlighted = nodes.filter(
-            (n: any) =>
-              m.evidence.map((e: any) => e.activityTitle).indexOf(n.title) === -1
-          );
-          return group;
+        //   group.notHighlighted = nodes.filter(
+        //     (n: any) =>
+        //       m.evidence.map((e: any) => e.activityTitle).indexOf(n.title) === -1
+        //   );
+        //   return group;
         });
 
         groups = [...groups, ...tempgroups];
@@ -182,201 +176,17 @@ const BubbleVis = (props: BubbleProps) => {
 
         groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 170}, 0)`);
 
-        let underGroup = groupGroups.append('g');
+        let allActivityGroups = groupGroups
+        .selectAll('g.activity')
+        .data(forced.nodes)
+        .join('g')
+        .attr('class', 'activity');
 
-        const activityNotGroups = groupGroups
-          .selectAll('g.activity_not')
-          .data((d: any) => d.notHighlighted)
-          .join('g')
-          .attr('class', 'activity_not');
+      allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-        const activityHighlightGroups = groupGroups
-          .selectAll('g.activity')
-          .data((d: any) => {
-            const temp = d.highlighted.map((m: any) => {
-              m.color = d.color;
-              return m;
-            });
-            return temp;
-          })
-          .join('g')
-          .attr('class', 'activity');
 
-        const bubbleNotHighlighted = new Bubbles(
-          activityNotGroups,
-          false,
-          splitBubbs,
-          artifactTypes
-        );
-        
-        bubbleNotHighlighted.bubbles
-          .attr('fill', 'gray')
-          .attr('fill-opacity', .2)
+      let underGroup = groupGroups.append('g');
 
-        const bubbleHighlighted = new Bubbles(
-          activityHighlightGroups,
-          true,
-          splitBubbs,
-          artifactTypes
-        );
-
-        bubbleHighlighted.bubbles.attr('fill', (d) => d.color);
-
-        let rt = researchThreads?.research_threads.map(m => {
-          let evid = m.evidence.map(e => e.activityTitle)
-          return {rtTitle: m.title, dataTitle: evid};
-        })
-
-        bubbleHighlighted.bubbles.filter(f => {
-          let tempCheck = rt?.filter(r => r.rtTitle === f.rtTitle)[0];
-          return tempCheck?.dataTitle.indexOf(f.title) === -1;
-        }).attr('fill-opacity', .6).attr('stroke', 'gray').attr('stroke-width', 1)
-
-        bubbleHighlighted.bubbles.filter(f => {
-          let tempCheck = rt?.filter(r => r.rtTitle === f.rtTitle)[0];
-          return tempCheck?.dataTitle.indexOf(f.title) > -1;
-        }).attr('stroke', 'black').attr('stroke-width', 2);
-
-        let rtConnect = []
-
-        rt?.forEach((r, i)=> {
-
-          let linkData = [];
-
-          let filterRTNodes = bubbleHighlighted.bubbles.filter(f=> f.rtTitle === r.rtTitle);
-
-          rtConnect.push({title:r.rtTitle, names: filterRTNodes.data().map(m => m.title)})
-      
-          for(let j = 0; j < filterRTNodes.nodes().length; j = j+1){
-            let bubbSel = d3.select(filterRTNodes.nodes()[j]);
-            linkData.push({coord: [bubbSel.attr('cx'), bubbSel.attr('cy')], date: bubbSel.data()[0].date})
-          }
-          
-         var lineGeneratorToo = d3.line();
-          linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
-          var pathString = lineGeneratorToo(linkData.map(m=> m.coord));
-
-          underGroup.filter(ug => ug.label === r.rtTitle).append('path')
-            .attr('d', pathString)
-            .attr('fill', 'none')
-            .attr('stroke', 'gray')
-            .attr('stroke-width', 1)//.attr('transform', `translate(${i * 170}, 0)`);
-        });
-
-        let nameSet = new Set(rtConnect.flatMap(fm => fm.names))
-
-        let test = Array.from(nameSet).filter(ns => {
-          let temp = rtConnect.flatMap(fm => fm.names).filter(fl => fl === ns);
-          return temp.length > 2;
-        })
-
-        test.forEach((t, tIndex) => {
-          let tPath = []
-          let multiBubbles = bubbleHighlighted.bubbles.filter(f=> t === f.title);
-          console.log('SVG', svg.node().getBoundingClientRect())
-          let sub = svg.node().getBoundingClientRect();
-
-          for(let mi = 0; mi < multiBubbles.nodes().length; mi = mi + 1){
-            let tmp = multiBubbles.nodes()[mi].getBoundingClientRect();
-            let trp = d3.select(multiBubbles.nodes()[mi])
-          
-            // tPath.push([tmp.x, tmp.y])
-            tPath.push([tmp.x - sub.x, trp.attr('cy')])
-          }
-
-          var lineGeneratorDoo = d3.line();
-          var pathString = lineGeneratorDoo(tPath);
-
-          let moveX = (sub.x - 170)
-
-          let conWrap = underWrap
-          .append('g').classed('con', true)//.attr('transform', `translate(170, 0)`);;
-
-          conWrap
-          .append('path')
-            .attr('d', pathString)
-            .attr('fill', 'none')
-            .attr('stroke', 'gray')
-            .style("stroke-dasharray", ("3, 3"))
-            .attr('stroke-width', 1)
-        })
-
-        let multiBubbles = bubbleHighlighted.bubbles.filter(f=> test.includes(f.title));
-
-        console.log(multiBubbles.nodes())
-
-        if(filterRT){
-
-          let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
-
-          bubbleHighlighted.bubbles.filter(b => {
-            return tagChecker.includes(b.title);
-          }).attr('fill-opacity', .6)
-            .attr('stroke', 'gray')
-            .attr('stroke-width', 1);
-  
-          bubbleHighlighted.bubbles.filter(b => {
-            return tagChecker.indexOf(b.title) === -1;
-          }).attr('stroke', 'black')
-          .attr('stroke-width', 2)
-        }
-
-        bubbleHighlighted.bubbles
-          .on('mouseover', (event: any, d: any) => {
-            d3.select(event.target)
-              .attr('r', d.radius * 2)
-              // .attr('stroke', '#fff')
-              // .attr('stroke-width', 2)
-
-            setHoverActivity(d);
-
-            const htmlForm = () => {
-              let start = `<div style="margin-bottom:10px; font-weight:700">`;
-              if (!d.evidence) {
-                start += `Activity: ${d.title} <br/>`;
-
-                d.files.forEach((f: any) => {
-                  start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
-                });
-
-                if (d.rtTitle) {
-                  start += `</br><div style='font-weight:700'>This activity is tagged with a tag associated with ${d.rtTitle}</div>`;
-                }
-              } else {
-                start += `Research Thread: ${d.rtTitle} - Activity: ${d.title} <br/>`;
-                d.evidence.forEach((t: any) => {
-                  const type =
-                    t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-                  const artifactTitle =
-                    t.type === 'fragment' || t.type === 'artifact'
-                      ? `: ${t.artifactTitle}`
-                      : '';
-                  start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-                  if (t.type === 'fragment') {
-                    t.anchors.map((an: any) => {
-                      if (an.anchor_type === 'text') {
-                        start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-                      }
-                    });
-                  }
-                  start += `<div>Rationale: ${t.rationale}<div>`;
-                });
-              }
-              start += `</div>`;
-              return start;
-            };
-
-            div.transition().duration(200).style('opacity', 0.9);
-            div
-              .html(htmlForm)
-              .style('left', `${event.pageX}px`)
-              .style('top', `${event.pageY - 28}px`);
-          })
-          .on('mouseout', (event: any, d: any) => {
-            d3.select(event.target).attr('r', d.radius)
-            //.attr('stroke-width', 0);
-            div.transition().duration(500).style('opacity', 0);
-          });
       }
     } else {
 
@@ -456,13 +266,9 @@ const BubbleVis = (props: BubbleProps) => {
       if(filterRT){
         let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
-        
-
-      let linkData = [];
-
-  
-      researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
-        let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
+        let linkData = [];
+        researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
+          let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
         
         let chosenActivityData = temp.select('.all-activities').data()[0];
         console.log('temp', temp)
