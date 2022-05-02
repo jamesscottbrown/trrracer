@@ -473,12 +473,13 @@ const BubbleVis = (props: BubbleProps) => {
         }else if(f.type === 'artifact' || f.type === 'fragment'){
       
           let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
-          console.log('tempppp', temp.selectAll('circle.all-activities').nodes())
+          temp.select('circle.background').attr('fill-opacity', 1);
           temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle).attr('fill', researchThreads?.research_threads[selectedThread].color);
-          temp.select('circle').attr('fill', researchThreads?.research_threads[selectedThread].color)
+          temp.select('circle.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color)
+          
           let adjustedX = (+artifactCoord.attr('cx') < 0) ? (chosenActivityData.x - artifactCoord.attr('cx')) : (chosenActivityData.x + artifactCoord.attr('cx'));
           let adjustedY = (+artifactCoord.attr('cy') < 0) ? (chosenActivityData.y - artifactCoord.attr('cy')) : (chosenActivityData.y - (artifactCoord.attr('cy')));
-          console.log('adjusted Y??', adjustedY, 'chosenactivity', chosenActivityData.y, artifactCoord.attr('cy'));
+          // console.log('adjusted Y??', adjustedY, 'chosenactivity', chosenActivityData.y, artifactCoord.attr('cy'));
           linkData.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
         }
       })
