@@ -460,12 +460,12 @@ const BubbleVis = (props: BubbleProps) => {
 
       let linkData = [];
 
-     
-
+  
       researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
         let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
         
         let chosenActivityData = temp.select('.all-activities').data()[0];
+        console.log('temp', temp)
 
         if(f.type === 'activity'){
           temp.select('.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color);
@@ -473,13 +473,13 @@ const BubbleVis = (props: BubbleProps) => {
         }else if(f.type === 'artifact' || f.type === 'fragment'){
       
           let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
-         
+          console.log('tempppp', temp.selectAll('circle.all-activities').nodes())
           temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle).attr('fill', researchThreads?.research_threads[selectedThread].color);
-          
+          temp.select('circle').attr('fill', researchThreads?.research_threads[selectedThread].color)
           let adjustedX = (+artifactCoord.attr('cx') < 0) ? (chosenActivityData.x - artifactCoord.attr('cx')) : (chosenActivityData.x + artifactCoord.attr('cx'));
           let adjustedY = (+artifactCoord.attr('cy') < 0) ? (chosenActivityData.y - artifactCoord.attr('cy')) : (chosenActivityData.y - (artifactCoord.attr('cy')));
           console.log('adjusted Y??', adjustedY, 'chosenactivity', chosenActivityData.y, artifactCoord.attr('cy'));
-          linkData.push({coord: [adjustedX, adjustedY], date: chosenActivityData.date})
+          linkData.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
         }
       })
 
