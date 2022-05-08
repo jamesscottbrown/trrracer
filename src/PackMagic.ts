@@ -24,18 +24,26 @@ export const calcCircles = (activityData:any) => {
 
             let simulation = d3
             .forceSimulation(packedSibs)
-            .force('x', d3.forceX().x(ad.r/2))
-            .force("y", d3.forceY(ad.r/2))
-            .force("collide", d3.forceCollide(3))
-            .stop();
+            // .force('x', d3.forceX().x(ad.r/2))
+            // .force("y", d3.forceY(ad.r/2))
+            // 
+            // .force('charge', d3.forceManyBody().radius(parent.r))
+            // .force("charge", d3.forceManyBody().strength(-5))
+            .force('collide',d3.forceCollide().radius(6))
+            .force('center', d3.forceCenter(parent.r/2, parent.r/2))
+            // .stop();
 
             for (let i = 0; i < packedSibs.length; ++i) {
-                simulation.tick(20);
+                simulation.tick(50);
             }
 
             packedSibs.forEach(p => {
-                p.x = p.x - (ad.r/2);
-                p.y = p.y - (ad.r/2);
+                // p.x = p.x - (ad.r/2);
+                // p.y = p.y - (ad.r/2);
+                p.x = Math.max(p.r, Math.min(parent.r - p.r, p.x)) - (parent.r);
+                p.y = Math.max(p.r, Math.min(parent.r - p.r, p.y)) - (parent.r);
+
+              
             })
         }
         

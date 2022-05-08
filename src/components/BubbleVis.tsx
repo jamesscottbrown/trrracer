@@ -8,9 +8,7 @@ import VerticalAxis from './VerticalAxis';
 import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
-import { MdSelectAll } from 'react-icons/md';
-
-
+import VerticalAxisOverview from './VerticalAxisOverview';
 
 interface BubbleProps {
   filteredActivities: EntryType[];
@@ -170,7 +168,6 @@ const BubbleVis = (props: BubbleProps) => {
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       
-
       groupGroups.each((d, i, n)=> {
         console.log('each', d3.select(n[i]));
         let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
@@ -270,6 +267,7 @@ const BubbleVis = (props: BubbleProps) => {
 
     highlightedActivities
         .on('mouseover', (event, d) => {
+          svg.append('line').attr('y1', d.y).attr('x1', 0).attr('y2', d.y).attr('x2', d.x).attr('stroke', 'black').attr('stroke-width', 1)
           d3.select(event.target).select('.all-activities')
             .attr('r', d.radius * 1.3)
             // .attr('stroke', '#fff')
@@ -404,7 +402,8 @@ const BubbleVis = (props: BubbleProps) => {
       </Box>
            
       </div>
-      <VerticalAxis
+ 
+      <VerticalAxisOverview 
         filteredActivities={filteredActivities}
         height={height}
         setDefineEvent={setDefineEvent}
@@ -415,7 +414,7 @@ const BubbleVis = (props: BubbleProps) => {
       <svg
         ref={svgRef}
         width="calc(100% - 160px)"
-        // width="500px"
+       
         height={height}
         style={{ display: 'inline' }}
       />
