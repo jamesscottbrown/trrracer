@@ -26,7 +26,7 @@ export const calcCircles = (activityData:any) => {
             .forceSimulation(packedSibs)
             .force('x', d3.forceX().x(ad.r/2))
             .force("y", d3.forceY(ad.r/2))
-            .force("collide", d3.forceCollide(7))
+            .force("collide", d3.forceCollide(3))
             .stop();
 
             for (let i = 0; i < packedSibs.length; ++i) {

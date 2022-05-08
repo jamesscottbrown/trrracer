@@ -114,7 +114,8 @@ const BubbleVis = (props: BubbleProps) => {
           .join('text')
           .text((d) => d.event);
   
-          eventText.attr('x', 200);
+          eventText.attr('x', 270);
+          eventText.attr('y', 20);
           eventText.style('font-size', 10);
           eventText.style('fill', 'gray');
         }
@@ -129,23 +130,12 @@ const BubbleVis = (props: BubbleProps) => {
     });
 
     if (groupBy) {
-      // const highlightedForFirst = forced.nodes.filter((f: any) =>
-      //   filteredActivities.map((m: any) => m.title).includes(f.title)
-      // );
-      // const notHighlightedForFirst = forced.nodes.filter(
-      //   (f: any) => filteredActivities.map((m: any) => m.title).indexOf(f.title) == -1
-      // );
-
-      
-    
+ 
       if (groupBy.type === 'research_threads') {
 
         const groupRTDATA = groupBy.data.map((m: any) => {
-          console.log(m)
           return { label: m.title, color: m.color };
         });
-
-       
 
         const groupGroups = wrap
           .selectAll('g.group')
@@ -153,7 +143,7 @@ const BubbleVis = (props: BubbleProps) => {
           .join('g')
           .attr('class', 'group');
 
-        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 200}, 0)`);
+        groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 230}, 0)`);
 
         let allActivityGroups = groupGroups
         .selectAll('g.activity')
@@ -180,7 +170,6 @@ const BubbleVis = (props: BubbleProps) => {
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       
-    
 
       groupGroups.each((d, i, n)=> {
         console.log('each', d3.select(n[i]));
@@ -213,8 +202,6 @@ const BubbleVis = (props: BubbleProps) => {
       );
 
       activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
-      
-      //.attr("stroke" ,'gray').attr('stroke-width', .5).attr('stroke-dasharray', "2,2");
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
