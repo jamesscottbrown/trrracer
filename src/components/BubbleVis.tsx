@@ -233,7 +233,7 @@ const BubbleVis = (props: BubbleProps) => {
           let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
         
         let chosenActivityData = temp.select('.all-activities').data()[0];
-        console.log('temp', temp)
+        
 
         if(f.type === 'activity'){
           temp.select('.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color);
@@ -267,13 +267,21 @@ const BubbleVis = (props: BubbleProps) => {
 
     highlightedActivities
         .on('mouseover', (event, d) => {
-          svg.append('line').attr('y1', d.y).attr('x1', 0).attr('y2', d.y).attr('x2', d.x).attr('stroke', 'black').attr('stroke-width', 1)
-          d3.select(event.target).select('.all-activities')
-            .attr('r', d.radius * 1.3)
+          console.log(d)
+          underWrap.append('line')
+            .attr('id', 'date_line')
+            .attr('y1', d.y)
+            .attr('x1', 0)
+            .attr('y2', d.y)
+            .attr('x2', (+d.x))
+            .attr('stroke', 'gray')
+            .attr('stroke-width', 1)
+          // d3.select(event.target).select('.all-activities')
+          //   .attr('r', d.radius * 1.3)
             // .attr('stroke', '#fff')
             // .attr('stroke-width', 2)
 
-          setHoverActivity(d);
+          // setHoverActivity(d);
 
           const htmlForm = () => {
             let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
@@ -335,6 +343,7 @@ const BubbleVis = (props: BubbleProps) => {
         })
         .on('mouseout', (event:any, d:any) => {
           d3.select(event.target).attr('r', d.radius)
+          d3.select('#date_line').remove();
           //.attr('stroke-width', 0);
           div.transition().duration(500).style('opacity', 0);
         });
