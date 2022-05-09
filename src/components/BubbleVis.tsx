@@ -287,12 +287,12 @@ const BubbleVis = (props: BubbleProps) => {
       const resetTest = svg.select('text.reset');
 
       const reset = resetTest.empty()
-        ? svg.append('text').classed('reset', true)
+        ?wrapAxisGroup.append('text').classed('reset', true)
         : resetTest;
 
       reset
         .text('Reset Time')
-        .attr('transform', 'translate(-10, -30)')
+        .attr('transform', 'translate(-25, -30)')
         .style('font-size', '12px')
         .style('cursor', 'pointer')
         .on('click', () => {
@@ -607,6 +607,16 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke', 'gray')
             .attr('stroke-width', 1)
 
+          // var format = d3.time.format("%Y-%m-%d");
+
+          underWrap.append('text')
+            .attr('id', 'date_label')
+            .text(new Date(d.date))
+            .attr('text-anchor', 'end')
+            .attr('font-size', 9)
+            .attr('x', (0-100))
+            .attr('y', d.y)
+
           // setHoverActivity(d);
 
           const htmlForm = () => {
@@ -670,6 +680,7 @@ const BubbleVis = (props: BubbleProps) => {
         .on('mouseout', (event:any, d:any) => {
           // d3.select(event.target).attr('r', d.radius)
           d3.select('#date_line').remove();
+          d3.select('#date_label').remove();
           //.attr('stroke-width', 0);
           div.transition().duration(500).style('opacity', 0);
         });
