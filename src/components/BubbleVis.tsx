@@ -83,8 +83,8 @@ const BubbleVis = (props: BubbleProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(160, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
-    const wrap = svg.append('g').attr('transform', `translate(160, ${translateY})`);
+    underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
+    const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);
@@ -119,7 +119,7 @@ const BubbleVis = (props: BubbleProps) => {
     let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
     
     wrapAxisGroup.selectAll('*').remove();
-    wrapAxisGroup.attr('transform', `translate(90, ${translateY})`);
+    wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
 
     const yAxis = d3.axisLeft(yScale).ticks(30).tickSize(10);
 
@@ -482,7 +482,6 @@ const BubbleVis = (props: BubbleProps) => {
 
       allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-
       let underGroup = groupGroups.append('g');
 
       // allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
@@ -532,31 +531,38 @@ const BubbleVis = (props: BubbleProps) => {
       activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
+      artifactCircles.attr('r', d => (d.r)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       highlightedActivities.select('.all-activities')
       .on('mouseover', (event, d) => {
-        d3.select(event.target).attr('fill', 'gray');
+        if(filterRT){
+          d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
+        }else{
+          d3.select(event.target).attr('fill', 'gray');
+        }
+       
       }).on('mouseout', (event, d) => {
+        if(filterRT){
+        d3.select(event.target).attr('stroke-width', 0);
+        }else{
         d3.select(event.target).attr('fill', '#fff');
+        }
       });
 
       let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
 
       highlightedCircles.attr('fill', 'gray');
 
-      highlightedCircles.on('mouseover', (event, d) => {
-        console.log('WHAT IS THIS', d);
-      });
-
       let hiddenCircles = allActivityGroups.filter(ac => {
         return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
       .selectAll('circle.artifact');
 
-      hiddenCircles.attr('fill', 'gray').attr('fill-opacity', .3);
+      hiddenCircles.attr('fill', 'gray')
+      .attr('fill-opacity', .3);
 
       if(filterRT){
+        console.log('selecteddddd',selectedThread, filterRT)
         let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
         let linkData = [];
@@ -566,14 +572,20 @@ const BubbleVis = (props: BubbleProps) => {
         let chosenActivityData = temp.select('.all-activities').data()[0];
         
         if(f.type === 'activity'){
-          temp.select('.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color);
+          temp.select('.all-activities')
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
         
         }else if(f.type === 'artifact' || f.type === 'fragment'){
       
           let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
-          temp.select('circle.background').attr('fill-opacity', 1);
-          temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle).attr('fill', researchThreads?.research_threads[selectedThread].color);
-          temp.select('circle.all-activities').attr('fill', researchThreads?.research_threads[selectedThread].color)
+          temp
+            .select('circle.background')
+            .attr('fill-opacity', 1);
+          temp.selectAll('circle.artifact')
+            .filter(art => art.title === f.artifactTitle)
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
+          temp.select('circle.all-activities')
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
           
           let adjustedX = (+artifactCoord.attr('cx') < 0) ? (chosenActivityData.x - artifactCoord.attr('cx')) : (chosenActivityData.x + artifactCoord.attr('cx'));
           let adjustedY = (+artifactCoord.attr('cy') < 0) ? (chosenActivityData.y - artifactCoord.attr('cy')) : (chosenActivityData.y - (artifactCoord.attr('cy')));
@@ -607,11 +619,14 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke', 'gray')
             .attr('stroke-width', 1)
 
-          // var format = d3.time.format("%Y-%m-%d");
-
           underWrap.append('text')
             .attr('id', 'date_label')
-            .text(new Date(d.date))
+            .text(new Date(d.date).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            }))
             .attr('text-anchor', 'end')
             .attr('font-size', 9)
             .attr('x', (0-100))
@@ -674,7 +689,7 @@ const BubbleVis = (props: BubbleProps) => {
           div.transition().duration(200).style('opacity', 0.9);
           div
             .html(htmlForm)
-            .style('left', `${event.pageX}px`)
+            .style('left', `${event.pageX + 10}px`)
             .style('top', `${event.pageY - 28}px`);
         })
         .on('mouseout', (event:any, d:any) => {
@@ -748,15 +763,7 @@ const BubbleVis = (props: BubbleProps) => {
       </Box>
            
       </div>
- 
-      {/* <VerticalAxisOverview 
-        filteredActivities={filteredActivities}
-        height={height}
-        setDefineEvent={setDefineEvent}
-        defineEvent={defineEvent}
-        yScale={forced.yScale}
-        translateY={translateY}
-      /> */}
+
       <svg
         ref={svgRef}
         width="calc(100% - 160px)"
