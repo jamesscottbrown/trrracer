@@ -43,9 +43,11 @@ const BubbleVis = (props: BubbleProps) => {
   const {eventArray} = projectData;
 
   const [newHeight, setNewHeight] = useState('1000px');
+  const [svgWidth, setSvgWidth] = useState(500);
   const [translateY, setTranslateY] = useState(35);
 
   const width = 200;
+  // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
   const height = +newHeight.split('px')[0];
 
   const svgRef = React.useRef(null);
@@ -77,6 +79,17 @@ const BubbleVis = (props: BubbleProps) => {
   useEffect(() => {
     if (svgRef.current) {
       setNewHeight(window.getComputedStyle(svgRef.current).height);
+      // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
+
+    }
+
+    console.log('artifactTypes', artifactTypes)
+    if(groupBy){
+      console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
+      
+      setSvgWidth((researchThreads?.research_threads.length * 300))
+    }else{
+      setSvgWidth(500);
     }
 
     const svg = d3.select(svgRef.current);
@@ -105,11 +118,9 @@ const BubbleVis = (props: BubbleProps) => {
     yearMonth.length - 1
   ].months.filter((f: any, i: number) => i < endIndex);
 
-  // React.useEffect(() => {
-
-    const filteredActivitiesExtent = d3.extent(
-      filteredActivities.map((m: any) => new Date(m.date))
-    );
+  const filteredActivitiesExtent = d3.extent(
+    filteredActivities.map((m: any) => new Date(m.date))
+  );
 
     // Create root container where we will append all other chart elements
     // const svgEl = d3.select(svgRef.current);
@@ -121,7 +132,7 @@ const BubbleVis = (props: BubbleProps) => {
     wrapAxisGroup.selectAll('*').remove();
     wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
 
-    const yAxis = d3.axisLeft(yScale).ticks(30).tickSize(10);
+    const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
     const yAxisGroup = wrapAxisGroup
       .append('g')
@@ -212,7 +223,7 @@ const BubbleVis = (props: BubbleProps) => {
           yScale(filteredActivitiesExtent[1]),
         ]);
 
-      gBrush.select('.overlay').attr('opacity', 0.25);
+      gBrush.select('.overlay').attr('opacity', 0.1);
 
       // Custom handlers
       // Handle group
@@ -719,25 +730,7 @@ const BubbleVis = (props: BubbleProps) => {
         >
           Add events to timeline
         </Button>
-       
-        <Box marginLeft="50px" padding="3px" height="30px" display={'inline-block'}>
-        <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Split bubbles to artifacts
-          </FormLabel>
-          <Switch
-            id="split-by"
-            onChange={(event) => {
-              event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
-            }}
-          />
-        </FormControl>
-      </Box>
+
       <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
         <FormControl display="flex" alignItems="center" marginBottom={10}>
           <FormLabel
@@ -766,7 +759,7 @@ const BubbleVis = (props: BubbleProps) => {
 
       <svg
         ref={svgRef}
-        width="calc(100% - 160px)"
+        width={svgWidth}
         height={height}
         style={{ display: 'inline' }}
       />
