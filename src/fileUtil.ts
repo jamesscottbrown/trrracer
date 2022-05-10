@@ -1,12 +1,12 @@
-import {
-  openFile,
-  readFile,
-  writeFile,
-  readFileSync,
-  joinPath,
-} from './fileUtilElectron';
+// import {
+//   openFile,
+//   readFile,
+//   writeFile,
+//   readFileSync,
+//   joinPath,
+// } from './fileUtilElectron';
 
-/*
+
 import {
   openFile,
   readFile,
@@ -14,7 +14,7 @@ import {
   readFileSync,
   joinPath,
 } from './fileUtilWeb';
-*/
+
 
 function decode(input) {
   if (!input) return '';
