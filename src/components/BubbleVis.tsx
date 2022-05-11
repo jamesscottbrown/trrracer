@@ -436,7 +436,7 @@ const BubbleVis = (props: BubbleProps) => {
 
     if (eventArray.length > 0) {
 
-        eventRectGroups.attr('transform', (d)=> `translate(0, ${yScale(new Date(d.time[0]))})`)
+        eventRectGroups.attr('transform', (d)=> `translate(-70, ${yScale(new Date(d.time[0]))})`)
         const eventRects = eventRectGroups.selectAll('rect').data(d => [d]).join('rect');
 
         eventRects.attr(
@@ -444,18 +444,27 @@ const BubbleVis = (props: BubbleProps) => {
         (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
         );
 
-        eventRects.attr('width', 600);
+        eventRects.attr('width', 900);
         eventRects.style('fill-opacity', 0.05);
 
         if(!groupBy){
+          let eventLine = eventRectGroups
+            .append('line')
+            .attr('x1', 0)
+            .attr('x2', 300)
+            .attr('y1', 0)
+            .attr('y2', 0)
+            .attr('stroke', 'gray')
+            .attr('stroke-width', 1)
+
           let eventText = eventRectGroups
           .selectAll('text')
           .data((d) => [d])
           .join('text')
           .text((d) => d.event);
   
-          eventText.attr('x', 270);
-          eventText.attr('y', 20);
+          eventText.attr('x', 305);
+          eventText.attr('y', 4);
           eventText.style('font-size', 10);
           eventText.style('fill', 'gray');
         }
