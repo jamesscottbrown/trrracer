@@ -558,11 +558,12 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
       }
 
       case 'ADD_ENTRY': {
+
         const newEntry: EntryType = {
-          title: 'New entry',
-          description: '',
+          title: action.data.title,
+          description: action.data.description,
           files: [],
-          date: new Date().toISOString(),
+          date: new Date(action.data.date).toISOString(),
           tags: [],
           urls: [],
           activity_uid: uuidv4(),

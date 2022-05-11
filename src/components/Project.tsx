@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Tag, TagLabel, AbsoluteCenter, Input, Editable, EditableInput, EditablePreview } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
@@ -10,6 +10,7 @@ import { EntryType } from './types';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
+import AddEntryForm from './AddEntryForm';
 
 interface ProjectProps {
   folderPath: string;
@@ -90,6 +91,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       researchThreads
     }, dispatch
   ] = useProjectState();
+
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -194,8 +196,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
 
     setfilteredActivities(queryFiltered);
-    
-
 
   }, [
     projectData.entries,
@@ -299,25 +299,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
           />
-          
-
+        
           {
             addEntrySplash && (
-                <Box style={{
-                  position:'absolute',
-                  top:60,
-                  right:10,
-                  backgroundColor:'red',
-                  zIndex:50000
-                }} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
-                  <Editable 
-                  defaultValue={"New Activity Title"}
-                  // onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
-                >
-                  <EditablePreview />
-                  <EditableInput />
-                </Editable>
-                </Box>
+                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
               )
           }
          
