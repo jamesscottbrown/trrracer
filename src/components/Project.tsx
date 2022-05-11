@@ -100,6 +100,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [groupBy, setGroupBy] = useState(null);
   const [splitBubbs, setSplitBubbs] = useState(false);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
+  const [hideByDefault, setHideByDefault] = useState<boolean>(false);
 
 
   const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
@@ -191,7 +192,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
+
     setfilteredActivities(queryFiltered);
+    
+
+
   }, [
     projectData.entries,
     filterTags,
@@ -275,8 +280,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           newTitle={newTitle}
           setNewTitle={setNewTitle}
           filteredActivityNames={null}
-          defineEvent={defineEvent}
-          setDefineEvent={setDefineEvent}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
         />
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
@@ -292,16 +297,20 @@ const Project = (ProjectPropValues: ProjectProps) => {
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
           />
-          <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
-           
-            <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
-            <ProjectListView
-              projectData={projectData}
-              filteredActivities={filteredActivities}
-              setViewType={setViewType}
-              hoverActivity={hoverActivity}
-            />
-          </Box>
+          {
+            (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
+              <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+                <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
+                <ProjectListView
+                  projectData={projectData}
+                  filteredActivities={filteredActivities}
+                  setViewType={setViewType}
+                  hoverActivity={hoverActivity}
+                />
+              </Box>
+            )
+          }
+        
         </Flex>
       </div>
     );

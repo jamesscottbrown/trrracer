@@ -362,7 +362,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
       case 'THREAD_FILTER': {
         if (action.filterRT) {
-          console.log('action in filter', action.filterRT.associated_tags);
+         
           let associatedByTags = state.projectData.entries.filter(f => {
             let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
             return test.length > 0;

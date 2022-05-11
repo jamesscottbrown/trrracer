@@ -37,14 +37,6 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
     setEditableStatus(selectedEntryIndex, true);
   }, [selectedEntryIndex]);
 
-  const makeAllEditable = () => {
-    setEditable(Array.from(Array(projectData.entries.length), () => true));
-  };
-
-  const makeAllNonEditable = () => {
-    setEditable(Array.from(Array(projectData.entries.length), () => false));
-  };
-
   const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>
       oldEditable.map((d, i) => (i === index ? isEditable : d))
@@ -53,7 +45,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
 
   return (
     <div style={{ padding: '10px' }}>
-
+      
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}

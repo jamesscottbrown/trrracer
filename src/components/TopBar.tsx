@@ -12,6 +12,9 @@ import {
   EditablePreview,
   Tag,
   TagLabel,
+  FormControl,
+  FormLabel,
+  Switch,
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
@@ -31,8 +34,8 @@ interface TopbarProps {
   setNewTitle: any;
   filteredActivityNames: any;
   filteredActivities: any;
-  defineEvent: boolean;
-  setDefineEvent: (boo: any) => void;
+  setHideByDefault: (boo: any) => void;
+  hideByDefault: Boolean;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -46,8 +49,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     newTitle,
     setNewTitle,
     filteredActivities,
-    defineEvent,
-    setDefineEvent,
+    setHideByDefault,
+    hideByDefault
   } = ProjectPropValues;
 
   const addEntry = () => {
@@ -106,9 +109,38 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               textAlign: 'end',
             }}
           >
-           <div
-           style={{display:'inline-block', fontSize:"14px"}}
-           >{`${filteredActivities.length} Activities Shown  `}</div> 
+            <div
+            style={{
+              display:'inline-block', 
+              fontSize:"14px",
+              paddingRight:15,
+            }}> 
+            <FormControl display="flex" alignItems="center" marginBottom={10}>
+            <FormLabel
+              htmlFor="split-by"
+              mb="0"
+              textAlign="right"
+              fontSize="12px"
+            >
+              Hide all by default
+            </FormLabel>
+            <Switch
+              id="show-all"
+              onChange={(event) => {
+              console.log('SPLIT')
+              hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
+              }}
+            />
+        </FormControl> 
+            </div>
+            {
+              (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
+                <div
+                  style={{display:'inline-block', fontSize:"14px", marginRight:15}}
+                >{`${filteredActivities.length} Activities Shown  `}</div> 
+              )
+            }
+           
             <Button
               marginLeft="3px"
               alignSelf="end"
