@@ -9,6 +9,11 @@ import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
+import { FaAddressBook, FaBaby, FaLink, FaPaperclip, FaSketch } from 'react-icons/fa';
+import { MdComment } from 'react-icons/md';
+import { GrNotes } from 'react-icons/gr';
+import { RiComputerLine } from 'react-icons/ri';
+import { BiQuestionMark } from 'react-icons/bi';
 
 interface BubbleProps {
   filteredActivities: EntryType[];
@@ -20,6 +25,63 @@ interface BubbleProps {
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
+}
+
+const ToolTip = (toolProp: any) => {
+  const {activityData, position} = toolProp;
+  console.log('activity data', activityData.files)
+  return <div
+    id={'tooltip'}
+    style={{
+      position:'absolute',
+      left: position[0],
+      top: position[1] - 50,
+      textAlign: 'center',
+      minWidth:100,
+      minHeight:50,
+      padding:10,
+      backgroundColor: '#fff',
+      border: '2px solid gray',
+      borderRadius: 10,
+      pointerEvents:'none'
+    }}
+  >
+    <span
+    style={{
+      font: '15px sans-serif',
+      fontWeight:600
+    }}
+    >{activityData.title}</span>
+    <div>
+    {
+      activityData.files.map(fi => (
+      
+        <div
+          style={{display:'inline-block', margin:5, fontSize:18}}
+        ><ToolIcon fileData={fi}/></div>
+      ))
+    }
+    </div>
+  </div>
+}
+
+const ToolIcon = (toolProp:any) => {
+  const { fileData } = toolProp;
+  
+  if(fileData.artifactType === 'correspondance' || fileData.artifactType === 'correspondence'){
+    return <MdComment />
+  }else if(fileData.artifactType === 'link'){
+    return <FaLink />
+  }else if(fileData.artifactType === 'related work'){
+    return <FaPaperclip />
+  }else if(fileData.artifactType === 'sketch'){
+    return <FaSketch />
+  }else if(fileData.artifactType === 'notes'){
+    return <GrNotes/>
+  }else if(fileData.artifactType === 'tool artifact'){
+    return <RiComputerLine/>
+  }
+  return <BiQuestionMark />
 }
 
 const BubbleVis = (props: BubbleProps) => {
@@ -45,6 +107,8 @@ const BubbleVis = (props: BubbleProps) => {
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(500);
   const [translateY, setTranslateY] = useState(35);
+  const [hoverData, setHoverData] = useState(projectData.entries[0]);
+  const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 200;
   // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
@@ -54,25 +118,27 @@ const BubbleVis = (props: BubbleProps) => {
 
   let packedCircData = calcCircles(projectData.entries);
 
-  const checktool = d3.select('#tooltip');
+  d3.select('#tooltip').style('opacity', 0);
 
-  const div = checktool.empty()
-    ? d3
-        .select('body')
-        .append('div')
-        .attr('id', 'tooltip')
-        .style('opacity', 0)
-        .style('position', 'absolute')
-        .style('text-align', 'center')
-        .attr('width', 60)
-        .attr('height', 2)
-        .style('padding', '10px')
-        .style('font', '12px sans-serif')
-        .style('background', 'white')
-        .style('border', '2px solid gray')
-        .style('border-radius', '10px')
-        .style('pointer-events', 'none')
-    : checktool;
+  // const checktool = d3.select('#tooltip');
+
+  // const div = checktool.empty()
+  //   ? d3
+  //       .select('body')
+  //       .append('div')
+  //       .attr('id', 'tooltip')
+  //       .style('opacity', 0)
+  //       .style('position', 'absolute')
+  //       .style('text-align', 'center')
+  //       .attr('width', 60)
+  //       .attr('height', 2)
+  //       .style('padding', '10px')
+  //       .style('font', '12px sans-serif')
+  //       .style('background', 'white')
+  //       .style('border', '2px solid gray')
+  //       .style('border-radius', '10px')
+  //       .style('pointer-events', 'none')
+  //   : checktool;
 
   const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
 
@@ -654,70 +720,85 @@ const BubbleVis = (props: BubbleProps) => {
 
           // setHoverActivity(d);
 
-          const htmlForm = () => {
-            let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
-                                    ${d.date} <br/></div>`;
-            if (!splitBubbs) {
-              if (selectedThread != null) {
-                const test = researchThreads.research_threads[
-                  selectedThread
-                ].evidence.filter((f) => f.activityTitle === d.title);
+          // const htmlForm = () => {
+          //   let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
+          //                           ${d.date} <br/></div>`;
+          //   if (!splitBubbs) {
+          //     if (selectedThread != null) {
+          //       const test = researchThreads.research_threads[
+          //         selectedThread
+          //       ].evidence.filter((f) => f.activityTitle === d.title);
 
-                if (test.length > 0) {
-                  test.forEach((t) => {
-                    const type =
-                      t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-                    const artifactTitle =
-                      t.type === 'fragment' || t.type === 'artifact'
-                        ? `: ${t.artifactTitle}`
-                        : '';
-                    start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-                    if (t.type === 'fragment') {
-                      t.anchors.map((an:any) => {
-                        if (an.anchor_type === 'text') {
-                          start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-                        }
-                      });
-                    }
-                    start += `<div>Rationale: ${t.rationale}<div>`;
+          //       if (test.length > 0) {
+          //         test.forEach((t) => {
+          //           const type =
+          //             t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
+          //           const artifactTitle =
+          //             t.type === 'fragment' || t.type === 'artifact'
+          //               ? `: ${t.artifactTitle}`
+          //               : '';
+          //           start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
+          //           if (t.type === 'fragment') {
+          //             t.anchors.map((an:any) => {
+          //               if (an.anchor_type === 'text') {
+          //                 start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
+          //               }
+          //             });
+          //           }
+          //           start += `<div>Rationale: ${t.rationale}<div>`;
 
-                    if (t.artifactTitle.includes('.png')) {
-                      start += `<img src="${path.join(
-                        folderPath,
-                        t.artifactTitle
-                      )}" style="width:500px; height:auto"
-                                    />`;
-                    }
-                  });
-                } else {
-                  start += `</br>
-                    <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
-                }
+          //           if (t.artifactTitle.includes('.png')) {
+          //             start += `<img src="${path.join(
+          //               folderPath,
+          //               t.artifactTitle
+          //             )}" style="width:500px; height:auto"
+          //                           />`;
+          //           }
+          //         });
+          //       } else {
+          //         start += `</br>
+          //           <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
+          //       }
 
-                start += `</div>`;
-                return start;
-              }
-              d.files.forEach((f:any) => {
-                start += `<div><span style="font-weight:700; font-size:14px">${f.artifactType}:  </span>${f.title}</div>`;
-              });
-            } else {
-              console.log('dis a file', d);
-            }
-            return start;
-          };
+          //       start += `</div>`;
+          //       return start;
+          //     }
+          //     d.files.forEach((f:any) => {
+                
+          //       start += `<div><span style="font-weight:700; font-size:14px">${<FaAddressBook />}}:  </span>${f.title}</div>`;
+          //     });
+          //   } else {
+          //     console.log('dis a file', d);
+          //   }
+          //   return start;
+          // };
 
-          div.transition().duration(200).style('opacity', 0.9);
-          div
-            .html(htmlForm)
-            .style('left', `${event.pageX + 10}px`)
-            .style('top', `${event.pageY - 28}px`);
+          // div.transition().duration(200).style('opacity', 0.9);
+          // div.selectAll('*').remove();
+
+          setToolPosition([event.pageX, event.pageY]);
+          setHoverData(d);
+
+          d3.select('#tooltip').style('opacity', 1);
+          
+          // let tool = div
+          //   // .html(htmlForm)
+          //   .style('left', `${event.pageX + 10}px`)
+          //   .style('top', `${event.pageY - 28}px`);
+
+          // let toolTitle = tool.append('span').text(d.title).style('font-size', 18).style('font-weight', 600);
+
+          // let files = tool.selectAll('div.file').data(d.files).join('div').classed('file', true);
+          // files.append('span').text(t => t.title)
+
         })
         .on('mouseout', (event:any, d:any) => {
           // d3.select(event.target).attr('r', d.radius)
+          d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#date_label').remove();
           //.attr('stroke-width', 0);
-          div.transition().duration(500).style('opacity', 0);
+          // div.transition().duration(500).style('opacity', 0);
         });
 
     // }
@@ -772,6 +853,7 @@ const BubbleVis = (props: BubbleProps) => {
         height={height}
         style={{ display: 'inline' }}
       />
+      <ToolTip activityData={hoverData} position={toolPosition}/>
     </div>
   );
 };
