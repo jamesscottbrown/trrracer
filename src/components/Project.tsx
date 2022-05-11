@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel, AbsoluteCenter, Input, Editable, EditableInput, EditablePreview } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
@@ -101,7 +101,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [splitBubbs, setSplitBubbs] = useState(false);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
-
+  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
 
   const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
@@ -282,6 +282,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           filteredActivityNames={null}
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
+          addEntrySplash={addEntrySplash}
+          setAddEntrySplash={setAddEntrySplash}
         />
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
@@ -297,16 +299,40 @@ const Project = (ProjectPropValues: ProjectProps) => {
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
           />
+          
+
+          {
+            addEntrySplash && (
+                <Box style={{
+                  position:'absolute',
+                  top:60,
+                  right:10,
+                  backgroundColor:'red',
+                  zIndex:50000
+                }} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+                  <Editable 
+                  defaultValue={"New Activity Title"}
+                  // onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
+                >
+                  <EditablePreview />
+                  <EditableInput />
+                </Editable>
+                </Box>
+              )
+          }
+         
           {
             (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
-                <ProjectListView
-                  projectData={projectData}
-                  filteredActivities={filteredActivities}
-                  setViewType={setViewType}
-                  hoverActivity={hoverActivity}
-                />
+                
+                    <ProjectListView
+                      projectData={projectData}
+                      filteredActivities={filteredActivities}
+                      setViewType={setViewType}
+                      hoverActivity={hoverActivity}
+                    />
+                  
               </Box>
             )
           }

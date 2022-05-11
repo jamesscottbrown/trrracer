@@ -36,6 +36,8 @@ interface TopbarProps {
   filteredActivities: any;
   setHideByDefault: (boo: any) => void;
   hideByDefault: Boolean;
+  setAddEntrySplash: (boo: any) => void;
+  addEntrySplash: Boolean;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -50,7 +52,9 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setNewTitle,
     filteredActivities,
     setHideByDefault,
-    hideByDefault
+    hideByDefault,
+    setAddEntrySplash,
+    addEntrySplash
   } = ProjectPropValues;
 
   const addEntry = () => {
@@ -144,7 +148,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
             <Button
               marginLeft="3px"
               alignSelf="end"
-              onClick={addEntry}
+              // onClick={addEntry}
+              onClick={(event) => setAddEntrySplash(true)}
               type="button"
             >
               <FaPlus /> Add activity
