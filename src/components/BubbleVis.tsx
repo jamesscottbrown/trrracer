@@ -587,7 +587,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
         
         }else if(f.type === 'artifact' || f.type === 'fragment'){
-      
+          console.log('temp!',temp)
           let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
           temp
             .select('circle.background')

@@ -368,8 +368,10 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
             return test.length > 0;
           });
           let associatedTest = associatedByTags.length > 0 ? associatedByTags.map(as => as.title).filter(at => action.filterRT.evidence.map((m) => m.activityTitle).indexOf(at) === -1) : []
+          
           return {
             ...state,
+            filterDates: [null, null],
             filterRT: {
               title: action.filterRT.title,
               key: action.filterRT.evidence.map((m) => m.activityTitle),
