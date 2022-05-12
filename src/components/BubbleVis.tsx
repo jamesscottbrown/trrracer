@@ -135,7 +135,7 @@ const BubbleVis = (props: BubbleProps) => {
 
     }
 
-    console.log('artifactTypes', artifactTypes)
+    
     if(groupBy){
       console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
       
@@ -566,7 +566,7 @@ const BubbleVis = (props: BubbleProps) => {
 
       activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      artifactCircles.attr('r', d => (d.r - 1)).attr('cx', d => d.x).attr('cy', d => d.y);
+      artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       
@@ -603,7 +603,7 @@ const BubbleVis = (props: BubbleProps) => {
       activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      artifactCircles.attr('r', d => (d.r)).attr('cx', d => d.x).attr('cy', d => d.y);
+      artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       highlightedActivities.select('.all-activities')
