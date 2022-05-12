@@ -674,8 +674,6 @@ const BubbleVis = (props: BubbleProps) => {
         }
       })
 
-      
-      console.log('linkdata after', linkDataAfter)
       var lineGenerator = d3.line();
       linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
       linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -705,10 +703,10 @@ const BubbleVis = (props: BubbleProps) => {
           underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
-            .attr('x1', (0-100))
-            .attr('y2', d.y)
-            .attr('x2', (+d.x))
-            .attr('stroke', 'gray')
+            .attr('x2', (0-70))
+            .attr('y2', forced.yScale(new Date(d.date)))
+            .attr('x1', (+d.x))
+            .attr('stroke', 'black')
             .attr('stroke-width', 1)
 
           underWrap.append('text')
@@ -721,81 +719,8 @@ const BubbleVis = (props: BubbleProps) => {
             }))
             .attr('text-anchor', 'end')
             .attr('font-size', 9)
-            .attr('x', (0-100))
-            .attr('y', d.y)
-
-          // setHoverActivity(d);
-
-          // const htmlForm = () => {
-          //   let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>
-          //                           ${d.date} <br/></div>`;
-          //   if (!splitBubbs) {
-          //     if (selectedThread != null) {
-          //       const test = researchThreads.research_threads[
-          //         selectedThread
-          //       ].evidence.filter((f) => f.activityTitle === d.title);
-
-          //       if (test.length > 0) {
-          //         test.forEach((t) => {
-          //           const type =
-          //             t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-          //           const artifactTitle =
-          //             t.type === 'fragment' || t.type === 'artifact'
-          //               ? `: ${t.artifactTitle}`
-          //               : '';
-          //           start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-          //           if (t.type === 'fragment') {
-          //             t.anchors.map((an:any) => {
-          //               if (an.anchor_type === 'text') {
-          //                 start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-          //               }
-          //             });
-          //           }
-          //           start += `<div>Rationale: ${t.rationale}<div>`;
-
-          //           if (t.artifactTitle.includes('.png')) {
-          //             start += `<img src="${path.join(
-          //               folderPath,
-          //               t.artifactTitle
-          //             )}" style="width:500px; height:auto"
-          //                           />`;
-          //           }
-          //         });
-          //       } else {
-          //         start += `</br>
-          //           <span>This activity is tagged with a tag associated with the research thread <span style="font-weight:700">${researchThreads.research_threads[selectedThread].title}</span>`;
-          //       }
-
-          //       start += `</div>`;
-          //       return start;
-          //     }
-          //     d.files.forEach((f:any) => {
-                
-          //       start += `<div><span style="font-weight:700; font-size:14px">${<FaAddressBook />}}:  </span>${f.title}</div>`;
-          //     });
-          //   } else {
-          //     console.log('dis a file', d);
-          //   }
-          //   return start;
-          // };
-
-          // div.transition().duration(200).style('opacity', 0.9);
-          // div.selectAll('*').remove();
-
-          setToolPosition([event.pageX, event.pageY]);
-          setHoverData(d);
-
-          d3.select('#tooltip').style('opacity', 1);
-          
-          // let tool = div
-          //   // .html(htmlForm)
-          //   .style('left', `${event.pageX + 10}px`)
-          //   .style('top', `${event.pageY - 28}px`);
-
-          // let toolTitle = tool.append('span').text(d.title).style('font-size', 18).style('font-weight', 600);
-
-          // let files = tool.selectAll('div.file').data(d.files).join('div').classed('file', true);
-          // files.append('span').text(t => t.title)
+            .attr('x', (0-70))
+            .attr('y', forced.yScale(new Date(d.date)))
 
         })
         .on('mouseout', (event:any, d:any) => {
