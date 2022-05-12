@@ -174,9 +174,6 @@ const BubbleVis = (props: BubbleProps) => {
     filteredActivities.map((m: any) => new Date(m.date))
   );
 
-    // Create root container where we will append all other chart elements
-    // const svgEl = d3.select(svgRef.current);
-    // svgEl.selectAll('*').remove(); // Clear svg content before adding new elements
     let checkGroup = svg.select('g.timeline-wrap');
 
     let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
@@ -277,6 +274,21 @@ const BubbleVis = (props: BubbleProps) => {
 
       gBrush.select('.overlay').attr('opacity', 0.1);
 
+      let gUnderRect = gBrush.selectAll('rect.handle')
+      .data(['handle--o', 'handle--e'])
+      .join('rect')
+      .classed('handle', true)
+      .attr('fill', '#fff')
+      .attr('width', 60)
+      .attr('height', 20)
+      .attr('transform', (d) => {
+        const y =
+          d === 'handle--o'
+            ? yScale(filteredActivitiesExtent[0])
+            : yScale(filteredActivitiesExtent[1]);
+        return `translate(0, ${y})`;
+      });
+
       // Custom handlers
       // Handle group
       const gHandles = gBrush
@@ -319,7 +331,8 @@ const BubbleVis = (props: BubbleProps) => {
           });
         })
         .style('font-size', '11px')
-        .style('pointer-events', 'none');
+        .style('pointer-events', 'none')
+        
       //       // Visible Line
 
       //       // Triangle
@@ -700,6 +713,10 @@ const BubbleVis = (props: BubbleProps) => {
     highlightedActivities
         .on('mouseover', (event, d) => {
           
+          setToolPosition([d.x, d.y])
+          setHoverData(d);
+          d3.select('#tooltip').style('opacity', 1);
+
           underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
@@ -709,7 +726,9 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
 
-          underWrap.append('text')
+          let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
+
+          let text = wrap.append('text')
             .attr('id', 'date_label')
             .text(new Date(d.date).toLocaleDateString('en-us', {
               weekday: 'long',
@@ -721,6 +740,14 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('font-size', 9)
             .attr('x', (0-70))
             .attr('y', forced.yScale(new Date(d.date)))
+          
+          let bB = text.node().getBoundingClientRect();
+          
+          textWrap.attr('width', bB.width)
+          textWrap.attr('height', bB.height)
+          .attr('x', (0-(70+ bB.width)))
+          .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
+          textWrap.attr('fill', '#fff')
 
         })
         .on('mouseout', (event:any, d:any) => {
@@ -728,6 +755,7 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#date_label').remove();
+          d3.select('#date_label_bg').remove();
           //.attr('stroke-width', 0);
           // div.transition().duration(500).style('opacity', 0);
         }).on('click', (event:any, d:any)=> {
