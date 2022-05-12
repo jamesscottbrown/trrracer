@@ -55,9 +55,10 @@ const ToolTip = (toolProp: any) => {
     >{activityData.title}</span>
     <div>
     {
-      activityData.files.map(fi => (
+      activityData.files.map((fi:any, i:any) => (
       
         <div
+        key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
         ><ToolIcon 
           fileData={fi}/>
@@ -101,6 +102,7 @@ const BubbleVis = (props: BubbleProps) => {
     flexAmount,
     setDefineEvent,
     defineEvent,
+    filterType
   } = props;
 
   const [
@@ -577,7 +579,7 @@ const BubbleVis = (props: BubbleProps) => {
         'all-activities'
       );
 
-      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
+      activityBubbles.bubbles.attr('fill', "gray").attr('fill-opacity', .1).attr('stroke', '#d3d3d3').attr('stroke-width', .5);
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
 
@@ -613,12 +615,13 @@ const BubbleVis = (props: BubbleProps) => {
         'all-activities'
       );
 
-      activityBubbles.bubbles.attr('fill', "#fff").attr('fill-opacity', .2).attr('stroke', '#d3d3d3').attr('stroke-width', .2);
+      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      
       highlightedActivities.select('.all-activities')
       .on('mouseover', (event, d) => {
         if(filterRT){
@@ -635,9 +638,20 @@ const BubbleVis = (props: BubbleProps) => {
         }
       });
 
-      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      if(filterType){
 
-      highlightedCircles.attr('fill', 'gray');
+        highlightedActivities.attr('fill', 'gray').attr('opacity', 1);
+        let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
+        highlightedCircles.attr('fill', 'red');
+      }else{
+
+        let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+
+        highlightedCircles.attr('fill', 'gray');
+
+      }
+
+      
 
       let hiddenCircles = allActivityGroups.filter(ac => {
         return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
@@ -751,13 +765,12 @@ const BubbleVis = (props: BubbleProps) => {
 
         })
         .on('mouseout', (event:any, d:any) => {
-          // d3.select(event.target).attr('r', d.radius)
+      
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#date_label').remove();
           d3.select('#date_label_bg').remove();
-          //.attr('stroke-width', 0);
-          // div.transition().duration(500).style('opacity', 0);
+      
         }).on('click', (event:any, d:any)=> {
           setHoverActivity(d);
         })
@@ -765,7 +778,7 @@ const BubbleVis = (props: BubbleProps) => {
     // }
       }
 
-  }, [filteredActivities, groupBy, splitBubbs, eventArray]);
+  }, [filteredActivities, groupBy, splitBubbs, eventArray, filterType]);
 
   return (
     <div style={{ flex: flexAmount, paddingTop:'10px' }}>
