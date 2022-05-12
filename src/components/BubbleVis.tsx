@@ -634,7 +634,7 @@ const BubbleVis = (props: BubbleProps) => {
         if(filterRT){
         d3.select(event.target).attr('stroke-width', 0);
         }else{
-        d3.select(event.target).attr('fill', '#fff');
+        d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .4);;
         }
       });
 
