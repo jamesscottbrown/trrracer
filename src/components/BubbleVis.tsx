@@ -29,7 +29,7 @@ interface BubbleProps {
 
 const ToolTip = (toolProp: any) => {
   const {activityData, position} = toolProp;
-  console.log('activity data', activityData.files)
+  
   return <div
     id={'tooltip'}
     style={{
@@ -125,26 +125,6 @@ const BubbleVis = (props: BubbleProps) => {
   let packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
-
-  // const checktool = d3.select('#tooltip');
-
-  // const div = checktool.empty()
-  //   ? d3
-  //       .select('body')
-  //       .append('div')
-  //       .attr('id', 'tooltip')
-  //       .style('opacity', 0)
-  //       .style('position', 'absolute')
-  //       .style('text-align', 'center')
-  //       .attr('width', 60)
-  //       .attr('height', 2)
-  //       .style('padding', '10px')
-  //       .style('font', '12px sans-serif')
-  //       .style('background', 'white')
-  //       .style('border', '2px solid gray')
-  //       .style('border-radius', '10px')
-  //       .style('pointer-events', 'none')
-  //   : checktool;
 
   const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
 
@@ -323,7 +303,7 @@ const BubbleVis = (props: BubbleProps) => {
         .attr('dy', -2)
         .text((d) => {
           if (d === 'handle--o') {
-            console.log('sanity check filtered activities extent', filteredActivitiesExtent)
+            
             return filteredActivitiesExtent[0].toLocaleDateString('en-us', {
               weekday: 'long',
               year: 'numeric',
@@ -701,7 +681,7 @@ const BubbleVis = (props: BubbleProps) => {
 
     highlightedActivities
         .on('mouseover', (event, d) => {
-          console.log(d)
+          
           underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
@@ -805,7 +785,9 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#date_label').remove();
           //.attr('stroke-width', 0);
           // div.transition().duration(500).style('opacity', 0);
-        });
+        }).on('click', (event:any, d:any)=> {
+          setHoverActivity(d);
+        })
 
     // }
       }
