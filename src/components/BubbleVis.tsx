@@ -634,10 +634,12 @@ const BubbleVis = (props: BubbleProps) => {
       .attr('fill-opacity', .3);
 
       if(filterRT){
-        console.log('selecteddddd',selectedThread, filterRT)
+       
         let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
 
-        let linkData = [];
+        let linkDataBefore = [];
+        let linkDataAfter = [];
+
         researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
           let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
         
@@ -648,7 +650,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
         
         }else if(f.type === 'artifact' || f.type === 'fragment'){
-          console.log('temp!',temp)
+         
           let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
           temp
             .select('circle.background')
@@ -659,24 +661,42 @@ const BubbleVis = (props: BubbleProps) => {
           temp.select('circle.all-activities')
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
           
-          let adjustedX = (+artifactCoord.attr('cx') < 0) ? (chosenActivityData.x - artifactCoord.attr('cx')) : (chosenActivityData.x + artifactCoord.attr('cx'));
-          let adjustedY = (+artifactCoord.attr('cy') < 0) ? (chosenActivityData.y - artifactCoord.attr('cy')) : (chosenActivityData.y - (artifactCoord.attr('cy')));
-          // console.log('adjusted Y??', adjustedY, 'chosenactivity', chosenActivityData.y, artifactCoord.attr('cy'));
-          linkData.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+          let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
+
+          console.log('divide date',divideDate)
+
+          if(new Date(chosenActivityData.date) < divideDate){
+            linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+          }else{
+            linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+          }
+         
         }
       })
 
-      console.log('highlighted activities', researchThreads?.research_threads[selectedThread], filterRT)
       
+      console.log('linkdata after', linkDataAfter)
       var lineGenerator = d3.line();
-      linkData = linkData.sort((a, b) => new Date(a.date) - new Date(b.date))
-      var pathString = lineGenerator(linkData.map(m=> m.coord));
+      linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
+      linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      linkDataBefore.push(linkDataAfter[0])
+
+      var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+      var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
 
       underWrap.append('path')
-        .attr('d', pathString)
+        .attr('d', pathStringDash)
         .attr('fill', 'none')
-        .attr('stroke', 'gray')
-        .attr('stroke-width', 1);
+        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+        .attr('stroke-width', 2)
+        .style('stroke-dasharray', '5,5');
+
+      underWrap.append('path')
+        .attr('d', pathStringSolid)
+        .attr('fill', 'none')
+        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+        .attr('stroke-width', 2);
     }
 
     highlightedActivities
