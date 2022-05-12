@@ -9,7 +9,7 @@ import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import { FaAddressBook, FaBaby, FaLink, FaPaperclip, FaSketch } from 'react-icons/fa';
+import { FaAddressBook, FaBaby, FaLink, FaPaperclip, FaPencilAlt, FaSketch } from 'react-icons/fa';
 import { MdComment } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine } from 'react-icons/ri';
@@ -43,7 +43,8 @@ const ToolTip = (toolProp: any) => {
       backgroundColor: '#fff',
       border: '2px solid gray',
       borderRadius: 10,
-      pointerEvents:'none'
+      pointerEvents:'none',
+      zIndex: 6000
     }}
   >
     <span
@@ -57,8 +58,13 @@ const ToolTip = (toolProp: any) => {
       activityData.files.map(fi => (
       
         <div
-          style={{display:'inline-block', margin:5, fontSize:18}}
-        ><ToolIcon fileData={fi}/></div>
+          style={{display:'inline-block', margin:5}}
+        ><ToolIcon 
+          fileData={fi}/>
+            <span
+              style={{fontSize:10}}
+            >{fi.title}</span>
+          </div>
       ))
     }
     </div>
@@ -69,19 +75,19 @@ const ToolIcon = (toolProp:any) => {
   const { fileData } = toolProp;
   
   if(fileData.artifactType === 'correspondance' || fileData.artifactType === 'correspondence'){
-    return <MdComment />
+    return <MdComment style={{display:'inline', fontSize:24, marginLeft:4}}/>
   }else if(fileData.artifactType === 'link'){
-    return <FaLink />
+    return <FaLink style={{display:'inline', fontSize:24, marginLeft:4}}/>
   }else if(fileData.artifactType === 'related work'){
-    return <FaPaperclip />
+    return <FaPaperclip style={{display:'inline', fontSize:24, marginLeft:4}}/>
   }else if(fileData.artifactType === 'sketch'){
-    return <FaSketch />
+    return <FaPencilAlt style={{display:'inline', fontSize:24, marginLeft:4}}/> 
   }else if(fileData.artifactType === 'notes'){
-    return <GrNotes/>
+    return <GrNotes style={{display:'inline', fontSize:24, marginLeft:4}}/>
   }else if(fileData.artifactType === 'tool artifact'){
-    return <RiComputerLine/>
+    return <RiComputerLine style={{display:'inline', fontSize:24, marginLeft:4}}/>
   }
-  return <BiQuestionMark />
+  return <BiQuestionMark style={{display:'inline', fontSize:24, marginLeft:4}}/>
 }
 
 const BubbleVis = (props: BubbleProps) => {
