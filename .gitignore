@@ -51,6 +51,7 @@ src/renderer.prod.js
 src/renderer.prod.js.map
 src/style.css
 src/style.css.map
+src/web-dist
 dist
 dll
 main.js

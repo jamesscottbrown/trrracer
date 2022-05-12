@@ -158,7 +158,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           )}
       </Flex>
       <Flex style={{ 
-        backgroundColor:'red',
         height: filterTags.length > 0 ? 70 : 0 }}>
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
