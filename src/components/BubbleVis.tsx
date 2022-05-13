@@ -134,10 +134,7 @@ const BubbleVis = (props: BubbleProps) => {
     if (svgRef.current) {
       setNewHeight(window.getComputedStyle(svgRef.current).height);
       // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
-
     }
-
-    
     if(groupBy){
       console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
       
@@ -204,7 +201,7 @@ const BubbleVis = (props: BubbleProps) => {
       .attr('opacity', 0.5);
 
     if (!defineEvent) {
-      const triangle = d3.symbol().size(100).type(d3.symbolTriangle);
+      const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
 
       const brushed = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
@@ -233,10 +230,12 @@ const BubbleVis = (props: BubbleProps) => {
           return `translate(0, ${y})`;
         });
 
+        d3.selectAll('g.handles').selectAll('rect.handle-rect')
+
         // update labels
         d3.selectAll('g.handles')
           .selectAll('text')
-          .attr('dy', 6)
+          .attr('dy', (d)=> d === 'handle--o' ? -2 : 10)
           .text((d: any) => {
             const year =
               d === 'handle--o'
@@ -274,22 +273,7 @@ const BubbleVis = (props: BubbleProps) => {
           yScale(filteredActivitiesExtent[1]),
         ]);
 
-      gBrush.select('.overlay').attr('opacity', 0.1);
-
-      // let gUnderRect = gBrush.selectAll('rect.handle')
-      // .data(['handle--o', 'handle--e'])
-      // .join('rect')
-      // .classed('handle', true)
-      // .attr('fill', '#fff')
-      // .attr('width', 60)
-      // .attr('height', 20)
-      // .attr('transform', (d) => {
-      //   const y =
-      //     d === 'handle--o'
-      //       ? yScale(filteredActivitiesExtent[0])
-      //       : yScale(filteredActivitiesExtent[1]);
-      //   return `translate(0, ${y})`;
-      // });
+      gBrush.select('.selection').attr('opacity', 0.2);
 
       // Custom handlers
       // Handle group
@@ -307,6 +291,17 @@ const BubbleVis = (props: BubbleProps) => {
               : yScale(filteredActivitiesExtent[1]);
           return `translate(0, ${y})`;
         });
+      
+      let gUnderRect = gHandles.selectAll('rect.handle-rect')
+      .data(d => [d])
+      .join('rect')
+      .classed('handle-rect', true)
+      .attr('fill', '#fff')
+      .attr('width', 70)
+      .attr('height', 13)
+      .attr('y', (d)=> d === 'handle--o' ? -13 : 0)
+      .attr('x', -50);
+     
 
       // Label
       gHandles
@@ -314,7 +309,7 @@ const BubbleVis = (props: BubbleProps) => {
         .data((d) => [d])
         .join('text')
         .attr('text-anchor', 'middle')
-        .attr('dy', -2)
+        .attr('dy', (d)=> d === 'handle--o' ? -2 : 10)
         .text((d) => {
           if (d === 'handle--o') {
             
@@ -335,18 +330,14 @@ const BubbleVis = (props: BubbleProps) => {
         .style('font-size', '11px')
         .style('pointer-events', 'none')
         
-      //       // Visible Line
-
-      //       // Triangle
       gHandles
         .selectAll('.triangle')
         .data((d) => [d])
-        .enter()
-        .append('path')
+        .join('path')
         .attr('class', (d) => `triangle ${d}`)
         .attr('d', triangle)
         .attr('transform', (d) => {
-          const y = d === 'handle--o' ? -17 : 6;
+          const y = d === 'handle--o' ? -17 :17;
           const rot = d === 'handle--o' ? 0 : 180;
           return `translate(20, ${y}) rotate(${rot})`;
         });
@@ -358,7 +349,7 @@ const BubbleVis = (props: BubbleProps) => {
         .attr('class', (d: any) => `line ${d}`)
         .attr('x1', 0)
         .attr('y1', 0)
-        .attr('x2', 40)
+        .attr('x2', 20)
         .attr('y2', 0)
         .attr('stroke', 'black');
 
