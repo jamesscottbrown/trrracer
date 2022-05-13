@@ -1,8 +1,6 @@
 import * as d3 from 'd3';
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
-import {quadtree} from 'd3-quadtree';
-
 
 class ForceMagic {
   circleScale: any;
@@ -15,11 +13,9 @@ class ForceMagic {
     projectEntries: any,
     width: number,
     height: number,
-    splitBool: boolean
+    
   ) {
-    this.circleScale = splitBool
-      ? null
-      : d3
+    this.circleScale = d3
           .scaleLinear()
           .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
           .range([2, 20]);
@@ -36,14 +32,16 @@ class ForceMagic {
       const node = {};
       node.date = a.date;
       node.description = a.description;
-      node.files = splitBool ? null : a.files;
+      node.files = a.files;
       node.index = a.index;
       node.key_txt = a.key_txt;
       node.month = a.month;
       node.tags = a.tags;
       node.title = a.title;
-      node.activityTitle = splitBool ? a.activityTitle : null;
-      node.artifactType = splitBool ? a.artifactType : null;
+      // node.activityTitle = splitBool ? a.activityTitle : null;
+      // node.artifactType = splitBool ? a.artifactType : null;
+      node.activityTitle = null;
+      node.artifactType = null;
       node.urls = a.urls;
       node.year = a.year;
       node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);

@@ -4,23 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
-import VerticalAxis, { dataStructureForTimeline } from './VerticalAxis';
+import { dataStructureForTimeline } from './VerticalAxis';
 import type { EntryType } from './types';
-import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import { FaAddressBook, FaBaby, FaLink, FaPaperclip, FaPencilAlt, FaSketch } from 'react-icons/fa';
-import { MdComment } from 'react-icons/md';
-import { GrNotes } from 'react-icons/gr';
-import { RiComputerLine } from 'react-icons/ri';
-import { BiQuestionMark } from 'react-icons/bi';
+import { ToolIcon } from './Project';
 
 interface BubbleProps {
   filteredActivities: EntryType[];
   setGroupBy:(gb:any)=> void;
   groupBy: any;
-  setSplitBubbs: (b:boolean)=> void;
-  splitBubbs: boolean;
   setHoverActivity: (ent: any) => void;
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
@@ -62,7 +56,9 @@ const ToolTip = (toolProp: any) => {
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
         ><ToolIcon 
-          fileData={fi}/>
+          artifactType={fi.artifactType}
+          size={28}
+          />
             <span
               style={{fontSize:10}}
             >{fi.title}</span>
@@ -73,32 +69,11 @@ const ToolTip = (toolProp: any) => {
   </div>
 }
 
-const ToolIcon = (toolProp:any) => {
-  const { fileData } = toolProp;
-  
-  if(fileData.artifactType === 'correspondance' || fileData.artifactType === 'correspondence'){
-    return <MdComment style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'link'){
-    return <FaLink style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'related work'){
-    return <FaPaperclip style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'sketch'){
-    return <FaPencilAlt style={{display:'inline', fontSize:24, marginLeft:4}}/> 
-  }else if(fileData.artifactType === 'notes'){
-    return <GrNotes style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'tool artifact'){
-    return <RiComputerLine style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }
-  return <BiQuestionMark style={{display:'inline', fontSize:24, marginLeft:4}}/>
-}
-
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
     groupBy,
     setGroupBy,
-    splitBubbs,
-    setSplitBubbs,
     setHoverActivity,
     flexAmount,
     setDefineEvent,
@@ -107,13 +82,11 @@ const BubbleVis = (props: BubbleProps) => {
   } = props;
 
   const [
-    { artifactTypes, selectedThread, researchThreads, folderPath, projectData, filterRT },
+    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
     dispatch
   ] = useProjectState();
   
   const {eventArray} = projectData;
-
-  console.log('filterType IN BUBB VIS', filterType)
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(500);
@@ -131,7 +104,7 @@ const BubbleVis = (props: BubbleProps) => {
 
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
+  const forced = new ForceMagic(packedCircData, width, height);
 
   useEffect(() => {
     if (svgRef.current) {
@@ -531,12 +504,7 @@ const BubbleVis = (props: BubbleProps) => {
      
     }
 
-    const nodes = forced.nodes.filter((f: any) => {
-      if (splitBubbs) {
-        return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
-      }
-      return filteredActivities.map((m: any) => m.title).includes(f.title);
-    });
+    // const nodes = forced.nodes.filter((f: any) => filteredActivities.map((m: any) => m.title).includes(f.title));
 
     if (groupBy) {
  
@@ -640,7 +608,6 @@ const BubbleVis = (props: BubbleProps) => {
       });
 
       if(filterType){
-       
         highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
         highlightedActivities.select('.all-activities').attr('stroke-width', 0);
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
@@ -650,7 +617,6 @@ const BubbleVis = (props: BubbleProps) => {
       }else{
 
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
-
         highlightedCircles.attr('fill', 'gray');
 
       }
@@ -780,7 +746,7 @@ const BubbleVis = (props: BubbleProps) => {
     // }
       }
 
-  }, [filteredActivities, groupBy, splitBubbs, eventArray, filterType]);
+  }, [filteredActivities, groupBy, eventArray, filterType]);
 
   return (
     <div style={{ flex: flexAmount, paddingTop:'10px' }}>
