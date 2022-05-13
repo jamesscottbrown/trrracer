@@ -51,7 +51,7 @@ const BubbleVisPaper = (props: any) => {
       setNewHeight(window.getComputedStyle(svgRef.current).height);
     }
     
-    setSvgWidth(500);
+    setSvgWidth(300);
     
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
@@ -319,7 +319,7 @@ const BubbleVisPaper = (props: any) => {
   }, [filteredActivities, eventArray]);
 
   return (
-    <div style={{ flex: flexAmount, paddingTop:'10px' }}>
+    <div style={{ flex: flexAmount, paddingTop:'10px', width:svgWidth, display:'inline-block' }}>
       <svg
         ref={svgRef}
         width={svgWidth}
@@ -334,13 +334,9 @@ const BubbleVisPaper = (props: any) => {
 const PaperView = (props: any) => {
   const { folderPath } = props;
 
-  console.log('folderpath',folderPath)
-
   const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
   const linkData = readSync(`${folderPath}/links.json`);
   const anno = d3.groups(JSON.parse(linkData.value.toString()), (d) => d.page);
-
-  console.log('ANNOO',anno)
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();
 
@@ -366,11 +362,13 @@ const PaperView = (props: any) => {
     changePage(1);
   }
 
-  const width = 200;
-  const height = 900;
-
   const svgRef = React.useRef(null);
   const annoSvgRef = React.useRef(null);
+
+  /////
+
+
+  /////
 
   useEffect(() => {
     const pageRectData = [];
@@ -405,7 +403,7 @@ const PaperView = (props: any) => {
       ? d3.select(svgRef.current).append('g').classed('text-group', true)
       : groupTest;
 
-    group.attr('transform', 'translate(240, 10)');
+    group.attr('transform', 'translate(5, 100)');
 
     const pages = group
       .selectAll('g.pages')
@@ -498,16 +496,17 @@ const PaperView = (props: any) => {
           />
         </Box>
         <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
-          {/* <svg
-            style={{ display: 'inline' }}
-            ref={svgRef}
-            width={360}
-            height="100%"
-          /> */}
+         
           <BubbleVisPaper 
             filteredActivities={projectData.entries}
             setHoverActivity={null}
             flexAmount={2}
+          />
+           <svg
+            style={{ display: 'inline' }}
+            ref={svgRef}
+            width={80}
+            height="100%"
           />
           <div
             id="pdf-wrap"
