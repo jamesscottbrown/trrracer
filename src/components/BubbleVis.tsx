@@ -25,6 +25,7 @@ interface BubbleProps {
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
+  filterType: null | any;
 }
 
 const ToolTip = (toolProp: any) => {
@@ -111,6 +112,8 @@ const BubbleVis = (props: BubbleProps) => {
   ] = useProjectState();
   
   const {eventArray} = projectData;
+
+  console.log('filterType IN BUBB VIS', filterType)
 
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(500);
@@ -230,7 +233,7 @@ const BubbleVis = (props: BubbleProps) => {
           return `translate(0, ${y})`;
         });
 
-        d3.selectAll('g.handles').selectAll('rect.handle-rect')
+        d3.selectAll('g.handles').selectAll('rect.handle-rect');
 
         // update labels
         d3.selectAll('g.handles')
@@ -292,17 +295,16 @@ const BubbleVis = (props: BubbleProps) => {
           return `translate(0, ${y})`;
         });
       
-      let gUnderRect = gHandles.selectAll('rect.handle-rect')
-      .data(d => [d])
-      .join('rect')
-      .classed('handle-rect', true)
-      .attr('fill', '#fff')
-      .attr('width', 70)
-      .attr('height', 13)
-      .attr('y', (d)=> d === 'handle--o' ? -13 : 0)
-      .attr('x', -50);
+      gHandles.selectAll('rect.handle-rect')
+        .data(d => [d])
+        .join('rect')
+        .classed('handle-rect', true)
+        .attr('fill', '#fff')
+        .attr('width', 70)
+        .attr('height', 13)
+        .attr('y', (d)=> d === 'handle--o' ? -13 : 0)
+        .attr('x', -50);
      
-
       // Label
       gHandles
         .selectAll('text')
@@ -624,16 +626,32 @@ const BubbleVis = (props: BubbleProps) => {
       }).on('mouseout', (event, d) => {
         if(filterRT){
         d3.select(event.target).attr('stroke-width', 0);
+        }else if(filterType){
+
+
+          
+       
+        highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
+        highlightedActivities.select('.all-activities').attr('stroke', 'gray').attr('stroke-width', 1);
+        let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
+        highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
+        let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
+        highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
+
+
         }else{
         d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .4);;
         }
       });
 
       if(filterType){
-
-        highlightedActivities.attr('fill', 'gray').attr('opacity', 1);
+       
+        highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
+        highlightedActivities.select('.all-activities').attr('stroke', 'gray').attr('stroke-width', 1);
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
-        highlightedCircles.attr('fill', 'red');
+        highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
+        let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
+        highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
       }else{
 
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
@@ -641,8 +659,6 @@ const BubbleVis = (props: BubbleProps) => {
         highlightedCircles.attr('fill', 'gray');
 
       }
-
-      
 
       let hiddenCircles = allActivityGroups.filter(ac => {
         return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})

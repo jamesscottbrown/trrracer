@@ -138,7 +138,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       })
       .map((e: EntryType, index: number) => ({ ...e, index }));
 
-    console.log('filterRT in project LOOK HERE', filterRT);
+    
 
     const rtFiltered = typeFiltered.filter((entryData: any) => {
       if (filterRT) {
@@ -166,7 +166,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             }
           }
         });
-        console.log('NONO', nono)
+       
         return (
           nono.indexOf(entryData.title) === -1 
         );
@@ -237,6 +237,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
             flexAmount={2}
+            filterType={filterType}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView
@@ -298,6 +299,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             flexAmount={2}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
+            filterType={filterType}
           />
         
           {
