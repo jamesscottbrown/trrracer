@@ -619,6 +619,8 @@ const BubbleVis = (props: BubbleProps) => {
       .on('mouseover', (event, d) => {
         if(filterRT){
           d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
+        }else if(filterType){
+          d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 1);
         }else{
           d3.select(event.target).attr('fill', 'gray');
         }
@@ -628,26 +630,19 @@ const BubbleVis = (props: BubbleProps) => {
         d3.select(event.target).attr('stroke-width', 0);
         }else if(filterType){
 
-
-          
+        d3.select(event.target).attr('fill', 'gray').attr('fill-opacity', .5);
+        d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
        
-        highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
-        highlightedActivities.select('.all-activities').attr('stroke', 'gray').attr('stroke-width', 1);
-        let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
-        highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
-        let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
-        highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
-
 
         }else{
-        d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .4);;
+        d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .5);
         }
       });
 
       if(filterType){
        
         highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
-        highlightedActivities.select('.all-activities').attr('stroke', 'gray').attr('stroke-width', 1);
+        highlightedActivities.select('.all-activities').attr('stroke-width', 0);
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
         highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
         let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
