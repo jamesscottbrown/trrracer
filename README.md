@@ -42,6 +42,14 @@ To package apps for the local platform:
 yarn package
 ```
 
+## Web Development
+1. make sure `fileUtils.ts` and `ProjectContext.ts` has the web version functions uncommented and the electron versions commented out.
+2. run `npm run build:web` in the root folder
+3. run a simple server in `src/web-dist`. (`http-server` is a good option for this).
+4. run a server in the directory of the data files. These are in the shared google drive. To serach for these start with '/Volumes/GoogleDrive/Shared drives/trrrace/' with whatever project you need. Should look something like `http-server --cors -p 8081`
+5. Happy deving.
+
+
 ## About
 
 The initial scaffolding for this app was based on the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) template, which uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
