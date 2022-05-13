@@ -276,20 +276,20 @@ const BubbleVis = (props: BubbleProps) => {
 
       gBrush.select('.overlay').attr('opacity', 0.1);
 
-      let gUnderRect = gBrush.selectAll('rect.handle')
-      .data(['handle--o', 'handle--e'])
-      .join('rect')
-      .classed('handle', true)
-      .attr('fill', '#fff')
-      .attr('width', 60)
-      .attr('height', 20)
-      .attr('transform', (d) => {
-        const y =
-          d === 'handle--o'
-            ? yScale(filteredActivitiesExtent[0])
-            : yScale(filteredActivitiesExtent[1]);
-        return `translate(0, ${y})`;
-      });
+      // let gUnderRect = gBrush.selectAll('rect.handle')
+      // .data(['handle--o', 'handle--e'])
+      // .join('rect')
+      // .classed('handle', true)
+      // .attr('fill', '#fff')
+      // .attr('width', 60)
+      // .attr('height', 20)
+      // .attr('transform', (d) => {
+      //   const y =
+      //     d === 'handle--o'
+      //       ? yScale(filteredActivitiesExtent[0])
+      //       : yScale(filteredActivitiesExtent[1]);
+      //   return `translate(0, ${y})`;
+      // });
 
       // Custom handlers
       // Handle group
