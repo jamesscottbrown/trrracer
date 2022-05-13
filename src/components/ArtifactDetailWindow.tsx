@@ -387,10 +387,18 @@ const DetailSidebar = (props: any) => {
       marginRight="8px"
       flex="2"
       flexDirection="column"
-      h="calc(100vh - 150px)"
+      h="calc(100vh - 75px)"
       overflow="auto"
+      
     >
-      <Box flex="2" overflowY="auto">
+      <Box 
+        flex="2" 
+        overflowY="auto" 
+        boxShadow={"3px 3px 8px #A3AAAF"}
+        border={"1px solid #A3AAAF"}
+        borderRadius={6}
+        p={5}
+      >
         <Box style={{ marginBottom: 20 }}>
           <div>
             <span style={{ fontSize: 20, fontWeight: 700 }}>
@@ -744,7 +752,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       </Box>
       <Flex
         position="relative"
-        top={120}
+        top={70}
         bottom={0}
         height="calc(100% - 150px)"
       >

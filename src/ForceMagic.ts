@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import { extent } from 'd3-array';
 import { scaleTime } from 'd3-scale';
+import {quadtree} from 'd3-quadtree';
+
 
 class ForceMagic {
   circleScale: any;
@@ -20,7 +22,7 @@ class ForceMagic {
       : d3
           .scaleLinear()
           .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
-          .range([5, 20]);
+          .range([2, 20]);
 
     this.margin = height * .15;
 
@@ -28,7 +30,9 @@ class ForceMagic {
       .range([0, height - this.margin])
       .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
 
-    this.nodes = projectEntries.map((a: any) => {
+    let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
+
+    this.nodes = filtered.map((a: any) => {
       const node = {};
       node.date = a.date;
       node.description = a.description;
@@ -42,21 +46,25 @@ class ForceMagic {
       node.artifactType = splitBool ? a.artifactType : null;
       node.urls = a.urls;
       node.year = a.year;
-      node.radius = splitBool ? 5 : this.circleScale(a.files.length);
+      node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);
+      node.true_y = this.yScale(new Date(a.date));
+      node.true_x = 0;
+      node.y = this.yScale(new Date(a.date));
+      node.x = 0;
       return node;
     });
 
     this.simulation = d3
       .forceSimulation(this.nodes)
-      .force('x', d3.forceX().x(width / 2))
+      .force('x', d3.forceX().x(width/2))
       .force(
         'y',
-        d3.forceY().y((d) => this.yScale(new Date(d.date)))
+        d3.forceY().y((d) => this.yScale(new Date(d.date))).strength(1)
       )
       .force(
         'collision',
-        d3.forceCollide().radius((d: any) => d.radius + 1)
-      );
+        d3.forceCollide().radius((d: any) => d.radius + 2)
+      ).stop();
 
     for (let i = 0; i < 120; ++i) this.simulation.tick();
   }

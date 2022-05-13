@@ -11,7 +11,8 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 
-import { FaCalculator, FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
@@ -20,9 +21,12 @@ import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 
 const LeftSidebar = (props: any) => {
+  
+  const {fromTop} = props;
+
   const [{ projectData, researchThreads, artifactTypes }, dispatch] =
     useProjectState();
-  const { setGroupBy, setSplitBubbs } = props;
+ 
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({
@@ -66,15 +70,6 @@ const LeftSidebar = (props: any) => {
 
   const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
   sortedArtTypes.push({ title: 'all', matches: artifacts.length });
-
-  // const tags = projectData.tags.map((t) => {
-  //   t.matches = projectData.entries.filter((f) => {
-  //     return f.tags.indexOf(t.title) > -1;
-  //   });
-  //   return t;
-  // });
-
-  // const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
   const headerStyle = { fontSize: '19px', fontWeight: 600 };
 
   return (
@@ -83,61 +78,22 @@ const LeftSidebar = (props: any) => {
       style={{ paddingLeft: 5, paddingRight: 5 }}
       flex={1}
       flexDirection="column"
-      h="calc(100vh - 130px)"
+      h={`calc(100vh - ${(fromTop + 5)}px)`}
       overflow="auto"
+      borderRight={'1px solid #A3AAAF'}
+      boxShadow={"0 3px 8px #A3AAAF"}
+      borderRadius={6}
+      p={3}
     >
-      <Box marginLeft="3px" padding="3px" height="30px">
-        <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Split bubbles to artifacts
-          </FormLabel>
-          <Switch
-            id="split-by"
-            onChange={(event) => {
-              event.target.checked ? setSplitBubbs(true) : setSplitBubbs(false);
-            }}
-          />
-        </FormControl>
-      </Box>
-      <Box marginLeft="3px" padding="3px" height="40px">
-        <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Group by research threads
-          </FormLabel>
-          <Switch
-            id="split-by"
-            onChange={(event) => {
-              event.target.checked
-                ? setGroupBy({
-                    type: 'research_threads',
-                    data: researchThreads.research_threads,
-                  })
-                : setGroupBy(null);
-            }}
-          />
-        </FormControl>
-      </Box>
+    
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType="overview"
       />
       <br />
       <Box
-        marginLeft="3px"
         marginTop="10px"
         marginBottom="10px"
-        borderLeftColor="black"
-        borderLeftWidth="1px"
         padding="3px"
       >
         <Menu>

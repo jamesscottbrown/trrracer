@@ -29,6 +29,8 @@ const SidebarButton = (sidebarProps: any) => {
           style={{ cursor: 'pointer' }}
           bg={barColor}
           key={`${data.title}-${index}`}
+          onMouseOver={()=> setBarColor('#D3D3D3')}
+          onMouseOut={()=> setBarColor('#FFF')}
         >
           {`${data.title}  (${data.matches.length})`}
         </Box>
@@ -36,6 +38,26 @@ const SidebarButton = (sidebarProps: any) => {
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
         <PopoverBody>
+          <Button 
+            style={{
+                display:'inline-block',
+                margin:5
+              }}
+              onClick={() => {
+                        console.log('tags filter check', filterTags);
+                        // nee to make a tag filter function
+                        if (filterTags.includes(data.title)) {
+                          alert('tag filter already exists');
+                        } else {
+                          dispatch({
+                            type: 'UPDATE_FILTER_TAGS',
+                            filterTags: [...filterTags, data.title],
+                          });
+                        }
+                      }}
+            >
+                Filter artifacts by this tag.
+          </Button>
           {showThreadPop ? (
             <Box>
               {researchThreads &&
@@ -66,10 +88,16 @@ const SidebarButton = (sidebarProps: any) => {
               <Button onClick={() => setShowThreadPop(false)}>cancel</Button>
             </Box>
           ) : (
-            <Button onClick={() => setShowThreadPop(true)}>
+            <Button 
+            style={{
+              display:'inline-block',
+              margin:5
+            }}
+            onClick={() => setShowThreadPop(true)}>
               Add this tag to a thread.
             </Button>
           )}
+          
         </PopoverBody>
       </PopoverContent>
     </Popover>

@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useState } from 'react';
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
@@ -10,9 +10,71 @@ import { EntryType } from './types';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
+import AddEntryForm from './AddEntryForm';
 
 interface ProjectProps {
   folderPath: string;
+}
+
+const ResearchThreadTypeTags = (rttt:any) => {
+
+  const {fromTop, dispatch, filterRT, researchThreads, threadTypeFilterArray} = rttt;
+
+  let chosenThread = filterRT ? researchThreads.research_threads.filter(f => f.title === filterRT.title)[0] : null;
+  let threadTypeGroups = threadTypeFilterArray.map((ty)=> {
+    ty.matches = ty.type === 'tags' ?  (filterRT? filterRT.associatedKey : null) : chosenThread?.evidence.filter(f => f.type === ty.type);
+    return ty;
+  });
+
+  return (
+    <Box
+    style={{
+      width:'100%',
+      zIndex:5000,
+      position:'fixed',
+      top: filterRT ? 70 : -50
+    }}
+  >
+  {filterRT && (
+    <Flex style={{
+      backgroundColor:'#fff',
+      paddingBottom:'20px',
+      paddingTop:'20px',
+      paddingLeft:'40px',
+      paddingRight:'20px',
+      alignContent:"space-around",
+      alignItems:"center",
+      alignSelf:"center"
+    }}>
+    {threadTypeGroups.map((tg, i)=> (
+      <Tag
+      key={`r-t-t-t-i${i}`}
+      style={{
+        marginRight:'15px',
+        cursor:'pointer',
+        backgroundColor: chosenThread.color,
+        color: chosenThread.color === '#3932a3' ? '#fff' : 'black',
+        opacity: (tg.show && tg.matches.length > 0) ? 1 : 0.4,
+      }}
+      onClick={()=>{
+        let temp = threadTypeFilterArray.map(m => {
+          if(m.type === tg.type){
+            m.show ? m.show = false : m.show = true;
+          }
+          return m;
+        })
+        dispatch({ type: 'UPDATE_RT_TYPE_SHOWN', threadTypeFilterArray: temp })
+      }}
+      >
+        <TagLabel>
+          {`${tg.type} : ${tg.matches.length}`}
+        </TagLabel>
+        </Tag> 
+    ))
+    }
+    </Flex> 
+  )}</Box>
+  )
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
@@ -27,8 +89,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads
-    },
+    }, dispatch
   ] = useProjectState();
+
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
@@ -39,6 +102,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [groupBy, setGroupBy] = useState(null);
   const [splitBubbs, setSplitBubbs] = useState(false);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
+  const [hideByDefault, setHideByDefault] = useState<boolean>(false);
+  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
+
+  const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   // Update title when projectData changes.
   useEffect(() => {
@@ -127,7 +194,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
+
     setfilteredActivities(queryFiltered);
+
   }, [
     projectData.entries,
     filterTags,
@@ -211,28 +280,48 @@ const Project = (ProjectPropValues: ProjectProps) => {
           newTitle={newTitle}
           setNewTitle={setNewTitle}
           filteredActivityNames={null}
-          defineEvent={defineEvent}
-          setDefineEvent={setDefineEvent}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
+          addEntrySplash={addEntrySplash}
+          setAddEntrySplash={setAddEntrySplash}
         />
-        <Flex position="relative" top={130}>
-          <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
+        <Flex position="relative" top={`${fromTop}px`}>
+          <LeftSidebar fromTop={fromTop} />
           <BubbleVis
+            fromTop={fromTop}
             filteredActivities={filteredActivities}
             groupBy={groupBy}
+            setGroupBy={setGroupBy}
             splitBubbs={splitBubbs}
+            setSplitBubbs={setSplitBubbs}
             setHoverActivity={setHoverActivity}
             flexAmount={2}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
           />
-          <Box flex="1.5" h="calc(100vh - 130px)" overflowY="auto">
-            <ProjectListView
-              projectData={projectData}
-              filteredActivities={filteredActivities}
-              setViewType={setViewType}
-              hoverActivity={hoverActivity}
-            />
-          </Box>
+        
+          {
+            addEntrySplash && (
+                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
+              )
+          }
+         
+          {
+            (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
+              <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+                <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
+                
+                    <ProjectListView
+                      projectData={projectData}
+                      filteredActivities={filteredActivities}
+                      setViewType={setViewType}
+                      hoverActivity={hoverActivity}
+                    />
+                  
+              </Box>
+            )
+          }
+        
         </Flex>
       </div>
     );

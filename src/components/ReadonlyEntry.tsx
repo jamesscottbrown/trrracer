@@ -75,7 +75,6 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 />
       <Button 
         size={'xs'}
-        
         style={{
           marginLeft:'7px',
           color:'#ffffff',
@@ -203,29 +202,19 @@ const ActivityTitlePopoverLogic = (props: ActivityTitlePopoverLogicProps) => {
     }
   };
 
-  return showPopover ? (
-    <Popover
-      isOpen={showPopover}
-      onClose={closePopover}
-      onMouseLeave={closePopover}
-    >
-      <PopoverTrigger>
-        <Box
-          key={`${activityData.title}-${activityData.index}`}
-          marginTop={2}
-          style={{ cursor: 'pointer' }}
-          className="activity"
-          onMouseLeave={() => {
-            if (!seeThreadAssign) {
-              setTimeout(function () {
-                setActivitySelected(false);
-                closePopover();
-              }, 3000);
-            }
-          }}
-        >
-          <div>{activityData.title} </div>
-        </Box>
+  return <Popover
+            trigger={'hover'}
+            style={{display:'inline'}}
+          >
+          <PopoverTrigger>
+          <div
+            style={{
+              display:'inline',
+              marginTop:2,
+              cursor:'pointer'
+            }}
+          >{activityData.title} </div>
+        
       </PopoverTrigger>
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
@@ -276,16 +265,6 @@ const ActivityTitlePopoverLogic = (props: ActivityTitlePopoverLogicProps) => {
         </PopoverFooter>
       </PopoverContent>
     </Popover>
-  ) : (
-    <div
-      style={{ cursor: 'pointer' }}
-      onMouseOver={() => {
-        setShowPopover(true);
-      }}
-    >
-      {activityData.title}{' '}
-    </div>
-  );
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
@@ -311,6 +290,9 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
+      <div
+        style={{padding:10}}
+      >
       <span style={{ fontSize: 22, fontWeight: 'bold' }}>
         {entryData.isPrivate && (
           <FaLock
@@ -329,7 +311,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           <Button 
           leftIcon={<EditIcon />} 
           onClick={makeEditable}
-          style={{display:'inline'}}
+          style={{display:'inline', float:'right'}}
           >
             Edit
           </Button>
@@ -372,15 +354,10 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           <br />
         </div>
       )}
-      {/* <br />
-      {entryData.description && (
-        <div
-          className="readonlyEntryMarkdownPreview"
-          dangerouslySetInnerHTML={{ __html: descriptionHTML }}
-        />
-      )} */}
 
-      <SimpleGrid columns={1} spacing={3}>
+      </div>
+
+      <SimpleGrid columns={1} spacing={1}>
         {files.map((f, i) => (
           <ReadonlyEntryFile
             key={`readonly-${i}`}
@@ -393,10 +370,12 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         ))}
       </SimpleGrid>
       {urls.length > 0 && (
-        <>
-          <Heading as="h3" size="lg">
+        <div
+          style={{padding:10}}
+        >
+          <span style={{fontSize: 16, fontWeight:800}}>
             URLs
-          </Heading>
+          </span>
           <UnorderedList>
             {urls.map((url, i) => (
               <ListItem key={`${url.url}-${i}`}>
@@ -409,7 +388,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               </ListItem>
             ))}
           </UnorderedList>
-        </>
+        </div>
       )}
     </Box>
   );
