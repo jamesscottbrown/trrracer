@@ -10,6 +10,326 @@ import Bubbles from '../Bubbles';
 
 // import { readFileSync } from '../fileUtil';
 import {readSync} from 'to-vfile';
+import { calcCircles } from '../PackMagic';
+import { dataStructureForTimeline } from './VerticalAxis';
+import { getIndexOfMonth } from '../timeHelperFunctions';
+
+const BubbleVisPaper = (props: any) => {
+  const {
+    filteredActivities,
+    setHoverActivity,
+    flexAmount
+  } = props;
+
+  const [
+    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
+    dispatch
+  ] = useProjectState();
+  
+  const {eventArray} = projectData;
+
+  const [newHeight, setNewHeight] = useState('1000px');
+  const [svgWidth, setSvgWidth] = useState(500);
+  const [translateY, setTranslateY] = useState(35);
+  const [hoverData, setHoverData] = useState(projectData.entries[0]);
+  const [toolPosition, setToolPosition] = useState([0, 0]);
+
+  const width = 200;
+
+  const height = +newHeight.split('px')[0];
+
+  const svgRef = React.useRef(null);
+
+  let packedCircData = calcCircles(projectData.entries);
+
+  d3.select('#tooltip').style('opacity', 0);
+
+  const forced = new ForceMagic(packedCircData, width, height);
+
+  useEffect(() => {
+    if (svgRef.current) {
+      setNewHeight(window.getComputedStyle(svgRef.current).height);
+    }
+    
+    setSvgWidth(500);
+    
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('*').remove();
+
+    const underWrap = svg.append('g').classed('path-wrap', true)
+    underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
+    const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
+
+    const { yScale, margin } = forced;
+    setTranslateY(margin / 3);
+
+    const marginTime = height * 0.25;
+  
+    const yearMonth = dataStructureForTimeline(projectData.entries);
+
+    const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
+    const endIndex = getIndexOfMonth(
+      yearMonth[yearMonth.length - 1].months,
+      'last'
+    );
+  yearMonth[0].months = yearMonth[0].months.filter(
+    (f: any, i: number) => i > startIndex - 1
+  );
+  yearMonth[yearMonth.length - 1].months = yearMonth[
+    yearMonth.length - 1
+  ].months.filter((f: any, i: number) => i < endIndex);
+
+  const filteredActivitiesExtent = d3.extent(
+    filteredActivities.map((m: any) => new Date(m.date))
+  );
+
+    let checkGroup = svg.select('g.timeline-wrap');
+
+    let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+    
+    wrapAxisGroup.selectAll('*').remove();
+    wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
+
+    const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
+
+    const yAxisGroup = wrapAxisGroup
+      .append('g')
+      .attr('transform', `translate(10, 0)`)
+      .call(yAxis);
+
+    yAxisGroup.select('.domain').remove();
+    yAxisGroup
+      .selectAll('line')
+      .enter()
+      .append('line')
+      .attr('stroke', 'gray.900');
+
+    const axisLabel = yAxisGroup
+      .selectAll('text')
+      .join('text')
+      .attr('font-size', '0.55rem')
+      .attr('opacity', 0.5);
+
+  /*
+  */
+    const eventRectGroups = wrap
+    .selectAll('g.event')
+    .data(eventArray)
+    .join('g')
+    .classed('event', true);
+
+    if (eventArray.length > 0) {
+
+        eventRectGroups.attr('transform', (d)=> `translate(-70, ${yScale(new Date(d.time[0]))})`)
+        const eventRects = eventRectGroups.selectAll('rect').data(d => [d]).join('rect');
+
+        eventRects.attr(
+        'height',
+        (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+        );
+
+        eventRects.attr('width', 900);
+        eventRects.style('fill-opacity', 0.05);
+
+        
+        let eventLine = eventRectGroups
+          .append('line')
+          .attr('x1', 0)
+          .attr('x2', 300)
+          .attr('y1', 0)
+          .attr('y2', 0)
+          .attr('stroke', 'gray')
+          .attr('stroke-width', 1)
+
+        let eventText = eventRectGroups
+        .selectAll('text')
+        .data((d) => [d])
+        .join('text')
+        .text((d) => d.event);
+
+        eventText.attr('x', 305);
+        eventText.attr('y', 4);
+        eventText.style('font-size', 10);
+        eventText.style('fill', 'gray');
+        
+     
+    }
+
+    // const nodes = forced.nodes.filter((f: any) => filteredActivities.map((m: any) => m.title).includes(f.title));
+
+    let allActivityGroups = wrap
+      .selectAll('g.activity')
+      .data(forced.nodes)
+      .join('g')
+      .attr('class', 'activity');
+
+      allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+      let activityBubbles = new Bubbles(
+        allActivityGroups,
+        true,
+        'all-activities'
+      );
+
+      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+      
+      let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
+      artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
+
+      let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      
+      highlightedActivities.select('.all-activities')
+      .on('mouseover', (event, d) => {
+        if(filterRT){
+          d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
+        }
+       
+      }).on('mouseout', (event, d) => {
+        if(filterRT){
+        d3.select(event.target).attr('stroke-width', 0);
+        }
+      });
+
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      highlightedCircles.attr('fill', 'gray');
+
+      let hiddenCircles = allActivityGroups.filter(ac => {
+        return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
+      .selectAll('circle.artifact');
+
+      hiddenCircles.attr('fill', 'gray')
+      .attr('fill-opacity', .3);
+
+      if(filterRT){
+       
+        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+
+        let linkDataBefore = [];
+        let linkDataAfter = [];
+
+        researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
+          let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
+        
+        let chosenActivityData = temp.select('.all-activities').data()[0];
+        
+        if(f.type === 'activity'){
+          temp.select('.all-activities')
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        
+        }else if(f.type === 'artifact' || f.type === 'fragment'){
+         
+          let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
+          temp
+            .select('circle.background')
+            .attr('fill-opacity', 1);
+          temp.selectAll('circle.artifact')
+            .filter(art => art.title === f.artifactTitle)
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
+          temp.select('circle.all-activities')
+            .attr('fill', researchThreads?.research_threads[selectedThread].color);
+          
+          let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
+
+          if(new Date(chosenActivityData.date) < divideDate){
+            linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+          }else{
+            linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+          }
+         
+        }
+      })
+
+      var lineGenerator = d3.line();
+      linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
+      linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      linkDataBefore.push(linkDataAfter[0])
+
+      var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+      var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+
+      underWrap.append('path')
+        .attr('d', pathStringDash)
+        .attr('fill', 'none')
+        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+        .attr('stroke-width', 2)
+        .style('stroke-dasharray', '5,5');
+
+      underWrap.append('path')
+        .attr('d', pathStringSolid)
+        .attr('fill', 'none')
+        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+        .attr('stroke-width', 2);
+    }
+
+    highlightedActivities
+        .on('mouseover', (event, d) => {
+          
+          setToolPosition([d.x, d.y])
+          setHoverData(d);
+          d3.select('#tooltip').style('opacity', 1);
+
+          underWrap.append('line')
+            .attr('id', 'date_line')
+            .attr('y1', d.y)
+            .attr('x2', (0-70))
+            .attr('y2', forced.yScale(new Date(d.date)))
+            .attr('x1', (+d.x))
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+
+          let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
+
+          let text = wrap.append('text')
+            .attr('id', 'date_label')
+            .text(new Date(d.date).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            }))
+            .attr('text-anchor', 'end')
+            .attr('font-size', 9)
+            .attr('x', (0-70))
+            .attr('y', forced.yScale(new Date(d.date)))
+          
+          let bB = text.node().getBoundingClientRect();
+          
+          textWrap.attr('width', bB.width)
+          textWrap.attr('height', bB.height)
+          .attr('x', (0-(70+ bB.width)))
+          .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
+          textWrap.attr('fill', '#fff')
+
+        })
+        .on('mouseout', (event:any, d:any) => {
+      
+          d3.select('#tooltip').style('opacity', 0);
+          d3.select('#date_line').remove();
+          d3.select('#date_label').remove();
+          d3.select('#date_label_bg').remove();
+      
+        }).on('click', (event:any, d:any)=> {
+          setHoverActivity(d);
+        })
+
+    // }
+      
+
+  }, [filteredActivities, eventArray]);
+
+  return (
+    <div style={{ flex: flexAmount, paddingTop:'10px' }}>
+      <svg
+        ref={svgRef}
+        width={svgWidth}
+        height={height}
+        style={{ display: 'inline' }}
+      />
+      {/* <ToolTip activityData={hoverData} position={toolPosition}/> */}
+    </div>
+  );
+};
 
 const PaperView = (props: any) => {
   const { folderPath } = props;
@@ -52,112 +372,6 @@ const PaperView = (props: any) => {
   const svgRef = React.useRef(null);
   const annoSvgRef = React.useRef(null);
 
-  const forced = new ForceMagic(projectData.entries, width, height, false);
-  const checktool = d3.select('#tooltip');
-
-  const div = checktool.empty()
-    ? d3
-        .select('body')
-        .append('div')
-        .attr('id', 'tooltip')
-        .style('opacity', 0)
-        .style('position', 'absolute')
-        .style('text-align', 'center')
-        .attr('max-width', '150px')
-        .attr('height', 2)
-        .style('padding', '10px')
-        .style('font', '12px sans-serif')
-        .style('background', 'white')
-        .style('border', '2px solid gray')
-        .style('border-radius', '10px')
-        .style('pointer-events', 'none')
-    : checktool;
-
-  useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
-
-    const wrap = svg.append('g').attr('transform', 'translate(0, 20)');
-
-    const nodes = forced.nodes
-      .filter((f) =>
-        researchThreads.research_threads[index].evidence
-          .map((m) => m.activityTitle)
-          .includes(f.title)
-      )
-      .map((m) => {
-        m.color = researchThreads.research_threads[index].color;
-        return m;
-      });
-
-    const notNodes = forced.nodes.filter(
-      (f) =>
-        researchThreads.research_threads[index].evidence
-          .map((m) => m.activityTitle)
-          .indexOf(f.title) === -1
-    );
-
-    const activityNot = wrap
-      .selectAll('g.activity_not')
-      .data(notNodes)
-      .join('g')
-      .attr('class', 'activity_not');
-
-    const activityGroups = wrap
-      .selectAll('g.activity')
-      .data(nodes)
-      .join('g')
-      .attr('class', 'activity');
-
-    const bubbleHighlighted = new Bubbles(activityGroups, true, false, null);
-
-    bubbleHighlighted.bubbles
-      .on('mouseover', (event, d) => {
-        d3.select(event.target)
-          .attr('r', d.radius * 2)
-          .attr('stroke', '#fff')
-          .attr('stroke-width', 2);
-
-        const htmlForm = () => {
-          const test = researchThreads.research_threads[index].evidence.filter(
-            (f) => f.activityTitle === d.title
-          );
-
-          let start = `<div style="margin-bottom:10px; font-weight:700">${d.title} <br/>`;
-          test.forEach((t) => {
-            const type =
-              t.type === 'fragment' ? 'Fragment of Artifact' : t.type;
-            const artifactTitle =
-              t.type === 'fragment' || t.type === 'artifact'
-                ? `: ${t.artifactTitle}`
-                : '';
-            start += `<div><span style="font-weight:700; font-size:14px">${type}</span>${artifactTitle}</div></br>`;
-            if (t.type === 'fragment') {
-              t.anchors.map((an) => {
-                if (an.anchor_type === 'text') {
-                  start += `<div style="margin-bottom:10px">${an.frag_type}</div>`;
-                }
-              });
-            }
-            start += `<div>Rationale: ${t.rationale}<div>`;
-          });
-
-          start += `</div>`;
-          return start;
-        };
-
-        div.transition().duration(200).style('opacity', 0.9);
-        div
-          .html(htmlForm)
-          .style('left', `${event.pageX}px`)
-          .style('top', `${event.pageY - 28}px`);
-      })
-      .on('mouseout', (event, d) => {
-        d3.select(event.target).attr('r', d.radius).attr('stroke-width', 0);
-        div.transition().duration(500).style('opacity', 0);
-      });
-  }, [projectData, selectedThread]);
-
   useEffect(() => {
     const pageRectData = [];
     for (let i = 1; i < numPages; i += 1) {
@@ -168,7 +382,6 @@ const PaperView = (props: any) => {
       });
     }
 
-    console.log('page rect data', pageRectData);
     const smallRectHeight = 70;
     const bigRectHeight = 792;
     const bigRectWidth = 612;
@@ -285,11 +498,16 @@ const PaperView = (props: any) => {
           />
         </Box>
         <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
-          <svg
+          {/* <svg
             style={{ display: 'inline' }}
             ref={svgRef}
             width={360}
             height="100%"
+          /> */}
+          <BubbleVisPaper 
+            filteredActivities={projectData.entries}
+            setHoverActivity={null}
+            flexAmount={2}
           />
           <div
             id="pdf-wrap"
