@@ -14,58 +14,49 @@ import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 
+
 const BubbleVisPaper = (props: any) => {
   const {
+    svg,
     filteredActivities,
     setHoverActivity,
-    flexAmount
+    flexAmount,
+    selectedThreadData,
+    projectData,
+    translateY,
+    setTranslateY,
+    hoverData,
+    setHoverData,
+    toolPosition,
+    setToolPosition,
   } = props;
-
-  const [
-    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
-    dispatch
-  ] = useProjectState();
   
   const {eventArray} = projectData;
 
-  const [newHeight, setNewHeight] = useState('1000px');
-  const [svgWidth, setSvgWidth] = useState(500);
-  const [translateY, setTranslateY] = useState(35);
-  const [hoverData, setHoverData] = useState(projectData.entries[0]);
-  const [toolPosition, setToolPosition] = useState([0, 0]);
-
   const width = 200;
-
-  const height = +newHeight.split('px')[0];
-
-  const svgRef = React.useRef(null);
-
+  const height = 1000;
+ 
   let packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = new ForceMagic(packedCircData, width, height);
 
-  useEffect(() => {
-    if (svgRef.current) {
-      setNewHeight(window.getComputedStyle(svgRef.current).height);
-    }
-    
-    setSvgWidth(300);
-    
-    const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
+  const svgWrap = svg;
+  svgWrap.selectAll('*').remove();
 
-    const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
-    const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
-
-    const { yScale, margin } = forced;
-    setTranslateY(margin / 3);
-
-    const marginTime = height * 0.25;
+  const underWrap = svgWrap.append('g').classed('path-wrap', true)
+  underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
   
-    const yearMonth = dataStructureForTimeline(projectData.entries);
+  const wrapTest = svgWrap.select('.wrapper');
+  const wrap = wrapTest.empty() ? svgWrap.append('g').classed('wrapper', true).attr('transform', `translate(180, ${translateY})`) : wrapTest;
+
+  const { yScale, margin } = forced;
+  setTranslateY(margin / 3);
+
+  const marginTime = height * 0.25;
+  
+  const yearMonth = dataStructureForTimeline(projectData.entries);
 
     const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
     const endIndex = getIndexOfMonth(
@@ -83,9 +74,8 @@ const BubbleVisPaper = (props: any) => {
     filteredActivities.map((m: any) => new Date(m.date))
   );
 
-    let checkGroup = svg.select('g.timeline-wrap');
-
-    let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+    let checkGroup = svgWrap.select('g.timeline-wrap');
+    let wrapAxisGroup = checkGroup.empty() ? svgWrap.append('g').attr('class', 'timeline-wrap') : checkGroup;
     
     wrapAxisGroup.selectAll('*').remove();
     wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
@@ -110,8 +100,6 @@ const BubbleVisPaper = (props: any) => {
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
 
-  /*
-  */
     const eventRectGroups = wrap
     .selectAll('g.event')
     .data(eventArray)
@@ -131,7 +119,6 @@ const BubbleVisPaper = (props: any) => {
         eventRects.attr('width', 900);
         eventRects.style('fill-opacity', 0.05);
 
-        
         let eventLine = eventRectGroups
           .append('line')
           .attr('x1', 0)
@@ -142,20 +129,17 @@ const BubbleVisPaper = (props: any) => {
           .attr('stroke-width', 1)
 
         let eventText = eventRectGroups
-        .selectAll('text')
-        .data((d) => [d])
-        .join('text')
-        .text((d) => d.event);
+          .selectAll('text')
+          .data((d) => [d])
+          .join('text')
+          .text((d) => d.event);
 
         eventText.attr('x', 305);
         eventText.attr('y', 4);
         eventText.style('font-size', 10);
         eventText.style('fill', 'gray');
         
-     
     }
-
-    // const nodes = forced.nodes.filter((f: any) => filteredActivities.map((m: any) => m.title).includes(f.title));
 
     let allActivityGroups = wrap
       .selectAll('g.activity')
@@ -176,159 +160,146 @@ const BubbleVisPaper = (props: any) => {
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-      let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+      let highlightedActivities = allActivityGroups.filter((ac) => selectedThreadData.evidence.map((m:any) => m.activityTitle).includes(ac.title));
       
       highlightedActivities.select('.all-activities')
       .on('mouseover', (event, d) => {
-        if(filterRT){
-          d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
-        }
-       
+        d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
       }).on('mouseout', (event, d) => {
-        if(filterRT){
         d3.select(event.target).attr('stroke-width', 0);
-        }
       });
 
       let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
       highlightedCircles.attr('fill', 'gray');
 
-      let hiddenCircles = allActivityGroups.filter(ac => {
-        return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
+      let hiddenCircles = allActivityGroups.filter(ac => selectedThreadData.evidence.map((m:any) => m.activityTitle).indexOf(ac.title) === -1)
       .selectAll('circle.artifact');
 
       hiddenCircles.attr('fill', 'gray')
       .attr('fill-opacity', .3);
 
-      if(filterRT){
-       
-        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
+      let linkDataBefore = [];
+      let linkDataAfter = [];
 
-        let linkDataBefore = [];
-        let linkDataAfter = [];
-
-        researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
-          let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
-        
-        let chosenActivityData = temp.select('.all-activities').data()[0];
-        
-        if(f.type === 'activity'){
-          temp.select('.all-activities')
-            .attr('fill', researchThreads?.research_threads[selectedThread].color);
-        
-        }else if(f.type === 'artifact' || f.type === 'fragment'){
+      console.log('selected_thread', selectedThreadData)
+      selectedThreadData.evidence.forEach(f => {
+        console.log()
+        let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
+      
+      let chosenActivityData = temp.select('.all-activities').data()[0];
+      
+      if(f.type === 'activity'){
+        temp.select('.all-activities')
+          .attr('fill', selectedThreadData.color);
+      
+      }else if(f.type === 'artifact' || f.type === 'fragment'){
          
-          let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
-          temp
-            .select('circle.background')
-            .attr('fill-opacity', 1);
-          temp.selectAll('circle.artifact')
-            .filter(art => art.title === f.artifactTitle)
-            .attr('fill', researchThreads?.research_threads[selectedThread].color);
-          temp.select('circle.all-activities')
-            .attr('fill', researchThreads?.research_threads[selectedThread].color);
-          
-          let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
+        let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
+        temp
+          .select('circle.background')
+          .attr('fill-opacity', 1);
+        temp.selectAll('circle.artifact')
+          .filter(art => art.title === f.artifactTitle)
+          .attr('fill', selectedThreadData.color);
+        temp.select('circle.all-activities')
+          .attr('fill', selectedThreadData.color);
+        
+        let divideDate = new Date(selectedThreadData.actions.filter(f => f.action === 'created')[0].when);
 
-          if(new Date(chosenActivityData.date) < divideDate){
-            linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
-          }else{
-            linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
-          }
-         
+        if(new Date(chosenActivityData.date) < divideDate){
+          linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+        }else{
+          linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
         }
-      })
+        
+      }
+    })
 
-      var lineGenerator = d3.line();
-      linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
-      linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+    var lineGenerator = d3.line();
+    linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
+    linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      linkDataBefore.push(linkDataAfter[0])
+    linkDataBefore.push(linkDataAfter[0])
 
-      var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
-      var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+    var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+    var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
 
-      underWrap.append('path')
-        .attr('d', pathStringDash)
-        .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
-        .attr('stroke-width', 2)
-        .style('stroke-dasharray', '5,5');
+    underWrap.append('path')
+      .attr('d', pathStringDash)
+      .attr('fill', 'none')
+      .attr('stroke', selectedThreadData.color)
+      .attr('stroke-width', 2)
+      .style('stroke-dasharray', '5,5');
 
       underWrap.append('path')
         .attr('d', pathStringSolid)
         .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+        .attr('stroke', selectedThreadData.color)
         .attr('stroke-width', 2);
-    }
+    
+      highlightedActivities
+          .on('mouseover', (event, d) => {
+            setToolPosition([d.x, d.y])
+            setHoverData(d);
+            d3.select('#tooltip').style('opacity', 1);
 
-    highlightedActivities
-        .on('mouseover', (event, d) => {
-          
-          setToolPosition([d.x, d.y])
-          setHoverData(d);
-          d3.select('#tooltip').style('opacity', 1);
+      underWrap.append('line')
+        .attr('id', 'date_line')
+        .attr('y1', d.y)
+        .attr('x2', (0-70))
+        .attr('y2', forced.yScale(new Date(d.date)))
+        .attr('x1', (+d.x))
+        .attr('stroke', 'black')
+        .attr('stroke-width', 1)
 
-          underWrap.append('line')
-            .attr('id', 'date_line')
-            .attr('y1', d.y)
-            .attr('x2', (0-70))
-            .attr('y2', forced.yScale(new Date(d.date)))
-            .attr('x1', (+d.x))
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
+    let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
 
-          let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
-
-          let text = wrap.append('text')
-            .attr('id', 'date_label')
-            .text(new Date(d.date).toLocaleDateString('en-us', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            }))
-            .attr('text-anchor', 'end')
-            .attr('font-size', 9)
-            .attr('x', (0-70))
-            .attr('y', forced.yScale(new Date(d.date)))
-          
-          let bB = text.node().getBoundingClientRect();
-          
-          textWrap.attr('width', bB.width)
-          textWrap.attr('height', bB.height)
-          .attr('x', (0-(70+ bB.width)))
-          .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
-          textWrap.attr('fill', '#fff')
-
-        })
-        .on('mouseout', (event:any, d:any) => {
+      let text = wrap.append('text')
+        .attr('id', 'date_label')
+        .text(new Date(d.date).toLocaleDateString('en-us', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }))
+        .attr('text-anchor', 'end')
+        .attr('font-size', 9)
+        .attr('x', (0-70))
+        .attr('y', forced.yScale(new Date(d.date)))
       
-          d3.select('#tooltip').style('opacity', 0);
-          d3.select('#date_line').remove();
-          d3.select('#date_label').remove();
-          d3.select('#date_label_bg').remove();
+      let bB = text.node().getBoundingClientRect();
       
-        }).on('click', (event:any, d:any)=> {
-          setHoverActivity(d);
-        })
+      textWrap.attr('width', bB.width)
+      textWrap.attr('height', bB.height)
+      .attr('x', (0-(70+ bB.width)))
+      .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
+      textWrap.attr('fill', '#fff')
 
-    // }
-      
+    })
+    .on('mouseout', (event:any, d:any) => {
 
-  }, [filteredActivities, eventArray]);
+      d3.select('#tooltip').style('opacity', 0);
+      d3.select('#date_line').remove();
+      d3.select('#date_label').remove();
+      d3.select('#date_label_bg').remove();
 
-  return (
-    <div style={{ flex: flexAmount, paddingTop:'10px', width:svgWidth, display:'inline-block' }}>
-      <svg
-        ref={svgRef}
-        width={svgWidth}
-        height={height}
-        style={{ display: 'inline' }}
-      />
-      {/* <ToolTip activityData={hoverData} position={toolPosition}/> */}
-    </div>
-  );
+    }).on('click', (event:any, d:any)=> {
+      setHoverActivity(d);
+    })
+  // }, [filteredActivities, eventArray]);
+
+  // return (
+  //   <div style={{ flex: flexAmount, paddingTop:'10px', width:svgWidth, display:'inline-block' }}>
+  //     <svg
+  //       ref={svgRef}
+  //       width={svgWidth}
+  //       height={height}
+  //       style={{ display: 'inline' }}
+  //     />
+  //     {/* <ToolTip activityData={hoverData} position={toolPosition}/> */}
+  //   </div>
+  // );
+    return svgWrap;
 };
 
 const PaperView = (props: any) => {
@@ -339,11 +310,16 @@ const PaperView = (props: any) => {
   const anno = d3.groups(JSON.parse(linkData.value.toString()), (d) => d.page);
 
   const [{ projectData, researchThreads, selectedThread }] = useProjectState();
-
+  
   const index = selectedThread || 0;
+  const svgWidth = 600;
 
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
+
+  const [translateY, setTranslateY] = useState(35);
+  const [hoverData, setHoverData] = useState(projectData.entries[0]);
+  const [toolPosition, setToolPosition] = useState([0, 0]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -364,14 +340,11 @@ const PaperView = (props: any) => {
 
   const svgRef = React.useRef(null);
   const annoSvgRef = React.useRef(null);
-
-  /////
-
-
-  /////
-
+  
   useEffect(() => {
+
     const pageRectData = [];
+
     for (let i = 1; i < numPages; i += 1) {
       const annoTemp = anno.filter((a: any) => a[0] === i);
       pageRectData.push({
@@ -380,31 +353,48 @@ const PaperView = (props: any) => {
       });
     }
 
-    const smallRectHeight = 70;
     const bigRectHeight = 792;
     const bigRectWidth = 612;
 
+    ////TRY THIS HERE
+    let selectedThreadData = researchThreads?.research_threads[index];
+   
+    const smallRectHeight = 70;
     const yScaleSmall = d3
-      .scaleLinear()
-      .domain([0, anno[0][1][0]['pdf-dim'][3]])
-      .range([smallRectHeight, 0]);
-    const yScaleBig = d3
-      .scaleLinear()
-      .domain([0, anno[0][1][0]['pdf-dim'][3]])
-      .range([bigRectHeight, 0]);
-    const xScaleBig = d3
-      .scaleLinear()
-      .domain([0, anno[0][1][0]['pdf-dim'][2]])
-      .range([0, bigRectWidth]);
+    .scaleLinear()
+    .domain([0, anno[0][1][0]['pdf-dim'][3]])
+    .range([smallRectHeight, 0]);
+    
+    const svgWrapTest = d3.select(svgRef.current).select('#bubble-wrap');
+    const svgWrap = svgWrapTest.empty() ? d3.select(svgRef.current).append('g').attr('id', 'bubble-wrap') : svgWrapTest;
 
+    svgWrap.selectAll('*').remove();
+
+    BubbleVisPaper({
+      svg:svgWrap, 
+      filteredActivities:projectData.entries,
+      setHoverActivity:2,
+      flexAmount:2,
+      selectedThreadData: selectedThreadData,
+      projectData:projectData,
+      translateY:translateY, 
+      setTranslateY: setTranslateY,
+      hoverData: hoverData, 
+      setHoverData: setHoverData,
+      toolPosition: toolPosition, 
+      setToolPosition: setToolPosition
+    });
+  
     const groupTest = d3.select(svgRef.current).select('.text-group');
-
+  
     const group = groupTest.empty()
       ? d3.select(svgRef.current).append('g').classed('text-group', true)
       : groupTest;
-
+  
     group.attr('transform', 'translate(5, 100)');
-
+  
+    console.log('pagerectdata', pageRectData);
+  
     const pages = group
       .selectAll('g.pages')
       .data(pageRectData)
@@ -414,45 +404,54 @@ const PaperView = (props: any) => {
       'transform',
       (d, i) => `translate(0, ${i * (smallRectHeight + 5)})`
     );
-
+  
     const rect = pages
       .selectAll('rect.pag')
       .data((d: any) => [d])
       .join('rect')
       .classed('pag', true);
-
+  
     rect.attr('width', 50).attr('height', smallRectHeight);
-
+  
     rect.attr('fill', '#C5C5C5');
     rect.attr('fill-opacity', 0.5);
-
+  
     const annog = pages
       .selectAll('rect.anno')
       .data((d: any) => d.anno)
       .join('rect')
       .classed('anno', true);
-
+  
     annog.attr('width', 50);
     annog.attr('height', 5);
-
+  
     annog.attr('y', (d) => {
       return yScaleSmall(d.position['1']);
     });
-
+  
     annog.attr('fill', 'gray');
     annog.attr('opacity', 0.4);
-
+  
     const selectedPage = pages.filter((f: any) => f.pageIndex === pageNumber);
-
+  
     selectedPage
       .selectAll('rect.pag')
-      .attr('fill', researchThreads.research_threads[index].color)
+      .attr('fill', selectedThreadData.color)
       .attr('fill-opacity', 1);
-
+  
     selectedPage
       .selectAll('rect.anno')
       .attr('fill', '#FFF')
       .attr('opacity', 0.4);
+
+    const yScaleBig = d3
+      .scaleLinear()
+      .domain([0, anno[0][1][0]['pdf-dim'][3]])
+      .range([bigRectHeight, 0]);
+    const xScaleBig = d3
+      .scaleLinear()
+      .domain([0, anno[0][1][0]['pdf-dim'][2]])
+      .range([0, bigRectWidth]);
 
     const svgAnno = d3.select(annoSvgRef.current);
     svgAnno.selectAll('*').remove();
@@ -497,16 +496,12 @@ const PaperView = (props: any) => {
         </Box>
         <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
          
-          <BubbleVisPaper 
-            filteredActivities={projectData.entries}
-            setHoverActivity={null}
-            flexAmount={2}
-          />
-           <svg
-            style={{ display: 'inline' }}
-            ref={svgRef}
-            width={80}
-            height="100%"
+          <svg 
+            ref={svgRef} 
+            style={{
+              height:"100%",
+              width:"100%"
+            }}
           />
           <div
             id="pdf-wrap"

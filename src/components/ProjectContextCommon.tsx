@@ -75,7 +75,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_em = readProjectFile(baseDir, 'goog_em.json', null);
-         // console.log('yes to google em file');
+        
         } catch (e: any) {
           console.error('could not load google em file');
           google_em = null;
@@ -83,14 +83,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_data = readProjectFile(baseDir, 'goog_data.json', null);
-         // console.log('yes to goog data file');
+         
         } catch (e: any) {
           console.error('could not load google data file');
         }
 
         try {
           google_comms = readProjectFile(baseDir, 'goog_comms.json', null);
-          //console.log('yes to goog comments');
+      
         } catch (e) {
           google_comms = null;
           console.log('could not load goog comments');
@@ -98,7 +98,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           txt_data = readProjectFile(baseDir, 'text_data.json', null);
-         // console.log('yes to txtData');
+        
         } catch (e) {
           txt_data = null;
           console.error('could not load text data');
@@ -106,14 +106,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           roleData = readProjectFile(baseDir, 'roles.json', null);
-         // console.log('yes to role data');
+        
         } catch (e) {
           console.error('could not load role data');
         }
 
         try {
           artifact_types = readProjectFile(baseDir, 'artifactTypes.json', null);
-         // console.log('yes to artifact types data');
+        
         } catch (e) {
           artifact_types = null;
           console.error('could not load artifact types');
@@ -146,7 +146,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
                 //       ef.keywords = file.data.keywords;
                 //       ef.keyPhrases = file.data.keyphrases;
                 //     // file.data.keywords.forEach((keyword) => {
-                //     //   console.log(toString(keyword.matches[0].node))
+                //     //  
                 //     // })
 
                 // //     console.log('Key-phrases:')
@@ -182,7 +182,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
               // }
               ef.artifactType = ef.artifactType ? ef.artifactType : '';
               if(ef.fileType === 'txt'){
-                console.log('FILE WITH KEYS?', ef);
+                // console.log('FILE WITH KEYS?', ef);
               }
               
               return ef;
