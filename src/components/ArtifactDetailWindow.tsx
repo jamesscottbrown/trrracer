@@ -368,7 +368,7 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
   } = props;
 
-  const [{ researchThreads, projectData }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
@@ -450,6 +450,14 @@ const DetailSidebar = (props: any) => {
                         type: 'SELECTED_ARTIFACT',
                         selectedArtifactEntry,
                         selectedArtifactIndex: i,
+                        hopArray: [
+                          ...hopArray,
+                          { activity: 
+                            selectedArtifactEntry, 
+                            artifactUid: selectedArtifactEntry.files[i].artifact_uid,
+                            hopReason: 'another artifact in activity',
+                          },
+                        ]
                       });
                     }}
                   >

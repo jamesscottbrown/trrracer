@@ -25,9 +25,9 @@ const ToolTip = (toolProp: any) => {
     id={'tooltip'}
     style={{
       position:'absolute',
-      left: position[0] + 300,
+      left: position[0] + 450,
       top: position[1],
-      textAlign: 'center',
+      textAlign: 'left',
       minWidth:100,
       minHeight:50,
       padding:10,
@@ -51,17 +51,13 @@ const ToolTip = (toolProp: any) => {
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
         >
-        {/* <ToolIcon 
-          artifactType={fi.artifactType}
-          size={28}
-          /> */}
             <span
-               style={{
+                style={{
                 font: '15px sans-serif',
                 fontWeight:600
-              }}
+                }}
             >{fi.hopReason === 'tag' ? `This was hopped to from tag : ${fi.tag}` : `${fi.hopReason}`}</span>
-          </div>
+        </div>
       ))
     }
     </div>
@@ -162,6 +158,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     .attr('fill-opacity', .2);
 
     highlightedCircles.attr('fill', 'gray');
+    
 
     let theChosenOne = highlightedActivities.filter(f => f.title === selectedArtifactEntry.title);
     theChosenOne.selectAll('circle.artifact').filter((af, i) => selectedArtifactIndex === i).attr('fill', 'red');
@@ -208,7 +205,32 @@ const DetailBubble = (props: BubbleDetProps) => {
         .on('mouseout', (event:any, d:any) => {
           d3.select('#tooltip').style('opacity', 0);
         }).on('click', (event:any, d:any)=> {
-        //   setHoverActivity(d);
+            console.log(event.target, d)
+            let parentData = d3.select(event.target.parentNode).data()[0];
+            let selectedArtIndex = parentData.files.map(f => f.artifact_uid).indexOf(d.artifact_uid);
+            console.log('PARENT DATA', parentData, selectedArtIndex);
+            console.log('LOOKS RIGHT?', parentData.files[selectedArtIndex]);
+            let newHopData = [
+                    ...hopArray,
+                    { activity: 
+                    parentData, 
+                    artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
+                    hopReason: 'revisit hopped artifact',
+                    }
+                ]
+            console.log(newHopData)
+            dispatch({
+                type: 'SELECTED_ARTIFACT',
+                selectedArtifactEntry: parentData,
+                selectedArtifactIndex: selectedArtIndex,
+                hopArray: [
+                  ...hopArray,
+                  { activity: parentData, 
+                    artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
+                    hopReason: 'revisit hopped artifact',
+                  },
+                ]
+            });
         })
 
     // }
