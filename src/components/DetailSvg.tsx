@@ -187,6 +187,9 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     highlightedCircles.attr('fill', 'gray');
 
+    let theChosenOne = highlightedActivities.filter(f => f.title === selectedArtifactEntry.title);
+    theChosenOne.selectAll('circle.artifact').filter((af, i) => selectedArtifactIndex === i).attr('fill', 'red');
+
     let hiddenCircles = allActivityGroups.filter(ac => {
     return hopArray.map((m) => m.activity.title).indexOf(ac.title) === -1})
     .selectAll('circle.artifact');
@@ -214,7 +217,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     .attr('d', pathStringSolid)
     .attr('fill', 'none')
     .attr('stroke', 'gray')
-    .attr('stroke-width', 2);
+    .attr('stroke-width',1);
  
     highlightedActivities
         .on('mouseover', (event, d) => {
