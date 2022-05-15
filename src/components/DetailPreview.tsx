@@ -150,7 +150,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             console.log('mouseup');
           }
         }}
-        style={{ height: '90%', overflow: 'auto' }}
+        style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
       >
         {temp[0].text}
       </div>

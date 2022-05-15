@@ -16,6 +16,7 @@ import type {
   ReactTag,
 } from './types';
 import VerticalAxis from './VerticalAxis';
+import DetailBubble from './DetailSvg';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -204,7 +205,6 @@ const InteractiveActivityTag = (props: any) => {
   const [expandedTag, setExpandedTag] = useState(false);
 
  
-
   const tagMatches = projectData.entries.filter(
     (f: any) => f.tags.indexOf(tag) > -1
   );
@@ -230,7 +230,10 @@ const InteractiveActivityTag = (props: any) => {
               .indexOf(selectedArtifactEntry.title);
 
             if (indexOfE === 0) {
-              const newHop = [...hopArray, tagMatches[tagMatches.length - 1]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[tagMatches.length - 1], 
+                artifactUid: tagMatches[tagMatches.length - 1].files[0].artifact_uid,
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[tagMatches.length - 1],
@@ -238,7 +241,10 @@ const InteractiveActivityTag = (props: any) => {
                 hopArray: newHop,
               });
             } else {
-              const newHop = [...hopArray, tagMatches[indexOfE - 1]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[indexOfE - 1], 
+                artifactUid: tagMatches[indexOfE - 1].files[0].artifact_uid
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE - 1],
@@ -268,7 +274,10 @@ const InteractiveActivityTag = (props: any) => {
               .map((m: any) => m.title)
               .indexOf(selectedArtifactEntry.title);
             if (indexOfE === tagMatches.length - 1) {
-              const newHop = [...hopArray, tagMatches[0]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[0], 
+                artifactUid: tagMatches[0].files[0].artifact_uid
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[0],
@@ -276,7 +285,10 @@ const InteractiveActivityTag = (props: any) => {
                 hopArray: newHop,
               });
             } else {
-              const newHop = [...hopArray, tagMatches[indexOfE + 1]];
+              const newHop = [...hopArray,  {
+                activity: tagMatches[indexOfE + 1], 
+                artifactUid: tagMatches[indexOfE + 1].files[0].artifact_uid
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE + 1],
@@ -315,7 +327,10 @@ const InteractiveActivityTag = (props: any) => {
                   }}
                   key={`match-${i}`}
                   onClick={() => {
-                    const newHop = [...hopArray, t];
+                    const newHop = [...hopArray,  { 
+                      activity: t, 
+                      artifactUid: t.files[0].artifact_uid
+                    }];
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: t,
@@ -350,7 +365,6 @@ const DetailSidebar = (props: any) => {
     enter: 13,
   };
 
-  console.log('IN DETAIL SIDEBAR', selectedArtifactEntry, selectedArtifactIndex)
   const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry[selectedArtifactIndex] : null;
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
@@ -699,9 +713,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
+
                 const newHop = [
                   ...hopArray,
-                  projectData.entries[selectedArtifactEntry.index - 1],
+                  { activity: 
+                    projectData.entries[selectedArtifactEntry.index - 1], 
+                    artifactUid: projectData.entries[selectedArtifactEntry.index - 1].files[0].artifact_uid
+                  },
                 ];
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
@@ -722,7 +740,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               onClick={() => {
                 const newHop = [
                   ...hopArray,
-                  projectData.entries[selectedArtifactEntry.index + 1],
+                  { activity: projectData.entries[selectedArtifactEntry.index + 1], 
+                    artifactUid: projectData.entries[selectedArtifactEntry.index + 1].files[0].artifact_uid
+                  },
                 ];
 
                 dispatch({
@@ -763,14 +783,11 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           selectedArtifactIndex={selectedArtifactIndex}
         />
 
-        <div style={{ flex: 1 }}>
-          <VerticalAxis
-            filteredActivities={filteredActivities}
-            height={height}
-            setDefineEvent={null}
-            defineEvent={null}
-            yScale={yScale}
-            translateY={(margin / 2)}
+        <div style={{ width:200 }}>
+          <DetailBubble 
+            filteredActivities={projectData.entries}
+            widthSvg={260}
+            filterType={null}
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>

@@ -138,9 +138,9 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth[yearMonth.length - 1].months,
       'last'
     );
-  yearMonth[0].months = yearMonth[0].months.filter(
-    (f: any, i: number) => i > startIndex - 1
-  );
+    yearMonth[0].months = yearMonth[0].months.filter(
+      (f: any, i: number) => i > startIndex - 1
+    );
   yearMonth[yearMonth.length - 1].months = yearMonth[
     yearMonth.length - 1
   ].months.filter((f: any, i: number) => i < endIndex);
@@ -345,7 +345,7 @@ const BubbleVis = (props: BubbleProps) => {
     }
 
     if (defineEvent) {
-
+      console.log('defineEvent!!', defineEvent)
       let text;
       let bGroup = wrapAxisGroup.append('g')
       
@@ -746,7 +746,7 @@ const BubbleVis = (props: BubbleProps) => {
     // }
       }
 
-  }, [filteredActivities, groupBy, eventArray, filterType]);
+  }, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
   return (
     <div style={{ flex: flexAmount, paddingTop:'10px' }}>
@@ -756,8 +756,9 @@ const BubbleVis = (props: BubbleProps) => {
         <Button
           size={'sm'}
           style={{fontSize:"12px"}}
-          onClick={() =>
-            defineEvent ? setDefineEvent(false) : setDefineEvent(true)
+          onClick={() => {
+            console.log('is this working??')
+            defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
           }
         >
           Add events to timeline

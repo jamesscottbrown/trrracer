@@ -86,7 +86,12 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             type: 'SELECTED_ARTIFACT',
             selectedArtifactEntry: entryData,
             selectedArtifactIndex: i,
-            hopArray: [entryData],
+            hopArray: [
+              {
+                activity: entryData, 
+                artifactUid: entryData.files[i].artifact_uid
+              }
+            ],
           });
         }}
       >See in detail</Button>
