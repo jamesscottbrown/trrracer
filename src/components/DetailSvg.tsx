@@ -105,8 +105,8 @@ const DetailBubble = (props: BubbleDetProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(90, 20)`);
-    const wrap = svg.append('g').attr('transform', `translate(80, 20)`);
+    underWrap.attr('transform', `translate(105, 20)`);
+    const wrap = svg.append('g').attr('transform', `translate(95, 20)`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);
@@ -205,11 +205,10 @@ const DetailBubble = (props: BubbleDetProps) => {
         .on('mouseout', (event:any, d:any) => {
           d3.select('#tooltip').style('opacity', 0);
         }).on('click', (event:any, d:any)=> {
-            console.log(event.target, d)
+          
             let parentData = d3.select(event.target.parentNode).data()[0];
             let selectedArtIndex = parentData.files.map(f => f.artifact_uid).indexOf(d.artifact_uid);
-            console.log('PARENT DATA', parentData, selectedArtIndex);
-            console.log('LOOKS RIGHT?', parentData.files[selectedArtIndex]);
+          
             let newHopData = [
                     ...hopArray,
                     { activity: 

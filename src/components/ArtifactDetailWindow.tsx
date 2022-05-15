@@ -679,10 +679,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * .15;
 
-  const yScale = d3.scaleTime()
-  .range([0, viewheight - margin])
-  .domain(d3.extent(projectData.entries.map((e: any) => new Date(e.date))));
-
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
@@ -804,7 +800,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           selectedArtifactIndex={selectedArtifactIndex}
         />
 
-        <div style={{ width:200 }}>
+        <div style={{ width:260 }}>
           <DetailBubble 
             filteredActivities={projectData.entries}
             widthSvg={260}
@@ -814,7 +810,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         </div>
         {
           selectedArtifact && (
-            <Box flex="4">
+            <Box flex="3.5">
               {(selectedArtifact.fileType ===
                 'txt' ||
                 selectedArtifact.fileType ===
