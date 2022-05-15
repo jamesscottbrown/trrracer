@@ -48,13 +48,13 @@ const ToolTip = (toolProp: any) => {
     {
       hoverData.hopDataArray.map((fi:any, i:any) => (
         <div
-        key={`act-data-${i}`}
-          style={{display:'inline-block', margin:5}}
+            key={`act-data-${i}`}
+            style={{display:'block', margin:5}}
         >
             <span
                 style={{
-                font: '15px sans-serif',
-                fontWeight:600
+                    font: '13px sans-serif',
+                    fontWeight:600
                 }}
             >{fi.hopReason === 'tag' ? `This was hopped to from tag : ${fi.tag}` : `${fi.hopReason}`}</span>
         </div>
@@ -159,7 +159,6 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     highlightedCircles.attr('fill', 'gray');
     
-
     let theChosenOne = highlightedActivities.filter(f => f.title === selectedArtifactEntry.title);
     theChosenOne.selectAll('circle.artifact').filter((af, i) => selectedArtifactIndex === i).attr('fill', 'red');
 
@@ -176,9 +175,9 @@ const DetailBubble = (props: BubbleDetProps) => {
     //     linkData.push({coord: [(f.x - 8), f.y], date: f.date})
     // })
 
-    hopArray.forEach(h => {
+    hopArray.forEach((h, i) => {
         let temp = highlightedActivities.filter(f => h.activity.title === f.title);
-        let td = temp.data()[0]
+        let td = temp.data()[0];
         linkData.push({coord: [(td.x - 8), td.y], date: td.date});
     });
  
