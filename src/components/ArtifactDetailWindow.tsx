@@ -233,6 +233,8 @@ const InteractiveActivityTag = (props: any) => {
               const newHop = [...hopArray, {
                 activity: tagMatches[tagMatches.length - 1], 
                 artifactUid: tagMatches[tagMatches.length - 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
               }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
@@ -243,7 +245,9 @@ const InteractiveActivityTag = (props: any) => {
             } else {
               const newHop = [...hopArray, {
                 activity: tagMatches[indexOfE - 1], 
-                artifactUid: tagMatches[indexOfE - 1].files[0].artifact_uid
+                artifactUid: tagMatches[indexOfE - 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
               }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
@@ -276,7 +280,9 @@ const InteractiveActivityTag = (props: any) => {
             if (indexOfE === tagMatches.length - 1) {
               const newHop = [...hopArray, {
                 activity: tagMatches[0], 
-                artifactUid: tagMatches[0].files[0].artifact_uid
+                artifactUid: tagMatches[0].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
               }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
@@ -287,7 +293,9 @@ const InteractiveActivityTag = (props: any) => {
             } else {
               const newHop = [...hopArray,  {
                 activity: tagMatches[indexOfE + 1], 
-                artifactUid: tagMatches[indexOfE + 1].files[0].artifact_uid
+                artifactUid: tagMatches[indexOfE + 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
               }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
@@ -329,7 +337,9 @@ const InteractiveActivityTag = (props: any) => {
                   onClick={() => {
                     const newHop = [...hopArray,  { 
                       activity: t, 
-                      artifactUid: t.files[0].artifact_uid
+                      artifactUid: t.files[0].artifact_uid,
+                      hopReason: 'tag',
+                      tag: tag
                     }];
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
@@ -399,7 +409,8 @@ const DetailSidebar = (props: any) => {
     <Box
       marginLeft="8px"
       marginRight="8px"
-      flex="2"
+      // flex="1.5"
+      width="300px"
       flexDirection="column"
       h="calc(100vh - 75px)"
       overflow="auto"
@@ -718,7 +729,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   ...hopArray,
                   { activity: 
                     projectData.entries[selectedArtifactEntry.index - 1], 
-                    artifactUid: projectData.entries[selectedArtifactEntry.index - 1].files[0].artifact_uid
+                    artifactUid: projectData.entries[selectedArtifactEntry.index - 1].files[0].artifact_uid,
+                    hopReason: 'time hop back',
                   },
                 ];
                 dispatch({
@@ -741,7 +753,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 const newHop = [
                   ...hopArray,
                   { activity: projectData.entries[selectedArtifactEntry.index + 1], 
-                    artifactUid: projectData.entries[selectedArtifactEntry.index + 1].files[0].artifact_uid
+                    artifactUid: projectData.entries[selectedArtifactEntry.index + 1].files[0].artifact_uid,
+                    hopReason: 'time hop forward',
                   },
                 ];
 

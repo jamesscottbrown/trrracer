@@ -89,7 +89,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             hopArray: [
               {
                 activity: entryData, 
-                artifactUid: entryData.files[i].artifact_uid
+                artifactUid: entryData.files[i].artifact_uid,
+                hopReason: 'first hop',
               }
             ],
           });
