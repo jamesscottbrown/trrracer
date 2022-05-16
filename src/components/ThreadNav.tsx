@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 
 import type { EntryType, ResearchThread } from './types';
+import { BiTrash } from 'react-icons/bi';
 
 
 export const jitter = (val: any) => Math.random() * val;
@@ -158,36 +159,44 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   );
                   dispatch({ type: 'HOVER_THREAD', researchThreadHover: null });
                 }}
-                onClick={() => {
-                  dispatch({ type: 'THREAD_FILTER', filterRT: rt });
-                }}
               >
-                <span
-                  style={{ 
-                    
-                    cursor: 'pointer', 
-                    display:'inline' }}
+           
+              <span
+                style={{ 
+                  cursor: 'pointer', 
+                  display:'inline' }}
                   onClick={() => {
                     dispatch({ type: 'SELECTED_THREAD', selectedThread: i });
                   }}
-                >
-                  {`${rt.title} `}
-                  <GiSewingString size={'16px'} style={{ color: rt.color, display: 'inline' }} />
-                </span>
+              >
+                {`${rt.title} `}
+                {/* <GiSewingString size={'16px'} style={{ color: rt.color, display: 'inline' }} /> */}
+              </span>
+              <span>
+              <Popover>
+                  <PopoverTrigger>
+                  <Button 
+                    size={'xs'}
+                  >Cite thread</Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverBody>
+                      copy this ref: {rt.rt_id}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </span>
                 <span>
-                <Popover>
-                    <PopoverTrigger>
-                    <Button 
-                      size={'xs'}
-                    >Cite this thread</Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverBody>
-                        copy this ref: {rt.rt_id}
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </span>
+                  <Button 
+                    size={'xs'} 
+                    bgColor={'#ff6863'} 
+                    style={{display:'inline'}}
+                    onClick={()=> {
+                      dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
+                    }}
+                    >
+                    <BiTrash style={{display:'inline'}} />
+                    </Button></span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (
                   <div

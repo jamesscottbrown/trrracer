@@ -530,6 +530,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
         return saveJSONRT(newRT, state.folderPath, state);
       }
 
+      case 'DELETE_THREAD': {
+        
+        const newRT = state.researchThreads;
+        newRT.research_threads = newRT.research_threads.filter((ft: any) => ft.rt_id != action.deleteThread);
+        console.log('newwww newww', newRT.research_threads);
+        return saveJSONRT(newRT, state.folderPath, state);
+      } 
+
       case 'ADD_FILES': {
         const { fileList } = action;
 
