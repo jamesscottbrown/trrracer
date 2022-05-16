@@ -214,11 +214,12 @@ const InteractiveActivityTag = (props: any) => {
       key={`tag-sel-${index}`}
       style={{
         padding: 5,
-        backgroundColor: '#D3D3D3',
+        backgroundColor: '#F5F5F5',
         borderRadius: 5,
         margin: 5,
         verticalAlign: 'middle',
         lineHeight: 'normal',
+        boxShadow: "1px 1px 2px #A3AAAF"
       }}
     >
       <Flex>
