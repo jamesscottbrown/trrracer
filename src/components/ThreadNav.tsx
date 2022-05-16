@@ -197,7 +197,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     }}
                     >
                     <BiTrash style={{display:'inline'}} />
-                    </Button></span>
+                  </Button></span>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (
                   <div
@@ -293,8 +293,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 onChange={handleDescriptionChange}
               />
 
-              {threadName && description && (
+              {/* {threadName && description && ( */}
                 <Button
+                  isActive={(threadName && description) ? true : false}
+                  isDisabled={(threadName && description) ? false : true}
                   onClick={() => {
                     setName(null);
                     setDescription(null);
@@ -309,7 +311,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 >
                   CREATE
                 </Button>
-              )}
+              {/* )} */}
             </Box>
           )}
         </>
