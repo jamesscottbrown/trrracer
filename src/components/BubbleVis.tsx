@@ -89,7 +89,7 @@ const BubbleVis = (props: BubbleProps) => {
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
-  const [svgWidth, setSvgWidth] = useState(500);
+  const [svgWidth, setSvgWidth] = useState(600);
   const [translateY, setTranslateY] = useState(35);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
@@ -112,7 +112,7 @@ const BubbleVis = (props: BubbleProps) => {
       
       setSvgWidth((researchThreads?.research_threads.length * 300))
     }else{
-      setSvgWidth(500);
+      setSvgWidth(600);
     }
 
     const svg = d3.select(svgRef.current);
