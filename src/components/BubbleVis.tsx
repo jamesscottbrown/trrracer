@@ -10,6 +10,7 @@ import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { ToolIcon } from './Project';
+const smalltalk = require('smalltalk');
 
 interface BubbleProps {
   filteredActivities: EntryType[];
@@ -87,7 +88,6 @@ const BubbleVis = (props: BubbleProps) => {
   ] = useProjectState();
   
   const {eventArray} = projectData;
-
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(500);
   const [translateY, setTranslateY] = useState(35);
@@ -95,13 +95,10 @@ const BubbleVis = (props: BubbleProps) => {
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 200;
-  // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
   const height = +newHeight.split('px')[0];
-
   const svgRef = React.useRef(null);
 
   let packedCircData = calcCircles(projectData.entries);
-
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = new ForceMagic(packedCircData, width, height);
@@ -109,7 +106,6 @@ const BubbleVis = (props: BubbleProps) => {
   useEffect(() => {
     if (svgRef.current) {
       setNewHeight(window.getComputedStyle(svgRef.current).height);
-      // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
     }
     if(groupBy){
       console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
@@ -141,13 +137,14 @@ const BubbleVis = (props: BubbleProps) => {
     yearMonth[0].months = yearMonth[0].months.filter(
       (f: any, i: number) => i > startIndex - 1
     );
-  yearMonth[yearMonth.length - 1].months = yearMonth[
-    yearMonth.length - 1
-  ].months.filter((f: any, i: number) => i < endIndex);
 
-  const filteredActivitiesExtent = d3.extent(
-    filteredActivities.map((m: any) => new Date(m.date))
-  );
+    yearMonth[yearMonth.length - 1].months = yearMonth[
+      yearMonth.length - 1
+    ].months.filter((f: any, i: number) => i < endIndex);
+
+    const filteredActivitiesExtent = d3.extent(
+      filteredActivities.map((m: any) => new Date(m.date))
+    );
 
     let checkGroup = svg.select('g.timeline-wrap');
 

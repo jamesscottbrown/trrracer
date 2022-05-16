@@ -170,7 +170,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   }}
               >
                 {`${rt.title} `}
-                {/* <GiSewingString size={'16px'} style={{ color: rt.color, display: 'inline' }} /> */}
               </span>
               <span>
               <Popover>
@@ -186,7 +185,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   </PopoverContent>
                 </Popover>
               </span>
-                <span>
+                <span
+                style={{display:'inline'}}
+                >
                   <Button 
                     size={'xs'} 
                     bgColor={'#ff6863'} 
