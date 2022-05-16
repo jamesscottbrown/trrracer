@@ -362,7 +362,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
       case 'THREAD_FILTER': {
         if (action.filterRT) {
-         
+         console.log('MADE IT TO CONTEXT',action.filterRT)
           let associatedByTags = state.projectData.entries.filter(f => {
             let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
             return test.length > 0;
@@ -377,6 +377,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
               key: action.filterRT.evidence.map((m) => m.activityTitle),
               associatedKey: associatedTest
             },
+            selectedThread: action.selectedThread,
           };
         }
         return { ...state, filterRT: null, selectedThread: null };
@@ -524,8 +525,6 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
         };
         const newRT = state.researchThreads;
         newRT.research_threads.push(threadOb);
-
-        console.log('THREADOB', threadOb);
 
         return saveJSONRT(newRT, state.folderPath, state);
       }
