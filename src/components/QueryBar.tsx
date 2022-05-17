@@ -135,12 +135,15 @@ const QueryBar = (queryProps: QueryProps) => {
   let data;
 
   if (artifactData) {
-    data =
-      artifactData.fileType === 'txt'
-        ? txtData['text-data'].filter(
-            (f) => f['file-title'] === artifactData.title
-          )[0].text
-        : googleData[artifactData.fileId];
+    // data = ((artifactData.fileType === 'txt') && (txtData?['text-data'] != undefined)) ? txtData['text-data'].filter(
+    //         (f) => f['file-title'] === artifactData.title
+    //       )[0].text
+    //     : googleData[artifactData.fileId];
+    if((artifactData.fileType === 'txt') && (txtData)){
+      data = txtData['text-data'].filter((f) => f['file-title'] === artifactData.title)[0].text
+    }else{
+      data = googleData[artifactData.fileId];
+    }
   }
 
   return (

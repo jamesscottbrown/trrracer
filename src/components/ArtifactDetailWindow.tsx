@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
 
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
@@ -15,7 +15,6 @@ import type {
   ResearchThreadEvidence,
   ReactTag,
 } from './types';
-import VerticalAxis from './VerticalAxis';
 import DetailBubble from './DetailSvg';
 
 interface DetailProps {
@@ -380,6 +379,8 @@ const DetailSidebar = (props: any) => {
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
+  const [showFileList, setShowFileList] = useState(true);
+  const [showTagList, setShowTagList] = useState(true);
 
   const updateEntryField = (
     entryIndex: number,
@@ -410,7 +411,6 @@ const DetailSidebar = (props: any) => {
     <Box
       marginLeft="8px"
       marginRight="8px"
-      // flex="1.5"
       width="300px"
       flexDirection="column"
       h="calc(100vh - 75px)"
@@ -429,45 +429,55 @@ const DetailSidebar = (props: any) => {
           <div>
             <span style={{ fontSize: 20, fontWeight: 700 }}>
               {`Artifacts associated with ${selectedArtifactEntry.title}`}
+              <span
+                style={{cursor:'pointer', display:'inline', marginLeft:10}}
+                onClick={()=> showFileList ? setShowFileList(false) : setShowFileList(true)}
+              >{showFileList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}</span>
             </span>
           </div>
-          <Box
-            marginLeft="3px"
-            borderLeftColor="black"
-            borderLeftWidth="1px"
-            padding="3px"
-          >
-            {selectedArtifactEntry.files.map((f: any, i: number) => (
-              <React.Fragment key={`fi-${f.title}-${i}`}>
-                {i === selectedArtifactIndex ? (
-                  <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                    {selectedArtifactEntry.files[i].title}
-                  </div>
-                ) : (
-                  <div
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      dispatch({
-                        type: 'SELECTED_ARTIFACT',
-                        selectedArtifactEntry,
-                        selectedArtifactIndex: i,
-                        hopArray: [
-                          ...hopArray,
-                          { activity: 
-                            selectedArtifactEntry, 
-                            artifactUid: selectedArtifactEntry.files[i].artifact_uid,
-                            hopReason: 'another artifact in activity',
-                          },
-                        ]
-                      });
-                    }}
-                  >
-                    {selectedArtifactEntry.files[i].title}
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </Box>
+            {
+              showFileList && (
+                <Box
+                marginLeft="3px"
+                borderLeftColor="black"
+                borderLeftWidth="1px"
+                padding="3px"
+              >{
+                selectedArtifactEntry.files.map((f: any, i: number) => (
+                  <React.Fragment key={`fi-${f.title}-${i}`}>
+                    {i === selectedArtifactIndex ? (
+                      <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                        {selectedArtifactEntry.files[i].title}
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            selectedArtifactEntry,
+                            selectedArtifactIndex: i,
+                            hopArray: [
+                              ...hopArray,
+                              { activity: 
+                                selectedArtifactEntry, 
+                                artifactUid: selectedArtifactEntry.files[i].artifact_uid,
+                                hopReason: 'another artifact in activity',
+                              },
+                            ]
+                          });
+                        }}
+                      >
+                        {selectedArtifactEntry.files[i].title}
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+                </Box>
+              )
+            }
+            
+         
         </Box>
       </Box>
       {
@@ -492,6 +502,11 @@ const DetailSidebar = (props: any) => {
           >
             Edit
           </Button>
+          <Button
+            style={{cursor:'pointer', display:'inline', marginLeft:10}}
+            onClick={()=> showTagList ? setShowTagList(false) : setShowTagList(true)}
+          >{showTagList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}</Button>
+            
         </div>
         {showTagAdd && (
           <div>
@@ -529,15 +544,22 @@ const DetailSidebar = (props: any) => {
             />
           </div>
         )}
-        {selectedArtifactEntry.tags.map((t: any, i: number) => (
-          <InteractiveActivityTag
-            key={`it-${i}`}
-            selectedArtifactEntry={selectedArtifactEntry}
-            selectedArtifactIndex={selectedArtifactIndex}
-            tag={t}
-            index={i}
-          />
-        ))}
+        {
+          showTagList && (
+            <React.Fragment>
+              {selectedArtifactEntry.tags.map((t: any, i: number) => (
+                <InteractiveActivityTag
+                  key={`it-${i}`}
+                  selectedArtifactEntry={selectedArtifactEntry}
+                  selectedArtifactIndex={selectedArtifactIndex}
+                  tag={t}
+                  index={i}
+                />
+              ))}
+            </React.Fragment>
+          )
+        }
+ 
       </Box>
 
       {fragSelected && (

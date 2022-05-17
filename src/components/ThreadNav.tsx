@@ -149,16 +149,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   opacity: checkIfSelectThread(i),
                   marginTop:10,
                   marginBottom:10
-              }}
-                // onMouseEnter={() => {
-                //   dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
-                // }}
-                // onMouseLeave={() => {
-                //   console.log(
-                //     'need to add this to project context and highlight timline with activities'
-                //   );
-                //   dispatch({ type: 'HOVER_THREAD', researchThreadHover: null });
-                // }}
+                }}
               >
            
               <span
@@ -166,7 +157,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   cursor: 'pointer', 
                   display:'inline' }}
                   onClick={() => {
-                    console.log('is this working rt')
                     dispatch({ type: 'THREAD_FILTER', filterRT:rt, selectedThread: i });
                   }}
               >
