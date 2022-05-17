@@ -696,12 +696,43 @@ const BubbleVis = (props: BubbleProps) => {
           setHoverData(d);
           d3.select('#tooltip').style('opacity', 1);
 
-          let rectTest = wrap.select('.timeline-wrap').select('g').select('#background');
-          let rect = rectTest.empty() ? svg.select('.timeline-wrap').select('g').append('rect').attr('id', 'background') : rectTest;
-          rect.attr('width', 50).attr('height', 30).attr('fill', 'red');
-          rect.attr('x', -50).attr('y', (forced.yScale(new Date(d.date)) - 30)).style('z-index', 5)
+          let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+          let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
+          labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
 
-          underWrap.append('line')
+          let rect = labelG.append('rect')
+          rect.attr('width', 50).attr('height', 15).attr('fill', '#fff').attr('fill-opacity', .9);
+          rect.attr('x', -50).attr('y', -12);
+
+          let text = labelG
+          .append('text')
+          .text(new Date(d.date).toLocaleDateString('en-us', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })).style('font-size', 10).style('text-anchor', 'end')
+
+
+
+          // let text = textTest.empty() ? wrap.select('.timeline-wrap').append('text').attr('id', 'date-label') : textTest;
+
+          // console.log('text on mouseover',text)
+          // // let text = wrap.append('text')
+          //   // .attr('id', 'date_label')
+          //   text
+          //   .text(new Date(d.date).toLocaleDateString('en-us', {
+          //     weekday: 'long',
+          //     year: 'numeric',
+          //     month: 'short',
+          //     day: 'numeric',
+          //   }))
+          //   .attr('text-anchor', 'end')
+          //   .attr('font-size', 9)
+          //   .attr('dx', (-50))
+          //   .attr('dy', forced.yScale(new Date(d.date)))
+
+            underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
             .attr('x2', (0-70))
@@ -709,39 +740,17 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('x1', (+d.x))
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
-
-          let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
-
-          let text = wrap.append('text')
-            .attr('id', 'date_label')
-            .text(new Date(d.date).toLocaleDateString('en-us', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            }))
-            .attr('text-anchor', 'end')
-            .attr('font-size', 9)
-            .attr('x', (0-70))
-            .attr('y', forced.yScale(new Date(d.date)))
           
-          let bB = text.node().getBoundingClientRect();
           
-          textWrap.attr('width', bB.width)
-          textWrap.attr('height', bB.height)
-          textWrap.style('z-index', 2000)
-          .attr('x', (0-(70+ bB.width)))
-          .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
-          textWrap.attr('fill', '#fff')
 
         })
         .on('mouseout', (event:any, d:any) => {
       
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
-          d3.select('#date_label').remove();
-          d3.select('#date_label_bg').remove();
-          d3.select('#background').remove();
+          // d3.select('#date_label').remove();
+          // d3.select('#date_label_bg').remove();
+          d3.select('#label-group').remove();
       
         }).on('click', (event:any, d:any)=> {
           setHoverActivity(d);
