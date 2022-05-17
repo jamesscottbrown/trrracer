@@ -696,6 +696,11 @@ const BubbleVis = (props: BubbleProps) => {
           setHoverData(d);
           d3.select('#tooltip').style('opacity', 1);
 
+          let rectTest = wrap.select('.timeline-wrap').select('g').select('#background');
+          let rect = rectTest.empty() ? svg.select('.timeline-wrap').select('g').append('rect').attr('id', 'background') : rectTest;
+          rect.attr('width', 50).attr('height', 30).attr('fill', 'red');
+          rect.attr('x', -50).attr('y', (forced.yScale(new Date(d.date)) - 30)).style('z-index', 5)
+
           underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
@@ -724,6 +729,7 @@ const BubbleVis = (props: BubbleProps) => {
           
           textWrap.attr('width', bB.width)
           textWrap.attr('height', bB.height)
+          textWrap.style('z-index', 2000)
           .attr('x', (0-(70+ bB.width)))
           .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
           textWrap.attr('fill', '#fff')
@@ -735,6 +741,7 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#date_line').remove();
           d3.select('#date_label').remove();
           d3.select('#date_label_bg').remove();
+          d3.select('#background').remove();
       
         }).on('click', (event:any, d:any)=> {
           setHoverActivity(d);
