@@ -164,8 +164,14 @@ const QueryBar = (queryProps: QueryProps) => {
               if(data.documentId){
                 console.log('this is a google doc.');
               }else{
-                const matchArray = data.split(term);
-                alert(`${matchArray.length - 1} matches`);
+                console.log('this is text file', data)
+                if(data){
+                  const matchArray = data.split(term);
+                  alert(`${matchArray.length - 1} matches`);
+                }else{
+                  alert('notext data for this file yet');
+                }
+                
               }
               
             } else {

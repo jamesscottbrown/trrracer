@@ -727,8 +727,6 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
           
-          
-
         })
         .on('mouseout', (event:any, d:any) => {
       
