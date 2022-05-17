@@ -2,6 +2,7 @@ import React from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
+import { doc } from 'prettier';
 
 const processDataQuery = (
   queryTerm: string,
@@ -159,8 +160,14 @@ const QueryBar = (queryProps: QueryProps) => {
           size="sm"
           onClick={() => {
             if (artifactData) {
-              const matchArray = data.split(term);
-              alert(`${matchArray.length - 1} matches`);
+              console.log('DATA ON CLICK', data);
+              if(data.documentId){
+                console.log('this is a google doc.');
+              }else{
+                const matchArray = data.split(term);
+                alert(`${matchArray.length - 1} matches`);
+              }
+              
             } else {
               const matches = processDataQuery(
                 term,

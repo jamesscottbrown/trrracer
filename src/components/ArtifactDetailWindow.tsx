@@ -559,7 +559,6 @@ const DetailSidebar = (props: any) => {
             </React.Fragment>
           )
         }
- 
       </Box>
 
       {fragSelected && (
