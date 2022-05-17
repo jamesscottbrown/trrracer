@@ -701,7 +701,10 @@ const BubbleVis = (props: BubbleProps) => {
           labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
 
           let rect = labelG.append('rect')
-          rect.attr('width', 50).attr('height', 15).attr('fill', '#fff').attr('fill-opacity', .9);
+          rect.attr('width', 50)
+          .attr('height', 15)
+          .attr('fill', '#fff')
+          .attr('fill-opacity', .9);
           rect.attr('x', -50).attr('y', -12);
 
           let text = labelG
@@ -711,26 +714,9 @@ const BubbleVis = (props: BubbleProps) => {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
-          })).style('font-size', 10).style('text-anchor', 'end')
-
-
-
-          // let text = textTest.empty() ? wrap.select('.timeline-wrap').append('text').attr('id', 'date-label') : textTest;
-
-          // console.log('text on mouseover',text)
-          // // let text = wrap.append('text')
-          //   // .attr('id', 'date_label')
-          //   text
-          //   .text(new Date(d.date).toLocaleDateString('en-us', {
-          //     weekday: 'long',
-          //     year: 'numeric',
-          //     month: 'short',
-          //     day: 'numeric',
-          //   }))
-          //   .attr('text-anchor', 'end')
-          //   .attr('font-size', 9)
-          //   .attr('dx', (-50))
-          //   .attr('dy', forced.yScale(new Date(d.date)))
+          })).style('font-size', 9)
+          .style('text-anchor', 'end')
+          .style('font-weight', 600)
 
             underWrap.append('line')
             .attr('id', 'date_line')
