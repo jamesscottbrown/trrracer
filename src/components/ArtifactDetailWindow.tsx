@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
 
@@ -849,13 +849,18 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   selectedArtifact.bookmarks && (
                     selectedArtifact.bookmarks.map((f, i)=> (
                     // 
+                    <Tooltip 
+                    style={{padding:5}}
+                    label={`"${f.fragment}"`}>
+                      
                     <Tag
                       size={'md'}
                       key={`pin-${i}`}
                       borderRadius='full'
                       variant='solid'
-                      colorScheme='green'
-                      style={{cursor:'pointer'}}
+                      colorScheme='gray'
+                      style={{cursor:'pointer', marginRight:5}}
+
                     > 
                     <TagLabel
                       onClick={()=> {
@@ -873,6 +878,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                       }}
                     />
                   </Tag>
+                    </Tooltip>
+                    
                   )) )
                 }
               </Box>

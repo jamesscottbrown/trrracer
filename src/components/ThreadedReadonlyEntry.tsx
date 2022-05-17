@@ -349,7 +349,9 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
       </p>
       {
         isEntryInAnyThreads.map(m => (
-          <Tooltip label={`Threaded in ${m.title}`}>
+          <Tooltip 
+          style={{padding:5}}
+          label={`Threaded in ${m.title}`}>
           <div
           style={{
             fontSize:20, 
