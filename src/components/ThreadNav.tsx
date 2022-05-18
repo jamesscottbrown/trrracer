@@ -151,7 +151,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   marginBottom:10
                 }}
               >
-           
+            <div style={{display:'inline'}}>
               <span
                 style={{ 
                   cursor: 'pointer', 
@@ -167,6 +167,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   <PopoverTrigger>
                   <Button 
                     size={'xs'}
+                    style={{display:'inline'}}
                   >Cite thread</Button>
                   </PopoverTrigger>
                   <PopoverContent>
@@ -174,9 +175,11 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       copy this ref: {rt.rt_id}
                     </PopoverBody>
                   </PopoverContent>
-                </Popover>
+              </Popover>
               </span>
-                <span
+            </div>
+            <div style={{display:'inline', float:'right'}}>
+              <span
                 style={{display:'inline'}}
                 >
                   <Button 
@@ -189,18 +192,19 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     >
                     <BiTrash style={{display:'inline'}} />
                   </Button></span>
+                  </div>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}
                     style={{
-                      backgroundColor: rt.color,
-                      fontSize: '11px',
+                      backgroundColor: `${rt.color}50`,
+                      fontSize: '9px',
                       display: 'inline-block',
-                      margin: 3,
+                      margin: 1.5,
                       padding: 2,
                       borderRadius: 5,
-                      color: rt.color === '#3932a3' ? 'white' : 'black',
+                      // color: rt.color === '#3932a3' ? 'white' : 'black',
                     }}
                   >
                     {t}

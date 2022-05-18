@@ -119,7 +119,7 @@ const BubbleVis = (props: BubbleProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
+    underWrap.attr('transform', `translate(180, ${translateY})`);
     const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
 
     const { yScale, margin } = forced;
@@ -147,7 +147,6 @@ const BubbleVis = (props: BubbleProps) => {
     );
 
     let checkGroup = svg.select('g.timeline-wrap');
-
     let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
     
     wrapAxisGroup.selectAll('*').remove();
@@ -172,8 +171,6 @@ const BubbleVis = (props: BubbleProps) => {
       .join('text')
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
-
-    console.log('nodes',forced.nodes);
 
     if (!defineEvent) {
       const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
@@ -503,8 +500,6 @@ const BubbleVis = (props: BubbleProps) => {
      
     }
 
-    // const nodes = forced.nodes.filter((f: any) => filteredActivities.map((m: any) => m.title).includes(f.title));
-
     if (groupBy) {
  
       if (groupBy.type === 'research_threads') {
@@ -574,8 +569,8 @@ const BubbleVis = (props: BubbleProps) => {
         true,
         'all-activities'
       );
-      console.log(activityBubbles.bubbles)
-      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', 1).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+      
+      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
@@ -617,7 +612,6 @@ const BubbleVis = (props: BubbleProps) => {
 
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
-
       }
 
       let hiddenCircles = allActivityGroups.filter(ac => {
@@ -655,40 +649,48 @@ const BubbleVis = (props: BubbleProps) => {
           
           let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
 
-  
+          console.log('divide date', divideDate)
+          console.log('chosenActivityDTA', chosenActivityData)
           if(new Date(chosenActivityData.date) < divideDate){
             linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }else{
             linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }
-         
-        
       })
 
+      console.log('LINKS', linkDataAfter)
+
       var lineGenerator = d3.line();
-      linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
-      linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      linkDataBefore.push(linkDataAfter[0])
+        if(linkDataAfter.length > 0){
 
-      var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
-      var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+          linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      underWrap.append('path')
-        .attr('d', pathStringDash)
-        .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
-        .attr('stroke-width', 2)
-        .style('stroke-dasharray', '5,5');
+          var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+    
+          underWrap.append('path')
+          .attr('d', pathStringSolid)
+          .attr('fill', 'none')
+          .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+          .attr('stroke-width', 2);
 
-      underWrap.append('path')
-        .attr('d', pathStringSolid)
-        .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
-        .attr('stroke-width', 2);
+        }
+        if(linkDataBefore.length > 0){
+
+          linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+          if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
+          
+          var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+          
+          underWrap.append('path')
+            .attr('d', pathStringDash)
+            .attr('fill', 'none')
+            .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+            .attr('stroke-width', 2)
+            .style('stroke-dasharray', '5,5');
+        }
       }
     
-
     highlightedActivities
         .on('mouseover', (event, d) => {
           
@@ -732,8 +734,6 @@ const BubbleVis = (props: BubbleProps) => {
       
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
-          // d3.select('#date_label').remove();
-          // d3.select('#date_label_bg').remove();
           d3.select('#label-group').remove();
       
         }).on('click', (event:any, d:any)=> {

@@ -11,7 +11,6 @@ export const calcCircles = (activityData:any) => {
         });
 
         let packedSibs = d3.packSiblings(filesWithRadius);
-        
         let parent = d3.packEnclose(packedSibs);
       
         ad.r = parent ? (parent.r + 3) : 5;
@@ -21,7 +20,6 @@ export const calcCircles = (activityData:any) => {
         return ad;
     });
 
-    // console.log('nodessssss in pack', nodes)
     return nodes;
 
 }

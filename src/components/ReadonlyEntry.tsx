@@ -335,7 +335,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             {entryData.tags.map((t) => (
               <Tag
                 key={t}
-                backgroundColor={checkTagColor(t)}
+                backgroundColor={`${checkTagColor(t)}50`}
+                stroke={`${checkTagColor(t)}`}
                 marginRight="0.25em"
                 marginBottom="0.25em"
               >
