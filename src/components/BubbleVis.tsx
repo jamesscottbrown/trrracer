@@ -627,10 +627,8 @@ const BubbleVis = (props: BubbleProps) => {
       hiddenCircles.attr('fill', 'gray')
       .attr('fill-opacity', .3);
 
-      if(filterRT){
+      if(filterRT && researchThreads?.research_threads[selectedThread].evidence.length > 0){
        
-        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
-
         let linkDataBefore = [];
         let linkDataAfter = [];
 
@@ -645,7 +643,6 @@ const BubbleVis = (props: BubbleProps) => {
         
         }else if(f.type === 'artifact' || f.type === 'fragment'){
          
-          let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
           temp
             .select('circle.background')
             .attr('fill-opacity', 1);
@@ -654,18 +651,18 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
           temp.select('circle.all-activities')
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        }
           
           let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
 
-          console.log('divide date',divideDate)
-
+  
           if(new Date(chosenActivityData.date) < divideDate){
             linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }else{
             linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }
          
-        }
+        
       })
 
       var lineGenerator = d3.line();
@@ -689,7 +686,8 @@ const BubbleVis = (props: BubbleProps) => {
         .attr('fill', 'none')
         .attr('stroke', researchThreads?.research_threads[selectedThread].color)
         .attr('stroke-width', 2);
-    }
+      }
+    
 
     highlightedActivities
         .on('mouseover', (event, d) => {
@@ -742,7 +740,7 @@ const BubbleVis = (props: BubbleProps) => {
           setHoverActivity(d);
         })
 
-    // }
+ 
       }
 
   }, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
