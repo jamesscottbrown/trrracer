@@ -15,42 +15,45 @@ class ForceMagic {
     height: number,
     
   ) {
-    this.circleScale = d3
-          .scaleLinear()
-          .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
-          .range([2, 20]);
+  this.circleScale = d3
+        .scaleLinear()
+        .domain(d3.extent(projectEntries.map((m: any) => m.files.length)))
+        .range([2, 20]);
 
-    this.margin = height * .15;
+  this.margin = height * .15;
 
-    this.yScale = scaleTime()
-      .range([0, height - this.margin])
-      .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
+  this.yScale = scaleTime()
+    .range([0, height - this.margin])
+    .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
 
-    let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
+  let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
 
-    this.nodes = filtered.map((a: any) => {
-      const node = {};
-      node.date = a.date;
-      node.description = a.description;
-      node.files = a.files;
-      node.index = a.index;
-      node.key_txt = a.key_txt;
-      node.month = a.month;
-      node.tags = a.tags;
-      node.title = a.title;
-      // node.activityTitle = splitBool ? a.activityTitle : null;
-      // node.artifactType = splitBool ? a.artifactType : null;
-      node.activityTitle = null;
-      node.artifactType = null;
-      node.urls = a.urls;
-      node.year = a.year;
-      node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);
-      node.true_y = this.yScale(new Date(a.date));
-      node.true_x = 0;
-      node.y = this.yScale(new Date(a.date));
-      node.x = 0;
-      return node;
-    });
+  this.nodes = filtered.map((a: any) => {
+    const node = {};
+    node.date = a.date;
+    node.description = a.description;
+    node.files = a.files;
+    node.index = a.index;
+    node.key_txt = a.key_txt;
+    node.month = a.month;
+    node.tags = a.tags;
+    node.title = a.title;
+    // node.activityTitle = splitBool ? a.activityTitle : null;
+    // node.artifactType = splitBool ? a.artifactType : null;
+    node.activityTitle = null;
+    node.artifactType = null;
+    node.urls = a.urls;
+    node.year = a.year;
+    // node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);
+    node.radius = a.r;
+    node.true_y = this.yScale(new Date(a.date));
+    node.true_x = 0;
+    node.y = this.yScale(new Date(a.date));
+    node.x = 0;
+    return node;
+  });
+
+  console.log('NODES', this.nodes);
 
     this.simulation = d3
       .forceSimulation(this.nodes)

@@ -94,7 +94,7 @@ const BubbleVis = (props: BubbleProps) => {
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
-  const width = 200;
+  const width = 300;
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
@@ -172,6 +172,8 @@ const BubbleVis = (props: BubbleProps) => {
       .join('text')
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
+
+    console.log('nodes',forced.nodes);
 
     if (!defineEvent) {
       const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
@@ -342,7 +344,7 @@ const BubbleVis = (props: BubbleProps) => {
     }
 
     if (defineEvent) {
-      console.log('defineEvent!!', defineEvent)
+     
       let text;
       let bGroup = wrapAxisGroup.append('g')
       
@@ -572,8 +574,8 @@ const BubbleVis = (props: BubbleProps) => {
         true,
         'all-activities'
       );
-
-      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+      console.log(activityBubbles.bubbles)
+      activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', 1).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
       artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
