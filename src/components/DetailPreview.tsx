@@ -1,5 +1,5 @@
 import path from 'path';
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Image, Box } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
@@ -23,6 +23,7 @@ interface DetailPreviewPropsType {
   setFragSelected: any;
   fragSelected:any;
   artifactIndex: number;
+  // artifactRenderedRef:any;
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
@@ -34,6 +35,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     activity,
     artifactIndex,
     openFile,
+    // artifactRenderedRef
   } = props;
 
   const [{ googleData, txtData }] = useProjectState();
@@ -91,6 +93,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
+      useLayoutEffect(() => {
+        console.log('fired when rendered', document.getElementById('gdoc'));
+        console.log('bookmarks', artifact);
+      })
+
       return (
         <Box style={{ 
           overflowY: 'scroll', 
@@ -111,6 +118,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
               }
             }}
             style={{ height: '100%', overflow: 'auto' }}
+            id={'gdoc'}
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph
@@ -118,6 +126,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 parData={m}
                 index={i}
                 comments={artifact.comments.comments}
+                setFragSelected={setFragSelected}
+                activityBookmarks={artifact.bookmarks}
               />
             ))}
           </div>

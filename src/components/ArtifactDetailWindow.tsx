@@ -827,6 +827,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             filteredActivities={projectData.entries}
             widthSvg={260}
             filterType={null}
+            setHoverActivity={null}
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
@@ -898,6 +899,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               {
                 selectedArtifact ?
                 <DetailPreview
+                  // artifactRenderedRef={artifactRenderedRef}
                   setFragSelected={setFragSelected}
                   fragSelected={fragSelected}
                   folderPath={folderPath}

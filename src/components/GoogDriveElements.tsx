@@ -4,8 +4,9 @@ import {
   PopoverArrow,
   PopoverBody,
   PopoverContent,
+  background,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
 const colorConvert = (codes: any) => {
@@ -21,15 +22,18 @@ const GoogInline = (googProps: any) => {
   );
 };
 
-const styleSection = (sectionData: any, commentedOn: any) => {
-  const styleOb = { display: 'inline' };
+const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmarked:any) => {
 
+
+  const styleOb = { display: 'inline', cursor: 'pointer' };
+  
   if (sectionData.textRun.textStyle) {
     Object.keys(sectionData.textRun.textStyle).forEach((m) => {
       if (m === 'italic') styleOb.fontStyle = 'italic';
       if (m === 'bold') styleOb.fontWeight = 'bold';
       if (m === 'backgroundColor') {
-        styleOb.backgroundColor = colorConvert(
+        
+        styleOb.backgroundColor = (spanColor === true || bookmarked === true) ? '#FFB347' : colorConvert(
           sectionData.textRun.textStyle[m].color.rgbColor
         );
       }
@@ -39,23 +43,44 @@ const styleSection = (sectionData: any, commentedOn: any) => {
         );
       }
     });
-    if (commentedOn) styleOb.backgroundColor = '#FFFCBB';
+    if (commentedOn) styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347';
+    if (bookmarked){ 
+      console.log('boomark??', bookmarked)
+      styleOb.backgroundColor = '#FFFCBB';
+      styleOb.color = '#ffffff';
+    }
   }
-
+ 
   return styleOb;
 };
 
 const GoogDriveSpans = (googProps: any) => {
-  const { googEl, index, comments } = googProps;
+  const { googEl, index, comments, setFragSelected, activityBookmarks } = googProps;
+
+  const [spanColor, setSpanColor] = useState(false);
+  const [bookmarkExist, setBookmarkExist] = useState(false);
 
   const temp = comments.filter((f: any) =>
     (googEl.textRun && googEl.textRun.content.includes(f.quotedFileContent.value))
-  );
+  ); 
+  
+  var styleOb = styleSection(googEl, true, spanColor, false);
 
+  useEffect(() => {
+    
+    const tempBookmark = (activityBookmarks && activityBookmarks.length > 0) ? activityBookmarks.filter((f: any) => {
+  
+    return (googEl.textRun && (googEl.textRun.content.includes(f.fragment) || f.fragment === (googEl.textRun.content)))}
+    ) : []; 
+   
+  
+    styleOb = styleSection(googEl, true, spanColor, (tempBookmark.length > 0 ? true : false));
+  }, [spanColor, activityBookmarks.length]);
+  
   return temp.length > 0 ? (
     <Popover>
       <PopoverTrigger>
-        <div key={`elem-${index}`} style={styleSection(googEl, true)}>
+        <div key={`elem-${index}`} style={styleOb}>
           <span>{googEl.textRun.content}</span>
         </div>
       </PopoverTrigger>
@@ -69,14 +94,21 @@ const GoogDriveSpans = (googProps: any) => {
       </PopoverContent>
     </Popover>
   ) : (
-    <div key={`elem-${index}`} style={styleSection(googEl, false)}>
-      <span>{googEl.textRun.content}</span>
+    <div 
+      key={`elem-${index}`} 
+      style={styleOb}
+      onMouseOver={() => setSpanColor(true)}
+      onMouseOut={() => setSpanColor(false)}
+      onClick={()=> setFragSelected(googEl.textRun.content)}
+      >
+      <span
+      >{googEl.textRun.content}</span>
     </div>
   );
 };
 
 const GoogDriveParagraph = (parProps: any) => {
-  const { parData, index, comments } = parProps;
+  const { parData, index, comments, setFragSelected, activityBookmarks } = parProps;
 
   const getHeading = (
     styling: GoogleParagraphStyle,
@@ -134,7 +166,7 @@ const GoogDriveParagraph = (parProps: any) => {
         parData.paragraph.elements.map((elem: any, j: number) => (
           <React.Fragment key={`span-${j}`}>
             {elem.textRun ? (
-              <GoogDriveSpans googEl={elem} index={j} comments={comments} />
+              <GoogDriveSpans googEl={elem} index={j} comments={comments} setFragSelected={setFragSelected} activityBookmarks={activityBookmarks}/>
             ) : (
               <GoogInline sectionData={elem} />
             )}
