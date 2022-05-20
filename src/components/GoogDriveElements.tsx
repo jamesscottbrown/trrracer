@@ -69,13 +69,13 @@ const GoogDriveSpans = (googProps: any) => {
   useEffect(() => {
     
     const tempBookmark = (activityBookmarks && activityBookmarks.length > 0) ? activityBookmarks.filter((f: any) => {
-  
-    return (googEl.textRun && (googEl.textRun.content.includes(f.fragment) || f.fragment === (googEl.textRun.content)))}
+    // xreturn (googEl.textRun.tostring().normalize() === f.fragment.tostring().normalize())}
+      return (googEl.textRun && (googEl.textRun.content.includes(f.fragment) || f.fragment === (googEl.textRun.content)))}
     ) : []; 
    
   
     styleOb = styleSection(googEl, true, spanColor, (tempBookmark.length > 0 ? true : false));
-  }, [spanColor, activityBookmarks.length]);
+  }, [spanColor, activityBookmarks]);
   
   return temp.length > 0 ? (
     <Popover>

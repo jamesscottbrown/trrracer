@@ -1,6 +1,6 @@
 import path from 'path';
 import React, { useLayoutEffect } from 'react';
-import { Image, Box } from '@chakra-ui/react';
+import { Image, Box, background } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
   GrDocumentWord,
@@ -14,6 +14,8 @@ import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
+import { text } from 'node:stream/consumers';
+import { tsAnyKeyword } from '@babel/types';
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -24,6 +26,24 @@ interface DetailPreviewPropsType {
   fragSelected:any;
   artifactIndex: number;
   // artifactRenderedRef:any;
+}
+
+const TextRender = (textProps: any) => {
+  const {textArray} = textProps;
+  if(textArray.length > 1){
+    return textArray.map((ta:any, i:number)=> (
+      <span
+        key={`book-span-${i}`}
+        style={{
+          color: ta.style === "normal" ? "black" : "#ffffff",
+          backgroundColor: ta.style === 'normal' ? '#ffffff' : '#485063',
+          padding: ta.style === "normal" ? 1 : 5,
+        }}
+      >{ta.textData}</span>
+    ))
+  }else{
+    return <span>{textArray[0].textData}</span>
+  }
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
@@ -109,14 +129,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           padding:10,
           }}>
           <div
-            onMouseUp={() => {
-              if (setFragSelected) {
-                const selObj = window.getSelection();
-                setFragSelected(selObj?.toString());
-              } else {
-                console.log('mouseup');
-              }
-            }}
             style={{ height: '100%', overflow: 'auto' }}
             id={'gdoc'}
           >
@@ -149,6 +161,25 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const temp: TextEntry[] = txtData['text-data'].filter(
       (f: TextEntry) => f['entry-title'] === activity.title
     );
+    
+  
+    let textArray = (temp.length > 0) ? [{style:'normal', textData: temp[0].text}] : [];
+    if(artifact.bookmarks){
+      let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
+      
+      textArray = [
+        {style:'normal', textData: start[0]},
+        {style:'highlight', textData: artifact.bookmarks[0].fragment},
+        {style:'normal', textData: start[1]}
+      ]
+      if(artifact.bookmarks.length > 1){
+
+        for(let j = 1; j < artifact.bookmarks.length; j++){
+          console.log('is this right')
+        }
+      }
+      
+    }
 
     return (
       <div
@@ -162,7 +193,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         }}
         style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
       >
-        {temp[0].text}
+        {/* {artifact.bookmarks ? textArray.map((t)=> (
+          <span
+            style={{backgroundColor: t.style === 'normal' ? "#fff" : "yellow" }}
+          >{t.textData}</span>
+        )): <span>{textArray.textData}</span> } */}
+        {textArray.length > 0 ? <TextRender textArray={textArray} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
       </div>
     );
   }

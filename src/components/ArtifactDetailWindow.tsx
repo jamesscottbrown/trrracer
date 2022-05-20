@@ -584,7 +584,7 @@ const DetailSidebar = (props: any) => {
             textAlign: 'center',
           }}
           onClick={() => {
-         
+            // console.log(selectedArtifactIndex, selectedArtifactEntry, fragSelected)
             dispatch({
               type: 'BOOKMARK_FRAGMENT',
               selectedArtifactEntry: selectedArtifactEntry,
@@ -750,12 +750,12 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
-
+                const selectActivity = projectData.entries[selectedArtifactEntry.index - 1];
                 const newHop = [
                   ...hopArray,
                   { activity: 
-                    projectData.entries[selectedArtifactEntry.index - 1], 
-                    artifactUid: projectData.entries[selectedArtifactEntry.index - 1].files[0].artifact_uid,
+                    selectActivity, 
+                    artifactUid: selectActivity && selectActivity.files[0].artifact_uid ? selectActivity.files[0].artifact_uid : null,
                     hopReason: 'time hop back',
                   },
                 ];
@@ -776,20 +776,21 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
+                const selectActivity = selectedArtifactEntry.index < projectData.entries.length - 1
+                ? projectData.entries[selectedArtifactEntry.index + 1]
+                : projectData.entries[0];
+
                 const newHop = [
                   ...hopArray,
-                  { activity: projectData.entries[selectedArtifactEntry.index + 1], 
-                    artifactUid: projectData.entries[selectedArtifactEntry.index + 1].files[0].artifact_uid,
+                  { activity: selectActivity, 
+                    artifactUid: selectActivity && selectActivity.files[0].artifact_id ? selectActivity.files[0].artifact_uid : null,
                     hopReason: 'time hop forward',
                   },
                 ];
 
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry:
-                    selectedArtifactEntry.index < projectData.entries.length - 1
-                      ? projectData.entries[selectedArtifactEntry.index + 1]
-                      : projectData.entries[0],
+                  selectedArtifactEntry: selectActivity,
                   selectedArtifactIndex: 0,
                   hopArray: newHop,
                 });
@@ -849,14 +850,14 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 {
                   selectedArtifact.bookmarks && (
                     selectedArtifact.bookmarks.map((f, i)=> (
-                    // 
+                    //
+                    <React.Fragment key={`pin-${i}`}>
                     <Tooltip 
                     style={{padding:5}}
                     label={`"${f.fragment}"`}>
                       
                     <Tag
                       size={'md'}
-                      key={`pin-${i}`}
                       borderRadius='full'
                       variant='solid'
                       colorScheme='gray'
@@ -880,7 +881,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                     />
                   </Tag>
                     </Tooltip>
-                    
+                    </React.Fragment>
                   )) )
                 }
               </Box>

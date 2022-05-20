@@ -247,7 +247,6 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
       }
      
       case 'BOOKMARK_FRAGMENT':{
-        console.log('bookmark fragment', action.selectedArtifactEntry)
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks.push({ 'fragment': action.bookmarkFragment })
