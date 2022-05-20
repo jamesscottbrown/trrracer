@@ -139,7 +139,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 index={i}
                 comments={artifact.comments.comments}
                 setFragSelected={setFragSelected}
-                activityBookmarks={artifact.bookmarks}
+                artifactBookmarks={artifact.bookmarks}
               />
             ))}
           </div>
@@ -175,7 +175,25 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       if(artifact.bookmarks.length > 1){
 
         for(let j = 1; j < artifact.bookmarks.length; j++){
-          console.log('is this right')
+      
+          let oldTextArray = textArray;
+          let frag = artifact.bookmarks[j].fragment;
+          let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
+
+          let newArray = oldTextArray.slice(0, findIndex);
+        
+          let addThis = oldTextArray[findIndex].textData.split(frag);
+          let makeArray = [
+            {style:'normal', textData: addThis[0] },
+            {style:'highlight', textData: frag },
+            {style:'normal', textData: addThis[1] },
+          ]
+          newArray = [...newArray, ...makeArray]
+          
+          if(oldTextArray.length > (findIndex + 1)){
+            newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+          }
+          textArray = newArray;
         }
       }
       
