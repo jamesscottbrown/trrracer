@@ -750,7 +750,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
-                const selectActivity = projectData.entries[selectedArtifactEntry.index - 1];
+                const selectActivity = selectedArtifactEntry.index > 0
+                ? projectData.entries[selectedArtifactEntry.index - 1]
+                : projectData.entries[projectData.entries.length - 1];
+
                 const newHop = [
                   ...hopArray,
                   { activity: 
@@ -761,10 +764,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 ];
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry:
-                    selectedArtifactEntry.index > 0
-                      ? projectData.entries[selectedArtifactEntry.index - 1]
-                      : projectData.entries[projectData.entries.length - 1],
+                  selectedArtifactEntry: selectActivity,
                   selectedArtifactIndex: 0,
                   hopArray: newHop,
                 });
@@ -783,11 +783,11 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 const newHop = [
                   ...hopArray,
                   { activity: selectActivity, 
-                    artifactUid: selectActivity && selectActivity.files[0].artifact_id ? selectActivity.files[0].artifact_uid : null,
+                    artifactUid: (selectActivity && selectActivity.files.length > 0 && selectActivity.files[0].artifact_uid) ? selectActivity.files[0].artifact_uid : null,
                     hopReason: 'time hop forward',
                   },
                 ];
-
+                console.log('NEW HOP??', newHop);
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
                   selectedArtifactEntry: selectActivity,

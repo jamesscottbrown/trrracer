@@ -178,7 +178,12 @@ const DetailBubble = (props: BubbleDetProps) => {
     hopArray.forEach((h, i) => {
         let temp = highlightedActivities.filter(f => h.activity.title === f.title);
         let td = temp.data()[0];
-        linkData.push({coord: [(td.x - 8), td.y], date: td.date});
+        if(td && td.x && td.y){
+
+          linkData.push({coord: [(td.x - 8), td.y], date: td.date});
+
+        }
+        
     });
  
     var lineGenerator = d3.line();

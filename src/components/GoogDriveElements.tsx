@@ -48,11 +48,9 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
         );
       }
     });
-    if (commentedOn) {styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347'};
-    if (spanColor) {styleOb.backgroundColor = '#FFB347'};
-    
-    // console.log('is this reaching??', bookmarked);
- 
+    if (commentedOn) {styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347'}
+    if (spanColor) {styleOb.backgroundColor = '#FFB347'}
+     
   }
 
   if (bookmarked){ 
@@ -62,8 +60,6 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
     console.log('styleOb', styleOb)
   }
 
-  
- 
   return styleOb;
 };
 
@@ -96,9 +92,11 @@ const GoogDriveSpans = (googProps: any) => {
   
     
   }, [spanColor, artifactBookmarks]);
+
+  console.log('tempppp',temp);
   
   return temp.length > 0 ? (
-    <Popover>
+    <Popover trigger='hover'>
       <PopoverTrigger>
         {/* <div key={`elem-${index}`} > */}
           <span key={`elem-${index}`} style={styleOb}>{googEl.textRun.content}</span>
@@ -109,18 +107,16 @@ const GoogDriveSpans = (googProps: any) => {
         <PopoverArrow bg="white" />
 
         <PopoverBody>
-          <div>TESTING THIS OUT</div>
+          <div>{temp.map((t, i)=> (
+            <span
+            key={`span-comment-${i}`}
+            >{'test'}</span>
+          ))}</div>
         </PopoverBody>
       </PopoverContent>
     </Popover>
   ) : (
-    // <div 
-    //   key={`elem-${index}`} 
-    //   style={styleOb}
-    //   onMouseOver={() => setSpanColor(true)}
-    //   onMouseOut={() => setSpanColor(false)}
-    //   onClick={()=> setFragSelected(googEl.textRun.content)}
-    //   >
+
       <span
        key={`elem-${index}`} 
        style={styleOb}
