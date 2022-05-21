@@ -114,8 +114,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
       useLayoutEffect(() => {
-        console.log('fired when rendered', document.getElementById('gdoc'));
-        console.log('bookmarks', artifact);
+        // console.log('fired when rendered', document.getElementById('gdoc'));
+        // console.log('bookmarks', artifact);
       })
 
       return (

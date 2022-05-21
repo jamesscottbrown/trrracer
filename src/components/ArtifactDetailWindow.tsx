@@ -407,6 +407,8 @@ const DetailSidebar = (props: any) => {
     }
   );
 
+  console.log('is artifact in thread',isArtifactInThread)
+
   return (
     <Box
       marginLeft="8px"
@@ -415,7 +417,6 @@ const DetailSidebar = (props: any) => {
       flexDirection="column"
       h="calc(100vh - 75px)"
       overflow="auto"
-      
     >
       <Box 
         flex="2" 
@@ -666,7 +667,31 @@ const DetailSidebar = (props: any) => {
             <span style={{ fontWeight: 600, marginTop: 10, marginBottom: 10 }}>
               This artifact is associated with:
             </span>
-            <ThreadNav researchTs={isArtifactInThread} viewType="detail" />
+              {
+                isArtifactInThread.map((a, i)=> (
+                  <div
+                    key={`thread-${i}`}
+                  >
+
+                    <div
+                    style={{backgroundColor: `${a.color}50`}}
+                    >{a.title}</div>
+                    {
+                      a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, i) => (
+                        <React.Fragment>
+                        {m.type === "fragment" && (
+                          <span>{m.anchors[0].frag_type}</span>
+                        )}
+                        {
+                          <span>{m.rationale}</span>
+                        }
+                        </React.Fragment>
+                      ))
+                    }
+                  </div>
+                ))
+              }
+            {/* <ThreadNav researchTs={isArtifactInThread} viewType="detail" /> */}
           </div>
         )}
       </Box>

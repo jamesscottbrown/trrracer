@@ -26,11 +26,6 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
 
 
   const styleOb = { display: 'inline', cursor: 'pointer' };
-
-  // console.log('in stle', bookmarked);
-  if(bookmarked){
-    console.log('BOOKMARK TRUE')
-  }
   
   if (sectionData.textRun.textStyle) {
     Object.keys(sectionData.textRun.textStyle).forEach((m) => {
@@ -54,10 +49,10 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
   }
 
   if (bookmarked){ 
-    console.log('boomark??', bookmarked)
+   
     styleOb.backgroundColor = 'gray';
     styleOb.color = '#ffffff';
-    console.log('styleOb', styleOb)
+  
   }
 
   return styleOb;
@@ -93,7 +88,7 @@ const GoogDriveSpans = (googProps: any) => {
     
   }, [spanColor, artifactBookmarks]);
 
-  console.log('tempppp',temp);
+
   
   return temp.length > 0 ? (
     <Popover trigger='hover'>
@@ -112,13 +107,7 @@ const GoogDriveSpans = (googProps: any) => {
               key={`span-comment-${i}`}
             >
               <span dangerouslySetInnerHTML={{__html: t.htmlContent}}></span>
-              {/* {
-                t.replies.length > 0 && (
-                  t.replies.map((r, j) => (
-                    <span>{}</span>
-                  ))
-                )
-              } */}
+             
             </div>
           ))}</div>
         </PopoverBody>
@@ -187,7 +176,7 @@ const GoogDriveParagraph = (parProps: any) => {
         </span>
       );
   };
-  // console.log('paragraphData', parData);
+
   return parData.paragraph.paragraphStyle.namedStyleType.includes('HEADING') ? (
     <div>{getHeading(parData.paragraph.paragraphStyle, parData.paragraph)}</div>
   ) : (
