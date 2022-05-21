@@ -108,9 +108,18 @@ const GoogDriveSpans = (googProps: any) => {
 
         <PopoverBody>
           <div>{temp.map((t, i)=> (
-            <span
-            key={`span-comment-${i}`}
-            >{'test'}</span>
+            <div
+              key={`span-comment-${i}`}
+            >
+              <span dangerouslySetInnerHTML={{__html: t.htmlContent}}></span>
+              {/* {
+                t.replies.length > 0 && (
+                  t.replies.map((r, j) => (
+                    <span>{}</span>
+                  ))
+                )
+              } */}
+            </div>
           ))}</div>
         </PopoverBody>
       </PopoverContent>
