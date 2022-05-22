@@ -329,6 +329,8 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
       case 'ADD_ACTIVITY_TO_THREAD': {
         const { activity, rationale, activityIndex, threadIndex } = action;
+
+        console.log('this is hitting', activity, rationale, activityIndex, threadIndex)
         const newRT = state.researchThreads;
         const newA = {
           type: 'activity',
@@ -337,6 +339,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           activityTitle: activity.title,
           rationale,
         };
+
         newRT.research_threads[threadIndex].evidence.push(newA);
         return saveJSONRT(newRT, state.folderPath);
       }

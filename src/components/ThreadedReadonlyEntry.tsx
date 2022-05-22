@@ -286,7 +286,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
         {format(new Date(entryData.date), 'dd MMMM yyyy')}
       </Text>
-      <p>
+      <div>
         {entryData.tags.length === 0 ? (
           <b>No tags.</b>
         ) : (
@@ -346,7 +346,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
             </div>
           </>
         )}
-      </p>
+      </div>
       {
         isEntryInAnyThreads.map(m => (
           <Tooltip 

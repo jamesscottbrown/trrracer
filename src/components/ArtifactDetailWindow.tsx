@@ -563,7 +563,10 @@ const DetailSidebar = (props: any) => {
       </Box>
 
       {fragSelected && (
-        <div style={{ padding: '5px' }}>
+        <div style={{ padding: '5px', marginTop:10 }}>
+          <div
+          style={{ fontSize:20, fontWeight:600 }}
+          >Selected Fragment:</div>
           <span style={{ backgroundColor: '#FFFBC8' }}>{fragSelected}</span>
         </div>
       )}
@@ -664,7 +667,7 @@ const DetailSidebar = (props: any) => {
       <Box>
         {isArtifactInThread.length > 0 && (
           <div>
-            <span style={{ fontWeight: 600, marginTop: 10, marginBottom: 10 }}>
+            <span style={{ fontWeight: 600, fontSize:20, marginTop: 10, marginBottom: 10 }}>
               This artifact is associated with:
             </span>
               {
@@ -677,8 +680,8 @@ const DetailSidebar = (props: any) => {
                     style={{backgroundColor: `${a.color}50`}}
                     >{a.title}</div>
                     {
-                      a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, i) => (
-                        <React.Fragment>
+                      a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, j) => (
+                        <React.Fragment key={`evi-${j}`}>
                         {m.type === "fragment" && (
                           <span>{m.anchors[0].frag_type}</span>
                         )}
