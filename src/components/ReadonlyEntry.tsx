@@ -86,7 +86,13 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             type: 'SELECTED_ARTIFACT',
             selectedArtifactEntry: entryData,
             selectedArtifactIndex: i,
-            hopArray: [entryData],
+            hopArray: [
+              {
+                activity: entryData, 
+                artifactUid: entryData.files[i].artifact_uid,
+                hopReason: 'first hop',
+              }
+            ],
           });
         }}
       >See in detail</Button>
@@ -329,7 +335,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             {entryData.tags.map((t) => (
               <Tag
                 key={t}
-                backgroundColor={checkTagColor(t)}
+                backgroundColor={`${checkTagColor(t)}50`}
+                stroke={`${checkTagColor(t)}`}
                 marginRight="0.25em"
                 marginBottom="0.25em"
               >

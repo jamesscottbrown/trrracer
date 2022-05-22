@@ -4,27 +4,23 @@ import { useProjectState } from './ProjectContext';
 import { joinPath} from '../fileUtil';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
-import VerticalAxis, { dataStructureForTimeline } from './VerticalAxis';
+import { dataStructureForTimeline } from './VerticalAxis';
 import type { EntryType } from './types';
-import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import { FaAddressBook, FaBaby, FaLink, FaPaperclip, FaPencilAlt, FaSketch } from 'react-icons/fa';
-import { MdComment } from 'react-icons/md';
-import { GrNotes } from 'react-icons/gr';
-import { RiComputerLine } from 'react-icons/ri';
-import { BiQuestionMark } from 'react-icons/bi';
+import { ToolIcon } from './Project';
+const smalltalk = require('smalltalk');
 
 interface BubbleProps {
   filteredActivities: EntryType[];
   setGroupBy:(gb:any)=> void;
   groupBy: any;
-  setSplitBubbs: (b:boolean)=> void;
-  splitBubbs: boolean;
   setHoverActivity: (ent: any) => void;
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
+  filterType: null | any;
 }
 
 const ToolTip = (toolProp: any) => {
@@ -61,7 +57,9 @@ const ToolTip = (toolProp: any) => {
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
         ><ToolIcon 
-          fileData={fi}/>
+          artifactType={fi.artifactType}
+          size={28}
+          />
             <span
               style={{fontSize:10}}
             >{fi.title}</span>
@@ -72,32 +70,11 @@ const ToolTip = (toolProp: any) => {
   </div>
 }
 
-const ToolIcon = (toolProp:any) => {
-  const { fileData } = toolProp;
-  
-  if(fileData.artifactType === 'correspondance' || fileData.artifactType === 'correspondence'){
-    return <MdComment style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'link'){
-    return <FaLink style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'related work'){
-    return <FaPaperclip style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'sketch'){
-    return <FaPencilAlt style={{display:'inline', fontSize:24, marginLeft:4}}/> 
-  }else if(fileData.artifactType === 'notes'){
-    return <GrNotes style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }else if(fileData.artifactType === 'tool artifact'){
-    return <RiComputerLine style={{display:'inline', fontSize:24, marginLeft:4}}/>
-  }
-  return <BiQuestionMark style={{display:'inline', fontSize:24, marginLeft:4}}/>
-}
-
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
     groupBy,
     setGroupBy,
-    splitBubbs,
-    setSplitBubbs,
     setHoverActivity,
     flexAmount,
     setDefineEvent,
@@ -106,48 +83,43 @@ const BubbleVis = (props: BubbleProps) => {
   } = props;
 
   const [
-    { artifactTypes, selectedThread, researchThreads, folderPath, projectData, filterRT },
+    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
     dispatch
   ] = useProjectState();
   
   const {eventArray} = projectData;
-
   const [newHeight, setNewHeight] = useState('1000px');
-  const [svgWidth, setSvgWidth] = useState(500);
+  const [svgWidth, setSvgWidth] = useState(600);
   const [translateY, setTranslateY] = useState(35);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
-  const width = 200;
-  // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
+  const width = 300;
   const height = +newHeight.split('px')[0];
-
   const svgRef = React.useRef(null);
 
   let packedCircData = calcCircles(projectData.entries);
-
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = new ForceMagic(packedCircData, width, height, splitBubbs);
+  const forced = new ForceMagic(packedCircData, width, height);
 
   useEffect(() => {
     if (svgRef.current) {
       setNewHeight(window.getComputedStyle(svgRef.current).height);
-      // const svgWidth = groupBy ? (researchThreads?.research_threads.length * 200) : 500;
     }
     if(groupBy){
       console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
       
       setSvgWidth((researchThreads?.research_threads.length * 300))
     }else{
-      setSvgWidth(500);
+      setSvgWidth(600);
     }
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(180, ${translateY})`);//.attr('transform', .attr('transform', `translate(0, ${translateY})`);)
+    underWrap.attr('transform', `translate(180, ${translateY})`);
     const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
 
     const { yScale, margin } = forced;
@@ -162,19 +134,19 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth[yearMonth.length - 1].months,
       'last'
     );
-  yearMonth[0].months = yearMonth[0].months.filter(
-    (f: any, i: number) => i > startIndex - 1
-  );
-  yearMonth[yearMonth.length - 1].months = yearMonth[
-    yearMonth.length - 1
-  ].months.filter((f: any, i: number) => i < endIndex);
+    yearMonth[0].months = yearMonth[0].months.filter(
+      (f: any, i: number) => i > startIndex - 1
+    );
 
-  const filteredActivitiesExtent = d3.extent(
-    filteredActivities.map((m: any) => new Date(m.date))
-  );
+    yearMonth[yearMonth.length - 1].months = yearMonth[
+      yearMonth.length - 1
+    ].months.filter((f: any, i: number) => i < endIndex);
+
+    const filteredActivitiesExtent = d3.extent(
+      filteredActivities.map((m: any) => new Date(m.date))
+    );
 
     let checkGroup = svg.select('g.timeline-wrap');
-
     let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
     
     wrapAxisGroup.selectAll('*').remove();
@@ -230,7 +202,7 @@ const BubbleVis = (props: BubbleProps) => {
           return `translate(0, ${y})`;
         });
 
-        d3.selectAll('g.handles').selectAll('rect.handle-rect')
+        d3.selectAll('g.handles').selectAll('rect.handle-rect');
 
         // update labels
         d3.selectAll('g.handles')
@@ -292,17 +264,16 @@ const BubbleVis = (props: BubbleProps) => {
           return `translate(0, ${y})`;
         });
       
-      let gUnderRect = gHandles.selectAll('rect.handle-rect')
-      .data(d => [d])
-      .join('rect')
-      .classed('handle-rect', true)
-      .attr('fill', '#fff')
-      .attr('width', 70)
-      .attr('height', 13)
-      .attr('y', (d)=> d === 'handle--o' ? -13 : 0)
-      .attr('x', -50);
+      gHandles.selectAll('rect.handle-rect')
+        .data(d => [d])
+        .join('rect')
+        .classed('handle-rect', true)
+        .attr('fill', '#fff')
+        .attr('width', 70)
+        .attr('height', 13)
+        .attr('y', (d)=> d === 'handle--o' ? -13 : 0)
+        .attr('x', -50);
      
-
       // Label
       gHandles
         .selectAll('text')
@@ -370,7 +341,7 @@ const BubbleVis = (props: BubbleProps) => {
     }
 
     if (defineEvent) {
-
+     
       let text;
       let bGroup = wrapAxisGroup.append('g')
       
@@ -529,13 +500,6 @@ const BubbleVis = (props: BubbleProps) => {
      
     }
 
-    const nodes = forced.nodes.filter((f: any) => {
-      if (splitBubbs) {
-        return filteredActivities.map((m: any) => m.title).includes(f.activityTitle);
-      }
-      return filteredActivities.map((m: any) => m.title).includes(f.title);
-    });
-
     if (groupBy) {
  
       if (groupBy.type === 'research_threads') {
@@ -605,11 +569,11 @@ const BubbleVis = (props: BubbleProps) => {
         true,
         'all-activities'
       );
-
+      
       activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
+      artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
       
@@ -617,6 +581,8 @@ const BubbleVis = (props: BubbleProps) => {
       .on('mouseover', (event, d) => {
         if(filterRT){
           d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
+        }else if(filterType){
+          d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 1);
         }else{
           d3.select(event.target).attr('fill', 'gray');
         }
@@ -624,25 +590,29 @@ const BubbleVis = (props: BubbleProps) => {
       }).on('mouseout', (event, d) => {
         if(filterRT){
         d3.select(event.target).attr('stroke-width', 0);
+        }else if(filterType){
+
+        d3.select(event.target).attr('fill', 'gray').attr('fill-opacity', .5);
+        d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
+       
+
         }else{
-        d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .4);;
+        d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .5);
         }
       });
 
       if(filterType){
-
-        highlightedActivities.attr('fill', 'gray').attr('opacity', 1);
+        highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
+        highlightedActivities.select('.all-activities').attr('stroke-width', 0);
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
-        highlightedCircles.attr('fill', 'red');
+        highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
+        let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
+        highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
       }else{
 
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
-
         highlightedCircles.attr('fill', 'gray');
-
       }
-
-      
 
       let hiddenCircles = allActivityGroups.filter(ac => {
         return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
@@ -651,10 +621,8 @@ const BubbleVis = (props: BubbleProps) => {
       hiddenCircles.attr('fill', 'gray')
       .attr('fill-opacity', .3);
 
-      if(filterRT){
+      if(filterRT && researchThreads?.research_threads[selectedThread].evidence.length > 0){
        
-        let tagChecker = [...filterRT.associatedKey].filter(at => filterRT.key.indexOf(at) === -1);
-
         let linkDataBefore = [];
         let linkDataAfter = [];
 
@@ -669,7 +637,6 @@ const BubbleVis = (props: BubbleProps) => {
         
         }else if(f.type === 'artifact' || f.type === 'fragment'){
          
-          let artifactCoord = temp.selectAll('circle.artifact').filter(art => art.title === f.artifactTitle);
           temp
             .select('circle.background')
             .attr('fill-opacity', 1);
@@ -678,43 +645,52 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
           temp.select('circle.all-activities')
             .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        }
           
           let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
 
-          console.log('divide date',divideDate)
-
+          console.log('divide date', divideDate)
+          console.log('chosenActivityDTA', chosenActivityData)
           if(new Date(chosenActivityData.date) < divideDate){
             linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }else{
             linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
           }
-         
-        }
       })
 
+      console.log('LINKS', linkDataAfter)
+
       var lineGenerator = d3.line();
-      linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
-      linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      linkDataBefore.push(linkDataAfter[0])
+        if(linkDataAfter.length > 0){
 
-      var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
-      var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+          linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      underWrap.append('path')
-        .attr('d', pathStringDash)
-        .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
-        .attr('stroke-width', 2)
-        .style('stroke-dasharray', '5,5');
+          var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+    
+          underWrap.append('path')
+          .attr('d', pathStringSolid)
+          .attr('fill', 'none')
+          .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+          .attr('stroke-width', 2);
 
-      underWrap.append('path')
-        .attr('d', pathStringSolid)
-        .attr('fill', 'none')
-        .attr('stroke', researchThreads?.research_threads[selectedThread].color)
-        .attr('stroke-width', 2);
-    }
+        }
+        if(linkDataBefore.length > 0){
 
+          linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+          if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
+          
+          var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+          
+          underWrap.append('path')
+            .attr('d', pathStringDash)
+            .attr('fill', 'none')
+            .attr('stroke', researchThreads?.research_threads[selectedThread].color)
+            .attr('stroke-width', 2)
+            .style('stroke-dasharray', '5,5');
+        }
+      }
+    
     highlightedActivities
         .on('mouseover', (event, d) => {
           
@@ -722,7 +698,29 @@ const BubbleVis = (props: BubbleProps) => {
           setHoverData(d);
           d3.select('#tooltip').style('opacity', 1);
 
-          underWrap.append('line')
+          let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+          let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
+          labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
+
+          let rect = labelG.append('rect')
+          rect.attr('width', 50)
+          .attr('height', 15)
+          .attr('fill', '#fff')
+          .attr('fill-opacity', .9);
+          rect.attr('x', -50).attr('y', -12);
+
+          let text = labelG
+          .append('text')
+          .text(new Date(d.date).toLocaleDateString('en-us', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })).style('font-size', 9)
+          .style('text-anchor', 'end')
+          .style('font-weight', 600)
+
+            underWrap.append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
             .attr('x2', (0-70))
@@ -730,46 +728,22 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('x1', (+d.x))
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
-
-          let textWrap = wrap.append('rect').attr('id', 'date_label_bg');
-
-          let text = wrap.append('text')
-            .attr('id', 'date_label')
-            .text(new Date(d.date).toLocaleDateString('en-us', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            }))
-            .attr('text-anchor', 'end')
-            .attr('font-size', 9)
-            .attr('x', (0-70))
-            .attr('y', forced.yScale(new Date(d.date)))
           
-          let bB = text.node().getBoundingClientRect();
-          
-          textWrap.attr('width', bB.width)
-          textWrap.attr('height', bB.height)
-          .attr('x', (0-(70+ bB.width)))
-          .attr('y', (forced.yScale(new Date(d.date)) - bB.height))
-          textWrap.attr('fill', '#fff')
-
         })
         .on('mouseout', (event:any, d:any) => {
       
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
-          d3.select('#date_label').remove();
-          d3.select('#date_label_bg').remove();
+          d3.select('#label-group').remove();
       
         }).on('click', (event:any, d:any)=> {
           setHoverActivity(d);
         })
 
-    // }
+ 
       }
 
-  }, [filteredActivities, groupBy, splitBubbs, eventArray, filterType]);
+  }, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
   return (
     <div style={{ flex: flexAmount, paddingTop:'10px' }}>
@@ -779,8 +753,9 @@ const BubbleVis = (props: BubbleProps) => {
         <Button
           size={'sm'}
           style={{fontSize:"12px"}}
-          onClick={() =>
-            defineEvent ? setDefineEvent(false) : setDefineEvent(true)
+          onClick={() => {
+            console.log('is this working??')
+            defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
           }
         >
           Add events to timeline

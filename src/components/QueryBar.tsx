@@ -2,6 +2,7 @@ import React from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
+import { doc } from 'prettier';
 
 const processDataQuery = (
   queryTerm: string,
@@ -135,12 +136,16 @@ const QueryBar = (queryProps: QueryProps) => {
   let data;
 
   if (artifactData) {
-    data =
-      artifactData.fileType === 'txt'
-        ? txtData['text-data'].filter(
-            (f) => f['file-title'] === artifactData.title
-          )[0].text
-        : googleData[artifactData.fileId];
+    // data = ((artifactData.fileType === 'txt') && (txtData?['text-data'] != undefined)) ? txtData['text-data'].filter(
+    //         (f) => f['file-title'] === artifactData.title
+    //       )[0].text
+    //     : googleData[artifactData.fileId];
+    if((artifactData.fileType === 'txt') && (txtData)){
+      let dataCheck = txtData['text-data'].filter((f) => f['file-title'] === artifactData.title);
+      data = dataCheck.length > 0 ? dataCheck[0].text : [];
+    }else{
+      data = googleData[artifactData.fileId];
+    }
   }
 
   return (
@@ -156,8 +161,20 @@ const QueryBar = (queryProps: QueryProps) => {
           size="sm"
           onClick={() => {
             if (artifactData) {
-              const matchArray = data.split(term);
-              alert(`${matchArray.length - 1} matches`);
+              console.log('DATA ON CLICK', data);
+              if(data.documentId){
+                console.log('this is a google doc.');
+              }else{
+                console.log('this is text file', data)
+                if(data){
+                  const matchArray = data.split(term);
+                  alert(`${matchArray.length - 1} matches`);
+                }else{
+                  alert('notext data for this file yet');
+                }
+                
+              }
+              
             } else {
               const matches = processDataQuery(
                 term,

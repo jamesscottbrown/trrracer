@@ -1,5 +1,5 @@
-import React from 'react';
-import { Image, Box } from '@chakra-ui/react';
+import React, { useLayoutEffect } from 'react';
+import { Image, Box, background } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
   GrDocumentWord,
@@ -13,6 +13,7 @@ import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
+
 
 import { joinPath } from '../fileUtil';
 
@@ -32,6 +33,25 @@ interface DetailPreviewPropsType {
   setFragSelected: any;
   fragSelected:any;
   artifactIndex: number;
+  // artifactRenderedRef:any;
+}
+
+const TextRender = (textProps: any) => {
+  const {textArray} = textProps;
+  if(textArray.length > 1){
+    return textArray.map((ta:any, i:number)=> (
+      <span
+        key={`book-span-${i}`}
+        style={{
+          color: ta.style === "normal" ? "black" : "#ffffff",
+          backgroundColor: ta.style === 'normal' ? '#ffffff' : '#485063',
+          padding: ta.style === "normal" ? 1 : 5,
+        }}
+      >{ta.textData}</span>
+    ))
+  }else{
+    return <span>{textArray[0].textData}</span>
+  }
 }
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
@@ -43,6 +63,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     activity,
     artifactIndex,
     openFile,
+    // artifactRenderedRef
   } = props;
 
   const [{ googleData, txtData }] = useProjectState();
@@ -100,6 +121,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
+      useLayoutEffect(() => {
+        // console.log('fired when rendered', document.getElementById('gdoc'));
+        // console.log('bookmarks', artifact);
+      })
+
       return (
         <Box style={{ 
           overflowY: 'scroll', 
@@ -111,15 +137,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           padding:10,
           }}>
           <div
-            onMouseUp={() => {
-              if (setFragSelected) {
-                const selObj = window.getSelection();
-                setFragSelected(selObj?.toString());
-              } else {
-                console.log('mouseup');
-              }
-            }}
             style={{ height: '100%', overflow: 'auto' }}
+            id={'gdoc'}
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph
@@ -127,6 +146,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 parData={m}
                 index={i}
                 comments={artifact.comments.comments}
+                setFragSelected={setFragSelected}
+                artifactBookmarks={artifact.bookmarks}
               />
             ))}
           </div>
@@ -148,6 +169,43 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const temp: TextEntry[] = txtData['text-data'].filter(
       (f: TextEntry) => f['entry-title'] === activity.title
     );
+    
+  
+    let textArray = (temp.length > 0) ? [{style:'normal', textData: temp[0].text}] : [];
+    if(artifact.bookmarks){
+      let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
+      
+      textArray = [
+        {style:'normal', textData: start[0]},
+        {style:'highlight', textData: artifact.bookmarks[0].fragment},
+        {style:'normal', textData: start[1]}
+      ]
+      if(artifact.bookmarks.length > 1){
+
+        for(let j = 1; j < artifact.bookmarks.length; j++){
+      
+          let oldTextArray = textArray;
+          let frag = artifact.bookmarks[j].fragment;
+          let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
+
+          let newArray = oldTextArray.slice(0, findIndex);
+        
+          let addThis = oldTextArray[findIndex].textData.split(frag);
+          let makeArray = [
+            {style:'normal', textData: addThis[0] },
+            {style:'highlight', textData: frag },
+            {style:'normal', textData: addThis[1] },
+          ]
+          newArray = [...newArray, ...makeArray]
+          
+          if(oldTextArray.length > (findIndex + 1)){
+            newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+          }
+          textArray = newArray;
+        }
+      }
+      
+    }
 
     return (
       <div
@@ -159,9 +217,14 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             console.log('mouseup');
           }
         }}
-        style={{ height: '90%', overflow: 'auto' }}
+        style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
       >
-        {temp[0].text}
+        {/* {artifact.bookmarks ? textArray.map((t)=> (
+          <span
+            style={{backgroundColor: t.style === 'normal' ? "#fff" : "yellow" }}
+          >{t.textData}</span>
+        )): <span>{textArray.textData}</span> } */}
+        {textArray.length > 0 ? <TextRender textArray={textArray} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
       </div>
     );
   }

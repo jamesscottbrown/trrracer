@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
 
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
@@ -15,7 +15,7 @@ import type {
   ResearchThreadEvidence,
   ReactTag,
 } from './types';
-import VerticalAxis from './VerticalAxis';
+import DetailBubble from './DetailSvg';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -204,7 +204,6 @@ const InteractiveActivityTag = (props: any) => {
   const [expandedTag, setExpandedTag] = useState(false);
 
  
-
   const tagMatches = projectData.entries.filter(
     (f: any) => f.tags.indexOf(tag) > -1
   );
@@ -214,11 +213,12 @@ const InteractiveActivityTag = (props: any) => {
       key={`tag-sel-${index}`}
       style={{
         padding: 5,
-        backgroundColor: '#D3D3D3',
+        backgroundColor: '#F5F5F5',
         borderRadius: 5,
         margin: 5,
         verticalAlign: 'middle',
         lineHeight: 'normal',
+        boxShadow: "1px 1px 2px #A3AAAF"
       }}
     >
       <Flex>
@@ -230,7 +230,12 @@ const InteractiveActivityTag = (props: any) => {
               .indexOf(selectedArtifactEntry.title);
 
             if (indexOfE === 0) {
-              const newHop = [...hopArray, tagMatches[tagMatches.length - 1]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[tagMatches.length - 1], 
+                artifactUid: tagMatches[tagMatches.length - 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[tagMatches.length - 1],
@@ -238,7 +243,12 @@ const InteractiveActivityTag = (props: any) => {
                 hopArray: newHop,
               });
             } else {
-              const newHop = [...hopArray, tagMatches[indexOfE - 1]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[indexOfE - 1], 
+                artifactUid: tagMatches[indexOfE - 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE - 1],
@@ -268,7 +278,12 @@ const InteractiveActivityTag = (props: any) => {
               .map((m: any) => m.title)
               .indexOf(selectedArtifactEntry.title);
             if (indexOfE === tagMatches.length - 1) {
-              const newHop = [...hopArray, tagMatches[0]];
+              const newHop = [...hopArray, {
+                activity: tagMatches[0], 
+                artifactUid: tagMatches[0].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[0],
@@ -276,7 +291,12 @@ const InteractiveActivityTag = (props: any) => {
                 hopArray: newHop,
               });
             } else {
-              const newHop = [...hopArray, tagMatches[indexOfE + 1]];
+              const newHop = [...hopArray,  {
+                activity: tagMatches[indexOfE + 1], 
+                artifactUid: tagMatches[indexOfE + 1].files[0].artifact_uid,
+                hopReason: 'tag',
+                tag: tag,
+              }];
               dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: tagMatches[indexOfE + 1],
@@ -315,7 +335,12 @@ const InteractiveActivityTag = (props: any) => {
                   }}
                   key={`match-${i}`}
                   onClick={() => {
-                    const newHop = [...hopArray, t];
+                    const newHop = [...hopArray,  { 
+                      activity: t, 
+                      artifactUid: t.files[0].artifact_uid,
+                      hopReason: 'tag',
+                      tag: tag
+                    }];
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
                       selectedArtifactEntry: t,
@@ -343,18 +368,19 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
   } = props;
 
-  const [{ researchThreads, projectData }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
 
-  console.log('IN DETAIL SIDEBAR', selectedArtifactEntry, selectedArtifactIndex)
   const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry[selectedArtifactIndex] : null;
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
+  const [showFileList, setShowFileList] = useState(true);
+  const [showTagList, setShowTagList] = useState(true);
 
   const updateEntryField = (
     entryIndex: number,
@@ -381,15 +407,16 @@ const DetailSidebar = (props: any) => {
     }
   );
 
+  console.log('is artifact in thread',isArtifactInThread)
+
   return (
     <Box
       marginLeft="8px"
       marginRight="8px"
-      flex="2"
+      width="300px"
       flexDirection="column"
       h="calc(100vh - 75px)"
       overflow="auto"
-      
     >
       <Box 
         flex="2" 
@@ -403,37 +430,55 @@ const DetailSidebar = (props: any) => {
           <div>
             <span style={{ fontSize: 20, fontWeight: 700 }}>
               {`Artifacts associated with ${selectedArtifactEntry.title}`}
+              <span
+                style={{cursor:'pointer', display:'inline', marginLeft:10}}
+                onClick={()=> showFileList ? setShowFileList(false) : setShowFileList(true)}
+              >{showFileList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}</span>
             </span>
           </div>
-          <Box
-            marginLeft="3px"
-            borderLeftColor="black"
-            borderLeftWidth="1px"
-            padding="3px"
-          >
-            {selectedArtifactEntry.files.map((f: any, i: number) => (
-              <React.Fragment key={`fi-${f.title}-${i}`}>
-                {i === selectedArtifactIndex ? (
-                  <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
-                    {selectedArtifactEntry.files[i].title}
-                  </div>
-                ) : (
-                  <div
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      dispatch({
-                        type: 'SELECTED_ARTIFACT',
-                        selectedArtifactEntry,
-                        selectedArtifactIndex: i,
-                      });
-                    }}
-                  >
-                    {selectedArtifactEntry.files[i].title}
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </Box>
+            {
+              showFileList && (
+                <Box
+                marginLeft="3px"
+                borderLeftColor="black"
+                borderLeftWidth="1px"
+                padding="3px"
+              >{
+                selectedArtifactEntry.files.map((f: any, i: number) => (
+                  <React.Fragment key={`fi-${f.title}-${i}`}>
+                    {i === selectedArtifactIndex ? (
+                      <div style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}>
+                        {selectedArtifactEntry.files[i].title}
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            selectedArtifactEntry,
+                            selectedArtifactIndex: i,
+                            hopArray: [
+                              ...hopArray,
+                              { activity: 
+                                selectedArtifactEntry, 
+                                artifactUid: selectedArtifactEntry.files[i].artifact_uid,
+                                hopReason: 'another artifact in activity',
+                              },
+                            ]
+                          });
+                        }}
+                      >
+                        {selectedArtifactEntry.files[i].title}
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+                </Box>
+              )
+            }
+            
+         
         </Box>
       </Box>
       {
@@ -458,6 +503,11 @@ const DetailSidebar = (props: any) => {
           >
             Edit
           </Button>
+          <Button
+            style={{cursor:'pointer', display:'inline', marginLeft:10}}
+            onClick={()=> showTagList ? setShowTagList(false) : setShowTagList(true)}
+          >{showTagList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}</Button>
+            
         </div>
         {showTagAdd && (
           <div>
@@ -495,19 +545,28 @@ const DetailSidebar = (props: any) => {
             />
           </div>
         )}
-        {selectedArtifactEntry.tags.map((t: any, i: number) => (
-          <InteractiveActivityTag
-            key={`it-${i}`}
-            selectedArtifactEntry={selectedArtifactEntry}
-            selectedArtifactIndex={selectedArtifactIndex}
-            tag={t}
-            index={i}
-          />
-        ))}
+        {
+          showTagList && (
+            <React.Fragment>
+              {selectedArtifactEntry.tags.map((t: any, i: number) => (
+                <InteractiveActivityTag
+                  key={`it-${i}`}
+                  selectedArtifactEntry={selectedArtifactEntry}
+                  selectedArtifactIndex={selectedArtifactIndex}
+                  tag={t}
+                  index={i}
+                />
+              ))}
+            </React.Fragment>
+          )
+        }
       </Box>
 
       {fragSelected && (
-        <div style={{ padding: '5px' }}>
+        <div style={{ padding: '5px', marginTop:10 }}>
+          <div
+          style={{ fontSize:20, fontWeight:600 }}
+          >Selected Fragment:</div>
           <span style={{ backgroundColor: '#FFFBC8' }}>{fragSelected}</span>
         </div>
       )}
@@ -529,7 +588,7 @@ const DetailSidebar = (props: any) => {
             textAlign: 'center',
           }}
           onClick={() => {
-         
+            // console.log(selectedArtifactIndex, selectedArtifactEntry, fragSelected)
             dispatch({
               type: 'BOOKMARK_FRAGMENT',
               selectedArtifactEntry: selectedArtifactEntry,
@@ -608,10 +667,34 @@ const DetailSidebar = (props: any) => {
       <Box>
         {isArtifactInThread.length > 0 && (
           <div>
-            <span style={{ fontWeight: 600, marginTop: 10, marginBottom: 10 }}>
+            <span style={{ fontWeight: 600, fontSize:20, marginTop: 10, marginBottom: 10 }}>
               This artifact is associated with:
             </span>
-            <ThreadNav researchTs={isArtifactInThread} viewType="detail" />
+              {
+                isArtifactInThread.map((a, i)=> (
+                  <div
+                    key={`thread-${i}`}
+                  >
+
+                    <div
+                    style={{backgroundColor: `${a.color}50`}}
+                    >{a.title}</div>
+                    {
+                      a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, j) => (
+                        <React.Fragment key={`evi-${j}`}>
+                        {m.type === "fragment" && (
+                          <span>{m.anchors[0].frag_type}</span>
+                        )}
+                        {
+                          <span>{m.rationale}</span>
+                        }
+                        </React.Fragment>
+                      ))
+                    }
+                  </div>
+                ))
+              }
+            {/* <ThreadNav researchTs={isArtifactInThread} viewType="detail" /> */}
           </div>
         )}
       </Box>
@@ -645,10 +728,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * .15;
-
-  const yScale = d3.scaleTime()
-  .range([0, viewheight - margin])
-  .domain(d3.extent(projectData.entries.map((e: any) => new Date(e.date))));
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -699,16 +778,21 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
+                const selectActivity = selectedArtifactEntry.index > 0
+                ? projectData.entries[selectedArtifactEntry.index - 1]
+                : projectData.entries[projectData.entries.length - 1];
+
                 const newHop = [
                   ...hopArray,
-                  projectData.entries[selectedArtifactEntry.index - 1],
+                  { activity: 
+                    selectActivity, 
+                    artifactUid: selectActivity && selectActivity.files[0].artifact_uid ? selectActivity.files[0].artifact_uid : null,
+                    hopReason: 'time hop back',
+                  },
                 ];
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry:
-                    selectedArtifactEntry.index > 0
-                      ? projectData.entries[selectedArtifactEntry.index - 1]
-                      : projectData.entries[projectData.entries.length - 1],
+                  selectedArtifactEntry: selectActivity,
                   selectedArtifactIndex: 0,
                   hopArray: newHop,
                 });
@@ -720,17 +804,21 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
+                const selectActivity = selectedArtifactEntry.index < projectData.entries.length - 1
+                ? projectData.entries[selectedArtifactEntry.index + 1]
+                : projectData.entries[0];
+
                 const newHop = [
                   ...hopArray,
-                  projectData.entries[selectedArtifactEntry.index + 1],
+                  { activity: selectActivity, 
+                    artifactUid: (selectActivity && selectActivity.files.length > 0 && selectActivity.files[0].artifact_uid) ? selectActivity.files[0].artifact_uid : null,
+                    hopReason: 'time hop forward',
+                  },
                 ];
-
+                console.log('NEW HOP??', newHop);
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry:
-                    selectedArtifactEntry.index < projectData.entries.length - 1
-                      ? projectData.entries[selectedArtifactEntry.index + 1]
-                      : projectData.entries[0],
+                  selectedArtifactEntry: selectActivity,
                   selectedArtifactIndex: 0,
                   hopArray: newHop,
                 });
@@ -763,20 +851,18 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           selectedArtifactIndex={selectedArtifactIndex}
         />
 
-        <div style={{ flex: 1 }}>
-          <VerticalAxis
-            filteredActivities={filteredActivities}
-            height={height}
-            setDefineEvent={null}
-            defineEvent={null}
-            yScale={yScale}
-            translateY={(margin / 2)}
+        <div style={{ width:260 }}>
+          <DetailBubble 
+            filteredActivities={projectData.entries}
+            widthSvg={260}
+            filterType={null}
+            setHoverActivity={null}
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
         {
           selectedArtifact && (
-            <Box flex="4">
+            <Box flex="3.5">
               {(selectedArtifact.fileType ===
                 'txt' ||
                 selectedArtifact.fileType ===
@@ -792,14 +878,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 {
                   selectedArtifact.bookmarks && (
                     selectedArtifact.bookmarks.map((f, i)=> (
-                    // 
+                    //
+                    <React.Fragment key={`pin-${i}`}>
+                    <Tooltip 
+                    style={{padding:5}}
+                    label={`"${f.fragment}"`}>
+                      
                     <Tag
                       size={'md'}
-                      key={`pin-${i}`}
                       borderRadius='full'
                       variant='solid'
-                      colorScheme='green'
-                      style={{cursor:'pointer'}}
+                      colorScheme='gray'
+                      style={{cursor:'pointer', marginRight:5}}
+
                     > 
                     <TagLabel
                       onClick={()=> {
@@ -817,6 +908,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                       }}
                     />
                   </Tag>
+                    </Tooltip>
+                    </React.Fragment>
                   )) )
                 }
               </Box>
@@ -835,6 +928,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               {
                 selectedArtifact ?
                 <DetailPreview
+                  // artifactRenderedRef={artifactRenderedRef}
                   setFragSelected={setFragSelected}
                   fragSelected={fragSelected}
                   folderPath={folderPath}

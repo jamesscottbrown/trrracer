@@ -75,7 +75,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_em = readProjectFile(baseDir, 'goog_em.json', null);
-         // console.log('yes to google em file');
+        
         } catch (e: any) {
           console.error('could not load google em file');
           google_em = null;
@@ -83,14 +83,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           google_data = readProjectFile(baseDir, 'goog_data.json', null);
-        
+         
         } catch (e: any) {
           console.error('could not load google data file');
         }
 
         try {
           google_comms = readProjectFile(baseDir, 'goog_comms.json', null);
-        
+      
         } catch (e) {
           google_comms = null;
           console.log('could not load goog comments');
@@ -98,7 +98,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           txt_data = readProjectFile(baseDir, 'text_data.json', null);
-       
+        
         } catch (e) {
           txt_data = null;
           console.error('could not load text data');
@@ -106,7 +106,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         try {
           roleData = readProjectFile(baseDir, 'roles.json', null);
-       
+        
         } catch (e) {
           console.error('could not load role data');
         }
@@ -146,7 +146,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
                 //       ef.keywords = file.data.keywords;
                 //       ef.keyPhrases = file.data.keyphrases;
                 //     // file.data.keywords.forEach((keyword) => {
-                //     //   console.log(toString(keyword.matches[0].node))
+                //     //  
                 //     // })
 
                 // //     console.log('Key-phrases:')
@@ -182,7 +182,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
               // }
               ef.artifactType = ef.artifactType ? ef.artifactType : '';
               if(ef.fileType === 'txt'){
-                console.log('FILE WITH KEYS?', ef);
+                // console.log('FILE WITH KEYS?', ef);
               }
               
               return ef;
@@ -247,7 +247,6 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
       }
      
       case 'BOOKMARK_FRAGMENT':{
-        console.log('bookmark fragment', action.selectedArtifactEntry)
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks.push({ 'fragment': action.bookmarkFragment })
@@ -330,6 +329,8 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
       case 'ADD_ACTIVITY_TO_THREAD': {
         const { activity, rationale, activityIndex, threadIndex } = action;
+
+        console.log('this is hitting', activity, rationale, activityIndex, threadIndex)
         const newRT = state.researchThreads;
         const newA = {
           type: 'activity',
@@ -338,6 +339,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
           activityTitle: activity.title,
           rationale,
         };
+
         newRT.research_threads[threadIndex].evidence.push(newA);
         return saveJSONRT(newRT, state.folderPath);
       }
@@ -362,7 +364,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
       case 'THREAD_FILTER': {
         if (action.filterRT) {
-         
+         console.log('MADE IT TO CONTEXT',action.filterRT)
           let associatedByTags = state.projectData.entries.filter(f => {
             let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
             return test.length > 0;
@@ -377,6 +379,7 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
               key: action.filterRT.evidence.map((m) => m.activityTitle),
               associatedKey: associatedTest
             },
+            selectedThread: action.selectedThread,
           };
         }
         return { ...state, filterRT: null, selectedThread: null };
@@ -527,6 +530,14 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
 
         return saveJSONRT(newRT, state.folderPath, state);
       }
+
+      case 'DELETE_THREAD': {
+        
+        const newRT = state.researchThreads;
+        newRT.research_threads = newRT.research_threads.filter((ft: any) => ft.rt_id != action.deleteThread);
+        console.log('newwww newww', newRT.research_threads);
+        return saveJSONRT(newRT, state.folderPath, state);
+      } 
 
       case 'ADD_FILES': {
         const { fileList } = action;

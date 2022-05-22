@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 
 import type { EntryType, ResearchThread } from './types';
+import { BiTrash } from 'react-icons/bi';
 
 
 export const jitter = (val: any) => Math.random() * val;
@@ -148,58 +149,62 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   opacity: checkIfSelectThread(i),
                   marginTop:10,
                   marginBottom:10
-              }}
-                onMouseEnter={() => {
-                  dispatch({ type: 'HOVER_THREAD', researchThreadHover: rt });
-                }}
-                onMouseLeave={() => {
-                  console.log(
-                    'need to add this to project context and highlight timline with activities'
-                  );
-                  dispatch({ type: 'HOVER_THREAD', researchThreadHover: null });
-                }}
-                onClick={() => {
-                  dispatch({ type: 'THREAD_FILTER', filterRT: rt });
                 }}
               >
-                <span
-                  style={{ 
-                    
-                    cursor: 'pointer', 
-                    display:'inline' }}
+            <div style={{display:'inline'}}>
+              <span
+                style={{ 
+                  cursor: 'pointer', 
+                  display:'inline' }}
                   onClick={() => {
-                    dispatch({ type: 'SELECTED_THREAD', selectedThread: i });
+                    dispatch({ type: 'THREAD_FILTER', filterRT:rt, selectedThread: i });
                   }}
+              >
+                {`${rt.title} `}
+              </span>
+              <span>
+              <Popover>
+                  <PopoverTrigger>
+                  <Button 
+                    size={'xs'}
+                    style={{display:'inline'}}
+                  >Cite thread</Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverBody>
+                      copy this ref: {rt.rt_id}
+                    </PopoverBody>
+                  </PopoverContent>
+              </Popover>
+              </span>
+            </div>
+            <div style={{display:'inline', float:'right'}}>
+              <span
+                style={{display:'inline'}}
                 >
-                  {`${rt.title} `}
-                  <GiSewingString size={'16px'} style={{ color: rt.color, display: 'inline' }} />
-                </span>
-                <span>
-                <Popover>
-                    <PopoverTrigger>
-                    <Button 
-                      size={'xs'}
-                    >Cite this thread</Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverBody>
-                        copy this ref: {rt.rt_id}
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </span>
+                  <Button 
+                    size={'xs'} 
+                    bgColor={'#ff6863'} 
+                    style={{display:'inline'}}
+                    onClick={()=> {
+                      dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
+                    }}
+                    >
+                    <BiTrash style={{display:'inline'}} />
+                  </Button></span>
+                  </div>
                 <MiniTimline researchT={rt} activities={projectData.entries} />
                 {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}
                     style={{
-                      backgroundColor: rt.color,
-                      fontSize: '11px',
+                      backgroundColor: `${rt.color}50`,
+                      fontSize: '9px',
                       display: 'inline-block',
-                      margin: 3,
+                      margin: 1.5,
                       padding: 2,
                       borderRadius: 5,
-                      color: rt.color === '#3932a3' ? 'white' : 'black',
+                      // color: rt.color === '#3932a3' ? 'white' : 'black',
                     }}
                   >
                     {t}
@@ -283,8 +288,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 onChange={handleDescriptionChange}
               />
 
-              {threadName && description && (
+              {/* {threadName && description && ( */}
                 <Button
+                  isActive={(threadName && description) ? true : false}
+                  isDisabled={(threadName && description) ? false : true}
                   onClick={() => {
                     setName(null);
                     setDescription(null);
@@ -299,7 +306,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 >
                   CREATE
                 </Button>
-              )}
+              {/* )} */}
             </Box>
           )}
         </>

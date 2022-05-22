@@ -12,13 +12,12 @@ import {
 } from '@chakra-ui/react';
 
 import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
-
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
 import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
+import { ToolIcon } from './Project';
 
 const LeftSidebar = (props: any) => {
   
@@ -118,7 +117,7 @@ const LeftSidebar = (props: any) => {
                     dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
                   }
                 }}
-              >{`${m.title} (${m.matches})`}<FaFillDrip style={{ color: m.color, display: 'inline' }}/></MenuItem>
+              >{`${m.title} (${m.matches})`}<ToolIcon artifactType={m.title} size={18} style={{ color: m.color, display: 'inline' }}/></MenuItem>
             ))}
           </MenuList>
         </Menu>

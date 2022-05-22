@@ -256,6 +256,7 @@ const saveJSONRT = (RTData: any, dir: string, state) => {
       }
     }
   );
+  console.log('RT DATA',RTData)
   return { ...state, researchThreads: RTData };
 };
 

@@ -11,6 +11,11 @@ import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
+import { FaDatabase, FaHandPointUp, FaLink, FaPaperclip, FaPaperPlane, FaPencilAlt } from 'react-icons/fa';
+import { MdComment, MdPresentToAll } from 'react-icons/md';
+import { GrNotes } from 'react-icons/gr';
+import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
+import { BiQuestionMark } from 'react-icons/bi';
 
 interface ProjectProps {
   folderPath: string;
@@ -77,6 +82,33 @@ const ResearchThreadTypeTags = (rttt:any) => {
   )
 }
 
+export const ToolIcon = (toolProp:any) => {
+  const { artifactType, size } = toolProp;
+  
+  if(artifactType === 'transcript'){
+    return <MdComment style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  } if(artifactType === 'correspondance' || artifactType === 'correspondence'){
+    return <FaPaperPlane style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'link'){
+    return <FaLink style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'related work'){
+    return <FaPaperclip style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'sketch'){
+    return <FaPencilAlt style={{display:'inline', fontSize: size, marginLeft:4}}/> 
+  }else if(artifactType === 'notes'){
+    return <GrNotes style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'tool artifact'){
+    return <RiComputerLine style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'presentation'){
+    return <MdPresentToAll style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'data'){
+    return <FaDatabase style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }else if(artifactType === 'paper draft'){
+    return <RiNewspaperLine style={{display:'inline', fontSize: size, marginLeft:4}}/>
+  }
+  return <BiQuestionMark style={{display:'inline', fontSize: size, marginLeft:4}}/>
+}
+
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath } = ProjectPropValues;
   const [
@@ -138,8 +170,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       })
       .map((e: EntryType, index: number) => ({ ...e, index }));
 
-    console.log('filterRT in project LOOK HERE', filterRT);
-
     const rtFiltered = typeFiltered.filter((entryData: any) => {
       if (filterRT) {
         return (
@@ -166,7 +196,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             }
           }
         });
-        console.log('NONO', nono)
+       
         return (
           nono.indexOf(entryData.title) === -1 
         );
@@ -237,6 +267,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             splitBubbs={splitBubbs}
             setHoverActivity={setHoverActivity}
             flexAmount={2}
+            filterType={filterType}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView
@@ -298,6 +329,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             flexAmount={2}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
+            filterType={filterType}
           />
         
           {

@@ -7,12 +7,14 @@ interface File {
   url?: string;
   fileId?: string;
   artifactType: string;
+  artifact_uid: string;
 }
 
 interface FileObj {
   name: string;
   path: string;
   artifactType: string;
+  artifact_uid?: string;
 }
 
 interface URLAttachment {
