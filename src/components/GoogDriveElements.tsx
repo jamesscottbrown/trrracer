@@ -70,7 +70,6 @@ const GoogDriveSpans = (googProps: any) => {
   
   var styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
 
-  
 
   useEffect(() => {
    

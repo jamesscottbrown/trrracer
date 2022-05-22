@@ -15,15 +15,15 @@ import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
 
 
-import { joinPath } from '../fileUtil';
+// import { joinPath } from '../fileUtil';
 
-const url = (folderPath: string, title: string) => {
-  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
-    return `${joinPath(folderPath, title)}`;
-  } else {
-    return url(folderPath, title);
-  }
-};
+// const url = (folderPath: string, title: string) => {
+//   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+//     return `${joinPath(folderPath, title)}`;
+//   } else {
+//     return url(folderPath, title);
+//   }
+// };
 
 interface DetailPreviewPropsType {
   folderPath: string;
@@ -120,11 +120,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       const googD = googleData[artifact.fileId];
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
-
-      useLayoutEffect(() => {
-        // console.log('fired when rendered', document.getElementById('gdoc'));
-        // console.log('bookmarks', artifact);
-      })
 
       return (
         <Box style={{ 
@@ -246,10 +241,16 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.pdf')) {
     return (
-      <embed
-        style={{ height: '90%' }}
-        src={url(folderPath, title)}
-        type="application/pdf"
+      // <embed
+      //   style={{width: '90%' }}
+      //   src={`file://${path.join(folderPath, title)}`}
+      //   type="application/pdf"
+      // />
+      <iframe
+        style={{ width:'90%', zoom:60 }}
+        src={`file://${path.join(folderPath, title)}`}
+       
+        // type="application/pdf"
       />
     );
   }

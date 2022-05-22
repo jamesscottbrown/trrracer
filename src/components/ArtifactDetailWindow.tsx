@@ -7,15 +7,13 @@ import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
-import ThreadNav from './ThreadNav';
-
-import * as d3 from 'd3';
 import type {
   ResearchThread,
   ResearchThreadEvidence,
   ReactTag,
 } from './types';
 import DetailBubble from './DetailSvg';
+import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -198,6 +196,7 @@ const FragmentToThread = (props: any) => {
     </Box>
   );
 };
+
 const InteractiveActivityTag = (props: any) => {
   const { selectedArtifactEntry, index, tag } = props;
   const [{ projectData, hopArray }, dispatch] = useProjectState();
@@ -368,6 +367,8 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
   } = props;
 
+  console.log('FRAG SELECTED', fragSelected)
+
   const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
   const KeyCodes = {
@@ -406,8 +407,6 @@ const DetailSidebar = (props: any) => {
       return temp.length > 0;
     }
   );
-
-  console.log('is artifact in thread',isArtifactInThread)
 
   return (
     <Box
@@ -562,7 +561,7 @@ const DetailSidebar = (props: any) => {
         }
       </Box>
 
-      {fragSelected && (
+      {(fragSelected != null && fragSelected.length > 1) && (
         <div style={{ padding: '5px', marginTop:10 }}>
           <div
           style={{ fontSize:20, fontWeight:600 }}
@@ -711,6 +710,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       goBackView,
       projectData,
       hopArray,
+      researchThreads,
     },
     dispatch,
   ] = useProjectState();
@@ -800,7 +800,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             >
               <FaArrowLeft />
             </Button>
-            {` Activity: ${selectedArtifactEntry.title} `}
+
+            {` Activity:`}
+              <ActivityTitlePopoverLogic activityData={selectedArtifactEntry} researchThreads={researchThreads} />
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
