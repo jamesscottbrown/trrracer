@@ -196,7 +196,11 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
              
                   <MiniTimline researchT={rt} activities={projectData.entries} />
                
-                  <div>{rt.description}</div>
+                  <div
+                    style={{paddingBottom:10,
+                    fontSize:11
+                    }}
+                  >{rt.description}</div>
                 {/* {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}
