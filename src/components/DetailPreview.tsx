@@ -14,8 +14,6 @@ import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
-import { text } from 'node:stream/consumers';
-import { tsAnyKeyword } from '@babel/types';
 
 interface DetailPreviewPropsType {
   folderPath: string;
