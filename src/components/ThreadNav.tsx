@@ -191,7 +191,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   </Button></span>
                   </div>
                   <span
-                      style={{fontSize:10}}
+                      style={{fontSize:10, fontWeight: 800}}
                   >{`${rt.evidence.length} pieces of evidence`}</span>
              
                   <MiniTimline researchT={rt} activities={projectData.entries} />

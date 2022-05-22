@@ -23,6 +23,64 @@ interface BubbleProps {
   filterType: null | any;
 }
 
+const RTtooltip = (toolProp: any) => {
+
+  const { activityData, position, researchThreads, filterRT } = toolProp;
+  let threadData = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
+  
+  let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
+
+  console.log('evidenceeeee',evidence)
+
+  return <div
+    id={'tooltip'}
+    style={{
+      position:'absolute',
+      left: position[0],
+      top: position[1] - 50,
+      textAlign: 'center',
+      minWidth:100,
+      maxWidth:400,
+      minHeight:50,
+      padding:10,
+      backgroundColor: '#fff',
+      border: '2px solid gray',
+      borderRadius: 10,
+      pointerEvents:'none',
+      zIndex: 6000
+    }}
+  >
+    <span
+    style={{
+      font: '15px sans-serif',
+      fontWeight:600
+    }}
+    >{activityData.title}</span>
+    {
+      evidence.map((e:any, i:number) => (
+        <div style={{marginTop:10, fontSize:12}}>
+          <div
+             style={{fontWeight:800}}
+          >{`Included artifact: ${e.artifactTitle}`}</div>
+          {
+            e.type === 'fragment' && (
+              <span
+              style={{backgroundColor: '#fdfd96'}}
+              >{`"${e.anchors[0].frag_type}"`}</span>
+            )
+          }
+          <div
+            style={{marginTop:10, fontSize:11}}
+          ><span
+            style={{fontWeight:800}}
+          >Rationale: </span>{e.rationale}</div>
+        </div>
+      ))
+    }
+  
+  </div>
+}
+
 const ToolTip = (toolProp: any) => {
   const {activityData, position} = toolProp;
   
@@ -602,16 +660,19 @@ const BubbleVis = (props: BubbleProps) => {
       });
 
       if(filterType){
+
         highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
         highlightedActivities.select('.all-activities').attr('stroke-width', 0);
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
         highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
         let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
         highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
+
       }else{
 
         let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
+
       }
 
       let hiddenCircles = allActivityGroups.filter(ac => {
@@ -791,7 +852,10 @@ const BubbleVis = (props: BubbleProps) => {
         height={height}
         style={{ display: 'inline' }}
       />
-      <ToolTip activityData={hoverData} position={toolPosition}/>
+      {
+        filterRT ? <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> : <ToolTip activityData={hoverData} position={toolPosition}/>
+      }
+     
     </div>
   );
 };
