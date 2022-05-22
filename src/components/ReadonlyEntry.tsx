@@ -2,20 +2,12 @@ import React, { useState, useMemo } from 'react';
 
 import {
   Button,
-  Heading,
   ListItem,
   Tag,
   Text,
   UnorderedList,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverArrow,
   Box,
-  SimpleGrid,
-  PopoverFooter,
-  Badge,
+  SimpleGrid
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
@@ -23,9 +15,8 @@ import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 import { useProjectState } from './ProjectContext';
-import ActivitytoThread from './ActivityToThread';
-
 import type { EntryType, File, ResearchThreadData } from './types';
+import ActivityTitlePopoverLogic from './PopoverTitle';
 
 
 interface EntryPropTypes {
@@ -194,84 +185,6 @@ type ActivityTitlePopoverLogicProps = {
   activityData: EntryType;
   researchThreads: ResearchThreadData | undefined;
 }
-
-const ActivityTitlePopoverLogic = (props: ActivityTitlePopoverLogicProps) => {
-  const { activityData, researchThreads } = props;
-
-  const [seeThreadAssign, setSeeThreadAssign] = useState(false);
-  const [showPopover, setShowPopover] = useState(false);
-  const [activitySelected, setActivitySelected] = useState(false);
-
-  const closePopover = () => {
-    if (!seeThreadAssign) {
-      setShowPopover(false);
-    }
-  };
-
-  return <Popover
-            trigger={'hover'}
-            style={{display:'inline'}}
-          >
-          <PopoverTrigger>
-          <div
-            style={{
-              display:'inline',
-              marginTop:2,
-              cursor:'pointer'
-            }}
-          >{activityData.title} </div>
-        
-      </PopoverTrigger>
-      <PopoverContent bg="white" color="gray">
-        <PopoverArrow bg="white" />
-
-        <PopoverBody>
-          {seeThreadAssign && (
-            <div>
-              {researchThreads &&
-              researchThreads.research_threads.length > 0 ? (
-                researchThreads.research_threads.map(
-                  (rt: any, tIndex: number) => (
-                    <React.Fragment key={`rt-${tIndex}`}>
-                      <ActivitytoThread
-                        thread={rt}
-                        threadIndex={tIndex}
-                        activity={activityData}
-                        activityIndex={activityData.index}
-                        setSeeThreadAssign={setSeeThreadAssign}
-                        closePopover={closePopover}
-                      />
-                    </React.Fragment>
-                  )
-                )
-              ) : (
-                <span>no threads yet</span>
-              )}
-            </div>
-          )}
-        </PopoverBody>
-        <PopoverFooter>
-          {seeThreadAssign ? (
-            <Box>
-              <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
-            </Box>
-          ) : (
-            <>
-            <Button onClick={() => setSeeThreadAssign(true)}>
-              Add this activity to a thread.
-            </Button>
-            <br/>
-            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this activity:</span>
-            <Badge
-            style={{wordWrap:'break-word'}}
-            >{activityData.activity_uid}</Badge>
-            </>
-            
-          )}
-        </PopoverFooter>
-      </PopoverContent>
-    </Popover>
-};
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;

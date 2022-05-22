@@ -77,7 +77,7 @@ const MiniTimline = (props: MiniTimelineProps) => {
   }, [activities]);
 
   return (
-    <div>
+    <div style={{display:'inline-block', width:160}}>
       <svg ref={lilSVG} style={{ height: '20px', width: '100%' }} />
     </div>
   );
@@ -104,7 +104,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   };
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-
   const [threadName, setName] = React.useState(null);
   const [description, setDescription] = React.useState(null);
 
@@ -112,12 +111,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     const inputValue = e.target.value;
     setName(inputValue);
   };
-
   const handleDescriptionChange = (e: any) => {
     const inputValue = e.target.value;
     setDescription(inputValue);
   };
-
   const headerStyle = { fontSize: '19px', fontWeight: 600, cursor: 'pointer' };
 
   return (
@@ -125,9 +122,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
       {(viewType === 'activity view' || viewType === 'overview') && (
         <div
           style={headerStyle}
-          // onClick={() => {
-          //   showThreads ? setShowThreads(false) : setShowThreads(true);
-          // }}
         >
           <span style={{ display: 'inline' }}>Research Threads</span>
         </div>
@@ -155,7 +149,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
               <span
                 style={{ 
                   cursor: 'pointer', 
-                  display:'inline' }}
+                  display:'inline',
+                  fontSize:18,
+                  fontWeight:600 
+                }}
                   onClick={() => {
                     dispatch({ type: 'THREAD_FILTER', filterRT:rt, selectedThread: i });
                   }}
@@ -193,8 +190,14 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     <BiTrash style={{display:'inline'}} />
                   </Button></span>
                   </div>
-                <MiniTimline researchT={rt} activities={projectData.entries} />
-                {rt.associated_tags.map((t: any, i: number) => (
+                  <span
+                      style={{fontSize:10}}
+                  >{`${rt.evidence.length} pieces of evidence`}</span>
+             
+                  <MiniTimline researchT={rt} activities={projectData.entries} />
+               
+                  <div>{rt.description}</div>
+                {/* {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}
                     style={{
@@ -209,41 +212,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   >
                     {t}
                   </div>
-                ))}
-                {viewType === 'detail' && (
-                  <div>
-                    <Box key={`in-thread-${i}`}>
-                      <div style={{ padding: 5, borderLeft: '1px solid gray' }}>
-                        {rt.evidence.map((e: any, j: number) => (
-                          <React.Fragment key={`evid-${j}`}>
-                            {e.artifactIndex === selectedArtifactIndex ? (
-                              <div>
-                                <span
-                                  style={{
-                                    fontWeight: 600,
-                                    display: 'block',
-                                    backgroundColor: '#FFFBC8',
-                                  }}
-                                >
-                                  {e.artifactTitle}
-                                </span>
-                                {e.rationale}
-                              </div>
-                            ) : (
-                              <div>
-                                <span
-                                  style={{ fontSize: '10px', color: 'gray' }}
-                                >
-                                  {e.type}
-                                </span>
-                              </div>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </Box>
-                  </div>
-                )}
+                ))} */}
+              
                 <Divider />
               </div>
             

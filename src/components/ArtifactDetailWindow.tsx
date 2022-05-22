@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
 
@@ -7,16 +7,13 @@ import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
-import ThreadNav from './ThreadNav';
-
-import * as d3 from 'd3';
 import type {
   ResearchThread,
   ResearchThreadEvidence,
   ReactTag,
 } from './types';
 import DetailBubble from './DetailSvg';
-import ActivitytoThread from './ActivityToThread';
+import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface DetailProps {
   setViewType: (view: string) => void;
@@ -200,84 +197,6 @@ const FragmentToThread = (props: any) => {
   );
 };
 
-const ActivityTitlePopoverLogic = (props: any) => {
-  const { activityData, researchThreads } = props;
-
-  const [seeThreadAssign, setSeeThreadAssign] = useState(false);
-  const [showPopover, setShowPopover] = useState(false);
-  const [activitySelected, setActivitySelected] = useState(false);
-
-  const closePopover = () => {
-    if (!seeThreadAssign) {
-      setShowPopover(false);
-    }
-  };
-
-  return <Popover
-            trigger={'hover'}
-            style={{display:'inline'}}
-          >
-          <PopoverTrigger>
-          <div
-            style={{
-              display:'inline',
-              marginTop:2,
-              cursor:'pointer'
-            }}
-          >{activityData.title} </div>
-        
-      </PopoverTrigger>
-      <PopoverContent bg="white" color="gray">
-        <PopoverArrow bg="white" />
-
-        <PopoverBody>
-          {seeThreadAssign && (
-            <div>
-              {researchThreads &&
-              researchThreads.research_threads.length > 0 ? (
-                researchThreads.research_threads.map(
-                  (rt: any, tIndex: number) => (
-                    <React.Fragment key={`rt-${tIndex}`}>
-                      <ActivitytoThread
-                        thread={rt}
-                        threadIndex={tIndex}
-                        activity={activityData}
-                        activityIndex={activityData.index}
-                        setSeeThreadAssign={setSeeThreadAssign}
-                        closePopover={closePopover}
-                      />
-                    </React.Fragment>
-                  )
-                )
-              ) : (
-                <span>no threads yet</span>
-              )}
-            </div>
-          )}
-        </PopoverBody>
-        <PopoverFooter>
-          {seeThreadAssign ? (
-            <Box>
-              <Button onClick={() => setSeeThreadAssign(false)}>cancel</Button>
-            </Box>
-          ) : (
-            <>
-            <Button onClick={() => setSeeThreadAssign(true)}>
-              Add this activity to a thread.
-            </Button>
-            <br/>
-            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this activity:</span>
-            <Badge
-            style={{wordWrap:'break-word'}}
-            >{activityData.activity_uid}</Badge>
-            </>
-            
-          )}
-        </PopoverFooter>
-      </PopoverContent>
-    </Popover>
-};
-
 const InteractiveActivityTag = (props: any) => {
   const { selectedArtifactEntry, index, tag } = props;
   const [{ projectData, hopArray }, dispatch] = useProjectState();
@@ -448,6 +367,8 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
   } = props;
 
+  console.log('FRAG SELECTED', fragSelected)
+
   const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
   const KeyCodes = {
@@ -486,8 +407,6 @@ const DetailSidebar = (props: any) => {
       return temp.length > 0;
     }
   );
-
-  console.log('is artifact in thread',isArtifactInThread)
 
   return (
     <Box
@@ -642,7 +561,7 @@ const DetailSidebar = (props: any) => {
         }
       </Box>
 
-      {fragSelected && (
+      {(fragSelected != null && fragSelected.length > 1) && (
         <div style={{ padding: '5px', marginTop:10 }}>
           <div
           style={{ fontSize:20, fontWeight:600 }}

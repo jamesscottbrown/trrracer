@@ -111,11 +111,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
-      useLayoutEffect(() => {
-        // console.log('fired when rendered', document.getElementById('gdoc'));
-        // console.log('bookmarks', artifact);
-      })
-
       return (
         <Box style={{ 
           overflowY: 'scroll', 
@@ -236,10 +231,16 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.pdf')) {
     return (
-      <embed
-        style={{ height: '90%' }}
+      // <embed
+      //   style={{width: '90%' }}
+      //   src={`file://${path.join(folderPath, title)}`}
+      //   type="application/pdf"
+      // />
+      <iframe
+        style={{ width:'90%', zoom:60 }}
         src={`file://${path.join(folderPath, title)}`}
-        type="application/pdf"
+       
+        // type="application/pdf"
       />
     );
   }

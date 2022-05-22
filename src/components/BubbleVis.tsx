@@ -658,8 +658,6 @@ const BubbleVis = (props: BubbleProps) => {
           }
       })
 
-      console.log('LINKS', linkDataAfter)
-
       var lineGenerator = d3.line();
 
         if(linkDataAfter.length > 0){
@@ -746,7 +744,7 @@ const BubbleVis = (props: BubbleProps) => {
   }, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
   return (
-    <div style={{ flex: flexAmount, paddingTop:'10px' }}>
+    <div style={{ flex: flexAmount, paddingTop:'30px' }}>
       <div
         style={{width:'100%'}}
       >
