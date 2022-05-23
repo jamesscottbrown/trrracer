@@ -177,8 +177,8 @@ const BubbleVis = (props: BubbleProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(180, ${translateY})`);
-    const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
+    underWrap.attr('transform', `translate(130, ${translateY})`);
+    const wrap = svg.append('g').attr('transform', `translate(130, ${translateY})`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);

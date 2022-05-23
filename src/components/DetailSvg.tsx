@@ -142,9 +142,11 @@ const DetailBubble = (props: BubbleDetProps) => {
     activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
     
     let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-    artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
+    artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-    let highlightedActivities = allActivityGroups.filter((ac) => hopArray.map((m) => m.activity.title).includes(ac.title));
+    let highlightedActivities = allActivityGroups.filter((ac) => {
+      console.log('hopARRAY', hopArray)
+      return hopArray ? hopArray.map((m) => m.activity.title).includes(ac.title): []});
    
     highlightedActivities.select('.all-activities').attr('fill', "#F5F5F5").attr('fill-opacity', 1).attr('stroke-width', 1);;
 

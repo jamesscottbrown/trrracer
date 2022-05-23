@@ -367,7 +367,7 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
   } = props;
 
-  console.log('FRAG SELECTED', fragSelected)
+  
 
   const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
@@ -539,6 +539,7 @@ const DetailSidebar = (props: any) => {
                   selectedArtifactEntry:
                     projectData.entries[selectedArtifactEntry.index],
                   selectedArtifactIndex,
+                  hopArray:hopArray
                 });
               }}
             />
