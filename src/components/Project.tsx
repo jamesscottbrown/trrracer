@@ -120,7 +120,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterQuery,
       filterRT,
       threadTypeFilterArray,
-      researchThreads
+      selectedThread,
+      researchThreads,
+      artifactTypes,
+      query
     }, dispatch
   ] = useProjectState();
 
@@ -132,7 +135,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
   );
   const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
   const [groupBy, setGroupBy] = useState(null);
-  const [splitBubbs, setSplitBubbs] = useState(false);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
@@ -264,20 +266,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
           
         />
         <Flex position="relative" top={130}>
-          <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
+          <LeftSidebar 
+            fromTop={fromTop}
+            projectData={projectData} 
+            researchThreads={researchThreads} 
+            artifactTypes={artifactTypes} 
+            dispatch={dispatch}
+          />
           <BubbleVis
             filteredActivities={filteredActivities}
+            projectData={projectData}
             groupBy={groupBy}
-            splitBubbs={splitBubbs}
+            setGroupBy={setGroupBy}
             setHoverActivity={setHoverActivity}
+            defineEvent={defineEvent}
+            setDefineEvent={setDefineEvent}
             flexAmount={2}
             filterType={filterType}
+            filterRT={filterRT}
+            selectedThread={selectedThread}
+            researchThreads={researchThreads}
+            dispatch={dispatch}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView
               setViewType={setViewType}
-              filteredActivities={filteredActivities}
-              projectData={projectData}
+              dispatch={dispatch}
+              query={query}
             />
           </Box>
         </Flex>
@@ -320,19 +335,26 @@ const Project = (ProjectPropValues: ProjectProps) => {
           dispatch={dispatch}
         />
         <Flex position="relative" top={`${fromTop}px`}>
-          <LeftSidebar fromTop={fromTop} />
-          <BubbleVis
+          <LeftSidebar  
             fromTop={fromTop}
+            projectData={projectData} 
+            researchThreads={researchThreads} 
+            artifactTypes={artifactTypes} 
+            dispatch={dispatch} />
+          <BubbleVis
             filteredActivities={filteredActivities}
+            projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
-            splitBubbs={splitBubbs}
-            setSplitBubbs={setSplitBubbs}
             setHoverActivity={setHoverActivity}
-            flexAmount={2}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
+            flexAmount={2}
             filterType={filterType}
+            filterRT={filterRT}
+            selectedThread={selectedThread}
+            researchThreads={researchThreads}
+            dispatch={dispatch}
           />
         
           {
@@ -347,10 +369,26 @@ const Project = (ProjectPropValues: ProjectProps) => {
                 <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
                 
                     <ProjectListView
-                      projectData={projectData}
+                      
                       filteredActivities={filteredActivities}
+                      projectData={projectData}
                       setViewType={setViewType}
                       hoverActivity={hoverActivity}
+                      folderPath={folderPath} 
+                      dispatch={dispatch}
+                      researchThreads={researchThreads}
+                      filterRT={filterRT}
+                      // setSelectedArtifactEntry={setSelectedArtifactEntry}
+
+                      // filteredActivities,
+                      // setViewType,
+                      // setSelectedArtifactIndex,
+                      // setSelectedArtifactEntry,
+                      // selectedEntryIndex,
+                      // hoverActivity,
+                      // folderPath, 
+                      // dispatch, 
+                      // researchThreads,
                     />
                   
               </Box>

@@ -14,7 +14,7 @@ import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-import { useProjectState } from './ProjectContext';
+
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
@@ -39,11 +39,13 @@ interface ReadonlyEntryFilePropTypes {
   setViewType: (viewType: string) => void;
   file: File;
   i: number;
+  folderPath:any;
+  dispatch:any;
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
-  const { entryData, openFile, setViewType, file, i } = props;
-  const [{ folderPath }, dispatch] = useProjectState();
+  const { entryData, openFile, setViewType, file, i, folderPath, dispatch } = props;
+  // const [{ folderPath }, dispatch] = useProjectState();
 
   return (
     <>
@@ -53,6 +55,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                     folderPath={folderPath}
                     title={file.title}
                     openFile={openFile}
+                    size={50}
                   />
                 )}
       <div
@@ -187,8 +190,8 @@ type ActivityTitlePopoverLogicProps = {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable, openFile, setViewType, viewType } = props;
-  const [{ researchThreads }] = useProjectState();
+  const { entryData, makeEditable, openFile, setViewType, viewType, folderPath, dispatch, researchThreads } = props;
+  // const [{ researchThreads }] = useProjectState();
 
 
   const checkTagColor = (tagName: string) => {
@@ -286,6 +289,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             setViewType={setViewType}
             file={f}
             i={i}
+            folderPath={folderPath} 
+            dispatch={dispatch}
           />
         ))}
       </SimpleGrid>

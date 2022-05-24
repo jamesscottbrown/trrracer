@@ -1,7 +1,5 @@
-import path from 'path';
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
-import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
@@ -14,6 +12,7 @@ const smalltalk = require('smalltalk');
 
 interface BubbleProps {
   filteredActivities: EntryType[];
+  projectData:any;
   setGroupBy:(gb:any)=> void;
   groupBy: any;
   setHoverActivity: (ent: any) => void;
@@ -21,6 +20,10 @@ interface BubbleProps {
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
   filterType: null | any;
+  filterRT: any;
+  selectedThread: any;
+  researchThreads:any;
+  dispatch:any;
 }
 
 const RTtooltip = (toolProp: any) => {
@@ -131,19 +134,19 @@ const ToolTip = (toolProp: any) => {
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
+    projectData,
     groupBy,
     setGroupBy,
     setHoverActivity,
     flexAmount,
     setDefineEvent,
     defineEvent,
-    filterType
-  } = props;
-
-  const [
-    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
+    filterType,
+    filterRT,
+    selectedThread, 
+    researchThreads,
     dispatch
-  ] = useProjectState();
+  } = props;
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');

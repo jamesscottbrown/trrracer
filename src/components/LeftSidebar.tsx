@@ -5,26 +5,19 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Button,
-  FormControl,
-  Switch,
-  FormLabel,
+  Button
 } from '@chakra-ui/react';
 
 import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
-import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
 
 const LeftSidebar = (props: any) => {
   
-  const {fromTop} = props;
-
-  const [{ projectData, researchThreads, artifactTypes }, dispatch] =
-    useProjectState();
+  const { fromTop, projectData, researchThreads, artifactTypes, dispatch } = props;
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
 

@@ -10,15 +10,15 @@ import {
 } from '@chakra-ui/react';
 
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
 
 interface QueryViewProps {
   setViewType: (viewType: string) => void;
   filteredActivites: any;
+  dispatch:any;
 }
 
 const HoverTitle = (props: any) => {
-  const { title, entry, match, setViewType, matches } = props;
+  const { title, entry, match, setViewType, matches, dispatch } = props;
 
   const fileIndex =
     match.fileType === 'gdoc'
@@ -26,7 +26,6 @@ const HoverTitle = (props: any) => {
       : match['file-index'];
 
   const [showPopover, setShowPopover] = useState(false);
-  const [{}, dispatch] = useProjectState();
 
   const closePopover = () => {
     setShowPopover(false);
@@ -70,8 +69,7 @@ const HoverTitle = (props: any) => {
 };
 
 const QueryView = (props: any) => {
-  const { setViewType } = props;
-  const [{ query }, dispatch] = useProjectState();
+  const { setViewType, query, dispatch } = props;
 
   console.log('query', query);
 

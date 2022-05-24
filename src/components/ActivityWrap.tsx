@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
-import { useProjectState } from './ProjectContext';
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
@@ -17,10 +16,14 @@ type ActivityWrapPropType = {
   index: number;
   hoverActivity: any;
   viewType: string;
+  folderPath: any; 
+  dispatch:any; 
+  researchThreads:any;
 };
 
-const ActivityWrap = (props: ActivityWrapPropType) => {
+const ActivityWrap = (props: any) => {
   const {
+    projectData,
     activityData,
     editable,
     setEditableStatus,
@@ -30,9 +33,12 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     index,
     hoverActivity,
     viewType,
+    folderPath, 
+    dispatch, 
+    researchThreads,
+    filterRT
   } = props;
 
-  const [state, dispatch] = useProjectState();
 
   const myRef = useRef(null);
 
@@ -61,7 +67,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
             entryIndex={activityData.index}
             openFile={openFile}
             updateEntryField={updateEntryField}
-            allTags={state.projectData.tags}
+            allTags={projectData.tags}
             makeNonEditable={() => setEditableStatus(activityData.index, false)}
             viewType={viewType}
           />
@@ -69,7 +75,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
       </div>
     );
 
-  }else if(state.filterRT){
+  }else if(filterRT){
 
     return (
       <div 
@@ -114,6 +120,9 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
           setSelectedArtifactEntry={setSelectedArtifactEntry}
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
+          folderPath={folderPath} 
+          dispatch={dispatch} 
+          researchThreads={researchThreads}
         />
         
       </div>
@@ -131,7 +140,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
   //         entryIndex={activityData.index}
   //         openFile={openFile}
   //         updateEntryField={updateEntryField}
-  //         allTags={state.projectData.tags}
+
   //         makeNonEditable={() => setEditableStatus(activityData.index, false)}
   //         viewType={viewType}
   //       />
