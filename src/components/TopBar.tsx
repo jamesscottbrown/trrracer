@@ -5,45 +5,36 @@ import {
   Flex,
   useColorModeValue,
   Heading,
-  Spacer,
   Button,
   Editable,
   EditableInput,
   EditablePreview,
-  Tag,
-  TagLabel,
   FormControl,
   FormLabel,
   Switch,
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
-import { FileObj } from './types';
 import ViewTypeControl from './ViewTypeControl';
-import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
 
 interface TopbarProps {
   viewType: string;
   setViewType: any;
-  reversedOrder: any;
-  setReversedOrder: any;
-  timeFilter: any;
-  setTimeFilter: any;
   newTitle: string;
   setNewTitle: any;
-  filteredActivityNames: any;
   filteredActivities: any;
+  projectData: any;
   setHideByDefault: (boo: any) => void;
   hideByDefault: Boolean;
   setAddEntrySplash: (boo: any) => void;
-  addEntrySplash: Boolean;
+  dispatch: (act:any) => void;
+  filterTags: any; 
+  filterRT: any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-  const [{ projectData, filterTags, filterRT, researchThreads, threadTypeFilterArray }, dispatch] = useProjectState();
-
- // console.log('filtersssss', filterRT, researchThreads.research_threads.filter(f => f.title === filterRT.title))
+  // const [{ filterTags, filterRT }] = useProjectState();
 
   const {
     viewType,
@@ -51,15 +42,14 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     newTitle,
     setNewTitle,
     filteredActivities,
+    projectData,
     setHideByDefault,
     hideByDefault,
     setAddEntrySplash,
-    addEntrySplash
+    filterTags, 
+    filterRT,
+    dispatch
   } = ProjectPropValues;
-
-  const addEntry = () => {
-    dispatch({ type: 'ADD_ENTRY' });
-  };
 
   return (
     <Box

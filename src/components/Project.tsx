@@ -250,14 +250,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          folderPath={folderPath}
           filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
+          setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
+          
         />
         <Flex position="relative" top={130}>
           <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
@@ -303,18 +307,17 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          folderPath={folderPath}
           filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
-          addEntrySplash={addEntrySplash}
           setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
         />
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
@@ -370,14 +373,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
         }}
       >
         <TopBar
-          folderPath={folderPath}
           viewType={viewType}
+          filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
+          setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
         />
         <PaperView folderPath={folderPath} />
       </div>
