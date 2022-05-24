@@ -36,6 +36,9 @@ const pickTagColor = (tags: TagType[]) => {
 };
 
 export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSONRT, deleteFileAction) => {
+
+  console.log('project state reducer in project context common');
+  
   return (state: any, action: any) => {
     /**
      *  function for set data that checks to see if the file exists and if not, creates one.

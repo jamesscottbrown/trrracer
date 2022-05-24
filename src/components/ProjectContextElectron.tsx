@@ -4,8 +4,6 @@ import React, { createContext, useContext, useReducer } from 'react';
 import path from 'path';
 import * as googleCred from '../../assets/google_cred_desktop_app.json';
 import { EntryType, File, FileObj, ProjectState } from './types';
-
-// import { appStateReducer } from './ProjectContextCommon';
 import { getAppStateReducer } from './ProjectContextCommon';
 
 const { google } = require('googleapis');
@@ -15,6 +13,7 @@ export const ProjectContext = createContext<DispatchType>();
 type DispatchType = [ProjectState, (msg: any) => ProjectState];
 
 export function useProjectState() {
+  console.log('this use project state is fireing')
   return useContext<DispatchType>(ProjectContext);
 }
 

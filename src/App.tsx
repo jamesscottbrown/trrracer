@@ -47,6 +47,9 @@ export default function App() {
   const [noProjectSelected, setNoProjectSelected] = useState<boolean>(false);
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
+  console.log('project data',projectData);
+  console.log('changing something else to fit')
+
   ipcRenderer.on('projectPath', (_event, folderName) => {
     console.log('Received project path:', folderName);
 
@@ -79,7 +82,7 @@ export default function App() {
       </ChakraProvider>
     );
   }
-
+  console.log('project data in spalsh',projectData)
   if (!projectData) {
     return (
       <ChakraProvider>
@@ -87,7 +90,7 @@ export default function App() {
       </ChakraProvider>
     );
   }
-
+console.log("is this loading?")
   return (
     <ChakraProvider>
       <Project folderPath={folderPath} />
