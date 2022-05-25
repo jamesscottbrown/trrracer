@@ -16,6 +16,7 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
+import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
 
 interface ProjectProps {
   folderPath: string;
@@ -226,8 +227,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
+    //check out the comparison of objects turned to strings haihan 
 
-    setfilteredActivities(queryFiltered);
+    stateUpdateWrapperUseJSON(filteredActivities, queryFiltered, setfilteredActivities);
+    // setfilteredActivities(queryFiltered);
 
   }, [
     projectData.entries,

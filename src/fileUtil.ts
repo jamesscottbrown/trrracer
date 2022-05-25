@@ -5,6 +5,7 @@ import {
   decode,
   decodeAttachment,
   readFileSync,
+  stateUpdateWrapperUseJSON
 } from './fileUtilElectron';
 
 /*
@@ -25,4 +26,5 @@ export {
   decode,
   decodeAttachment,
   readFileSync,
+  stateUpdateWrapperUseJSON
 };

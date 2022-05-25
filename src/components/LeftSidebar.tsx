@@ -14,12 +14,14 @@ import * as d3 from 'd3';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
+import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
 
 const LeftSidebar = (props: any) => {
   
   const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread } = props;
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
+
 
   const [fileTypeShown, setFileTypeShown] = useState({
     title: 'all',
@@ -97,8 +99,9 @@ const LeftSidebar = (props: any) => {
                 data={m}
                 index={i}
                 onClick={() => {
-                  setFileTypeShown(m);
-                  if (m.title != 'all') {
+                  stateUpdateWrapperUseJSON(fileTypeShown, m, setFileTypeShown)
+                  // setFileTypeShown(m);
+                  if (m.title !== 'all') {
                     dispatch({
                       type: 'UPDATE_FILTER_TYPES',
                       filterType: m.title,
