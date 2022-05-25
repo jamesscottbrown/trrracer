@@ -712,6 +712,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       projectData,
       hopArray,
       researchThreads,
+      googleData,
+      txtData
     },
     dispatch,
   ] = useProjectState();
@@ -939,6 +941,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   activity={selectedArtifactEntry}
                   artifactIndex={selectedArtifactIndex}
                   openFile={openFile}
+                  googleData={googleData}
+                  txtData={txtData}
                 /> : <div>{'No Artifact for this activity'}</div>
               }
               

@@ -23,7 +23,6 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
 import FileUpload from './FileUpload';
 import { EntryType, File, FileObj, TagType } from './types';
-import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
 import URLList from './URLList';
 
@@ -66,13 +65,11 @@ type FileContextProps = {
   file: File;
   entryIndex: number;
   fileIndex: number;
+  dispatch: any;
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex } = props;
-
-  const [, dispatch] = useProjectState();
-
+  const { file, entryIndex, fileIndex, dispatch } = props;
   const contextFill = file.meta ? file.meta : file.context;
 
   const contextStarter =
@@ -106,6 +103,7 @@ interface EntryPropTypes {
   ) => void;
   allTags: TagType[];
   makeNonEditable: () => void;
+  dispatch:any;
 }
 
 interface ReactTag {
@@ -121,18 +119,13 @@ const Entry = (props: EntryPropTypes) => {
     updateEntryField,
     allTags,
     makeNonEditable,
+    dispatch,
   } = props;
-
-  const [{}, dispatch] = useProjectState();
-
-  //console.log('filterRT',filterRT)
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
-
-
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel
@@ -326,6 +319,7 @@ const Entry = (props: EntryPropTypes) => {
                     file={file}
                     entryIndex={entryIndex}
                     fileIndex={j}
+                    dispatch={dispatch}
                   />
                 </ListItem>
               </UnorderedList>

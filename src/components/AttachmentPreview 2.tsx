@@ -24,7 +24,7 @@ interface AttachmentPreviewPropsType {
 
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const { folderPath, title, openFile, size } = props;
-  console.log('folderPath',folderPath)
+
   if (
     title.endsWith('.mp4') ||
     title.endsWith('.mov') ||

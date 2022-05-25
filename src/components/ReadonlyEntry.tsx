@@ -45,7 +45,7 @@ interface ReadonlyEntryFilePropTypes {
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { entryData, openFile, setViewType, file, i, folderPath, dispatch } = props;
-  // const [{ folderPath }, dispatch] = useProjectState();
+ 
 
   return (
     <>
@@ -191,9 +191,7 @@ type ActivityTitlePopoverLogicProps = {
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
   const { entryData, makeEditable, openFile, setViewType, viewType, folderPath, dispatch, researchThreads } = props;
-  // const [{ researchThreads }] = useProjectState();
-
-
+  
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
       return f.associated_tags.indexOf(tagName) > -1;
