@@ -58,11 +58,11 @@ const BubbleVisPaper = (props: any) => {
   
   const yearMonth = dataStructureForTimeline(projectData.entries);
 
-    const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
-    const endIndex = getIndexOfMonth(
-      yearMonth[yearMonth.length - 1].months,
-      'last'
-    );
+  const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
+  const endIndex = getIndexOfMonth(
+    yearMonth[yearMonth.length - 1].months,
+    'last'
+  );
   yearMonth[0].months = yearMonth[0].months.filter(
     (f: any, i: number) => i > startIndex - 1
   );

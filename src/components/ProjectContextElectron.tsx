@@ -314,10 +314,17 @@ const appStateReducer = getAppStateReducer(
 
 const initialState: ProjectState = {
   projectData: null,
-  // projectData: getEmptyProject('null'),
   folderPath: null,
   filterTags: [],
   filterType: null,
+  filterDates:null,
+  filterQuery:null,
+  filterRT:null,
+  threadTypeFilterArray:null,
+  selectedThread:null,
+  researchThreads:null,
+  artifactTypes:null,
+  query:null,
 };
 
 export function ProjectStateProvider({ children }) {

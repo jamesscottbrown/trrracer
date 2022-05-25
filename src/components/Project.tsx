@@ -272,6 +272,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             researchThreads={researchThreads} 
             artifactTypes={artifactTypes} 
             dispatch={dispatch}
+            selectedThread={selectedThread}
           />
           <BubbleVis
             filteredActivities={filteredActivities}
@@ -366,30 +367,23 @@ const Project = (ProjectPropValues: ProjectProps) => {
           {
             (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
-                <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
-                
-                    <ProjectListView
-                      
-                      filteredActivities={filteredActivities}
-                      projectData={projectData}
-                      setViewType={setViewType}
-                      hoverActivity={hoverActivity}
-                      folderPath={folderPath} 
-                      dispatch={dispatch}
-                      researchThreads={researchThreads}
-                      filterRT={filterRT}
-                      // setSelectedArtifactEntry={setSelectedArtifactEntry}
-
-                      // filteredActivities,
-                      // setViewType,
-                      // setSelectedArtifactIndex,
-                      // setSelectedArtifactEntry,
-                      // selectedEntryIndex,
-                      // hoverActivity,
-                      // folderPath, 
-                      // dispatch, 
-                      // researchThreads,
-                    />
+                <ResearchThreadTypeTags 
+                  fromTop={fromTop} 
+                  dispatch={dispatch} 
+                  filterRT={filterRT} 
+                  researchThreads={researchThreads} 
+                  threadTypeFilterArray={threadTypeFilterArray} 
+                />
+                <ProjectListView
+                  filteredActivities={filteredActivities}
+                  projectData={projectData}
+                  setViewType={setViewType}
+                  hoverActivity={hoverActivity}
+                  folderPath={folderPath} 
+                  dispatch={dispatch}
+                  researchThreads={researchThreads}
+                  filterRT={filterRT}
+                />
                   
               </Box>
             )

@@ -17,16 +17,11 @@ import { ToolIcon } from './Project';
 
 const LeftSidebar = (props: any) => {
   
-  const { fromTop, projectData, researchThreads, artifactTypes, dispatch } = props;
+  const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread } = props;
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
   const [fileTypeShown, setFileTypeShown] = useState({
-    title: 'all',
-    matches: artifacts.length,
-  });
-
-  const [artifactTypeShown, seArtifactTypeShown] = useState({
     title: 'all',
     matches: artifacts.length,
   });
@@ -80,7 +75,9 @@ const LeftSidebar = (props: any) => {
     
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType="overview"
+        viewType={"overview"}
+        selectedThread={selectedThread}
+        projectData={projectData}
       />
       <br />
       <Box

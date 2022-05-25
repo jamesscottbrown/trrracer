@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup } from '@chakra-ui/react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useProjectState } from './ProjectContext';
 import { EntryTypeWithIndex, ProjectViewProps } from './types';
 import ActivityWrap from './ActivityWrap';
 
@@ -20,7 +17,7 @@ const ProjectListView = (ProjectPropValues: any) => {
     filterRT
   } = ProjectPropValues;
 
-  // const [{ projectData }] = useProjectState();
+  
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)

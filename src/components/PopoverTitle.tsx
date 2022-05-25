@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Badge, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
+import { Box, Button, Badge, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
 import ActivitytoThread from './ActivityToThread';
 
 const ActivityTitlePopoverLogic = (props: any) => {

@@ -799,7 +799,13 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#label-group').remove();
       
         }).on('click', (event:any, d:any)=> {
-          setHoverActivity(d);
+          //setHoverActivity(d);
+          let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+            return d3.select(n[i]).attr('id') === d.title;
+          });
+          activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          
+          
         })
 
  

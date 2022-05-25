@@ -58,8 +58,9 @@ const ActivityWrap = (props: any) => {
   if(editable[activityData.index]){
 
     return (
-      <div ref={myRef}>
-      
+      <div 
+      className='list-activity'
+      ref={myRef}>
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`en-${activityData.title}-${activityData.index}-${index}`}
@@ -79,6 +80,7 @@ const ActivityWrap = (props: any) => {
 
     return (
       <div 
+        className='list-activity'
         ref={myRef} 
         style={{
           border:".5px solid #A3AAAF", 
@@ -103,7 +105,10 @@ const ActivityWrap = (props: any) => {
   }else{
 
     return (
-      <div ref={myRef}
+      <div 
+      className='list-activity'
+      id={activityData.title}
+      ref={myRef}
         style={{
           border:".5px solid #A3AAAF", 
           borderRadius:6,
@@ -130,37 +135,6 @@ const ActivityWrap = (props: any) => {
 
   }
 
-  // return (
-  //   <div ref={myRef}>
-  //     {editable[activityData.index] ? (
-  //       <Entry
-  //         /* eslint-disable-next-line react/no-array-index-key */
-  //         key={`en-${activityData.title}-${activityData.index}-${index}`}
-  //         entryData={activityData}
-  //         entryIndex={activityData.index}
-  //         openFile={openFile}
-  //         updateEntryField={updateEntryField}
-
-  //         makeNonEditable={() => setEditableStatus(activityData.index, false)}
-  //         viewType={viewType}
-  //       />
-  //     ) : (
-  //       <ReadonlyEntry
-  //         /* eslint-disable-next-line react/no-array-index-key */
-  //         key={`ro-${activityData.title}-${activityData.index}-${index}`}
-  //         entryData={activityData}
-  //         openFile={openFile}
-  //         setViewType={setViewType}
-  //         setSelectedArtifactIndex={setSelectedArtifactIndex}
-  //         setSelectedArtifactEntry={setSelectedArtifactEntry}
-  //         makeEditable={() => setEditableStatus(activityData.index, true)}
-  //         viewType={viewType}
-  //       />
-  //     )}
-
-  //     <Divider marginTop="1em" marginBottom="1em" />
-  //   </div>
-  // );
 };
 
 export default ActivityWrap;

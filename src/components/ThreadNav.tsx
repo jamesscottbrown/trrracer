@@ -86,12 +86,14 @@ const MiniTimline = (props: MiniTimelineProps) => {
 type ThreadNavProps = {
   researchTs: ResearchThread[];
   viewType: string; // TODO: tighten to specific values
+  projectData:any;
+  selectedThread:any;
 };
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
-  const { researchTs, viewType } = threadProps;
-  const [{ projectData, selectedArtifactIndex, selectedThread }, dispatch] =
-    useProjectState();
+  const { projectData, selectedThread, researchTs, viewType } = threadProps;
+  // const [{ projectData, selectedThread }, dispatch] =
+  //   useProjectState();
 
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {
