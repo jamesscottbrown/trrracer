@@ -1,4 +1,3 @@
-import './wdyr'; 
 import React from 'react';
 import { render } from 'react-dom';
 import { ProjectStateProvider } from './components/ProjectContext';

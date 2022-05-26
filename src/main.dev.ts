@@ -106,8 +106,9 @@ const openProjectWindow = async (projectPath: string) => {
     } else {
       mainWindow.show();
       mainWindow.focus();
-
-      authenticate();
+      
+      console.log('NEED TO ADD THIS BACK IN')
+      // authenticate();
     }
 
     mainWindow.webContents.send('projectPath', projectPath);

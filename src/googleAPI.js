@@ -14,6 +14,8 @@ class GoogleLoader {
   constructor(file, destination) {
     const authOb = GoogleAuth.getInstance();
 
+    console.log('in google loader',file, destination)
+
     this.fileName = file.name;
     this.filePath = file.path;
     this.destination = destination;

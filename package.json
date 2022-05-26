@@ -252,7 +252,6 @@
     "electron-log": "^4.2.4",
     "electron-prompt": "^1.7.0",
     "electron-updater": "^4.3.4",
-    "eml-format": "^0.6.1",
     "framer-motion": "^4",
     "generate-unique-id": "^2.0.1",
     "googleapis": "^39.2.0",
@@ -288,7 +287,6 @@
     "source-map-support": "^0.5.19",
     "stopword": "^1.0.11",
     "tiny-invariant": "^1.2.0",
-    "to-vfile": "^7.2.3",
     "uuid": "^8.3.2",
     "wndb-with-exceptions": "^3.0.2"
   },

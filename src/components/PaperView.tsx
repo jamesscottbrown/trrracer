@@ -8,7 +8,6 @@ import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 // import { joinPath } from '../fileUtil';
 // import { readFileSync } from '../fileUtil';
-import {readSync} from 'to-vfile';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';

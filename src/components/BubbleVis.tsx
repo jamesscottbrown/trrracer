@@ -31,10 +31,7 @@ const RTtooltip = (toolProp: any) => {
 
   const { activityData, position, researchThreads, filterRT } = toolProp;
   let threadData = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
-  
   let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
-
-  console.log('evidenceeeee',evidence)
 
   return <div
     id={'tooltip'}

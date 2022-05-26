@@ -12,17 +12,15 @@ import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
+import { joinPath } from '../fileUtil';
 
-
-// import { joinPath } from '../fileUtil';
-
-// const url = (folderPath: string, title: string) => {
-//   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
-//     return `${joinPath(folderPath, title)}`;
-//   } else {
-//     return url(folderPath, title);
-//   }
-// };
+const url = (folderPath: string, title: string) => {
+  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+    return `${joinPath(folderPath, title)}`;
+  } else {
+    return `file://${folderPath}/${title}`;
+  }
+};
 
 interface DetailPreviewPropsType {
   folderPath: string;

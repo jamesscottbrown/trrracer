@@ -1,13 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { sendToFlask } from '../flaskHelper';
-
 import { EntryType, TagType } from './types';
-
-import {toVFile, readSync} from 'to-vfile';
-import {toString} from 'nlcst-to-string'
-import {retext} from 'retext'
-import retextPos from 'retext-pos'
-import retextKeywords from 'retext-keywords'
+// import {toString} from 'nlcst-to-string'
+// import {retext} from 'retext'
+// import retextPos from 'retext-pos'
+// import retextKeywords from 'retext-keywords'
 
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
@@ -35,7 +32,7 @@ const pickTagColor = (tags: TagType[]) => {
   return availableColors[Math.floor(Math.random() * availableColors.length)];
 };
 
-export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSONRT, deleteFileAction) => {
+export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, deleteFileAction: any) => {
 
   console.log('project state reducer in project context common');
   
@@ -61,11 +58,11 @@ export const getAppStateReducer = (copyFiles, readProjectFile, saveJSON, saveJSO
       }
     };
 
-
-
     switch (action.type) {
       case 'SET_DATA': {
         const baseDir = action.folderName;
+
+        console.log(action.type, action.folderName)
 
         let roleData;
         let google_data: any;

@@ -1,7 +1,5 @@
-import path from 'path';
 import React from 'react';
 import { Image } from '@chakra-ui/react';
-
 import {
   GrDocumentCsv,
   GrDocumentPpt,
@@ -14,6 +12,7 @@ import {
   GrCluster,
 } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
+import { joinPath } from '../fileUtil';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -22,8 +21,18 @@ interface AttachmentPreviewPropsType {
   size: number;
 }
 
+const url = (folderPath: string, title: string) => {
+  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+    return `${joinPath(folderPath, title)}`;
+  } else {
+    //return `file://${joinPath(folderPath, title)}`;
+    return `file://${folderPath}/${title}`
+  }
+};
+
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const { folderPath, title, openFile, size } = props;
+  
 
   if (
     title.endsWith('.mp4') ||
@@ -32,13 +41,13 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   ) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <video src={`file://${path.join(folderPath, title)}`} controls />;
+    return <video src={url(folderPath, title)} controls />;
   }
 
   if (title.endsWith('.mp3') || title.endsWith('.ogg')) {
     // We can't add a caption, as we have no knowledge of what the file is
     // eslint-disable-next-line jsx-a11y/media-has-caption
-    return <audio src={`file://${path.join(folderPath, title)}`} controls />;
+    return <audio src={url(folderPath, title)} controls />;
   }
 
   if (title.endsWith('.csv')) {
@@ -120,7 +129,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
   return (
     <Image
-      src={`file://${path.join(folderPath, title)}`}
+      src={url(folderPath, title)}
       onClick={() => openFile(title, folderPath)}
     />
   );
