@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Button,
@@ -46,7 +46,6 @@ interface ReadonlyEntryFilePropTypes {
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { entryData, openFile, setViewType, file, i, folderPath, dispatch } = props;
  
-
   return (
     <>
     <Box bg="#ececec" p={3}>

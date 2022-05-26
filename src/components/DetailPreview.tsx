@@ -58,8 +58,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     txtData,
   } = props;
 
-  // const [{ googleData, txtData }] = useProjectState();
-
   const { title } = artifact;
 
   if (

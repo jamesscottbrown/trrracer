@@ -13,7 +13,6 @@ import { ToolIcon } from './Project';
 
 interface BubbleDetProps {
   filteredActivities: EntryType[];
-  setHoverActivity: (ent: any) => void;
   widthSvg: number;
   filterType: null | any;
 }

@@ -124,7 +124,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
       selectedThread,
       researchThreads,
       artifactTypes,
-      query
+      query,
+      hopArray,
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+      goBackView,
+      googleData,
+      txtData
     }, dispatch
   ] = useProjectState();
 
@@ -134,7 +140,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [filteredActivities, setfilteredActivities] = useState(
     projectData.entries
   );
-  const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
+ 
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
@@ -282,7 +288,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
-            setHoverActivity={setHoverActivity}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             flexAmount={2}
@@ -309,7 +314,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setViewType={setViewType}
         folderPath={folderPath}
         projectData={projectData}
-        filteredActivities={projectData.entries}
+        researchThreads={researchThreads}
+        hopArray={hopArray}
+        selectedArtifactEntry={selectedArtifactEntry}
+        selectedArtifactIndex={selectedArtifactIndex}
+        goBackView={goBackView}
+        googleData={googleData}
+        txtData={txtData}
+        dispatch={dispatch}
       />
     );
   }
@@ -350,7 +362,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
-            setHoverActivity={setHoverActivity}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             flexAmount={2}
@@ -363,7 +374,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         
           {
             addEntrySplash && (
-                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
+                <AddEntryForm setAddEntrySplash={setAddEntrySplash} projectData={projectData} dispatch={dispatch}/>
               )
           }
          
@@ -381,7 +392,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
                   filteredActivities={filteredActivities}
                   projectData={projectData}
                   setViewType={setViewType}
-                  hoverActivity={hoverActivity}
                   folderPath={folderPath} 
                   dispatch={dispatch}
                   researchThreads={researchThreads}

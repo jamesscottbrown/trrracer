@@ -10,7 +10,6 @@ const ProjectListView = (ProjectPropValues: any) => {
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     selectedEntryIndex,
-    hoverActivity,
     folderPath, 
     dispatch, 
     researchThreads,
@@ -59,7 +58,6 @@ const ProjectListView = (ProjectPropValues: any) => {
           setSelectedArtifactIndex={setSelectedArtifactIndex}
           setSelectedArtifactEntry={setSelectedArtifactEntry}
           index={i}
-          hoverActivity={hoverActivity}
           folderPath={folderPath}
           dispatch={dispatch} 
           researchThreads={researchThreads}

@@ -19,7 +19,14 @@ interface DetailProps {
   setViewType: (view: string) => void;
   folderPath: string;
   projectData: any;
-  filteredActivities: any;
+  selectedArtifactEntry:any;
+  selectedArtifactIndex:any;
+  goBackView:any;
+  hopArray:any;
+  researchThreads:any;
+  googleData:any;
+  txtData:any;
+  dispatch: (dis: any) => void;
 }
 
 const ArtifactToThread = (props: any) => {
@@ -365,11 +372,14 @@ const DetailSidebar = (props: any) => {
     setFragSelected,
     selectedArtifactEntry,
     selectedArtifactIndex,
+    researchThreads, 
+    projectData, 
+    hopArray
   } = props;
 
   
 
-  const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
+  // const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
@@ -703,20 +713,19 @@ const DetailSidebar = (props: any) => {
 };
 
 const ArtifactDetailWindow = (props: DetailProps) => {
-  const { setViewType, folderPath, filteredActivities } = props;
-  const [
-    {
-      selectedArtifactEntry,
-      selectedArtifactIndex,
-      goBackView,
-      projectData,
-      hopArray,
-      researchThreads,
-      googleData,
-      txtData
-    },
-    dispatch,
-  ] = useProjectState();
+  const { 
+    setViewType, 
+    folderPath, 
+    selectedArtifactEntry,
+    selectedArtifactIndex,
+    goBackView,
+    projectData,
+    hopArray,
+    researchThreads,
+    googleData,
+    txtData,
+    dispatch  } = props;
+
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
@@ -820,7 +829,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                     hopReason: 'time hop forward',
                   },
                 ];
-                console.log('NEW HOP??', newHop);
+               
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
                   selectedArtifactEntry: selectActivity,
@@ -854,6 +863,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           setFragSelected={setFragSelected}
           selectedArtifactEntry={selectedArtifactEntry}
           selectedArtifactIndex={selectedArtifactIndex}
+          researchThreads={researchThreads}
+          projectData={projectData} 
+          hopArray={hopArray}
         />
 
         <div style={{ width:260 }}>
@@ -861,7 +873,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             filteredActivities={projectData.entries}
             widthSvg={260}
             filterType={null}
-            setHoverActivity={null}
           />
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>

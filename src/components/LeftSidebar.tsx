@@ -8,7 +8,7 @@ import {
   Button
 } from '@chakra-ui/react';
 
-import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
 import SidebarButton from './SidebarButton';

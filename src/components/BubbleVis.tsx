@@ -15,7 +15,6 @@ interface BubbleProps {
   projectData:any;
   setGroupBy:(gb:any)=> void;
   groupBy: any;
-  setHoverActivity: (ent: any) => void;
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;

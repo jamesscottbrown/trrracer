@@ -34,7 +34,6 @@ interface TopbarProps {
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-  // const [{ filterTags, filterRT }] = useProjectState();
 
   const {
     viewType,

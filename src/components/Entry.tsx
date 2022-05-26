@@ -376,7 +376,7 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
 
-      <URLList urls={urls} entryIndex={entryIndex} />
+      <URLList urls={urls} entryIndex={entryIndex} dispatch={dispatch} />
     
     </div>
   );

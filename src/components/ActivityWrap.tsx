@@ -14,7 +14,6 @@ type ActivityWrapPropType = {
   setSelectedArtifactIndex: number;
   setSelectedArtifactEntry: (e: any) => void;
   index: number;
-  hoverActivity: any;
   viewType: string;
   folderPath: any; 
   dispatch:any; 
@@ -31,7 +30,6 @@ const ActivityWrap = (props: any) => {
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     index,
-    hoverActivity,
     viewType,
     folderPath, 
     dispatch, 
@@ -42,11 +40,7 @@ const ActivityWrap = (props: any) => {
 
   const myRef = useRef(null);
 
-  useEffect(() => {
-    if (hoverActivity && hoverActivity.title === activityData.title) {
-      myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [hoverActivity]);
+
 
   const updateEntryField = (
     entryIndex: number,

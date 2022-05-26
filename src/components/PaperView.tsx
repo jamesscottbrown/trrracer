@@ -7,8 +7,6 @@ import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
-
-// import { readFileSync } from '../fileUtil';
 import {readSync} from 'to-vfile';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
