@@ -86,10 +86,11 @@ type ThreadNavProps = {
   viewType: string; // TODO: tighten to specific values
   projectData:any;
   selectedThread:any;
+  dispatch:any;
 };
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
-  const { projectData, selectedThread, researchTs, viewType } = threadProps;
+  const { projectData, selectedThread, researchTs, viewType, dispatch } = threadProps;
 
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {

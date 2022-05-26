@@ -24,7 +24,7 @@ export const writeFile = (fileName, content) =>
     fs.writeFile(fileName, content, (err) => {
       if (err) return reject(err);
 
-      resolve();
+      resolve(content);
     });
   });
 

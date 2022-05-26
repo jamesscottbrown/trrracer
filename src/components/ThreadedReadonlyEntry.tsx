@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-
+import * as d3 from 'd3';
 import {
   Button,
   ListItem,
@@ -118,8 +118,6 @@ const ThreadedArtifact = (props:any) => {
 
   const [{researchThreads}] = useProjectState();
 
-  
-
   return(
     <Box bg="#ececec" p={3}>
       <span style={{cursor:'pointer'}}>
@@ -187,15 +185,29 @@ const ThreadedArtifact = (props:any) => {
 
 const ActivityTitleLogic = (props:any) => {
 
-  const { entryData } = props;
+  const { entryData, color } = props;
     return (
-      <div style={{display:'inline'}}>
+      <div style={{
+          cursor:'pointer',
+          display:'inline'
+        }}
+        onMouseOver={()=> {
+          let circles = d3.selectAll('circle.all-activities');
+          
+          circles.filter(f => f.title === entryData.title).attr('fill', 'red')
+        }}
+        onMouseLeave={()=> {
+          let circles = d3.selectAll('circle.all-activities');
+          
+          circles.filter(f => f.title === entryData.title).attr('fill', color)
+        }}
+      >
         <span>{entryData.title}</span>
       </div>
     )
 }
 
-const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
+const ThreadedReadonlyEntry = (props: any) => {
 
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
 
@@ -253,7 +265,7 @@ const ThreadedReadonlyEntry = (props: EntryPropTypes) => {
         {viewType != 'detail' && (
          
           <div>
-            <ActivityTitleLogic isEntryInThread={isEntryInThread} selectedThread={selectedThread} entryData={entryData} /> 
+            <ActivityTitleLogic color={selectedThread.color} entryData={entryData} /> 
             <div style={{display:"inline", float:'right'}}>
             {makeEditable && (
                     <Button 

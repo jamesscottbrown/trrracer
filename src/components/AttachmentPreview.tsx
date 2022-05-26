@@ -26,7 +26,6 @@ const url = (folderPath: string, title: string) => {
     return `${joinPath(folderPath, title)}`;
   } else {
     return `file://${joinPath(folderPath, title)}`;
-    // return `file://${folderPath}/${title}`
   }
 };
 

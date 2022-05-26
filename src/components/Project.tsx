@@ -200,9 +200,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
               let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
               nono = [...nono, exclude];
               
-            }else{
-              nono = [...nono, ...filterRT.associatedKey.filter(as => filterRT.key.indexOf(as) === -1)]
             }
+            // else{
+            //   nono = [...nono, ...filterRT.associatedKey.filter(as => filterRT.key.indexOf(as) === -1)]
+            // }
           }
         });
        
@@ -295,6 +296,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             flexAmount={2}
             filterType={filterType}
             filterRT={filterRT}
+            filterTags={filterTags}
             selectedThread={selectedThread}
             researchThreads={researchThreads}
             dispatch={dispatch}
@@ -372,6 +374,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             flexAmount={2}
             filterType={filterType}
             filterRT={filterRT}
+            filterTags={filterTags}
             selectedThread={selectedThread}
             researchThreads={researchThreads}
             dispatch={dispatch}

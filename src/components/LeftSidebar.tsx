@@ -80,6 +80,7 @@ const LeftSidebar = (props: any) => {
         viewType={"overview"}
         selectedThread={selectedThread}
         projectData={projectData}
+        dispatch={dispatch}
       />
       <br />
       <Box
