@@ -1,22 +1,22 @@
-import {
-  openFile,
-  readFile,
-  writeFile,
-  // decode,
-  // decodeAttachment,
-  joinPath,
-  readFileSync,
-  stateUpdateWrapperUseJSON
-} from './fileUtilElectron';
-
 // import {
 //   openFile,
 //   readFile,
 //   writeFile,
-//   readFileSync,
+//   // decode,
+//   // decodeAttachment,
 //   joinPath,
+//   readFileSync,
 //   stateUpdateWrapperUseJSON
-// } from './fileUtilWeb';
+// } from './fileUtilElectron';
+
+import {
+  openFile,
+  readFile,
+  writeFile,
+  readFileSync,
+  joinPath,
+  stateUpdateWrapperUseJSON
+} from './fileUtilWeb';
 
 
 function decode(input:any) {
