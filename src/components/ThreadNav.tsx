@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Divider, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
-import { FaPlus, FaFillDrip } from 'react-icons/fa';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
-import { useProjectState } from './ProjectContext';
-
 import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
 
@@ -22,6 +19,7 @@ const MiniTimline = (props: MiniTimelineProps) => {
   const lilSVG = React.useRef(null);
 
   React.useEffect(() => {
+    console.log('useEffect in Minitimeline rendering')
     const xScale = d3
       .scaleTime()
       .domain(d3.extent(activities.map((m: any) => new Date(m.date))))
@@ -86,12 +84,12 @@ const MiniTimline = (props: MiniTimelineProps) => {
 type ThreadNavProps = {
   researchTs: ResearchThread[];
   viewType: string; // TODO: tighten to specific values
+  projectData:any;
+  selectedThread:any;
 };
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
-  const { researchTs, viewType } = threadProps;
-  const [{ projectData, selectedArtifactIndex, selectedThread }, dispatch] =
-    useProjectState();
+  const { projectData, selectedThread, researchTs, viewType } = threadProps;
 
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {

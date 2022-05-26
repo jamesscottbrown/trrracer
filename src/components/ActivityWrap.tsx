@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
-import { useProjectState } from './ProjectContext';
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
@@ -15,12 +14,15 @@ type ActivityWrapPropType = {
   setSelectedArtifactIndex: number;
   setSelectedArtifactEntry: (e: any) => void;
   index: number;
-  hoverActivity: any;
   viewType: string;
+  folderPath: any; 
+  dispatch:any; 
+  researchThreads:any;
 };
 
-const ActivityWrap = (props: ActivityWrapPropType) => {
+const ActivityWrap = (props: any) => {
   const {
+    projectData,
     activityData,
     editable,
     setEditableStatus,
@@ -28,19 +30,17 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     index,
-    hoverActivity,
     viewType,
+    folderPath, 
+    dispatch, 
+    researchThreads,
+    filterRT
   } = props;
 
-  const [state, dispatch] = useProjectState();
 
   const myRef = useRef(null);
 
-  useEffect(() => {
-    if (hoverActivity && hoverActivity.title === activityData.title) {
-      myRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [hoverActivity]);
+
 
   const updateEntryField = (
     entryIndex: number,
@@ -52,8 +52,9 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
   if(editable[activityData.index]){
 
     return (
-      <div ref={myRef}>
-      
+      <div 
+      className='list-activity'
+      ref={myRef}>
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`en-${activityData.title}-${activityData.index}-${index}`}
@@ -61,7 +62,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
             entryIndex={activityData.index}
             openFile={openFile}
             updateEntryField={updateEntryField}
-            allTags={state.projectData.tags}
+            allTags={projectData.tags}
             makeNonEditable={() => setEditableStatus(activityData.index, false)}
             viewType={viewType}
           />
@@ -69,10 +70,11 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
       </div>
     );
 
-  }else if(state.filterRT){
+  }else if(filterRT){
 
     return (
       <div 
+        className='list-activity'
         ref={myRef} 
         style={{
           border:".5px solid #A3AAAF", 
@@ -97,7 +99,10 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
   }else{
 
     return (
-      <div ref={myRef}
+      <div 
+      className='list-activity'
+      id={activityData.title}
+      ref={myRef}
         style={{
           border:".5px solid #A3AAAF", 
           borderRadius:6,
@@ -114,6 +119,9 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
           setSelectedArtifactEntry={setSelectedArtifactEntry}
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
+          folderPath={folderPath} 
+          dispatch={dispatch} 
+          researchThreads={researchThreads}
         />
         
       </div>
@@ -121,37 +129,6 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
 
   }
 
-  // return (
-  //   <div ref={myRef}>
-  //     {editable[activityData.index] ? (
-  //       <Entry
-  //         /* eslint-disable-next-line react/no-array-index-key */
-  //         key={`en-${activityData.title}-${activityData.index}-${index}`}
-  //         entryData={activityData}
-  //         entryIndex={activityData.index}
-  //         openFile={openFile}
-  //         updateEntryField={updateEntryField}
-  //         allTags={state.projectData.tags}
-  //         makeNonEditable={() => setEditableStatus(activityData.index, false)}
-  //         viewType={viewType}
-  //       />
-  //     ) : (
-  //       <ReadonlyEntry
-  //         /* eslint-disable-next-line react/no-array-index-key */
-  //         key={`ro-${activityData.title}-${activityData.index}-${index}`}
-  //         entryData={activityData}
-  //         openFile={openFile}
-  //         setViewType={setViewType}
-  //         setSelectedArtifactIndex={setSelectedArtifactIndex}
-  //         setSelectedArtifactEntry={setSelectedArtifactEntry}
-  //         makeEditable={() => setEditableStatus(activityData.index, true)}
-  //         viewType={viewType}
-  //       />
-  //     )}
-
-  //     <Divider marginTop="1em" marginBottom="1em" />
-  //   </div>
-  // );
 };
 
 export default ActivityWrap;

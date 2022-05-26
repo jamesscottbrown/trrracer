@@ -9,7 +9,6 @@ import {
   GrCluster,
 } from 'react-icons/gr';
 import type { TextEntry } from './types';
-import { useProjectState } from './ProjectContext';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
@@ -33,6 +32,8 @@ interface DetailPreviewPropsType {
   setFragSelected: any;
   fragSelected:any;
   artifactIndex: number;
+  googleData:any;
+  txtData:any;
   // artifactRenderedRef:any;
 }
 
@@ -63,10 +64,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     activity,
     artifactIndex,
     openFile,
-    // artifactRenderedRef
+    googleData,
+    txtData,
   } = props;
-
-  const [{ googleData, txtData }] = useProjectState();
 
   const { title } = artifact;
 

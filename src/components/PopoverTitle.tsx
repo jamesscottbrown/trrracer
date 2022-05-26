@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Flex, Box, Button, Badge, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import * as d3 from 'd3';
+import { Box, Button, Badge, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
 import ActivitytoThread from './ActivityToThread';
 
 const ActivityTitlePopoverLogic = (props: any) => {
@@ -9,6 +10,7 @@ const ActivityTitlePopoverLogic = (props: any) => {
     return <Popover
               trigger={'hover'}
               style={{display:'inline'}}
+              
             >
             <PopoverTrigger>
             <div
@@ -17,7 +19,11 @@ const ActivityTitlePopoverLogic = (props: any) => {
                 marginTop:2,
                 cursor:'pointer'
               }}
-            >{activityData.title} </div>
+              onMouseOver={()=> {
+                let circles = d3.selectAll('circle.all-activities');
+                console.log('circles',circles.filter(f => f.title === activityData.title))
+              }}
+            >{activityData.title}</div>
           
         </PopoverTrigger>
         <PopoverContent bg="white" color="gray">

@@ -35,3 +35,9 @@ export const readFileSync = (filePath: string) =>
 export function joinPath(...args){
   return path.join(args);
 };
+
+export const stateUpdateWrapperUseJSON = (oldState: any, newState: any, updateFunction: (value: React.SetStateAction<any>) => void) => {
+    if (JSON.stringify(oldState) !== JSON.stringify(newState)) {
+        updateFunction(newState);
+    }
+};

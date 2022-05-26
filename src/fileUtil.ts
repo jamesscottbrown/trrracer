@@ -2,10 +2,11 @@
 //   openFile,
 //   readFile,
 //   writeFile,
+//   // decode,
+//   // decodeAttachment,
 //   readFileSync,
-//   joinPath,
+//   stateUpdateWrapperUseJSON
 // } from './fileUtilElectron';
-
 
 import {
   openFile,
@@ -13,17 +14,18 @@ import {
   writeFile,
   readFileSync,
   joinPath,
+  stateUpdateWrapperUseJSON
 } from './fileUtilWeb';
 
 
-function decode(input) {
+function decode(input:any) {
   if (!input) return '';
   const decodedBase64 = atob(input.replace(/-/g, '+').replace(/_/g, '/'));
   const escaped = escape(decodedBase64);
   return decodeURIComponent(escaped);
 }
 
-function decodeAttachment(input) {
+function decodeAttachment(input:any) {
   if (!input) return '';
 
   return atob(encodeURI(input.replace(/-/g, '+').replace(/_/g, '/')));
@@ -38,4 +40,5 @@ export {
   decodeAttachment,
   readFileSync,
   joinPath,
+  stateUpdateWrapperUseJSON
 };

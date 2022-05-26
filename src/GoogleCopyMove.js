@@ -1,11 +1,10 @@
 import * as googleCred from '../assets/google_cred_desktop_app.json';
 import { readFile } from './fileUtil';
-import { useProjectState } from './components/ProjectContext';
 
 const { google } = require('googleapis');
 
 export const copyMoveGoogle = async (file, callback) => {
-  // const [, dispatch] = useProjectState();
+
 
   console.log('file in copy Move Google', file);
   const oAuth2Client = new google.auth.OAuth2(

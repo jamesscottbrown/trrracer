@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useProjectState } from './ProjectContext';
+// import { useProjectState } from './ProjectContext';
 import { EntryTypeWithIndex, ProjectViewProps } from './types';
 import ActivityWrap from './ActivityWrap';
 
-const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
+const ProjectListView = (ProjectPropValues: any) => {
   const {
     filteredActivities,
+    projectData,
     setViewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     selectedEntryIndex,
-    hoverActivity,
+    folderPath, 
+    dispatch, 
+    researchThreads,
+    filterRT
   } = ProjectPropValues;
 
-  const [{ projectData }] = useProjectState();
+  
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -47,6 +51,7 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
+          projectData={projectData}
           activityData={activityData}
           editable={editable}
           setEditableStatus={setEditableStatus}
@@ -54,7 +59,10 @@ const ProjectListView = (ProjectPropValues: ProjectViewProps) => {
           setSelectedArtifactIndex={setSelectedArtifactIndex}
           setSelectedArtifactEntry={setSelectedArtifactEntry}
           index={i}
-          hoverActivity={hoverActivity}
+          folderPath={folderPath}
+          dispatch={dispatch} 
+          researchThreads={researchThreads}
+          filterRT={filterRT}
         />
       ))}
     </div>

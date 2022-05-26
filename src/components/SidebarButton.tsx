@@ -16,8 +16,7 @@ const SidebarButton = (sidebarProps: any) => {
   const [{ researchThreads, filterTags }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
-  const [showPopover, setShowPopover] = useState(false);
-  const [mouseOnPop, setMouseOnPop] = useState(false);
+
   
   return(
 

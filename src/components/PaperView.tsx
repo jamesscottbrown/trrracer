@@ -6,8 +6,7 @@ import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
-import { joinPath } from '../fileUtil';
-
+// import { joinPath } from '../fileUtil';
 // import { readFileSync } from '../fileUtil';
 import {readSync} from 'to-vfile';
 import { calcCircles } from '../PackMagic';
@@ -58,11 +57,11 @@ const BubbleVisPaper = (props: any) => {
   
   const yearMonth = dataStructureForTimeline(projectData.entries);
 
-    const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
-    const endIndex = getIndexOfMonth(
-      yearMonth[yearMonth.length - 1].months,
-      'last'
-    );
+  const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
+  const endIndex = getIndexOfMonth(
+    yearMonth[yearMonth.length - 1].months,
+    'last'
+  );
   yearMonth[0].months = yearMonth[0].months.filter(
     (f: any, i: number) => i > startIndex - 1
   );
@@ -158,7 +157,7 @@ const BubbleVisPaper = (props: any) => {
       activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
       
       let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
+      artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
       let highlightedActivities = allActivityGroups.filter((ac) => selectedThreadData.evidence.map((m:any) => m.activityTitle).includes(ac.title));
       

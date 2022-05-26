@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Flex, Box, Tag, TagLabel, Input, Editable, EditableInput, EditablePreview, Button } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Flex, Box, Editable, EditableInput, EditablePreview, Button } from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
-import { useProjectState } from './ProjectContextElectron';
-import { FaPlus, FaXbox } from 'react-icons/fa';
 import ReactMde from 'react-mde';
-import URLList from './URLList';
 import Showdown from 'showdown';
 import { MdCancel } from 'react-icons/md';
 
@@ -21,14 +18,9 @@ const converter = new Showdown.Converter({
     enter: 13,
   };
 
-
-
-
 const AddEntryForm = (props:any) => {
 
-    const {setAddEntrySplash} = props;
-    const [{projectData}, dispatch] = useProjectState();
-
+    const {setAddEntrySplash, projectData, dispatch} = props;
     const [activityName, setActivityName] = useState('New Activity');
     const activityIndex = projectData.entries.length;
     const [value, setValue] = useState('Add description');

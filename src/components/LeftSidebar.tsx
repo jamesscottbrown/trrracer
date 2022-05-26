@@ -5,35 +5,25 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Button,
-  FormControl,
-  Switch,
-  FormLabel,
+  Button
 } from '@chakra-ui/react';
 
-import { FaFillDrip, FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
+import { FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
-import { useProjectState } from './ProjectContext';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
+import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
 
 const LeftSidebar = (props: any) => {
   
-  const {fromTop} = props;
-
-  const [{ projectData, researchThreads, artifactTypes }, dispatch] =
-    useProjectState();
+  const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread } = props;
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
-  const [fileTypeShown, setFileTypeShown] = useState({
-    title: 'all',
-    matches: artifacts.length,
-  });
 
-  const [artifactTypeShown, seArtifactTypeShown] = useState({
+  const [fileTypeShown, setFileTypeShown] = useState({
     title: 'all',
     matches: artifacts.length,
   });
@@ -87,7 +77,9 @@ const LeftSidebar = (props: any) => {
     
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType="overview"
+        viewType={"overview"}
+        selectedThread={selectedThread}
+        projectData={projectData}
       />
       <br />
       <Box
@@ -107,8 +99,9 @@ const LeftSidebar = (props: any) => {
                 data={m}
                 index={i}
                 onClick={() => {
-                  setFileTypeShown(m);
-                  if (m.title != 'all') {
+                  stateUpdateWrapperUseJSON(fileTypeShown, m, setFileTypeShown)
+                  // setFileTypeShown(m);
+                  if (m.title !== 'all') {
                     dispatch({
                       type: 'UPDATE_FILTER_TYPES',
                       filterType: m.title,

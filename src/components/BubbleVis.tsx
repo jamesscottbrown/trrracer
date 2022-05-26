@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
-import { useProjectState } from './ProjectContext';
-import { joinPath} from '../fileUtil';
+// import { useProjectState } from './ProjectContext';
+// import { joinPath} from '../fileUtil';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
@@ -14,13 +14,17 @@ const smalltalk = require('smalltalk');
 
 interface BubbleProps {
   filteredActivities: EntryType[];
+  projectData:any;
   setGroupBy:(gb:any)=> void;
   groupBy: any;
-  setHoverActivity: (ent: any) => void;
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
   filterType: null | any;
+  filterRT: any;
+  selectedThread: any;
+  researchThreads:any;
+  dispatch:any;
 }
 
 const RTtooltip = (toolProp: any) => {
@@ -131,19 +135,19 @@ const ToolTip = (toolProp: any) => {
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
+    projectData,
     groupBy,
     setGroupBy,
     setHoverActivity,
     flexAmount,
     setDefineEvent,
     defineEvent,
-    filterType
-  } = props;
-
-  const [
-    { artifactTypes, selectedThread, researchThreads, projectData, filterRT },
+    filterType,
+    filterRT,
+    selectedThread, 
+    researchThreads,
     dispatch
-  ] = useProjectState();
+  } = props;
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -177,8 +181,8 @@ const BubbleVis = (props: BubbleProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(180, ${translateY})`);
-    const wrap = svg.append('g').attr('transform', `translate(180, ${translateY})`);
+    underWrap.attr('transform', `translate(130, ${translateY})`);
+    const wrap = svg.append('g').attr('transform', `translate(130, ${translateY})`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 3);
@@ -796,7 +800,13 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#label-group').remove();
       
         }).on('click', (event:any, d:any)=> {
-          setHoverActivity(d);
+          // setHoverActivity(d);
+          let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+            return d3.select(n[i]).attr('id') === d.title;
+          });
+          activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          
+          
         })
 
  

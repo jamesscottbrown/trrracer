@@ -18,6 +18,7 @@ import log from 'electron-log';
 
 import ProjectLoader from './ProjectLoader';
 import { authenticate } from './authenticateGoogle';
+import { useState } from 'react';
 
 export default class AppUpdater {
   constructor() {
@@ -28,6 +29,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+// const [mainWindow, setMainWindow] = useState<any>(null)
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -79,6 +81,15 @@ const openProjectWindow = async (projectPath: string) => {
       nodeIntegration: true,
     },
   });
+  // setMainWindow(new BrowserWindow({
+  //   show: false,
+  //   width: 1024,
+  //   height: 728,
+  //   icon: getAssetPath('icon.png'),
+  //   webPreferences: {
+  //     nodeIntegration: true,
+  //   },
+  // }))
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
@@ -104,6 +115,7 @@ const openProjectWindow = async (projectPath: string) => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    // setMainWindow(null);
   });
 
   // Open urls in the user's browser
@@ -130,6 +142,7 @@ interface MenuDivider {
 }
 
 async function createSplashWindow() {
+  console.log('create splash window')
   const splashWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -254,9 +267,10 @@ app.on('window-all-closed', () => {
 app.whenReady().then(createSplashWindow).catch(console.log);
 
 app.on('activate', () => {
+  console.log('activated!!!!', mainWindow)
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createSplashWindow().catch(console.log);
+  // if (mainWindow === null) createSplashWindow().catch(console.log);
 });
 
 ipcMain.on('open-file', (_event, fileName) => {

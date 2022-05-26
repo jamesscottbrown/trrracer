@@ -23,3 +23,9 @@ export const readFileSync = async (filePath: string) => {
 export function joinPath(...args: string[]) {
   return [...args].join('/');
 }
+
+export const stateUpdateWrapperUseJSON = (oldState: any, newState: any, updateFunction: (value: React.SetStateAction<any>) => void) => {
+  if (JSON.stringify(oldState) !== JSON.stringify(newState)) {
+      updateFunction(newState);
+  }
+};

@@ -147,6 +147,14 @@ type ProjectState = {
   filterType: string | null;
   filterTypes: string[] | null;
 
+  //NEED TO MAKE THESE MORE SPECIFIC
+  filterDates:any;
+  filterQuery:any;
+  filterRT:any;
+  threadTypeFilterArray:any;
+  query:any;
+  artifactTypes:any;
+
   googleData?: GoogleData;
   txtData?: TxtData[];
   researchThreads?: ResearchThreadData;
@@ -157,6 +165,8 @@ type ProjectState = {
 
   selectedArtifactEntry: EntryTypeWithIndex; // ?
   selectedArtifactIndex: number;
+
+  
 
   hopArray: any[];
   

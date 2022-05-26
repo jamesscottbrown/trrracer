@@ -16,6 +16,7 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
+import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
 
 interface ProjectProps {
   folderPath: string;
@@ -120,7 +121,16 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterQuery,
       filterRT,
       threadTypeFilterArray,
-      researchThreads
+      selectedThread,
+      researchThreads,
+      artifactTypes,
+      query,
+      hopArray,
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+      goBackView,
+      googleData,
+      txtData
     }, dispatch
   ] = useProjectState();
 
@@ -130,9 +140,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [filteredActivities, setfilteredActivities] = useState(
     projectData.entries
   );
-  const [hoverActivity, setHoverActivity] = useState(projectData.entries[0]);
+ 
   const [groupBy, setGroupBy] = useState(null);
-  const [splitBubbs, setSplitBubbs] = useState(false);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
@@ -224,8 +233,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
+    //check out the comparison of objects turned to strings haihan 
 
-    setfilteredActivities(queryFiltered);
+    stateUpdateWrapperUseJSON(filteredActivities, queryFiltered, setfilteredActivities);
+    // setfilteredActivities(queryFiltered);
 
   }, [
     projectData.entries,
@@ -250,30 +261,47 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          folderPath={folderPath}
           filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
+          setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
+          
         />
         <Flex position="relative" top={130}>
-          <LeftSidebar setGroupBy={setGroupBy} setSplitBubbs={setSplitBubbs} />
+          <LeftSidebar 
+            fromTop={fromTop}
+            projectData={projectData} 
+            researchThreads={researchThreads} 
+            artifactTypes={artifactTypes} 
+            dispatch={dispatch}
+            selectedThread={selectedThread}
+          />
           <BubbleVis
             filteredActivities={filteredActivities}
+            projectData={projectData}
             groupBy={groupBy}
-            splitBubbs={splitBubbs}
-            setHoverActivity={setHoverActivity}
+            setGroupBy={setGroupBy}
+            defineEvent={defineEvent}
+            setDefineEvent={setDefineEvent}
             flexAmount={2}
             filterType={filterType}
+            filterRT={filterRT}
+            selectedThread={selectedThread}
+            researchThreads={researchThreads}
+            dispatch={dispatch}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView
               setViewType={setViewType}
-              filteredActivities={filteredActivities}
-              projectData={projectData}
+              dispatch={dispatch}
+              query={query}
             />
           </Box>
         </Flex>
@@ -286,7 +314,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
         setViewType={setViewType}
         folderPath={folderPath}
         projectData={projectData}
-        filteredActivities={projectData.entries}
+        researchThreads={researchThreads}
+        hopArray={hopArray}
+        selectedArtifactEntry={selectedArtifactEntry}
+        selectedArtifactIndex={selectedArtifactIndex}
+        goBackView={goBackView}
+        googleData={googleData}
+        txtData={txtData}
+        dispatch={dispatch}
       />
     );
   }
@@ -303,52 +338,65 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          folderPath={folderPath}
           filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
-          addEntrySplash={addEntrySplash}
           setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
         />
         <Flex position="relative" top={`${fromTop}px`}>
-          <LeftSidebar fromTop={fromTop} />
-          <BubbleVis
+          <LeftSidebar  
             fromTop={fromTop}
+            projectData={projectData} 
+            researchThreads={researchThreads} 
+            artifactTypes={artifactTypes} 
+            dispatch={dispatch} />
+          <BubbleVis
             filteredActivities={filteredActivities}
+            projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
-            splitBubbs={splitBubbs}
-            setSplitBubbs={setSplitBubbs}
-            setHoverActivity={setHoverActivity}
-            flexAmount={2}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
+            flexAmount={2}
             filterType={filterType}
+            filterRT={filterRT}
+            selectedThread={selectedThread}
+            researchThreads={researchThreads}
+            dispatch={dispatch}
           />
         
           {
             addEntrySplash && (
-                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
+                <AddEntryForm setAddEntrySplash={setAddEntrySplash} projectData={projectData} dispatch={dispatch}/>
               )
           }
          
           {
             (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
-                <ResearchThreadTypeTags fromTop={fromTop} dispatch={dispatch} filterRT={filterRT} researchThreads={researchThreads} threadTypeFilterArray={threadTypeFilterArray} />
-                
-                    <ProjectListView
-                      projectData={projectData}
-                      filteredActivities={filteredActivities}
-                      setViewType={setViewType}
-                      hoverActivity={hoverActivity}
-                    />
+                <ResearchThreadTypeTags 
+                  fromTop={fromTop} 
+                  dispatch={dispatch} 
+                  filterRT={filterRT} 
+                  researchThreads={researchThreads} 
+                  threadTypeFilterArray={threadTypeFilterArray} 
+                />
+                <ProjectListView
+                  filteredActivities={filteredActivities}
+                  projectData={projectData}
+                  setViewType={setViewType}
+                  folderPath={folderPath} 
+                  dispatch={dispatch}
+                  researchThreads={researchThreads}
+                  filterRT={filterRT}
+                />
                   
               </Box>
             )
@@ -370,14 +418,18 @@ const Project = (ProjectPropValues: ProjectProps) => {
         }}
       >
         <TopBar
-          folderPath={folderPath}
           viewType={viewType}
+          filteredActivities={filteredActivities}
+          projectData={projectData}
           setViewType={setViewType}
-          reversedOrder={reversedOrder}
-          setReversedOrder={setReversedOrder}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
-          filteredActivityNames={null}
+          setHideByDefault={setHideByDefault}
+          hideByDefault={hideByDefault}
+          setAddEntrySplash={setAddEntrySplash}
+          filterRT={filterRT}
+          filterTags={filterTags}
+          dispatch={dispatch}
         />
         <PaperView folderPath={folderPath} />
       </div>

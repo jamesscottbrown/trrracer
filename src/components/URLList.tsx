@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import Modal from 'react-modal';
+
 import {
   Button,
   FormControl,
@@ -20,17 +20,16 @@ import {
 import { FaExternalLinkAlt, FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
-import { useProjectState } from './ProjectContext';
+
 
 interface URLListProps {
   urls: URLAttachment[];
   entryIndex: number;
+  dispatch: any;
 }
 
 const URLList = (props: URLListProps) => {
-  const { urls, entryIndex } = props;
-  const [, dispatch] = useProjectState();
-
+  const { urls, entryIndex, dispatch } = props;
   const [addingURL, setAddingUrl] = useState<boolean>();
   const [additionTitle, setAdditionTitle] = useState<string>('');
   const [additionURL, setAdditionURL] = useState<string>('');
@@ -47,62 +46,10 @@ const URLList = (props: URLListProps) => {
     setAdditionTitle('');
   };
 
-  /*
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-
-      width: 'max-content',
-      height: 'max-content',
-    },
-  };
-   */
 
   if (addingURL) {
     return (
-      // <Modal
-      //   isOpen={addingURL}
-      //   onRequestClose={() => setAddingUrl(false)}
-      //   style={customStyles}
-      // >
-      //   <Heading as="h1">Attach URL</Heading>
 
-      //   <FormControl>
-      //     <FormLabel>URL:</FormLabel>
-      //     <Input
-      //       id="url"
-      //       value={additionURL}
-      //       onChange={(ev) => setAdditionURL(ev.target.value)}
-      //     />
-      //   </FormControl>
-
-      //   <br />
-
-      //   <FormControl>
-      //     <FormLabel>Title:</FormLabel>
-      //     <Input
-      //       id="title"
-      //       value={additionTitle}
-      //       onChange={(ev) => setAdditionTitle(ev.target.value)}
-      //     />
-      //   </FormControl>
-
-      //   <br />
-
-      //   <ButtonGroup>
-      //     <Button disabled={!additionURL} onClick={attachURL} type="button">
-      //       Add
-      //     </Button>
-
-      //     <Button onClick={() => setAddingUrl(false)} type="button">
-      //       Cancel
-      //     </Button>
-      //   </ButtonGroup>
       <Modal isOpen={addingURL} onClose={() => setAddingUrl(false)}>
         <ModalOverlay />
 
