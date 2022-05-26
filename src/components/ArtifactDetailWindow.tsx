@@ -374,10 +374,9 @@ const DetailSidebar = (props: any) => {
     selectedArtifactIndex,
     researchThreads, 
     projectData, 
-    hopArray
+    hopArray,
+    dispatch
   } = props;
-
-  
 
   // const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
 
@@ -866,6 +865,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           researchThreads={researchThreads}
           projectData={projectData} 
           hopArray={hopArray}
+          dispatch={dispatch}
         />
 
         <div style={{ width:260 }}>

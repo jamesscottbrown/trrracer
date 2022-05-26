@@ -79,6 +79,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
         }}
         onClick={() => {
           setViewType('detail view');
+          console.log('dispatch',dispatch)
           dispatch({
             type: 'SELECTED_ARTIFACT',
             selectedArtifactEntry: entryData,
