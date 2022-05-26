@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
-import React, { useEffect, useState } from 'react';
-// import { useProjectState } from './ProjectContext';
-// import { joinPath} from '../fileUtil';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useProjectState } from './ProjectContext';
+import { joinPath} from '../fileUtil';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
@@ -163,7 +163,7 @@ const BubbleVis = (props: BubbleProps) => {
   let packedCircData = calcCircles(projectData.entries);
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = new ForceMagic(packedCircData, width, height);
+  const forced = useMemo(() => new ForceMagic(bubbleData, width, height, splitBubbs), [bubbleData, width, height, splitBubbs]);
 
   useEffect(() => {
     if (svgRef.current) {
