@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   Button,
@@ -14,7 +14,7 @@ import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-
+import { useProjectState } from './ProjectContext';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
@@ -24,6 +24,10 @@ interface EntryPropTypes {
   openFile: (a: string, fp: string) => void;
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
+  viewType: any;
+  dispatch: any;
+  researchThreads:any;
+  folderPath:string;
 }
 
 const converter = new Showdown.Converter({
@@ -39,24 +43,24 @@ interface ReadonlyEntryFilePropTypes {
   setViewType: (viewType: string) => void;
   file: File;
   i: number;
-  folderPath:any;
-  dispatch:any;
+  dispatch: (dis:any) => void;
+  folderPath: string;
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
-  const { entryData, openFile, setViewType, file, i, folderPath, dispatch } = props;
- 
+  const { entryData, openFile, setViewType, file, i, dispatch, folderPath } = props;
+  // const [{ folderPath }, dispatch] = useProjectState();
+
   return (
     <>
     <Box bg="#ececec" p={3}>
-    {/* {['png', 'jpg', 'gif'].includes(file.fileType) && (
+    {['png', 'jpg', 'gif'].includes(file.fileType) && (
                   <AttachmentPreview
                     folderPath={folderPath}
                     title={file.title}
                     openFile={openFile}
-                    size={50}
                   />
-                )} */}
+                )}
       <div
       style={{marginTop:'8px'}}
       >{file.title}{' '}
@@ -90,94 +94,6 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
         }}
       >See in detail</Button>
       </div>
-      {/* <Box bg="#ececec" p={3}>
-        {showPopover ? (
-          <Popover isOpen={showPopover} onClose={closePopover}>
-            <PopoverTrigger>
-              <div>
-                {['png', 'jpg', 'gif'].includes(file.fileType) && (
-                  <AttachmentPreview
-                    folderPath={folderPath}
-                    title={file.title}
-                    openFile={openFile}
-                  />
-                )}
-                <div
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    marginBottom: 5,
-                    width: 75,
-                    display: 'inline',
-                  }}
-                >
-                  {' '}
-                  {file.title}{' '}
-                </div>
-                <FaExternalLinkAlt
-                  onClick={() => openFile(file.title, folderPath)}
-                  title="Open file externally"
-                  size="13px"
-                  style={{ display: 'inline' }}
-                />
-              </div>
-            </PopoverTrigger>
-            <PopoverContent bg="white" color="gray">
-              <PopoverArrow bg="white" />
-              <PopoverBody>
-                <Button
-                  onClick={() => {
-                    setViewType('detail view');
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: entryData,
-                      selectedArtifactIndex: i,
-                      hopArray: [entryData],
-                    });
-                  }}
-                >
-                  See artifact in detail.
-                </Button>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <div onMouseEnter={() => setShowPopover(true)}>
-            {['png', 'jpg', 'gif'].includes(file.fileType) && (
-              <AttachmentPreview
-                folderPath={folderPath}
-                title={file.title}
-                openFile={openFile}
-              />
-            )}
-            <div
-              style={{
-                fontSize: 18,
-                fontWeight: 500,
-                marginBottom: '5px',
-                width: '50%',
-                display: 'inline',
-              }}
-            >
-              {' '}
-              {file.title}{' '}
-            </div>
-            <FaExternalLinkAlt
-              onClick={() => openFile(file.title, folderPath)}
-              title="Open file externally"
-              size="13px"
-              style={{ display: 'inline' }}
-            />
-          </div>
-        )}
-
-        {/* {f.fileType != 'gdoc' && f.fileType != 'txt' ?
-                <AttachmentPreview
-                  folderPath={folderPath}
-                  title={f.title}
-                  openFile={openFile}
-                /> : <FileTextRender fileData={f} index={i} keywordArray={entryData.key_txt} />
-            } */}
       </Box> 
     </>
   );
@@ -189,8 +105,8 @@ type ActivityTitlePopoverLogicProps = {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable, openFile, setViewType, viewType, folderPath, dispatch, researchThreads } = props;
-  
+  const { entryData, makeEditable, openFile, setViewType, viewType, researchThreads, folderPath, dispatch } = props;
+
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
       return f.associated_tags.indexOf(tagName) > -1;
@@ -286,8 +202,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             setViewType={setViewType}
             file={f}
             i={i}
-            folderPath={folderPath} 
-            dispatch={dispatch}
+            dispatch={dispatch} 
+            folderPath={folderPath}
           />
         ))}
       </SimpleGrid>

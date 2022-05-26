@@ -8,6 +8,7 @@ import { EntryTypeWithIndex } from './types';
 
 type ActivityWrapPropType = {
   activityData: EntryTypeWithIndex;
+  projectData:any;
   editable: boolean[];
   setEditableStatus: (index: number, isEditable: boolean) => void;
   setViewType: (v: any) => void;
@@ -16,11 +17,12 @@ type ActivityWrapPropType = {
   index: number;
   viewType: string;
   folderPath: any; 
-  dispatch:any; 
+  dispatch: (dis:any) => void; 
   researchThreads:any;
+  filterRT:any;
 };
 
-const ActivityWrap = (props: any) => {
+const ActivityWrap = (props: ActivityWrapPropType) => {
   const {
     projectData,
     activityData,
@@ -39,8 +41,6 @@ const ActivityWrap = (props: any) => {
 
 
   const myRef = useRef(null);
-
-
 
   const updateEntryField = (
     entryIndex: number,
@@ -115,8 +115,6 @@ const ActivityWrap = (props: any) => {
           entryData={activityData}
           openFile={openFile}
           setViewType={setViewType}
-          setSelectedArtifactIndex={setSelectedArtifactIndex}
-          setSelectedArtifactEntry={setSelectedArtifactEntry}
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
           folderPath={folderPath} 

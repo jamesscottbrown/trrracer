@@ -28,7 +28,6 @@ export const writeFile = (fileName, content) =>
     });
   });
 
-
 export const readFileSync = (filePath: string) =>
   fs.readFileSync(filePath, { encoding: 'utf-8' });
 

@@ -4,6 +4,7 @@ import {
   writeFile,
   // decode,
   // decodeAttachment,
+  joinPath,
   readFileSync,
   stateUpdateWrapperUseJSON
 } from './fileUtilElectron';
@@ -39,6 +40,6 @@ export {
   decode,
   decodeAttachment,
   readFileSync,
-  // joinPath,
+  joinPath,
   stateUpdateWrapperUseJSON
 };

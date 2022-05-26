@@ -8,6 +8,7 @@ const ProjectListView = (ProjectPropValues: any) => {
     filteredActivities,
     projectData,
     setViewType,
+    viewType,
     setSelectedArtifactIndex,
     setSelectedArtifactEntry,
     selectedEntryIndex,
@@ -16,8 +17,6 @@ const ProjectListView = (ProjectPropValues: any) => {
     researchThreads,
     filterRT
   } = ProjectPropValues;
-
-  
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -56,6 +55,7 @@ const ProjectListView = (ProjectPropValues: any) => {
           editable={editable}
           setEditableStatus={setEditableStatus}
           setViewType={setViewType}
+          viewType={viewType}
           setSelectedArtifactIndex={setSelectedArtifactIndex}
           setSelectedArtifactEntry={setSelectedArtifactEntry}
           index={i}
