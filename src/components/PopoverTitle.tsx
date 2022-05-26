@@ -21,7 +21,13 @@ const ActivityTitlePopoverLogic = (props: any) => {
               }}
               onMouseOver={()=> {
                 let circles = d3.selectAll('circle.all-activities');
-                console.log('circles',circles.filter(f => f.title === activityData.title))
+                
+                circles.filter(f => f.title === activityData.title).attr('fill', 'red')
+              }}
+              onMouseLeave={()=> {
+                let circles = d3.selectAll('circle.all-activities');
+                
+                circles.filter(f => f.title === activityData.title).attr('fill', '#d3d3d3')
               }}
             >{activityData.title}</div>
           
