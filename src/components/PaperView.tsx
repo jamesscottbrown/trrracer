@@ -6,8 +6,6 @@ import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
-// import { joinPath } from '../fileUtil';
-// import { readFileSync } from '../fileUtil';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';

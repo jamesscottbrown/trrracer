@@ -32,7 +32,7 @@ export const readFileSync = (filePath: string) =>
   fs.readFileSync(filePath, { encoding: 'utf-8' });
 
 export function joinPath(...args){
-  return path.join(args);
+  return path.join(...args);
 };
 
 export const stateUpdateWrapperUseJSON = (oldState: any, newState: any, updateFunction: (value: React.SetStateAction<any>) => void) => {

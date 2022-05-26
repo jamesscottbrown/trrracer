@@ -11,12 +11,12 @@ import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
-import { FaDatabase, FaHandPointUp, FaLink, FaPaperclip, FaPaperPlane, FaPencilAlt } from 'react-icons/fa';
+import { FaDatabase, FaLink, FaPaperclip, FaPaperPlane, FaPencilAlt } from 'react-icons/fa';
 import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
+import { stateUpdateWrapperUseJSON } from '../fileUtil';
 
 interface ProjectProps {
   folderPath: string;
@@ -275,6 +275,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           
         />
         <Flex position="relative" top={130}>
+        
           <LeftSidebar 
             fromTop={fromTop}
             projectData={projectData} 
@@ -282,6 +283,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             artifactTypes={artifactTypes} 
             dispatch={dispatch}
             selectedThread={selectedThread}
+            filterTags={filterTags}
           />
           <BubbleVis
             filteredActivities={filteredActivities}
@@ -356,7 +358,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
             projectData={projectData} 
             researchThreads={researchThreads} 
             artifactTypes={artifactTypes} 
-            dispatch={dispatch} />
+            dispatch={dispatch}
+            selectedThread={selectedThread}
+            filterTags={filterTags}
+            />
           <BubbleVis
             filteredActivities={filteredActivities}
             projectData={projectData}

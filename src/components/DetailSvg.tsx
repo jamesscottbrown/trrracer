@@ -1,4 +1,3 @@
-import path from 'path';
 import * as d3 from 'd3';
 import React, { useEffect, useState } from 'react';
 import { useProjectState } from './ProjectContext';
@@ -6,10 +5,8 @@ import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
 import type { EntryType } from './types';
-import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import { ToolIcon } from './Project';
 
 interface BubbleDetProps {
   filteredActivities: EntryType[];

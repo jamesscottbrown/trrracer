@@ -32,7 +32,6 @@ function decodeAttachment(input:any) {
   return atob(encodeURI(input.replace(/-/g, '+').replace(/_/g, '/')));
 }
 
-
 export {
   openFile,
   readFile,

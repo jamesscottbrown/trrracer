@@ -15,7 +15,6 @@ interface EditDateTypes {
 
 const EditDate = (props: EditDateTypes) => {
   const { date, field, msg } = props;
-
   const [{ projectData }, dispatch] = useProjectState();
 
   const entryDates = projectData.entries.map(

@@ -14,11 +14,11 @@ import * as d3 from 'd3';
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
-import { stateUpdateWrapperUseJSON } from '../fileUtilElectron';
+import { stateUpdateWrapperUseJSON } from '../fileUtil';
 
 const LeftSidebar = (props: any) => {
   
-  const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread } = props;
+  const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread, filterTags } = props;
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
 
@@ -151,7 +151,13 @@ const LeftSidebar = (props: any) => {
       >
         {sortedTags.map((st: any, s: any) => (
           <React.Fragment key={`tag-${s}-frag`}>
-            <SidebarButton isTag data={st} index={s} />
+            <SidebarButton isTag 
+              data={st} 
+              index={s} 
+              researchThread={researchThreads} 
+              filterTags={filterTags} 
+              dispatch={dispatch}
+            />
           </React.Fragment>
         ))}
       </Box>

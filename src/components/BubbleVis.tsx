@@ -1,7 +1,5 @@
 import * as d3 from 'd3';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useProjectState } from './ProjectContext';
-import { joinPath} from '../fileUtil';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';

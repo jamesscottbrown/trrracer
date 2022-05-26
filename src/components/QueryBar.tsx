@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
-import { doc } from 'prettier';
+
 
 const processDataQuery = (
   queryTerm: string,

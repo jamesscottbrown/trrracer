@@ -14,7 +14,6 @@ import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
-import { useProjectState } from './ProjectContext';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 

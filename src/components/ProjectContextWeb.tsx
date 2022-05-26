@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { FileObj, ProjectState } from './types';
-
-// import { appStateReducer } from './ProjectContextCommon';
 import { getAppStateReducer } from './ProjectContextCommon';
 
 

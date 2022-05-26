@@ -4,7 +4,6 @@ import {
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  background,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
