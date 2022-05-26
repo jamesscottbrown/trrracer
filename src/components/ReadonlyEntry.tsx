@@ -49,14 +49,14 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   return (
     <>
     <Box bg="#ececec" p={3}>
-    {['png', 'jpg', 'gif'].includes(file.fileType) && (
+    {/* {['png', 'jpg', 'gif'].includes(file.fileType) && (
                   <AttachmentPreview
                     folderPath={folderPath}
                     title={file.title}
                     openFile={openFile}
                     size={50}
                   />
-                )}
+                )} */}
       <div
       style={{marginTop:'8px'}}
       >{file.title}{' '}

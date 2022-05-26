@@ -138,7 +138,6 @@ const BubbleVis = (props: BubbleProps) => {
     projectData,
     groupBy,
     setGroupBy,
-    setHoverActivity,
     flexAmount,
     setDefineEvent,
     defineEvent,
@@ -163,7 +162,7 @@ const BubbleVis = (props: BubbleProps) => {
   let packedCircData = calcCircles(projectData.entries);
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = useMemo(() => new ForceMagic(bubbleData, width, height, splitBubbs), [bubbleData, width, height, splitBubbs]);
+  const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
 
   useEffect(() => {
     if (svgRef.current) {

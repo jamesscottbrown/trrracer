@@ -1,21 +1,21 @@
-// import {
-//   openFile,
-//   readFile,
-//   writeFile,
-//   // decode,
-//   // decodeAttachment,
-//   readFileSync,
-//   stateUpdateWrapperUseJSON
-// } from './fileUtilElectron';
-
 import {
   openFile,
   readFile,
   writeFile,
+  // decode,
+  // decodeAttachment,
   readFileSync,
-  joinPath,
   stateUpdateWrapperUseJSON
-} from './fileUtilWeb';
+} from './fileUtilElectron';
+
+// import {
+//   openFile,
+//   readFile,
+//   writeFile,
+//   readFileSync,
+//   joinPath,
+//   stateUpdateWrapperUseJSON
+// } from './fileUtilWeb';
 
 
 function decode(input:any) {
@@ -39,6 +39,6 @@ export {
   decode,
   decodeAttachment,
   readFileSync,
-  joinPath,
+  // joinPath,
   stateUpdateWrapperUseJSON
 };
