@@ -10,11 +10,11 @@ import {
 } from '@chakra-ui/react';
 
 import { MdCancel } from 'react-icons/md';
+import { useProjectState } from './ProjectContext';
 
 interface QueryViewProps {
   setViewType: (viewType: string) => void;
   filteredActivites: any;
-  dispatch:any;
 }
 
 const HoverTitle = (props: any) => {
@@ -69,10 +69,9 @@ const HoverTitle = (props: any) => {
 };
 
 const QueryView = (props: any) => {
-  const { setViewType, query, dispatch } = props;
-
-  console.log('query', query);
-
+  const { setViewType } = props;
+  const [{query}, dispatch] = useProjectState();
+  
   return (
     <div>
       <div

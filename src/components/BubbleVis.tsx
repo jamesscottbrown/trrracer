@@ -8,22 +8,17 @@ import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { ToolIcon } from './Project';
+import { useProjectState } from './ProjectContext';
+
 const smalltalk = require('smalltalk');
 
 interface BubbleProps {
   filteredActivities: EntryType[];
-  projectData:any;
   setGroupBy:(gb:any)=> void;
   groupBy: any;
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
-  filterType: null | any;
-  filterRT: any;
-  filterTags: any;
-  selectedThread: any;
-  researchThreads:any;
-  dispatch:any;
 }
 
 const RTtooltip = (toolProp: any) => {
@@ -131,19 +126,14 @@ const ToolTip = (toolProp: any) => {
 const BubbleVis = (props: BubbleProps) => {
   const {
     filteredActivities,
-    projectData,
     groupBy,
     setGroupBy,
     flexAmount,
     setDefineEvent,
     defineEvent,
-    filterType,
-    filterRT,
-    filterTags,
-    selectedThread, 
-    researchThreads,
-    dispatch
   } = props;
+
+  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads},dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');

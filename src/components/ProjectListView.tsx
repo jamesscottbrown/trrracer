@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { EntryTypeWithIndex, ProjectViewProps } from './types';
 import ActivityWrap from './ActivityWrap';
+import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
   const {
     filteredActivities,
-    projectData,
     setViewType,
     viewType,
-    setSelectedArtifactIndex,
-    setSelectedArtifactEntry,
-    selectedEntryIndex,
-    folderPath, 
-    dispatch, 
-    researchThreads,
-    filterRT
   } = ProjectPropValues;
+
+
+  const [{projectData, selectedArtifactEntry, selectedArtifactIndex},] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -32,10 +28,10 @@ const ProjectListView = (ProjectPropValues: any) => {
     }
   }, [projectData]);
 
-  useEffect(() => {
-    setEditable(Array.from(Array(projectData.entries.length), () => false));
-    setEditableStatus(selectedEntryIndex, true);
-  }, [selectedEntryIndex]);
+  // useEffect(() => {
+  //   setEditable(Array.from(Array(projectData.entries.length), () => false));
+  //   setEditableStatus(selectedEntryIndex, true);
+  // }, [selectedEntryIndex]);
 
   const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>
@@ -49,19 +45,13 @@ const ProjectListView = (ProjectPropValues: any) => {
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
-          projectData={projectData}
           activityData={activityData}
           editable={editable}
           setEditableStatus={setEditableStatus}
           setViewType={setViewType}
           viewType={viewType}
-          setSelectedArtifactIndex={setSelectedArtifactIndex}
-          setSelectedArtifactEntry={setSelectedArtifactEntry}
           index={i}
-          folderPath={folderPath}
-          dispatch={dispatch} 
-          researchThreads={researchThreads}
-          filterRT={filterRT}
+          
         />
       ))}
     </div>

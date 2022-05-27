@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import {
   Box,
@@ -17,6 +17,7 @@ import {
 import { FaPlus } from 'react-icons/fa';
 import ViewTypeControl from './ViewTypeControl';
 import QueryBar from './QueryBar';
+import { useProjectState } from './ProjectContext';
 
 interface TopbarProps {
   viewType: string;
@@ -24,14 +25,12 @@ interface TopbarProps {
   newTitle: string;
   setNewTitle: any;
   filteredActivities: any;
-  projectData: any;
   setHideByDefault: (boo: any) => void;
   hideByDefault: Boolean;
   setAddEntrySplash: (boo: any) => void;
-  dispatch: (act:any) => void;
-  filterTags: any; 
-  filterRT: any;
 }
+
+
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
 
@@ -41,14 +40,15 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     newTitle,
     setNewTitle,
     filteredActivities,
-    projectData,
     setHideByDefault,
     hideByDefault,
     setAddEntrySplash,
-    filterTags, 
-    filterRT,
-    dispatch
   } = ProjectPropValues;
+
+  const [{projectData, filterTags, filterRT}, dispatch] = useProjectState();
+
+  //USE callback when you pass anonymous functions to big components!!
+  // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
 
   return (
     <Box

@@ -15,10 +15,12 @@ import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
 import { stateUpdateWrapperUseJSON } from '../fileUtil';
+import { useProjectState } from './ProjectContext';
 
 const LeftSidebar = (props: any) => {
   
-  const { fromTop, projectData, researchThreads, artifactTypes, dispatch, selectedThread, filterTags } = props;
+  const { fromTop } = props;
+  const [{projectData, researchThreads, artifactTypes, selectedThread, filterTags}, dispatch] = useProjectState();
  
   const artifacts = projectData.entries.flatMap((f) => f.files);
 

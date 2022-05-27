@@ -1,5 +1,5 @@
 /* eslint no-console: off */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
@@ -16,15 +16,42 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { stateUpdateWrapperUseJSON } from '../fileUtil';
+
 
 interface ProjectProps {
   folderPath: string;
 }
+//two arrays are the same length,
+//you dont have a  - in object, each key is string or number.
 
-const ResearchThreadTypeTags = (rttt:any) => {
+function compareObjects <T extends any>(objA: T, objB:T): boolean{
+  if(Object.keys(objA).length !== Object.keys(objB).length){
+    return false;
+  }else{
+    for(let key in Object.keys(objA)){
+      if(objA[key] !== objB[key]){
+        return false;
+      }
+    }
+    return true;
+  }
+}
 
-  const {fromTop, dispatch, filterRT, researchThreads, threadTypeFilterArray} = rttt;
+function compareObjectList <T extends any[]>(listA: T, listB: T): boolean{
+  if(listA.length !== listB.length){
+    return false;
+  }
+  for(let i = 0; i < listA.length; ++i){
+    if(!compareObjects(listA[i], listB[i])){
+      return false;
+    }
+  }
+  return true;
+}
+
+const ResearchThreadTypeTags = () => {
+
+  const [{filterRT, researchThreads, threadTypeFilterArray}, dispatch] = useProjectState();
 
   let chosenThread = filterRT ? researchThreads.research_threads.filter(f => f.title === filterRT.title)[0] : null;
   let threadTypeGroups = threadTypeFilterArray.map((ty)=> {
@@ -121,26 +148,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterQuery,
       filterRT,
       threadTypeFilterArray,
-      selectedThread,
       researchThreads,
-      artifactTypes,
-      query,
-      hopArray,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
-      goBackView,
-      googleData,
-      txtData
+      goBackView
     }, dispatch
   ] = useProjectState();
 
   const [viewType, setViewType] = useState<string>('overview');
   const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
-  const [filteredActivities, setfilteredActivities] = useState(
-    projectData.entries
-  );
- 
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
@@ -148,13 +163,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
-  // Update title when projectData changes.
-  useEffect(() => {
-    setNewTitle(projectData.title);
-  }, [projectData]);
 
   // Update title when projectData changes.
-  useEffect(() => {
+  //
+  const filteredActivities = useMemo(() => {
+
+   // move that logic here
     const tagFiltered = projectData.entries
       .filter((entryData: any) => {
         return filterTags.every((requiredTag: string) =>
@@ -234,10 +248,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
-    //check out the comparison of objects turned to strings haihan 
-
-    stateUpdateWrapperUseJSON(filteredActivities, queryFiltered, setfilteredActivities);
+    
+      //
+    // stateUpdateWrapperUseJSON(filteredActivities, queryFiltered, setfilteredActivities);
     // setfilteredActivities(queryFiltered);
+    return queryFiltered;
 
   }, [
     projectData.entries,
@@ -263,49 +278,29 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <TopBar
           viewType={viewType}
           filteredActivities={filteredActivities}
-          projectData={projectData}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
-          setAddEntrySplash={setAddEntrySplash}
-          filterRT={filterRT}
-          filterTags={filterTags}
-          dispatch={dispatch}
-          
+          setAddEntrySplash={setAddEntrySplash} 
         />
         <Flex position="relative" top={130}>
         
           <LeftSidebar 
             fromTop={fromTop}
-            projectData={projectData} 
-            researchThreads={researchThreads} 
-            artifactTypes={artifactTypes} 
-            dispatch={dispatch}
-            selectedThread={selectedThread}
-            filterTags={filterTags}
           />
           <BubbleVis
             filteredActivities={filteredActivities}
-            projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             flexAmount={2}
-            filterType={filterType}
-            filterRT={filterRT}
-            filterTags={filterTags}
-            selectedThread={selectedThread}
-            researchThreads={researchThreads}
-            dispatch={dispatch}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView
               setViewType={setViewType}
-              dispatch={dispatch}
-              query={query}
             />
           </Box>
         </Flex>
@@ -316,16 +311,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
     return (
       <ArtifactDetailWindow
         setViewType={setViewType}
-        folderPath={folderPath}
-        projectData={projectData}
-        researchThreads={researchThreads}
-        hopArray={hopArray}
-        selectedArtifactEntry={selectedArtifactEntry}
-        selectedArtifactIndex={selectedArtifactIndex}
         goBackView={goBackView}
-        googleData={googleData}
-        txtData={txtData}
-        dispatch={dispatch}
       />
     );
   }
@@ -341,69 +327,43 @@ const Project = (ProjectPropValues: ProjectProps) => {
         }}
       >
         <TopBar
-          viewType={viewType}
-          filteredActivities={filteredActivities}
-          projectData={projectData}
-          setViewType={setViewType}
-          newTitle={newTitle}
-          setNewTitle={setNewTitle}
-          setHideByDefault={setHideByDefault}
-          hideByDefault={hideByDefault}
-          setAddEntrySplash={setAddEntrySplash}
-          filterRT={filterRT}
-          filterTags={filterTags}
-          dispatch={dispatch}
+           viewType={viewType}
+           filteredActivities={filteredActivities}
+           setViewType={setViewType}
+           newTitle={newTitle}
+           setNewTitle={setNewTitle}
+           setHideByDefault={setHideByDefault}
+           hideByDefault={hideByDefault}
+           setAddEntrySplash={setAddEntrySplash} 
         />
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar  
             fromTop={fromTop}
-            projectData={projectData} 
-            researchThreads={researchThreads} 
-            artifactTypes={artifactTypes} 
-            dispatch={dispatch}
-            selectedThread={selectedThread}
-            filterTags={filterTags}
+           
             />
           <BubbleVis
             filteredActivities={filteredActivities}
-            projectData={projectData}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             flexAmount={2}
-            filterType={filterType}
-            filterRT={filterRT}
-            filterTags={filterTags}
-            selectedThread={selectedThread}
-            researchThreads={researchThreads}
-            dispatch={dispatch}
           />
         
           {
             addEntrySplash && (
-                <AddEntryForm setAddEntrySplash={setAddEntrySplash} projectData={projectData} dispatch={dispatch}/>
+                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
               )
           }
          
           {
             (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
-                <ResearchThreadTypeTags 
-                  fromTop={fromTop} 
-                  dispatch={dispatch} 
-                  filterRT={filterRT} 
-                  researchThreads={researchThreads} 
-                  threadTypeFilterArray={threadTypeFilterArray} 
-                />
+                <ResearchThreadTypeTags />
                 <ProjectListView
                   filteredActivities={filteredActivities}
-                  projectData={projectData}
                   setViewType={setViewType}
-                  folderPath={folderPath} 
-                  dispatch={dispatch}
-                  researchThreads={researchThreads}
-                  filterRT={filterRT}
+                  viewType={viewType}
                 />
                   
               </Box>
@@ -428,16 +388,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <TopBar
           viewType={viewType}
           filteredActivities={filteredActivities}
-          projectData={projectData}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
-          setAddEntrySplash={setAddEntrySplash}
-          filterRT={filterRT}
-          filterTags={filterTags}
-          dispatch={dispatch}
+          setAddEntrySplash={setAddEntrySplash} 
         />
         <PaperView folderPath={folderPath} />
       </div>

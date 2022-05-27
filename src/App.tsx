@@ -1,7 +1,5 @@
 /* eslint no-console: off */
 /// /
-
-
 // This is the entrypoint for the React app displayed in the Electron App. It *is* able to use node and electron APIs.
 
 import React, { useState } from 'react';

@@ -16,16 +16,7 @@ import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface DetailProps {
   setViewType: (view: string) => void;
-  folderPath: string;
-  projectData: any;
-  selectedArtifactEntry:any;
-  selectedArtifactIndex:any;
   goBackView:any;
-  hopArray:any;
-  researchThreads:any;
-  googleData:any;
-  txtData:any;
-  dispatch: (dis: any) => void;
 }
 
 const ArtifactToThread = (props: any) => {
@@ -713,17 +704,10 @@ const DetailSidebar = (props: any) => {
 const ArtifactDetailWindow = (props: DetailProps) => {
   const { 
     setViewType, 
-    folderPath, 
-    selectedArtifactEntry,
-    selectedArtifactIndex,
     goBackView,
-    projectData,
-    hopArray,
-    researchThreads,
-    googleData,
-    txtData,
-    dispatch  } = props;
+  } = props;
 
+  const [{projectData, folderPath, selectedArtifactEntry, selectedArtifactIndex, hopArray, researchThreads, googleData, txtData}, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)

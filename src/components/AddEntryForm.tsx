@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
 import { MdCancel } from 'react-icons/md';
+import { useProjectState } from './ProjectContext';
 
 
 const converter = new Showdown.Converter({
@@ -20,7 +21,9 @@ const converter = new Showdown.Converter({
 
 const AddEntryForm = (props:any) => {
 
-    const {setAddEntrySplash, projectData, dispatch} = props;
+    const {setAddEntrySplash} = props;
+    const [{ projectData }, dispatch] = useProjectState();
+
     const [activityName, setActivityName] = useState('New Activity');
     const activityIndex = projectData.entries.length;
     const [value, setValue] = useState('Add description');

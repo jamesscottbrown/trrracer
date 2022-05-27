@@ -5,41 +5,29 @@ import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
 import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
 import { EntryTypeWithIndex } from './types';
+import { useProjectState } from './ProjectContext';
 
 type ActivityWrapPropType = {
   activityData: EntryTypeWithIndex;
-  projectData:any;
   editable: boolean[];
   setEditableStatus: (index: number, isEditable: boolean) => void;
   setViewType: (v: any) => void;
-  setSelectedArtifactIndex: number;
-  setSelectedArtifactEntry: (e: any) => void;
+  viewtype: any;
   index: number;
-  viewType: string;
-  folderPath: any; 
-  dispatch: (dis:any) => void; 
-  researchThreads:any;
-  filterRT:any;
+  viewType: any;
 };
 
-const ActivityWrap = (props: ActivityWrapPropType) => {
+const ActivityWrap = (props: any) => {
   const {
-    projectData,
     activityData,
     editable,
     setEditableStatus,
     setViewType,
-    setSelectedArtifactIndex,
-    setSelectedArtifactEntry,
     index,
     viewType,
-    folderPath, 
-    dispatch, 
-    researchThreads,
-    filterRT
   } = props;
 
-
+  const [{projectData, folderPath, researchThreads, filterRT}, dispatch] = useProjectState();
   const myRef = useRef(null);
 
   const updateEntryField = (
@@ -88,8 +76,6 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
             entryData={activityData}
             openFile={openFile}
             setViewType={setViewType}
-            setSelectedArtifactIndex={setSelectedArtifactIndex}
-            setSelectedArtifactEntry={setSelectedArtifactEntry}
             makeEditable={() => setEditableStatus(activityData.index, true)}
             viewType={viewType}
         />

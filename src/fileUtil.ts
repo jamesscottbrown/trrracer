@@ -18,7 +18,6 @@ import {
 //   stateUpdateWrapperUseJSON
 // } from './fileUtilWeb';
 
-
 function decode(input:any) {
   if (!input) return '';
   const decodedBase64 = atob(input.replace(/-/g, '+').replace(/_/g, '/'));

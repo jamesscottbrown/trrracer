@@ -13,7 +13,6 @@ export const ProjectContext = createContext<DispatchType>();
 type DispatchType = [ProjectState, (msg: any) => ProjectState];
 
 export function useProjectState() {
-  console.log('this use project state is fireing')
   return useContext<DispatchType>(ProjectContext);
 }
 
