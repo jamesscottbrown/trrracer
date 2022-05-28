@@ -339,7 +339,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar  
             fromTop={fromTop}
-           
             />
           <BubbleVis
             filteredActivities={filteredActivities}

@@ -4,6 +4,8 @@ import { FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
 import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
+import { MdCancel } from 'react-icons/md';
+import { useProjectState } from './ProjectContextElectron';
 
 
 export const jitter = (val: any) => Math.random() * val;
@@ -82,24 +84,20 @@ const MiniTimline = (props: MiniTimelineProps) => {
 };
 
 type ThreadNavProps = {
-  researchTs: ResearchThread[];
   viewType: string; // TODO: tighten to specific values
-  projectData:any;
-  selectedThread:any;
-  dispatch:any;
 };
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
-  const { projectData, selectedThread, researchTs, viewType, dispatch } = threadProps;
-
+  const { viewType } = threadProps;
+  const [{projectData, researchThreads, selectedThread}, dispatch] = useProjectState();
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {
       if (i != selectedThread) {
-        return 0.5;
+        return false;
       }
-      return 1;
+      return true;
     }
-    return 1;
+    return true;
   };
 
   const [showCreateThread, setShowCreateThread] = useState(false);
@@ -127,53 +125,72 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
       )}
 
       <Box>
-        {researchTs ? (
+        {researchThreads && researchThreads.research_threads ? (
           <Box style={{ 
             marginTop: 10, 
             marginBottom: 10,
-          
+            
             }}>
-            {researchTs.map((rt: any, i: number) => (
+            {researchThreads.research_threads.map((rt: any, i: number) => (
               <div
                 key={`rt-${i}`}
                 style={{
                   borderLeft: '2px solid gray',
                   paddingLeft: 3,
-                  opacity: checkIfSelectThread(i),
+                  opacity: checkIfSelectThread(i) ? 1 : .5,
                   marginTop:10,
-                  marginBottom:10
+                  marginBottom:10,
+                  background: (checkIfSelectThread(i) && selectedThread !== null) ? `${rt.color}30` : '#fff',
+                  borderRadius: 6
                 }}
               >
-            <div style={{display:'inline'}}>
-              <span
-                style={{ 
-                  cursor: 'pointer', 
-                  display:'inline',
-                  fontSize:18,
-                  fontWeight:600 
-                }}
-                  onClick={() => {
-                    dispatch({ type: 'THREAD_FILTER', filterRT:rt, selectedThread: i });
+              { (checkIfSelectThread(i) && selectedThread !== null) && (
+                <div
+                  title="Unselect Thread"
+                  style={{
+                    float:'right', 
+                    cursor:"pointer",
+                    width:30,
+                    height:30,
                   }}
-              >
-                {`${rt.title} `}
-              </span>
-              <span>
-              <Popover>
-                  <PopoverTrigger>
-                  <Button 
-                    size={'xs'}
-                    style={{display:'inline'}}
-                  >Cite thread</Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverBody>
-                      copy this ref: {rt.rt_id}
-                    </PopoverBody>
-                  </PopoverContent>
-              </Popover>
-              </span>
-            </div>
+                  onClick={()=>
+                    dispatch({
+                      type: 'THREAD_FILTER',
+                      filterRT: null,
+                      selectedThread: null,
+                    })}
+                ><MdCancel size={30} /></div>
+              )}
+              <div style={{display:'inline'}}>
+                <span
+                  style={{ 
+                    cursor: 'pointer', 
+                    display:'inline',
+                    fontSize:18,
+                    fontWeight:600 
+                  }}
+                    onClick={() => {
+                      dispatch({ type: 'THREAD_FILTER', filterRT:rt, selectedThread: i });
+                    }}
+                >
+                  {`${rt.title} `}
+                </span>
+                <span>
+                <Popover>
+                    <PopoverTrigger>
+                    <Button 
+                      size={'xs'}
+                      style={{display:'inline'}}
+                    >Cite thread</Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverBody>
+                        copy this ref: {rt.rt_id}
+                      </PopoverBody>
+                    </PopoverContent>
+                </Popover>
+                </span>
+              </div>
             <div style={{display:'inline', float:'right'}}>
               <span
                 style={{display:'inline'}}
@@ -181,7 +198,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   <Button 
                     size={'xs'} 
                     bgColor={'#ff6863'} 
-                    style={{display:'inline'}}
+                    style={{display:'inline', margin:2}}
                     onClick={()=> {
                       dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
                     }}
@@ -269,7 +286,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     setName(null);
                     setDescription(null);
                     setShowCreateThread(false);
-                    console.log('creat threaddd', threadName, description);
                     dispatch({
                       type: 'CREATE_THREAD',
                       threadName,

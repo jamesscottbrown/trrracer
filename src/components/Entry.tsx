@@ -25,6 +25,7 @@ import FileUpload from './FileUpload';
 import { EntryType, File, FileObj, TagType } from './types';
 import GoogFileInit from './GoogleFileInit';
 import URLList from './URLList';
+import { useProjectState } from './ProjectContext';
 
 interface EditDateTypes {
   date: string;
@@ -95,15 +96,13 @@ const FileContext = (props: FileContextProps) => {
 interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
-  openFile: (a: string) => void;
+  openFile: (a: any) => void;
   updateEntryField: (
     entryIndex: number,
     fieldName: string,
     newData: any
   ) => void;
-  allTags: TagType[];
   makeNonEditable: () => void;
-  dispatch:any;
 }
 
 interface ReactTag {
@@ -117,15 +116,17 @@ const Entry = (props: EntryPropTypes) => {
     entryIndex,
     openFile,
     updateEntryField,
-    allTags,
     makeNonEditable,
-    dispatch,
   } = props;
+
+  const [{projectData}, dispatch] = useProjectState();
 
   const [value, setValue] = useState(entryData.description);
   const [showDescription, setShowDescription] = useState(
     !!entryData.description
   );
+
+  const allTags = projectData.tags;
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel

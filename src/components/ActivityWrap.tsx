@@ -50,7 +50,6 @@ const ActivityWrap = (props: any) => {
             entryIndex={activityData.index}
             openFile={openFile}
             updateEntryField={updateEntryField}
-            allTags={projectData.tags}
             makeNonEditable={() => setEditableStatus(activityData.index, false)}
             viewType={viewType}
           />

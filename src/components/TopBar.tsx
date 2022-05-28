@@ -31,7 +31,6 @@ interface TopbarProps {
 }
 
 
-
 const TopBar = (ProjectPropValues: TopbarProps) => {
 
   const {
@@ -45,7 +44,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setAddEntrySplash,
   } = ProjectPropValues;
 
-  const [{projectData, filterTags, filterRT}, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   //USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
@@ -146,7 +145,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           </div>
           )}
       </Flex>
-      <Flex style={{ 
+      {/* <Flex style={{ 
         height: filterTags.length > 0 ? 70 : 0 }}>
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
@@ -177,35 +176,10 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   </span>
                 </div>
               ))}
-            {filterRT && (
-              <div
-                key={`rt-${filterRT.title}`}
-                style={{
-                  display: 'inline-block',
-                  margin: 5,
-                  backgroundColor: 'gray',
-                  color: '#ffffff',
-                  borderRadius: 5,
-                  padding: 5,
-                }}
-              >
-              <span>{`Research Thread: ${filterRT.title}`}</span>
-              <span
-                onClick={() => {
-                  dispatch({
-                    type: 'THREAD_FILTER',
-                    filterRT: null,
-                  });
-                }}
-                style={{ padding: 5, cursor: 'pointer', fontWeight: 700 }}
-                >
-                  x
-                </span>
-              </div>
-            )}
+           
           </Box>
         </Flex>
-      </Flex>
+      </Flex> */}
     </Box>
   );
 };

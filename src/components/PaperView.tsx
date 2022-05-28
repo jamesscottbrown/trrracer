@@ -9,6 +9,8 @@ import Bubbles from '../Bubbles';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
+import { joinPath } from '../fileUtil';
+import { readFileSync } from '../fileUtil';
 
 
 const BubbleVisPaper = (props: any) => {
@@ -282,31 +284,18 @@ const BubbleVisPaper = (props: any) => {
     }).on('click', (event:any, d:any)=> {
       setHoverActivity(d);
     })
-  // }, [filteredActivities, eventArray]);
 
-  // return (
-  //   <div style={{ flex: flexAmount, paddingTop:'10px', width:svgWidth, display:'inline-block' }}>
-  //     <svg
-  //       ref={svgRef}
-  //       width={svgWidth}
-  //       height={height}
-  //       style={{ display: 'inline' }}
-  //     />
-  //     {/* <ToolTip activityData={hoverData} position={toolPosition}/> */}
-  //   </div>
-  // );
     return svgWrap;
 };
 
 const PaperView = (props: any) => {
   const { folderPath } = props;
+  const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+  const linkData = readFileSync(`${folderPath}/links.json`);
+  const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
-  const perf = `${path.join(folderPath, 'paper_2020_insights.pdf')}`;
-  const linkData = readSync(`${folderPath}/links.json`);
-  const anno = d3.groups(JSON.parse(linkData.value.toString()), (d) => d.page);
-
-  const [{ projectData, researchThreads, selectedThread }] = useProjectState();
-  
+  const [{ projectData, researchThreads, selectedThread }, dispatch] = useProjectState();
+ 
   const index = selectedThread || 0;
   const svgWidth = 600;
 
@@ -338,6 +327,10 @@ const PaperView = (props: any) => {
   const annoSvgRef = React.useRef(null);
   
   useEffect(() => {
+
+    if(selectedThread === null){
+      dispatch({ type: 'THREAD_FILTER', filterRT: researchThreads.research_threads[0], selectedThread: 0 });
+    }
 
     const pageRectData = [];
 
@@ -388,8 +381,6 @@ const PaperView = (props: any) => {
       : groupTest;
   
     group.attr('transform', 'translate(5, 100)');
-  
-    console.log('pagerectdata', pageRectData);
   
     const pages = group
       .selectAll('g.pages')
@@ -486,7 +477,6 @@ const PaperView = (props: any) => {
           overflow="auto"
         >
           <ThreadNav
-            researchTs={researchThreads ? researchThreads.research_threads : null}
             viewType="research threads"
           />
         </Box>

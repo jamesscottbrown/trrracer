@@ -16,35 +16,35 @@ import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
 import { stateUpdateWrapperUseJSON } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
+import { MdCancel } from 'react-icons/md';
 
 const LeftSidebar = (props: any) => {
   
   const { fromTop } = props;
   const [{projectData, researchThreads, artifactTypes, selectedThread, filterTags}, dispatch] = useProjectState();
- 
+
+  console.log('filtertagsssss',filterTags);
+
   const artifacts = projectData.entries.flatMap((f) => f.files);
-
-
   const [fileTypeShown, setFileTypeShown] = useState({
     title: 'all',
     matches: artifacts.length,
   });
 
-  const tags = projectData.tags.map((t) => {
+  const tags = projectData.tags.filter(f => filterTags?.indexOf(f.title) === -1).map((t) => {
     t.matches = projectData.entries.filter((f) => {
       return f.tags.indexOf(t.title) > -1;
     });
     return t;
   });
 
- // const sortedTags = tags.sort((a, b) => b.matches.length - a.matches.length);
+  console.log('tag lengthhhh',tags.length, tags, filterTags)
 
   const [ sortedTags, setSortedTags ] = useState(tags.sort((a, b) => b.matches.length - a.matches.length))
   
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
-      
       return { title: ty[0], matches: ty[1].length };
     });
 
@@ -52,7 +52,6 @@ const LeftSidebar = (props: any) => {
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
       let colorTest = artifactTypes.artifact_types.filter(f => f.type === ty[0])
-      
       return { title: ty[0] ? ty[0] : 'undefined', matches: ty[1].length, color: colorTest.length > 0 ? colorTest[0].color : 'gray'};
     });
 
@@ -66,7 +65,10 @@ const LeftSidebar = (props: any) => {
   return (
     <Box
       margin="8px"
-      style={{ paddingLeft: 5, paddingRight: 5 }}
+      style={{ 
+        paddingLeft: 5, 
+        paddingRight: 5 
+      }}
       flex={1}
       flexDirection="column"
       h={`calc(100vh - ${(fromTop + 5)}px)`}
@@ -76,7 +78,6 @@ const LeftSidebar = (props: any) => {
       borderRadius={6}
       p={3}
     >
-    
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType={"overview"}
@@ -128,9 +129,7 @@ const LeftSidebar = (props: any) => {
           cursor:'pointer'
         }} 
         onClick={()=>  {
-          console.log('click alpha')
           let temp = tags.sort((a, b) => a.title.localeCompare(b.title))
-          console.log(temp);
           setSortedTags(temp) }}
         />
       <FaSortAmountDown 
@@ -140,7 +139,6 @@ const LeftSidebar = (props: any) => {
           cursor:'pointer'
         }} 
         onClick={()=> {
-          console.log('click freq')
           let temp = tags.sort((a, b) => b.matches.length - a.matches.length)
           setSortedTags(temp)}}
         />
@@ -152,6 +150,31 @@ const LeftSidebar = (props: any) => {
         borderLeftWidth="1px"
         padding="3px"
       >
+        {
+          (filterTags.length > 0) && (
+            filterTags.map(ft => (
+              <div
+                style={{
+                  background:`#dadada90`, 
+                  padding:5, 
+                  borderRadius:5
+                }}
+              ><span>{`Tag filter: ${ft}`}</span>
+              <span
+                style={{
+                  float:'right', 
+                  padding:5,
+                  cursor:'pointer'
+                }}
+                onClick={()=> 
+                  dispatch({
+                  type: 'UPDATE_FILTER_TAGS',
+                  filterTags: filterTags.filter((f) => f != ft),
+                })}
+              ><MdCancel /></span></div>
+            ))
+          )
+        }
         {sortedTags.map((st: any, s: any) => (
           <React.Fragment key={`tag-${s}-frag`}>
             <SidebarButton isTag 
