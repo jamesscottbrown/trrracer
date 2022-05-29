@@ -133,7 +133,7 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads},dispatch] = useProjectState();
+  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads}, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -584,16 +584,20 @@ if (groupBy) {
 
   activityBubbles.bubbles.attr('fill', "gray").attr('fill-opacity', .1).attr('stroke', '#d3d3d3').attr('stroke-width', .5);
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-  artifactCircles.attr('r', d => (5)).attr('cx', d => d.x).attr('cy', d => d.y);
+  artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
   let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
   
   groupGroups.each((d, i, n)=> {
-    console.log('each', d3.select(n[i]));
+  
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
+
+    console.log('chosen',chosenRT)
+
     let rtActivities = chosenRT.evidence.map(m => m.activityTitle);
     let colorCirc = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.includes(c.title));
-    colorCirc.attr('fill', d.color);
+    colorCirc.attr('fill',  chosenRT.color);
+    colorCirc.selectAll('.artifact').attr('fill', chosenRT.color);
 
     let notColA = d3.select(n[i]).selectAll('.activity').filter(c => rtActivities.indexOf(c.title) === -1);
     notColA.selectAll('.artifact').attr('fill', '#d3d3d3');
@@ -849,7 +853,7 @@ return (
 
   <svg
     ref={svgRef}
-    width={svgWidth}
+    width={groupBy !== null ? (researchThreads.research_threads.length * 350) : 600}
     height={height}
     style={{ display: 'inline' }}
   />

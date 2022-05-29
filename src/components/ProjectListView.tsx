@@ -11,7 +11,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   } = ProjectPropValues;
 
 
-  const [{projectData, selectedArtifactEntry, selectedArtifactIndex},] = useProjectState();
+  const [{projectData},] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -51,7 +51,6 @@ const ProjectListView = (ProjectPropValues: any) => {
           setViewType={setViewType}
           viewType={viewType}
           index={i}
-          
         />
       ))}
     </div>
