@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Divider, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Textarea } from '@chakra-ui/react';
+import { Badge, Box, Button, Divider, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Tag, Textarea } from '@chakra-ui/react';
 import { FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
 import type { EntryType, ResearchThread } from './types';
@@ -90,6 +90,7 @@ type ThreadNavProps = {
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
   const [{projectData, researchThreads, selectedThread}, dispatch] = useProjectState();
+
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {
       if (i != selectedThread) {
@@ -113,6 +114,18 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     setDescription(inputValue);
   };
   const headerStyle = { fontSize: '19px', fontWeight: 600, cursor: 'pointer' };
+
+  const associatedTags = researchThreads?.research_threads.map((rt, i) => {
+    let tags = rt.evidence.flatMap(fm => {
+      let match = projectData.entries.filter(f => f.title === fm.activityTitle)[0].tags;
+      return match});
+    let groupTags = Array.from(d3.group(tags, d=> d));
+    let sorted = groupTags.sort((a, b)=> b[1].length - a[1].length);
+
+    return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
+  });
+
+  console.log('associated tags', associatedTags);
 
   return (
     <Box>
@@ -217,6 +230,21 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     fontSize:11
                     }}
                   >{rt.description}</div>
+                  <div>
+                    <span
+                    style={{fontSize:9, display:'block', fontWeight:800}}
+                    >{"Frequently occuring tags:"}</span>
+                    {associatedTags && (associatedTags[i].map(at => (
+                      <Badge
+                        size={"xs"}
+                        variant="outline"
+                        style={{
+                          margin:2, 
+                          fontSize:10
+                        }}
+                      >{at[0]}</Badge>
+                      )))}
+                  </div>
                 {/* {rt.associated_tags.map((t: any, i: number) => (
                   <div
                     key={`tag-${i}`}

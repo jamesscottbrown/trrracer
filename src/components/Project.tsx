@@ -150,11 +150,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView
-    }, dispatch
+    }, 
   ] = useProjectState();
 
   const [viewType, setViewType] = useState<string>('overview');
-  const [reversedOrder, setReversedOrder] = useState<boolean>(true);
+  // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
@@ -239,7 +239,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     timeFiltered.sort(
       (a, b) =>
-        (reversedOrder ? -1 : +1) *
+        // (reversedOrder ? -1 : +1) *
         (Number(new Date(a.date)) - Number(new Date(b.date)))
     );
 
@@ -248,10 +248,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
-    
-      //
-    // stateUpdateWrapperUseJSON(filteredActivities, queryFiltered, setfilteredActivities);
-    // setfilteredActivities(queryFiltered);
     return queryFiltered;
 
   }, [
