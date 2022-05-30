@@ -54,7 +54,10 @@ const ResearchThreadTypeTags = () => {
   const [{filterRT, researchThreads, threadTypeFilterArray}, dispatch] = useProjectState();
 
   let chosenThread = filterRT ? researchThreads.research_threads.filter(f => f.title === filterRT.title)[0] : null;
-  let threadTypeGroups = threadTypeFilterArray.map((ty)=> {
+  
+  let noTagsFilterArray = threadTypeFilterArray.filter(f => f.type !== 'tags');
+  
+  let threadTypeGroups = noTagsFilterArray.map((ty)=> {
     ty.matches = ty.type === 'tags' ?  (filterRT? filterRT.associatedKey : null) : chosenThread?.evidence.filter(f => f.type === ty.type);
     return ty;
   });

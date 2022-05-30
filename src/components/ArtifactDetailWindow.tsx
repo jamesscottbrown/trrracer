@@ -587,7 +587,6 @@ const DetailSidebar = (props: any) => {
             textAlign: 'center',
           }}
           onClick={() => {
-            // console.log(selectedArtifactIndex, selectedArtifactEntry, fragSelected)
             dispatch({
               type: 'BOOKMARK_FRAGMENT',
               selectedArtifactEntry: selectedArtifactEntry,

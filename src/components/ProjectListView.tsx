@@ -40,7 +40,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   };
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '10px', marginTop: '20px' }}>
       
       {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap

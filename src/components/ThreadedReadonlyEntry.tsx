@@ -189,9 +189,7 @@ const ThreadedArtifact = (props:any) => {
             />
           )}
     </Box>
-
   )
-
 }
 
 const ActivityTitleLogic = (props:any) => {
@@ -204,7 +202,6 @@ const ActivityTitleLogic = (props:any) => {
         }}
         onMouseOver={()=> {
           let circles = d3.selectAll('circle.all-activities');
-          
           circles.filter(f => f.title === entryData.title).attr('fill', 'red')
         }}
         onMouseLeave={()=> {

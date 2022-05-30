@@ -521,14 +521,14 @@ if (eventArray.length > 0) {
     (d: any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
     );
 
-    eventRects.attr('width', 900);
+    eventRects.attr('width', 1000);
     eventRects.style('fill-opacity', 0.05);
 
     if(!groupBy){
       let eventLine = eventRectGroups
         .append('line')
         .attr('x1', 0)
-        .attr('x2', 300)
+        .attr('x2', 400)
         .attr('y1', 0)
         .attr('y2', 0)
         .attr('stroke', 'gray')
@@ -540,7 +540,7 @@ if (eventArray.length > 0) {
       .join('text')
       .text((d) => d.event);
 
-      eventText.attr('x', 305);
+      eventText.attr('x', 405);
       eventText.attr('y', 4);
       eventText.style('font-size', 10);
       eventText.style('fill', 'gray');

@@ -16,7 +16,7 @@ interface BubbleDetProps {
 
 const ToolTip = (toolProp: any) => {
   const {hoverData, position} = toolProp;
-  console.log('in tooltip',hoverData)
+
   return <div
     id={'tooltip'}
     style={{
@@ -141,7 +141,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
     let highlightedActivities = allActivityGroups.filter((ac) => {
-      console.log('hopARRAY', hopArray)
+    
       return hopArray ? hopArray.map((m) => m.activity.title).includes(ac.title): []});
    
     highlightedActivities.select('.all-activities').attr('fill', "#F5F5F5").attr('fill-opacity', 1).attr('stroke-width', 1);;
@@ -198,7 +198,6 @@ const DetailBubble = (props: BubbleDetProps) => {
         .on('mouseover', (event, d) => {
             let hopData = hopArray.filter(f => f.artifactUid === d.artifact_uid);
             let parentData = d3.select(event.target.parentNode).data()[0];
-           
             setToolPosition([(parentData.x - (parentData.radius + 5)), parentData.y]);
             let hovData = {fileData: d, hopDataArray: hopData}
             setHoverData(hovData);
@@ -219,7 +218,7 @@ const DetailBubble = (props: BubbleDetProps) => {
                     hopReason: 'revisit hopped artifact',
                     }
                 ]
-            console.log(newHopData)
+          
             dispatch({
                 type: 'SELECTED_ARTIFACT',
                 selectedArtifactEntry: parentData,

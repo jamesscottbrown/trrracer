@@ -18,7 +18,9 @@ interface QueryViewProps {
 }
 
 const HoverTitle = (props: any) => {
-  const { title, entry, match, setViewType, matches, dispatch } = props;
+  const { title, entry, match, setViewType, matches } = props;
+
+  const [{}, dispatch] = useProjectState();
 
   const fileIndex =
     match.fileType === 'gdoc'
@@ -110,7 +112,6 @@ const QueryView = (props: any) => {
                     setViewType={setViewType}
                     matches={query.matches}
                   />
-
                   <div>
                     {tm.context.map((c, ci) => (
                       <div key={`div-cont-${ci}`}>
