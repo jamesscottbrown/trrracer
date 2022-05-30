@@ -18,9 +18,9 @@ interface QueryViewProps {
 }
 
 const HoverTitle = (props: any) => {
-  const { title, entry, match, setViewType, matches } = props;
+  const { title, entry, match, setViewType } = props;
 
-  const [{}, dispatch] = useProjectState();
+  const [{query}, dispatch] = useProjectState();
 
   const fileIndex =
     match.fileType === 'gdoc'
@@ -45,16 +45,24 @@ const HoverTitle = (props: any) => {
             <PopoverBody>
               <Button
                 onClick={() => {
+
+                  console.log('matches??',match)
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
                     selectedArtifactEntry: entry,
                     selectedArtifactIndex: fileIndex,
+                    hopArray: [ 
+                      { activity: 
+                        entry, 
+                        artifactUid: entry.files[fileIndex] ? entry.files[fileIndex].artifact_uid : null,
+                        hopReason: 'first hop',
+                      }]
                   });
                   dispatch({
                     type: 'UPDATE_GO_BACK',
                     goBackView: 'query',
-                    filterQuery: matches.map((m) => m.entry.title),
+                    filterQuery: query.matches.map((m) => m.entry.title),
                   });
                 }}
               >
@@ -73,6 +81,8 @@ const HoverTitle = (props: any) => {
 const QueryView = (props: any) => {
   const { setViewType } = props;
   const [{query}, dispatch] = useProjectState();
+
+  console.log('query matchessss',query.matches)
   
   return (
     <div>
@@ -110,7 +120,6 @@ const QueryView = (props: any) => {
                     entry={m.entry}
                     match={tm}
                     setViewType={setViewType}
-                    matches={query.matches}
                   />
                   <div>
                     {tm.context.map((c, ci) => (
