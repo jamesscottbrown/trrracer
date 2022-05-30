@@ -95,7 +95,13 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
             type: 'SELECTED_ARTIFACT',
             selectedArtifactEntry: entryData,
             selectedArtifactIndex: i,
-            hopArray: [entryData],
+            hopArray: [ 
+              { activity: 
+                entryData, 
+                artifactUid: entryData.files[i] ? entryData.files[i].artifact_uid : null,
+                hopReason: 'first hop',
+              }],
+           
           });
         }}
       >See in detail</Button>
@@ -114,9 +120,9 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i, dispatch } = props;
+  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i } = props;
 
-  const [{researchThreads}] = useProjectState();
+  const [{researchThreads}, dispatch] = useProjectState();
 
   return(
     <Box bg="#ececec" p={3}>
@@ -142,7 +148,12 @@ const ThreadedArtifact = (props:any) => {
                   type: 'SELECTED_ARTIFACT',
                   selectedArtifactEntry: entryData,
                   selectedArtifactIndex: i,
-                  hopArray: [entryData],
+                  hopArray: [ 
+                    { activity: 
+                      entryData, 
+                      artifactUid: entryData.files[i] ? entryData.files[i].artifact_uid : null,
+                      hopReason: 'first hop',
+                    }],
                 });
               }}
             >See in detail</Button>
@@ -211,7 +222,7 @@ const ThreadedReadonlyEntry = (props: any) => {
 
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
 
-  const [{ researchThreads, filterRT, folderPath, threadTypeFilterArray }] = useProjectState();
+  const [{ researchThreads, filterRT, folderPath, threadTypeFilterArray }, dispatch] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
   let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
@@ -359,10 +370,14 @@ const ThreadedReadonlyEntry = (props: any) => {
         )}
       </div>
       {
-        isEntryInAnyThreads.map(m => (
+        isEntryInAnyThreads.map((m, ti) => (
+          <React.Fragment
+          key={`tool-${ti}`}
+          >
           <Tooltip 
-          style={{padding:5}}
-          label={`Threaded in ${m.title}`}>
+            
+            style={{padding:5}}
+            label={`Threaded in ${m.title}`}>
           <div
           style={{
             fontSize:20, 
@@ -377,7 +392,7 @@ const ThreadedReadonlyEntry = (props: any) => {
           ><GiSewingString size={'20px'}/>
           </div>
           </Tooltip>
-         
+          </React.Fragment>
         ))
       }
       </div>

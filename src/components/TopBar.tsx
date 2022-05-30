@@ -107,22 +107,22 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               fontSize:"14px",
               paddingRight:15,
             }}> 
-            <FormControl display="flex" alignItems="center" marginBottom={10}>
-            <FormLabel
-              htmlFor="split-by"
-              mb="0"
-              textAlign="right"
-              fontSize="12px"
-            >
-              Hide all by default
-            </FormLabel>
-            <Switch
-              id="show-all"
-              onChange={(event) => {
-              console.log('SPLIT')
-              hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
-              }}
-            />
+          <FormControl display="flex" alignItems="center" marginBottom={10}>
+          <FormLabel
+            htmlFor="split-by"
+            mb="0"
+            textAlign="right"
+            fontSize="12px"
+          >
+            Hide all by default
+          </FormLabel>
+          <Switch
+            id="show-all"
+            onChange={(event) => {
+            console.log('SPLIT')
+            hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
+            }}
+          />
         </FormControl> 
             </div>
             {

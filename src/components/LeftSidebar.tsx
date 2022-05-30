@@ -22,9 +22,6 @@ const LeftSidebar = (props: any) => {
   
   const { fromTop } = props;
   const [{projectData, researchThreads, artifactTypes, selectedThread, filterTags}, dispatch] = useProjectState();
-
-  console.log('filtertagsssss',filterTags);
-
   const artifacts = projectData.entries.flatMap((f) => f.files);
   const [fileTypeShown, setFileTypeShown] = useState({
     title: 'all',
@@ -37,8 +34,6 @@ const LeftSidebar = (props: any) => {
     });
     return t;
   });
-
-  console.log('tag lengthhhh',tags.length, tags, filterTags)
 
   const [ sortedTags, setSortedTags ] = useState(tags.sort((a, b) => b.matches.length - a.matches.length))
   

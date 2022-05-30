@@ -594,13 +594,19 @@ if (groupBy) {
 
     console.log('chosen',chosenRT)
 
+    let linkDataBefore = [];
+    let linkDataAfter = [];
+
     let rtActivities = chosenRT.evidence.map(m => m.activityTitle);
     let colorCirc = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.includes(c.title));
     colorCirc.attr('fill',  chosenRT.color);
-    colorCirc.selectAll('.artifact').attr('fill', chosenRT.color);
+    colorCirc.attr('stroke-width', 1).attr('stroke', 'gray');
+
+    d3.select(n[i]).selectAll('.artifact').attr('fill', chosenRT.color);
 
     let notColA = d3.select(n[i]).selectAll('.activity').filter(c => rtActivities.indexOf(c.title) === -1);
     notColA.selectAll('.artifact').attr('fill', '#d3d3d3');
+
     let notCol = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.indexOf(c.title) === -1);
     notCol.attr('fill', '#d3d3d3');
   })
@@ -709,15 +715,13 @@ if (groupBy) {
         .attr('fill', researchThreads?.research_threads[selectedThread].color);
     }
       
-      let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
+    let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
 
-      console.log('divide date', divideDate)
-      console.log('chosenActivityDTA', chosenActivityData)
-      if(new Date(chosenActivityData.date) < divideDate){
-        linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
-      }else{
-        linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
-      }
+    if(new Date(chosenActivityData.date) < divideDate){
+      linkDataBefore.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+    }else{
+      linkDataAfter.push({coord: [chosenActivityData.x, chosenActivityData.y], date: chosenActivityData.date})
+    }
   })
 
   var lineGenerator = d3.line();

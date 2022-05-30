@@ -319,6 +319,56 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSONRT(newRT, state.folderPath, state);
       }
 
+      case 'UPDATE_THREAD_FIELD': {
+        const {threadIndex, fieldName, newValue } = action;
+        const newRT = { ...state.researchThreads };
+        if(fieldName === 'title'){
+          newRT.research_threads[threadIndex].title = newValue;
+        }
+        if(fieldName === 'description'){
+          newRT.research_threads[threadIndex].description = newValue;
+        }
+        if(fieldName === 'merge'){
+
+          console.log('theadIndex')
+          let filterThreads = newRT.research_threads
+          newRT.research_threads[threadIndex].actions.push({action: "merge", to: newValue, when: new Date()});
+          let newAddIndex = newRT.research_threads.indexOf(f => f.title === newValue);
+          console.log('newAddIndex',newAddIndex)
+          newRT.research_threads[newAddIndex].actions.push({action: "mergeAdd", from: newRT.research_threads[threadIndex].title, when: new Date()})
+          newRT.research_threads[newAddIndex].evidence = [...newRT.research_threads[newAddIndex], newRT.research_threads[threadIndex].evidence]
+        }
+    
+        return saveJSONRT(newRT, state.folderPath, state);
+      }
+
+      case 'MERGE_THREADS':{
+        const {fromThread, toThread} = action;
+
+        const newRT = { ...state.researchThreads };
+
+        let fromIndex = newRT.research_threads.map(m => m.title).indexOf(fromThread);
+        let toIndex = newRT.research_threads.map(m => m.title).indexOf(toThread);
+
+        newRT.research_threads[fromIndex].actions.push({action: "merge", to: newRT.research_threads[toIndex].title, when: new Date()});
+        
+        newRT.research_threads[toIndex].actions.push({action: "mergeAdd", from: newRT.research_threads[fromIndex].title, when: new Date()})
+      
+        let fromEvidence = newRT.research_threads[fromIndex].evidence.map(m => {
+          m.mergedFrom = fromThread;
+          return m;
+        })
+        let newEvidence = [...fromEvidence, ...newRT.research_threads[toIndex].evidence]
+        
+        
+        newRT.research_threads[toIndex].evidence = newEvidence;
+      
+    
+        return saveJSONRT(newRT, state.folderPath, state);
+
+
+      }
+
       case 'QUERY_TERM': {
         return {
           ...state,
