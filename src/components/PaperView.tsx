@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
@@ -17,28 +17,25 @@ const BubbleVisPaper = (props: any) => {
   const {
     svg,
     filteredActivities,
-    setHoverActivity,
-    flexAmount,
     selectedThreadData,
-    projectData,
     translateY,
     setTranslateY,
-    hoverData,
-    setHoverData,
-    toolPosition,
-    setToolPosition,
+    forced
   } = props;
+
+  console.log(svg,
+    filteredActivities,
+    selectedThreadData,
+    translateY,
+    setTranslateY,
+    forced)
+
+  const [{projectData}] = useProjectState();
   
   const {eventArray} = projectData;
 
   const width = 200;
   const height = 1000;
- 
-  let packedCircData = calcCircles(projectData.entries);
-
-  d3.select('#tooltip').style('opacity', 0);
-
-  const forced = new ForceMagic(packedCircData, width, height);
 
   const svgWrap = svg;
   svgWrap.selectAll('*').remove();
@@ -237,8 +234,8 @@ const BubbleVisPaper = (props: any) => {
     
       highlightedActivities
           .on('mouseover', (event, d) => {
-            setToolPosition([d.x, d.y])
-            setHoverData(d);
+            // setToolPosition([d.x, d.y])
+       
             d3.select('#tooltip').style('opacity', 1);
 
       underWrap.append('line')
@@ -282,109 +279,30 @@ const BubbleVisPaper = (props: any) => {
       d3.select('#date_label_bg').remove();
 
     }).on('click', (event:any, d:any)=> {
-      setHoverActivity(d);
+      // setHoverActivity(d);
     })
 
     return svgWrap;
 };
 
-const PaperView = (props: any) => {
-  const { folderPath } = props;
-  const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-  const linkData = readFileSync(`${folderPath}/links.json`);
-  const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
+const SmallPageNavigation = (props: any) => {
 
-  const [{ projectData, researchThreads, selectedThread }, dispatch] = useProjectState();
- 
-  const index = selectedThread || 0;
-  const svgWidth = 600;
+  const { anno, pageNumber } = props;
 
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
+  const svgSmallPagesRef = React.useRef(null);
+  const smallRectHeight = 70;
 
-  const [translateY, setTranslateY] = useState(35);
-  const [hoverData, setHoverData] = useState(projectData.entries[0]);
-  const [toolPosition, setToolPosition] = useState([0, 0]);
-
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-    setPageNumber(1);
-  }
-
-  function changePage(offset: any) {
-    setPageNumber((prevPageNumber) => prevPageNumber + offset);
-  }
-
-  function previousPage() {
-    changePage(-1);
-  }
-
-  function nextPage() {
-    changePage(1);
-  }
-
-  const svgRef = React.useRef(null);
-  const annoSvgRef = React.useRef(null);
+  const groupTest = d3.select(svgSmallPagesRef.current).select('.text-group');
   
-  useEffect(() => {
-
-    if(selectedThread === null){
-      dispatch({ type: 'THREAD_FILTER', filterRT: researchThreads.research_threads[0], selectedThread: 0 });
-    }
-
-    const pageRectData = [];
-
-    for (let i = 1; i < numPages; i += 1) {
-      const annoTemp = anno.filter((a: any) => a[0] === i);
-      pageRectData.push({
-        pageIndex: i,
-        anno: annoTemp.length > 0 ? annoTemp[0][1] : [],
-      });
-    }
-
-    const bigRectHeight = 792;
-    const bigRectWidth = 612;
-
-    ////TRY THIS HERE
-    let selectedThreadData = researchThreads?.research_threads[index];
-   
-    const smallRectHeight = 70;
-    const yScaleSmall = d3
-    .scaleLinear()
-    .domain([0, anno[0][1][0]['pdf-dim'][3]])
-    .range([smallRectHeight, 0]);
-    
-    const svgWrapTest = d3.select(svgRef.current).select('#bubble-wrap');
-    const svgWrap = svgWrapTest.empty() ? d3.select(svgRef.current).append('g').attr('id', 'bubble-wrap') : svgWrapTest;
-
-    svgWrap.selectAll('*').remove();
-
-    BubbleVisPaper({
-      svg:svgWrap, 
-      filteredActivities:projectData.entries,
-      setHoverActivity:2,
-      flexAmount:2,
-      selectedThreadData: selectedThreadData,
-      projectData:projectData,
-      translateY:translateY, 
-      setTranslateY: setTranslateY,
-      hoverData: hoverData, 
-      setHoverData: setHoverData,
-      toolPosition: toolPosition, 
-      setToolPosition: setToolPosition
-    });
-  
-    const groupTest = d3.select(svgRef.current).select('.text-group');
-  
-    const group = groupTest.empty()
-      ? d3.select(svgRef.current).append('g').classed('text-group', true)
+  const group = groupTest.empty()
+      ? d3.select(svgSmallPagesRef.current).append('g').classed('text-group', true)
       : groupTest;
   
-    group.attr('transform', 'translate(5, 100)');
+  group.attr('transform', 'translate(5, 100)');
   
-    const pages = group
+  const pages = group
       .selectAll('g.pages')
-      .data(pageRectData)
+      .data(svgSmallPagesRef)
       .join('g')
       .classed('pages', true);
     pages.attr(
@@ -392,13 +310,13 @@ const PaperView = (props: any) => {
       (d, i) => `translate(0, ${i * (smallRectHeight + 5)})`
     );
   
-    const rect = pages
+  const rect = pages
       .selectAll('rect.pag')
       .data((d: any) => [d])
       .join('rect')
       .classed('pag', true);
   
-    rect.attr('width', 50).attr('height', smallRectHeight);
+  rect.attr('width', 50).attr('height', smallRectHeight);
   
     rect.attr('fill', '#C5C5C5');
     rect.attr('fill-opacity', 0.5);
@@ -431,40 +349,243 @@ const PaperView = (props: any) => {
       .attr('fill', '#FFF')
       .attr('opacity', 0.4);
 
-    const yScaleBig = d3
-      .scaleLinear()
-      .domain([0, anno[0][1][0]['pdf-dim'][3]])
-      .range([bigRectHeight, 0]);
-    const xScaleBig = d3
-      .scaleLinear()
-      .domain([0, anno[0][1][0]['pdf-dim'][2]])
-      .range([0, bigRectWidth]);
+  const yScaleSmall = d3
+    .scaleLinear()
+    .domain([0, anno[0][1][0]['pdf-dim'][3]])
+    .range([smallRectHeight, 0]);
 
-    const svgAnno = d3.select(annoSvgRef.current);
-    svgAnno.selectAll('*').remove();
+  return (
+    <div
+      style={{
+        height:"100%",
+      }}
+    >
+      <svg 
+        ref={svgSmallPagesRef} 
+        style={{
+          height:"100%",
+          width:"200px",
+          backgroundColor:"red",
+        }}
+      />
+    </div>
+  )
+}
 
-    if (pageRectData.length > 0) {
-      const currentRectData = pageRectData.filter(
-        (f) => f.pageIndex === pageNumber
-      )[0];
+const PageNavigation = (props:any) => {
 
-      const overlayRect = svgAnno
-        .selectAll('rect.annotation_overlay')
-        .data(currentRectData ? currentRectData.anno : [])
-        .join('rect')
-        .classed('annotation_overlay', true);
+  const { perf, onDocumentLoadSuccess, pageNumber, numPages, previousPage, nextPage, pageRectData, anno, index } = props;
+  const [{researchThreads}] = useProjectState();
 
-        if (currentRectData) {
-          overlayRect
-            .attr('width', (d: any) => d.position[2] - d.position[0])
-            .attr('height', 10)
-            .attr('x', (d: any) => xScaleBig(d.position[0]))
-            .attr('y', (d: any) => yScaleBig(d.position[3]))
-            .attr('fill', researchThreads.research_threads[index].color)
-            .style('fill-opacity', 0.5);
-        }
+  const bigRectHeight = 792;
+  const bigRectWidth = 612;
+  const annoSvgRef = React.useRef(null);
+
+  const yScaleBig = d3
+  .scaleLinear()
+  .domain([0, anno[0][1][0]['pdf-dim'][3]])
+  .range([bigRectHeight, 0]);
+
+  const xScaleBig = d3
+    .scaleLinear()
+    .domain([0, anno[0][1][0]['pdf-dim'][2]])
+    .range([0, bigRectWidth]);
+
+  const svgAnno = d3.select(annoSvgRef.current);
+  svgAnno.selectAll('*').remove();
+
+  if (pageRectData.length > 0) {
+    const currentRectData = pageRectData.filter(
+      (f) => f.pageIndex === pageNumber
+    )[0];
+
+    const overlayRect = svgAnno
+      .selectAll('rect.annotation_overlay')
+      .data(currentRectData ? currentRectData.anno : [])
+      .join('rect')
+      .classed('annotation_overlay', true);
+
+      if (currentRectData) {
+        overlayRect
+          .attr('width', (d: any) => d.position[2] - d.position[0])
+          .attr('height', 10)
+          .attr('x', (d: any) => xScaleBig(d.position[0]))
+          .attr('y', (d: any) => yScaleBig(d.position[3]))
+          .attr('fill', researchThreads.research_threads[index].color)
+          .style('fill-opacity', 0.5);
       }
-    }, [numPages, pageNumber, anno]);
+  }
+
+  return(
+    <div
+      id="pdf-wrap"
+      style={{
+        width: '650px',
+        height: 'auto',
+        backgroundColor:'blue'
+      }}
+    >
+      <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
+        <svg
+          style={{
+            position: 'absolute',
+            width: 612,
+            height: 792,
+            zIndex: 1000,
+          }}
+          ref={annoSvgRef}
+        />
+          <Page pageNumber={pageNumber} />
+      </Document>
+      <div id="button-wrap" style={{ zIndex: 1050 }}>
+        <p
+          style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}
+        >
+          Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
+        </p>
+        <button
+          type="button"
+          disabled={pageNumber <= 1}
+          onClick={previousPage}
+          style={{
+            marginRight: '10px',
+            backgroundColor: '#818589',
+            color: 'white',
+            border: 'none',
+            padding: '5px 10px',
+            width: '100px',
+            cursor: 'pointer',
+            boxShadow: '2px 2px 2px 1px #ccc',
+          }}
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          disabled={pageNumber >= numPages}
+          onClick={nextPage}
+          style={{
+            marginRight: '10px',
+            backgroundColor: '#818589',
+            color: 'white',
+            border: 'none',
+            padding: '5px 10px',
+            width: '100px',
+            cursor: 'pointer',
+            boxShadow: '2px 2px 2px 1px #ccc',
+          }}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )
+
+}
+
+const PaperView = (props: any) => {
+  const { folderPath } = props;
+  const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+  const linkData = readFileSync(`${folderPath}/links.json`);
+  const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
+
+  const [{ projectData, researchThreads, selectedThread }, dispatch] = useProjectState();
+ 
+  const index = selectedThread || 0;
+  const svgWidth = 600;
+
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
+  
+
+  const [translateY, setTranslateY] = useState(35);
+  const [hoverData, setHoverData] = useState(projectData.entries[0]);
+  const [toolPosition, setToolPosition] = useState([0, 0]);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+    setPageNumber(1);
+  }
+
+  function changePage(offset: any) {
+    setPageNumber((prevPageNumber) => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
+  }
+
+  const pageRectData = useMemo(() => {
+
+    const pageData = [];
+
+    for (let i = 1; i < numPages; i += 1) {
+      const annoTemp = anno.filter((a: any) => a[0] === i);
+      pageData.push({
+        pageIndex: i,
+        anno: annoTemp.length > 0 ? annoTemp[0][1] : [],
+      });
+    }
+
+    return pageData;
+  }, [numPages]);  
+  
+
+  // const svgBubbleRef = React.useRef(null);
+ 
+  // const width = 200;
+  // const height = 1000;
+
+    ////TRY THIS HERE
+  // let selectedThreadData = researchThreads?.research_threads[index];
+  
+
+  // let packedCircData = calcCircles(projectData.entries);
+
+  // d3.select('#tooltip').style('opacity', 0);
+
+  // const svgWrapTest = d3.select(svgBubbleRef.current).select('#bubble-wrap');
+  // const svgWrap = svgWrapTest.empty() ? d3.select(svgBubbleRef.current).append('g').attr('id', 'bubble-wrap') : svgWrapTest;
+
+  // // const forced = new ForceMagic(packedCircData, width, height);
+  // const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
+ 
+  // useEffect(() => {
+
+  //   if(selectedThread === null){
+  //     dispatch({ type: 'THREAD_FILTER', filterRT: researchThreads.research_threads[0], selectedThread: 0 });
+  //   }
+
+  
+
+
+    
+  //   svgWrap.selectAll('*').remove();
+  
+ 
+
+ 
+
+  
+  //     }
+  //   }, [numPages, pageNumber, anno]);
+
+  // useEffect(() => {
+  //   BubbleVisPaper({
+  //     svg: svgWrap, 
+  //     filteredActivities:projectData.entries,
+  //     setHoverActivity:2,
+  //     selectedThreadData: selectedThreadData,
+  //     translateY:translateY, 
+  //     setTranslateY: setTranslateY,
+  //     setToolPosition: setToolPosition,
+  //     forced: forced,
+  //   });
+  // }, [forced])
   
     return (
       <Flex position="relative" top={70}>
@@ -482,75 +603,37 @@ const PaperView = (props: any) => {
         </Box>
         <Box flex={4} h="calc(100vh - 80px)" overflowY="auto" marginTop={15}>
          
-          <svg 
-            ref={svgRef} 
+          {/* <svg 
+            ref={svgBubbleRef} 
             style={{
               height:"100%",
               width:"100%"
             }}
-          />
+          /> */}
+
+
           <div
-            id="pdf-wrap"
-            style={{
-              width: '650px',
-              height: 'auto',
-            }}
-          >
-            <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
-              <svg
-                style={{
-                  position: 'absolute',
-                  width: 612,
-                  height: 792,
-                  zIndex: 1000,
-                }}
-                ref={annoSvgRef}
-              />
-              <Page pageNumber={pageNumber} />
-            </Document>
-  
-            <div id="button-wrap" style={{ zIndex: 1050 }}>
-              <p
-                style={{ textAlign: 'center', fontSize: '12px', padding: '5px' }}
-              >
-                Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-              </p>
-              <button
-                type="button"
-                disabled={pageNumber <= 1}
-                onClick={previousPage}
-                style={{
-                  marginRight: '10px',
-                  backgroundColor: '#818589',
-                  color: 'white',
-                  border: 'none',
-                  padding: '5px 10px',
-                  width: '100px',
-                  cursor: 'pointer',
-                  boxShadow: '2px 2px 2px 1px #ccc',
-                }}
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                disabled={pageNumber >= numPages}
-                onClick={nextPage}
-                style={{
-                  marginRight: '10px',
-                  backgroundColor: '#818589',
-                  color: 'white',
-                  border: 'none',
-                  padding: '5px 10px',
-                  width: '100px',
-                  cursor: 'pointer',
-                  boxShadow: '2px 2px 2px 1px #ccc',
-                }}
-              >
-                Next
-              </button>
-            </div>
+          style={{
+            height:'100%',
+            width:500,
+            backgroundColor:'yellow',
+          }}>
+            
           </div>
+          {/* <SmallPageNavigation 
+            anno={anno} 
+            pageNumber={pageNumber} /> */}
+          <PageNavigation 
+            perf={perf} 
+            index={index}
+            onDocumentLoadSuccess={onDocumentLoadSuccess} 
+            pageNumber={pageNumber} 
+            numPages={numPages} 
+            previousPage={previousPage} 
+            nextPage={nextPage}
+            pageRectData={pageRectData}
+            anno={anno}
+          />
         </Box>
       </Flex>
     );
