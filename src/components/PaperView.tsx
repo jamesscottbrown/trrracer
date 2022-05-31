@@ -391,6 +391,11 @@ const PageNavigation = (props:any) => {
     .domain([0, anno[0][1][0]['pdf-dim'][2]])
     .range([0, bigRectWidth]);
 
+  useEffect(()=> {
+
+
+
+   
   const svgAnno = d3.select(annoSvgRef.current);
   svgAnno.selectAll('*').remove();
 
@@ -415,6 +420,8 @@ const PageNavigation = (props:any) => {
           .style('fill-opacity', 0.5);
       }
   }
+
+}, [numPages, pageNumber, anno])
 
   return(
     <div
@@ -623,7 +630,7 @@ const PaperView = (props: any) => {
           {/* <SmallPageNavigation 
             anno={anno} 
             pageNumber={pageNumber} /> */}
-          <PageNavigation 
+          {/* <PageNavigation 
             perf={perf} 
             index={index}
             onDocumentLoadSuccess={onDocumentLoadSuccess} 
@@ -633,7 +640,7 @@ const PaperView = (props: any) => {
             nextPage={nextPage}
             pageRectData={pageRectData}
             anno={anno}
-          />
+          /> */}
         </Box>
       </Flex>
     );

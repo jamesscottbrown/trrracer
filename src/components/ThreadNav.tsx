@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContextElectron';
+import { useProjectState } from './ProjectContext';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
 
