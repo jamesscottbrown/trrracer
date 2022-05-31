@@ -44,7 +44,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setAddEntrySplash,
   } = ProjectPropValues;
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ projectData, isReadOnly }, dispatch] = useProjectState();
 
   //USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
@@ -70,16 +70,24 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         align="center"
       >
         <Heading as="h1">
-          <Editable
-            value={newTitle}
-            onChange={(val) => setNewTitle(val)}
-            onCancel={() => setNewTitle(projectData.title)}
-            onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
-          >
-            <EditablePreview />
-            <EditableInput />
-          </Editable>
+          {
+            isReadOnly ? <span
+            style={{fontSize:20, fontWeight:800, margin:10}}
+            >{projectData.title}</span>
+            :
+            <Editable
+              value={newTitle}
+              onChange={(val) => setNewTitle(val)}
+              onCancel={() => setNewTitle(projectData.title)}
+              onSubmit={(val) => dispatch({ type: 'UPDATE_TITLE', title: val })}
+            >
+              <EditablePreview />
+              <EditableInput />
+            </Editable>
+          }
+          
         </Heading>
+
         <div style={{ marginLeft: '20px', marginRight:'20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
@@ -132,16 +140,20 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 >{`${filteredActivities.length} Activities Shown  `}</div> 
               )
             }
+            {
+              !isReadOnly && (
+                <Button
+                marginLeft="3px"
+                alignSelf="end"
+                // onClick={addEntry}
+                onClick={(event) => setAddEntrySplash(true)}
+                type="button"
+                >
+                  <FaPlus /> Add activity
+                </Button>
+              )
+            }
            
-            <Button
-              marginLeft="3px"
-              alignSelf="end"
-              // onClick={addEntry}
-              onClick={(event) => setAddEntrySplash(true)}
-              type="button"
-            >
-              <FaPlus /> Add activity
-            </Button>
           </div>
           )}
       </Flex>

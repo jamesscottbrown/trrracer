@@ -258,7 +258,7 @@ const EditableThread = (threadProps: any) => {
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
-  const [{projectData, researchThreads, selectedThread}, dispatch] = useProjectState();
+  const [{ projectData, researchThreads, selectedThread, isReadOnly }, dispatch] = useProjectState();
   
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {
@@ -280,8 +280,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     let test = f.actions.map(m => m.action);
     return test.indexOf("merge") === -1;
   });
-
-  
 
   const handleNameChange = (e: any) => {
     const inputValue = e.target.value;
@@ -366,39 +364,40 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                   >
                     {`${rt.title} `}
                   </span>
-                  <span>
-                  <Popover>
-                      <PopoverTrigger>
-                      <Button 
+                  {!isReadOnly && (
+                    <span>
+                      <Popover>
+                          <PopoverTrigger>
+                          <Button 
+                            size={'xs'}
+                            style={{display:'inline'}}
+                          >Cite thread</Button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <PopoverBody>
+                              copy this ref: {rt.rt_id}
+                            </PopoverBody>
+                          </PopoverContent>
+                      </Popover>
+                    </span>
+                  )}
+                </div>
+                {!isReadOnly && (
+                  <div style={{display:'inline', float:'right'}}>
+                    <span style={{display:'inline'}} >
+                      <Button
                         size={'xs'}
                         style={{display:'inline'}}
-                      >Cite thread</Button>
-                      </PopoverTrigger>
-                      <PopoverContent>
-                        <PopoverBody>
-                          copy this ref: {rt.rt_id}
-                        </PopoverBody>
-                      </PopoverContent>
-                  </Popover>
-                  </span>
-                </div>
-              <div style={{display:'inline', float:'right'}}>
-                <span
-                  style={{display:'inline'}}
-                  >
-                    <Button
-                      size={'xs'}
-                      style={{display:'inline'}}
-                      onClick={()=> {
-                        setEditMode(i);
-                        console.log('editmode',editMode);
-                        //dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
-                      }}
-                      ><FaEdit />
-                    </Button>
-               
+                        onClick={()=> {
+                          setEditMode(i);
+                          console.log('editmode',editMode);
+                          //dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
+                        }}>
+                          <FaEdit />
+                      </Button>
                     </span>
                     </div>
+                    )}
                     <span
                         style={{fontSize:10, fontWeight: 800}}
                     >{`${rt.evidence.length} pieces of evidence`}</span>
@@ -415,8 +414,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         (associatedTags && editMode != i ) && (
                           <div>
                           <span
-                        style={{fontSize:9, display:'block', fontWeight:800}}
-                        >{"Frequently occuring tags:"}</span>
+                            style={{fontSize:9, display:'block', fontWeight:800}}
+                            >{"Frequently occuring tags:"}
+                          </span>
                         {associatedTags[i].map((at, j) => (
                           <Badge
                             key={`tag-${j}`}
@@ -462,7 +462,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
 
       {viewType != 'detail' && (
         <>
-          <Button
+        {
+          !isReadOnly && (
+            <Button
             style={{
               fontSize: '11px',
               borderRadius: 5,
@@ -478,6 +480,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
             {showCreateThread ? 'Cancel thread' : `Start a thread `}
             <FaPlus style={{ paddingLeft: 5 }} />
           </Button>
+          )
+        }
+        
 
           {showCreateThread && (
             <Box style={{ marginTop: 10 }}>

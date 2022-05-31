@@ -66,7 +66,8 @@ const appStateReducer = getAppStateReducer(
   readProjectFile,
   saveJSON,
   saveJSONRT,
-  deleteFileAction
+  deleteFileAction,
+  true,
 );
 
 

@@ -27,7 +27,7 @@ const ActivityWrap = (props: any) => {
     viewType,
   } = props;
 
-  const [{projectData, folderPath, researchThreads, filterRT}, dispatch] = useProjectState();
+  const [{folderPath, researchThreads, filterRT}, dispatch] = useProjectState();
   const myRef = useRef(null);
 
   const updateEntryField = (
@@ -37,6 +37,7 @@ const ActivityWrap = (props: any) => {
   ) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
   };
+
   if(editable[activityData.index]){
 
     return (
@@ -102,9 +103,6 @@ const ActivityWrap = (props: any) => {
           setViewType={setViewType}
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
-          folderPath={folderPath} 
-          dispatch={dispatch} 
-          researchThreads={researchThreads}
         />
         
       </div>

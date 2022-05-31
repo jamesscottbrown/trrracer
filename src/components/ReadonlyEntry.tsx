@@ -16,6 +16,7 @@ import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
+import { useProjectState } from './ProjectContext';
 
 
 interface EntryPropTypes {
@@ -24,9 +25,6 @@ interface EntryPropTypes {
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
   viewType: any;
-  dispatch: any;
-  researchThreads:any;
-  folderPath:string;
 }
 
 const converter = new Showdown.Converter({
@@ -105,7 +103,9 @@ type ActivityTitlePopoverLogicProps = {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable, openFile, setViewType, viewType, researchThreads, folderPath, dispatch } = props;
+  const { entryData, makeEditable, openFile, setViewType, viewType } = props;
+
+  const [{researchThreads, folderPath, isReadOnly}, dispatch] = useProjectState();
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
@@ -142,7 +142,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             researchThreads={researchThreads}
           />
         )}
-         {makeEditable && (
+         {(!isReadOnly && makeEditable) && (
           <Button 
           leftIcon={<EditIcon />} 
           onClick={makeEditable}

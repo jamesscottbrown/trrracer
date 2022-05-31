@@ -325,6 +325,7 @@ const initialState: ProjectState = {
   researchThreads:null,
   artifactTypes:null,
   query:null,
+  isReadOnly:false
 };
 
 export function ProjectStateProvider({ children }) {

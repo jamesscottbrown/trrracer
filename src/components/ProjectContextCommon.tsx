@@ -32,7 +32,7 @@ const pickTagColor = (tags: TagType[]) => {
   return availableColors[Math.floor(Math.random() * availableColors.length)];
 };
 
-export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, deleteFileAction: any) => {
+export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, deleteFileAction: any, isReadOnly: boolean) => {
 
   console.log('project state reducer in project context common');
   
@@ -58,7 +58,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
-    const getData = async (action) => {
+    const getData = async (action:any, isReadOnly:boolean) => {
       const baseDir = action.folderName;
 
       let roleData;
@@ -69,7 +69,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let google_comms: any;
 
       let newEntries = [...action.projectData.entries];
-
+     
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
         console.log('yes to google em file');
@@ -181,6 +181,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
+        isReadOnly: isReadOnly,
         googleData: google_data,
         txtData: txt_data,
         researchThreads: research_threads,
@@ -382,7 +383,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         // loading a project requires waiting for files to load over the network
         // the simplest way to handle this is to handle this in an async function,
         // and dispatch a new message to save the project data when it is ready
-        getData(action).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
+        getData(action, isReadOnly).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
         return state;
       }
       case 'SAVE_DATA': {
