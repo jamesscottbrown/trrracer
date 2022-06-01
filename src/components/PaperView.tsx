@@ -383,6 +383,8 @@ const PageNavigation = (props:any) => {
   const { perf, onDocumentLoadSuccess, pageNumber, numPages, previousPage, nextPage, pageRectData, anno, index } = props;
   const [{researchThreads}] = useProjectState();
 
+  console.log('PERF', perf);
+
   const bigRectHeight = 792;
   const bigRectWidth = 612;
   const annoSvgRef = React.useRef(null);
@@ -495,10 +497,15 @@ const PageNavigation = (props:any) => {
 const PaperView = (props: any) => {
   const { folderPath } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-  const linkData = readFileSync(`${folderPath}/links.json`);
-  const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
+  // const linkData = readFileSync(`${folderPath}/links.json`);
+  // console.log('LINKDATA',linkData);
+  // console.log('LINKDATA', JSON.parse(linkData));
+  // const anno = d3.groups(JSON.parse(linkData), (d) => d.page);
 
-  const [{ projectData, researchThreads, selectedThread }, dispatch] = useProjectState();
+  const [{ projectData, researchThreads, selectedThread, linkData }, dispatch] = useProjectState();
+
+  console.log('LINK DATA', linkData);
+  const anno = d3.groups(linkData, (d) => d.page);
  
   const index = selectedThread || 0;
   const svgWidth = 600;
@@ -568,17 +575,7 @@ const PaperView = (props: any) => {
   //     dispatch({ type: 'THREAD_FILTER', filterRT: researchThreads.research_threads[0], selectedThread: 0 });
   //   }
 
-  
-
-
-    
   //   svgWrap.selectAll('*').remove();
-  
- 
-
- 
-
-  
   //     }
   //   }, [numPages, pageNumber, anno]);
 
@@ -633,7 +630,7 @@ const PaperView = (props: any) => {
             pageNumber={pageNumber} 
             pageRectData={pageRectData}
             index={index}
-            />
+          />
           <PageNavigation 
             perf={perf} 
             index={index}

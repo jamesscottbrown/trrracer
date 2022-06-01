@@ -67,7 +67,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let artifact_types: any;
       let google_em: any;
       let google_comms: any;
-
+      let linkData: any;
       let newEntries = [...action.projectData.entries];
      
       try {
@@ -114,6 +114,14 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       } catch (e) {
         artifact_types = null;
         console.error('could not load artifact types');
+      }
+
+      try {
+        linkData = await readProjectFile(baseDir, 'links.json', null);
+        console.log('yes to linkData');
+      } catch (e) {
+        linkData = null;
+        console.error('could not load linkData');
       }
 
       try {
@@ -192,6 +200,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         filterRT: null,
         filterQuery: null,
         query: null,
+        linkData:linkData,
         hopArray: [],
         goBackView: 'overview',
         artifactTypes: artifact_types,
