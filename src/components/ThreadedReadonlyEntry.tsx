@@ -219,7 +219,7 @@ const ThreadedReadonlyEntry = (props: any) => {
 
   const { entryData, makeEditable, openFile, setViewType, viewType } = props;
 
-  const [{ researchThreads, filterRT, folderPath, threadTypeFilterArray }] = useProjectState();
+  const [{ researchThreads, filterRT, folderPath, isReadOnly }] = useProjectState();
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
   let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
@@ -275,7 +275,7 @@ const ThreadedReadonlyEntry = (props: any) => {
           <div>
             <ActivityTitleLogic color={selectedThread.color} entryData={entryData} /> 
             <div style={{display:"inline", float:'right'}}>
-            {makeEditable && (
+            {(makeEditable && !isReadOnly) && (
                     <Button 
                       size={'sm'}
                       leftIcon={<EditIcon />} 
@@ -283,17 +283,21 @@ const ThreadedReadonlyEntry = (props: any) => {
                       Edit
                     </Button>
                   )}
-                  <Tooltip label="Remove from thread">
-                    <Button
-                      size={'sm'}
-                      style={{
-                        marginLeft:'5px'
-                        // backgroundColor: '#ff726f',
-                        // borderRadius: 30
-                      }}
-                    ><GiCancel size={18}/>
-                    </Button> 
-                  </Tooltip>
+                  {
+                    !isReadOnly && (
+                    <Tooltip label="Remove from thread">
+                        <Button
+                          size={'sm'}
+                          style={{
+                            marginLeft:'5px'
+                            // backgroundColor: '#ff726f',
+                            // borderRadius: 30
+                          }}
+                          ><GiCancel size={18}/>
+                        </Button> 
+                      </Tooltip>
+                    )}
+                  
                  
             </div>
           </div>

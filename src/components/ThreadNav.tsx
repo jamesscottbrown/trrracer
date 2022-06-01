@@ -350,7 +350,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       })}
                   ><MdCancel size={30} /></div>
                 )}
-                <div style={{display:'inline'}}>
+                <div style={{
+                  display: isReadOnly ? 'block' : 'inline'
+                  }}>
                   <span
                     style={{ 
                       cursor: 'pointer', 

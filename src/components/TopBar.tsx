@@ -127,7 +127,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           <Switch
             id="show-all"
             onChange={(event) => {
-            console.log('SPLIT')
             hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
             }}
           />

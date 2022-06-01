@@ -361,14 +361,10 @@ const DetailSidebar = (props: any) => {
     fragSelected,
     setFragSelected,
     selectedArtifactEntry,
-    selectedArtifactIndex,
-    researchThreads, 
-    projectData, 
-    hopArray,
-    dispatch
+    selectedArtifactIndex
   } = props;
 
-  // const [{ researchThreads, projectData, hopArray }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, hopArray, isReadOnly }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
@@ -431,7 +427,8 @@ const DetailSidebar = (props: any) => {
               <span
                 style={{cursor:'pointer', display:'inline', marginLeft:10}}
                 onClick={()=> showFileList ? setShowFileList(false) : setShowFileList(true)}
-              >{showFileList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}</span>
+              >{showFileList ? <FaEye style={{cursor:'pointer', display:'inline'}}/> : <FaEyeSlash style={{cursor:'pointer', display:'inline'}}/>}
+              </span>
             </span>
           </div>
             {
@@ -475,8 +472,6 @@ const DetailSidebar = (props: any) => {
                 </Box>
               )
             }
-            
-         
         </Box>
       </Box>
       {
@@ -493,14 +488,19 @@ const DetailSidebar = (props: any) => {
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
           Activity Tags
-          <Button
-            style={{ marginLeft: '10px' }}
-            onClick={() => {
-              showTagAdd ? setShowTagAdd(false) : setShowTagAdd(true);
-            }}
-          >
-            Edit
-          </Button>
+          {
+            !isReadOnly && (
+              <Button
+                style={{ marginLeft: '10px' }}
+                onClick={() => {
+                  showTagAdd ? setShowTagAdd(false) : setShowTagAdd(true);
+                }}
+              >
+                Edit
+              </Button>
+            )
+          }
+      
           <Button
             style={{cursor:'pointer', display:'inline', marginLeft:10}}
             onClick={()=> showTagList ? setShowTagList(false) : setShowTagList(true)}
@@ -560,8 +560,10 @@ const DetailSidebar = (props: any) => {
           )
         }
       </Box>
+      
 
-      {(fragSelected != null && fragSelected.length > 1) && (
+     
+      {(!isReadOnly && fragSelected != null && fragSelected.length > 1) && (
         <div style={{ padding: '5px', marginTop:10 }}>
           <div
           style={{ fontSize:20, fontWeight:600 }}
@@ -569,99 +571,103 @@ const DetailSidebar = (props: any) => {
           <span style={{ backgroundColor: '#FFFBC8' }}>{fragSelected}</span>
         </div>
       )}
-
-    <Box
-        style={{
-          backgroundColor: '#ececec',
-          borderRadius: 5,
-          marginTop: 15,
-          marginBottom: 15,
-        }}
-      >
-      <span
-          style={{
-            fontSize: 17,
-            fontWeight: 700,
-            cursor: 'pointer',
-            padding: 3,
-            textAlign: 'center',
-          }}
-          onClick={() => {
-            dispatch({
-              type: 'BOOKMARK_FRAGMENT',
-              selectedArtifactEntry: selectedArtifactEntry,
-              selectedArtifactIndex: selectedArtifactIndex,
-              bookmarkFragment: fragSelected,
-            });
-          }}
-        >
-          {fragSelected && (
-            'Bookmark this fragment'
-          )}
-        </span>
-      </Box>
-
-      <Box
-        style={{
-          backgroundColor: '#ececec',
-          borderRadius: 5,
-          marginTop: 15,
-          marginBottom: 15,
-        }}
-      >
-        <span
-          style={{
-            fontSize: 17,
-            fontWeight: 700,
-            cursor: 'pointer',
-            padding: 3,
-            textAlign: 'center',
-          }}
-          onClick={() => {
-            showThreadAdd ? setShowThreadAdd(false) : setShowThreadAdd(true);
-          }}
-        >
-          {fragSelected
-            ? 'Add this fragment to a thread +'
-            : 'Add this artifact to a thread +'}
-        </span>      
-        <div>
-          {showThreadAdd && (
-            <>
-              {researchThreads &&
-              researchThreads.research_threads.length > 0 ? (
-                <div>
-                  {researchThreads.research_threads.map(
-                    (thread: any, ti: number) => (
-                      <React.Fragment key={`tr-${ti}`}>
-                        {fragSelected ? (
-                          <FragmentToThread
-                            thread={thread}
-                            threadIndex={ti}
-                            activity={selectedArtifactEntry}
-                            artifactIndex={selectedArtifactIndex}
-                            fragSelected={fragSelected}
-                            setFragSelected={setFragSelected}
-                          />
-                        ) : (
-                          <ArtifactToThread
-                            thread={thread}
-                            threadIndex={ti}
-                            activity={selectedArtifactEntry}
-                            artifactIndex={selectedArtifactIndex}
-                          />
-                        )}
-                      </React.Fragment>
-                    )
-                  )}
-                </div>
-              ) : (
-                <div>No research threads yet.</div>
+  {
+    !isReadOnly && (
+      <React.Fragment>
+        <Box
+            style={{
+              backgroundColor: '#ececec',
+              borderRadius: 5,
+              marginTop: 15,
+              marginBottom: 15,
+            }}
+          >
+          <span
+              style={{
+                fontSize: 17,
+                fontWeight: 700,
+                cursor: 'pointer',
+                padding: 3,
+                textAlign: 'center',
+              }}
+              onClick={() => {
+                dispatch({
+                  type: 'BOOKMARK_FRAGMENT',
+                  selectedArtifactEntry: selectedArtifactEntry,
+                  selectedArtifactIndex: selectedArtifactIndex,
+                  bookmarkFragment: fragSelected,
+                });
+              }}
+            >
+              {fragSelected && (
+                'Bookmark this fragment'
               )}
-            </>
-          )}{' '}
-        </div>
-      </Box>
+            </span>
+        </Box>
+
+        <Box
+          style={{
+            backgroundColor: '#ececec',
+            borderRadius: 5,
+            marginTop: 15,
+            marginBottom: 15,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 17,
+              fontWeight: 700,
+              cursor: 'pointer',
+              padding: 3,
+              textAlign: 'center',
+            }}
+            onClick={() => {
+              showThreadAdd ? setShowThreadAdd(false) : setShowThreadAdd(true);
+            }}
+          >
+            {fragSelected
+              ? 'Add this fragment to a thread +'
+              : 'Add this artifact to a thread +'}
+          </span>      
+          <div>
+            {showThreadAdd && (
+              <>
+                {researchThreads &&
+                researchThreads.research_threads.length > 0 ? (
+                  <div>
+                    {researchThreads.research_threads.map(
+                      (thread: any, ti: number) => (
+                        <React.Fragment key={`tr-${ti}`}>
+                          {fragSelected ? (
+                            <FragmentToThread
+                              thread={thread}
+                              threadIndex={ti}
+                              activity={selectedArtifactEntry}
+                              artifactIndex={selectedArtifactIndex}
+                              fragSelected={fragSelected}
+                              setFragSelected={setFragSelected}
+                            />
+                          ) : (
+                            <ArtifactToThread
+                              thread={thread}
+                              threadIndex={ti}
+                              activity={selectedArtifactEntry}
+                              artifactIndex={selectedArtifactIndex}
+                            />
+                          )}
+                        </React.Fragment>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <div>No research threads yet.</div>
+                )}
+              </>
+            )}{' '}
+          </div>
+        </Box>
+        </React.Fragment>
+        )}
       <Box>
         {isArtifactInThread.length > 0 && (
           <div>
@@ -706,7 +712,17 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     goBackView,
   } = props;
 
-  const [{projectData, folderPath, selectedArtifactEntry, selectedArtifactIndex, hopArray, researchThreads, googleData, txtData}, dispatch] = useProjectState();
+  const [{
+    projectData, 
+    folderPath, 
+    selectedArtifactEntry, 
+    selectedArtifactIndex, 
+    hopArray, 
+    researchThreads, 
+    googleData, 
+    txtData,
+    isReadOnly
+  }, dispatch] = useProjectState();
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
@@ -795,7 +811,11 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             </Button>
 
             {` Activity:`}
-              <ActivityTitlePopoverLogic activityData={selectedArtifactEntry} researchThreads={researchThreads} />
+            {
+              !isReadOnly ? <ActivityTitlePopoverLogic activityData={selectedArtifactEntry} researchThreads={researchThreads} />
+              : <span>{selectedArtifactEntry.title}</span>
+            }
+              
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
@@ -844,10 +864,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           setFragSelected={setFragSelected}
           selectedArtifactEntry={selectedArtifactEntry}
           selectedArtifactIndex={selectedArtifactIndex}
-          researchThreads={researchThreads}
-          projectData={projectData} 
-          hopArray={hopArray}
-          dispatch={dispatch}
         />
 
         <div style={{ width:260 }}>
