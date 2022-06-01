@@ -23,9 +23,9 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
 import FileUpload from './FileUpload';
 import { EntryType, File, FileObj, TagType } from './types';
-import GoogFileInit from './GoogleFileInit';
 import URLList from './URLList';
 import { useProjectState } from './ProjectContext';
+import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;

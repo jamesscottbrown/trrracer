@@ -58,6 +58,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
+    
+
     const getData = async (action:any, isReadOnly:boolean) => {
       const baseDir = action.folderName;
 
@@ -409,6 +411,28 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           title: action.title,
         };
 
+        return saveJSON(newProjectData, state);
+      }
+
+      case 'CREATE_GOOGLE_IN_ENTRY': {
+        const { name, fileType, fileId, entryIndex } = action;
+  
+        let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
+  
+        console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
+  
+        const currentFiles = state.projectData.entries[entryIndex].files;
+        const newFiles = [
+          ...currentFiles,
+        
+          {title: `${name}.${extension}`, fileType: extension, fileId: fileId, context: "null"}
+        ];
+        const entries = state.projectData.entries.map((d: EntryType, i: number) =>
+          entryIndex === i ? { ...d, files: newFiles } : d
+        );
+  
+        const newProjectData = { ...state.projectData, entries };
+  
         return saveJSON(newProjectData, state);
       }
      
