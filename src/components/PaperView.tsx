@@ -287,10 +287,18 @@ const BubbleVisPaper = (props: any) => {
 
 const SmallPageNavigation = (props: any) => {
 
-  const { anno, pageNumber } = props;
+  const { anno, pageNumber, index, pageRectData } = props;
+  const [{researchThreads}] = useProjectState();
+
+  let selectedThreadData = researchThreads?.research_threads[index];
 
   const svgSmallPagesRef = React.useRef(null);
   const smallRectHeight = 70;
+
+  const yScaleSmall = d3
+  .scaleLinear()
+  .domain([0, anno[0][1][0]['pdf-dim'][3]])
+  .range([smallRectHeight, 0]);
 
   const groupTest = d3.select(svgSmallPagesRef.current).select('.text-group');
   
@@ -302,7 +310,7 @@ const SmallPageNavigation = (props: any) => {
   
   const pages = group
       .selectAll('g.pages')
-      .data(svgSmallPagesRef)
+      .data(pageRectData)
       .join('g')
       .classed('pages', true);
     pages.attr(
@@ -349,23 +357,21 @@ const SmallPageNavigation = (props: any) => {
       .attr('fill', '#FFF')
       .attr('opacity', 0.4);
 
-  const yScaleSmall = d3
-    .scaleLinear()
-    .domain([0, anno[0][1][0]['pdf-dim'][3]])
-    .range([smallRectHeight, 0]);
+
 
   return (
     <div
       style={{
         height:"100%",
+        position:'absolute',
+        right:650
       }}
     >
       <svg 
         ref={svgSmallPagesRef} 
         style={{
           height:"100%",
-          width:"200px",
-          backgroundColor:"red",
+          width:"70px",
         }}
       />
     </div>
@@ -393,9 +399,6 @@ const PageNavigation = (props:any) => {
 
   useEffect(()=> {
 
-
-
-   
   const svgAnno = d3.select(annoSvgRef.current);
   svgAnno.selectAll('*').remove();
 
@@ -428,8 +431,7 @@ const PageNavigation = (props:any) => {
       id="pdf-wrap"
       style={{
         width: '650px',
-        height: 'auto',
-        backgroundColor:'blue'
+        height: 'auto'
       }}
     >
       <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
@@ -504,7 +506,6 @@ const PaperView = (props: any) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   
-
   const [translateY, setTranslateY] = useState(35);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
@@ -619,18 +620,21 @@ const PaperView = (props: any) => {
           /> */}
 
 
-          <div
+          {/* <div
           style={{
             height:'100%',
             width:500,
             backgroundColor:'yellow',
           }}>
             
-          </div>
-          {/* <SmallPageNavigation 
+          </div> */}
+          <SmallPageNavigation 
             anno={anno} 
-            pageNumber={pageNumber} /> */}
-          {/* <PageNavigation 
+            pageNumber={pageNumber} 
+            pageRectData={pageRectData}
+            index={index}
+            />
+          <PageNavigation 
             perf={perf} 
             index={index}
             onDocumentLoadSuccess={onDocumentLoadSuccess} 
@@ -640,7 +644,7 @@ const PaperView = (props: any) => {
             nextPage={nextPage}
             pageRectData={pageRectData}
             anno={anno}
-          /> */}
+          />
         </Box>
       </Flex>
     );
