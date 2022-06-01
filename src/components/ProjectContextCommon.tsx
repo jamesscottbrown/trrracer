@@ -425,7 +425,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newFiles = [
           ...currentFiles,
         
-          {title: `${name}.${extension}`, fileType: extension, fileId: fileId, context: "null"}
+          {title: `${name}.${extension}`, fileType: extension, artifactType:'memo', fileId: fileId, context: "null"}
         ];
         const entries = state.projectData.entries.map((d: EntryType, i: number) =>
           entryIndex === i ? { ...d, files: newFiles } : d
