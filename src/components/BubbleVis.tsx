@@ -133,12 +133,12 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads}, dispatch] = useProjectState();
+  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly}, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(600);
-  const [translateY, setTranslateY] = useState(35);
+  const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
@@ -818,16 +818,21 @@ return (
   <div
     style={{width:'100%'}}
   >
-    <Button
-      size={'sm'}
-      style={{fontSize:"12px"}}
-      onClick={() => {
-        console.log('is this working??')
-        defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
-      }
-    >
-      Add events to timeline
-    </Button>
+    {
+      !isReadOnly && (
+        <Button
+        size={'sm'}
+        style={{fontSize:"12px"}}
+        onClick={() => {
+          console.log('is this working??')
+          defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
+          }
+        >
+          Add events to timeline
+        </Button>
+      )
+    }
+   
 
   <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
     <FormControl display="flex" alignItems="center" marginBottom={10}>
