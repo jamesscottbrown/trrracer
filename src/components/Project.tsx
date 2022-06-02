@@ -16,6 +16,7 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
+import { ImFilePdf } from 'react-icons/im';
 
 const queryString = require('query-string');
 
@@ -167,6 +168,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
  
     //=> {foo: 'bar'}
     viewParam = parsed.view;
+    console.log(parsed)
+   
   }
 
   const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
