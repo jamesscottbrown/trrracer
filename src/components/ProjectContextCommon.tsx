@@ -58,8 +58,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
-    
-
     const getData = async (action:any, isReadOnly:boolean) => {
       const baseDir = action.folderName;
 
@@ -151,6 +149,27 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
             // }
             // else if(ef.fileType === 'txt'){
             //   ef.artifactType = 'transcript';
+             //           // if(j < 2){
+
+                 //   const file = readSync(`${baseDir}/${ef.title}`)
+
+                 //   retext()
+                 //     .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+                 //     .use(retextKeywords)
+                 //     .process(file)
+                 //     .then((file) => {
+                    
+                 //       ef.keywords = file.data.keywords;
+                 //       ef.keyPhrases = file.data.keyphrases;
+                 //     // file.data.keywords.forEach((keyword) => {
+                 //     //  
+                 //     // })
+
+                 // //     console.log('Key-phrases:')
+                 // //     file.data.keyphrases.forEach((phrase) => {
+                 // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
+                 // //     })
+                 //   })
             // }
             // else if(ef.fileType === 'eml'){
             //   ef.artifactType = 'correspondence'
@@ -216,180 +235,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
     };
 
     switch (action.type) {
-      // case 'SET_DATA': {
-      //   const baseDir = action.folderName;
-
-      //   console.log(action.type, action.folderName)
-
-      //   let roleData;
-      //   let google_data: any;
-      //   let txt_data: any;
-      //   let artifact_types: any;
-      //   let google_em: any;
-      //   let google_comms: any;
-
-      //   let newEntries = [...action.projectData.entries];
-
-      //   try {
-      //     google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-        
-      //   } catch (e: any) {
-      //     console.error('could not load google em file');
-      //     google_em = null;
-      //   }
-
-      //   try {
-      //     google_data = await readProjectFile(baseDir, 'goog_data.json', null);
-         
-      //   } catch (e: any) {
-      //     console.error('could not load google data file');
-      //   }
-
-      //   try {
-      //     google_comms = readProjectFile(baseDir, 'goog_comms.json', null);
       
-      //   } catch (e) {
-      //     google_comms = null;
-      //     console.log('could not load goog comments');
-      //   }
-
-      //   try {
-      //     txt_data = readProjectFile(baseDir, 'text_data.json', null);
-        
-      //   } catch (e) {
-      //     txt_data = null;
-      //     console.error('could not load text data');
-      //   }
-
-      //   try {
-      //     roleData = readProjectFile(baseDir, 'roles.json', null);
-        
-      //   } catch (e) {
-      //     console.error('could not load role data');
-      //   }
-
-      //   try {
-      //     artifact_types = readProjectFile(baseDir, 'artifactTypes.json', null);
-        
-      //   } catch (e) {
-      //     artifact_types = null;
-      //     console.error('could not load artifact types');
-      //   }
-
-      //   try {
-      //     newEntries = action.projectData.entries.map((e:any, i:number) => {
-      //       e.index = i;
-      //       e.key_txt = txt_data
-      //         ? txt_data['text-data'].filter((td) => td['entry-index'] === i)
-      //         : [];
-
-      //       e.files = e.files.map((ef:any, j:number) => {
-      //         if (ef.fileType === 'gdoc') {
-      //           // ef.artifactType = 'notes'
-      //           ef.emphasized = google_em ? google_em[ef.fileId] : [];
-      //           ef.comments = google_comms ? google_comms[ef.fileId] : [];
-      //         }else if(ef.fileType === 'txt'){
-
-      //           // if(j < 2){
-
-      //           //   const file = readSync(`${baseDir}/${ef.title}`)
-
-      //           //   retext()
-      //           //     .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
-      //           //     .use(retextKeywords)
-      //           //     .process(file)
-      //           //     .then((file) => {
-                    
-      //           //       ef.keywords = file.data.keywords;
-      //           //       ef.keyPhrases = file.data.keyphrases;
-      //           //     // file.data.keywords.forEach((keyword) => {
-      //           //     //  
-      //           //     // })
-
-      //           // //     console.log('Key-phrases:')
-      //           // //     file.data.keyphrases.forEach((phrase) => {
-      //           // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
-      //           // //     })
-      //           //   })
-      //           // }
-      //         }
-      //         // else if(ef.fileType === 'pdf'){
-      //         //   ef.artifactType = 'related work';
-      //         // }
-      //         // else if(ef.title.includes('.png')){
-      //         //   ef.artifactType = 'sketch';
-      //         // }
-
-      //         // else if(ef.title.includes('https:/')){
-      //         //   ef.artifactType = 'link';
-      //         // }
-      //         // else if(ef.fileType === 'txt'){
-      //         //   ef.artifactType = 'transcript';
-      //         // }
-      //         // else if(ef.fileType === 'eml'){
-      //         //   ef.artifactType = 'correspondence'
-      //         // }
-      //         // else if(ef.fileType === 'csv' || ef.fileType === 'phy' || ef.fileType === 'htm'){
-      //         //   ef.artifactType = 'data'
-      //         // }else if(ef.fileType === 'gif' || ef.fileType === 'jpg'){
-      //         //   ef.artifactType = 'tool artifact'
-      //         // }
-      //         // else if(ef.title.includes('Screen ')){
-      //         //   ef.artifactType = 'tool artifact';
-      //         // }
-      //         ef.artifactType = ef.artifactType ? ef.artifactType : '';
-      //         if(ef.fileType === 'txt'){
-      //           // console.log('FILE WITH KEYS?', ef);
-      //         }
-              
-      //         return ef;
-      //       });
-      //       // }
-
-      //       return e;
-      //     });
-      //   } catch (e) {
-      //     newEntries = action.projectData.entries;
-
-      //     return e;
-      //   }
-      //   console.log('base dir in set data', baseDir);
-      //   const research_threads = checkRtFile(baseDir);
-
-      //   const newProjectData = {
-      //     ...action.projectData,
-      //     entries: newEntries,
-      //     roles: roleData,
-      //     eventArray: action.projectData.eventArray
-      //       ? action.projectData.eventArray
-      //       : [],
-      //   };
-
-      //   return {
-      //     folderPath: action.folderName,
-      //     projectData: newProjectData,
-      //     googleData: google_data,
-      //     txtData: txt_data,
-      //     researchThreads: research_threads,
-      //     selectedThread: null,
-      //     filterTags: [],
-      //     filterType: null,
-      //     filterDates: [null, null],
-      //     filterRT: null,
-      //     filterQuery: null,
-      //     query: null,
-      //     hopArray: [],
-      //     goBackView: 'overview',
-      //     artifactTypes: artifact_types,
-      //     threadTypeFilterArray: [
-      //       { type:'activity', show:true },
-      //       { type:'artifact', show:true },
-      //       { type:'fragment', show:true },
-      //       { type:'tags', show:true }
-      //     ],
-      //   };
-      // }
-
       case 'SET_DATA': {
         // loading a project requires waiting for files to load over the network
         // the simplest way to handle this is to handle this in an async function,
@@ -416,7 +262,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
-  
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
   
         console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
@@ -519,8 +364,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           newRT.research_threads[threadIndex].description = newValue;
         }
         if(fieldName === 'merge'){
-
-          console.log('theadIndex')
           let filterThreads = newRT.research_threads
           newRT.research_threads[threadIndex].actions.push({action: "merge", to: newValue, when: new Date()});
           let newAddIndex = newRT.research_threads.indexOf(f => f.title === newValue);
