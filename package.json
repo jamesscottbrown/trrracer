@@ -263,6 +263,7 @@
     "markdown-it": "^12.3.2",
     "natural": "^5.1.0",
     "postel": "^0.1.5",
+    "query-string": "^7.1.1",
     "react": "^17.0.1",
     "react-color": "^2.19.3",
     "react-datepicker": "^3.8.0",

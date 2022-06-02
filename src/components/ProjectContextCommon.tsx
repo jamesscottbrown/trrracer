@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import { sendToFlask } from '../flaskHelper';
 import { EntryType, TagType } from './types';
 // import {toString} from 'nlcst-to-string'
 // import {retext} from 'retext'

@@ -17,6 +17,8 @@ import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
 
+const queryString = require('query-string');
+
 
 interface ProjectProps {
   folderPath: string;
@@ -152,11 +154,22 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads,
-      goBackView
+      goBackView,
+      isReadOnly
     }, 
   ] = useProjectState();
 
-  const [viewType, setViewType] = useState<string>('overview');
+  let viewParam = null;
+
+  if(isReadOnly){
+  
+    const parsed = queryString.parse(location.search);
+ 
+    //=> {foo: 'bar'}
+    viewParam = parsed.view;
+  }
+
+  const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);

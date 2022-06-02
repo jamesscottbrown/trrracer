@@ -25,7 +25,7 @@ import FileUpload from './FileUpload';
 import { EntryType, File, FileObj, TagType } from './types';
 import URLList from './URLList';
 import { useProjectState } from './ProjectContext';
-import GoogFileInit, { createGoogleFile } from './GoogleFileInit';
+import GoogFileInit from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;
