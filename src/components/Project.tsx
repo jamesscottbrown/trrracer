@@ -16,10 +16,7 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { ImFilePdf } from 'react-icons/im';
-
 const queryString = require('query-string');
-
 
 interface ProjectProps {
   folderPath: string;
@@ -157,20 +154,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
       researchThreads,
       goBackView,
       isReadOnly
-    }, 
+    }, dispatch 
   ] = useProjectState();
 
   let viewParam = null;
 
-  if(isReadOnly){
+  useEffect(()=> {
+
+    if(isReadOnly){
   
-    const parsed = queryString.parse(location.search);
- 
-    //=> {foo: 'bar'}
-    viewParam = parsed.view;
-    console.log(parsed)
-   
-  }
+      const parsed = queryString.parse(location.search);
+      viewParam = parsed.view;
+  
+      if(parsed.granularity === 'thread'){
+        let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
+        let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
+        dispatch({
+          type: 'THREAD_FILTER',
+          filterRT: chosenRT,
+          selectedThread: threadindex
+        })
+      }
+     
+    }
+
+  }, [viewParam])
+
+  
 
   const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);

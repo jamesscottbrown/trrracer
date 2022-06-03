@@ -7,7 +7,6 @@
 //   ProjectStateProvider,
 // } from './ProjectContextElectron';
 
-
 import {
   ProjectContext,
   useProjectState,
@@ -17,7 +16,6 @@ import {
   ProjectStateProvider,
 } from './ProjectContextWeb';
 
- 
 export {
   ProjectContext,
   useProjectState,
