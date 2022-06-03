@@ -14,7 +14,7 @@ class GoogleLoader {
   constructor(file, destination) {
     const authOb = GoogleAuth.getInstance();
 
-    console.log('in google loader',file, destination)
+  
 
     this.fileName = file.name;
     this.filePath = file.path;
@@ -32,7 +32,7 @@ class GoogleLoader {
     // included, separated by spaces.
     this.SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
 
-    console.log('TOKEN in google thing', authOb.getToken(), authOb.getAuth());
+  
     this.TOKEN = authOb.token;
   }
 
@@ -52,7 +52,7 @@ class GoogleLoader {
         if (err) return console.error(`The API returned an error: ${err}`);
         const taskLists = res.data.items;
         if (taskLists) {
-          console.log('Task lists:');
+       
           taskLists.forEach((taskList) => {
             console.log(`${taskList.title} (${taskList.id})`);
           });
@@ -70,7 +70,7 @@ class GoogleLoader {
    * @param {getEventsCallback} callback The callback for the authorized client.
    */
   getNewToken(oAuth2Client, callback) {
-    console.log('GET NEW TOKEN');
+
     emitter.setMaxListeners(20);
 
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -84,7 +84,7 @@ class GoogleLoader {
       input: process.stdin,
       output: process.stdout,
     });
-    console.log('rl', rl);
+   
     let response;
     rl.question('Enter the code from that page here: ', (code) => {
       response = code;

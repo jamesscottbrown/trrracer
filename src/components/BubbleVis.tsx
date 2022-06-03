@@ -156,7 +156,7 @@ const BubbleVis = (props: BubbleProps) => {
     setNewHeight(window.getComputedStyle(svgRef.current).height);
   }
   if(groupBy){
-    console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
+    
     
     setSvgWidth((researchThreads?.research_threads.length * 300))
   }else{
@@ -593,7 +593,7 @@ if (groupBy) {
   
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
 
-    console.log('chosen',chosenRT)
+  
 
     let linkDataBefore = [];
     let linkDataAfter = [];
@@ -845,7 +845,7 @@ return (
         size={'sm'}
         style={{fontSize:"12px"}}
         onClick={() => {
-          console.log('is this working??')
+         
           defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
           }
         >

@@ -1,13 +1,11 @@
 /* eslint no-console: off */
 /// /
 // This is the entrypoint for the React app displayed in the Electron App. It *is* able to use node and electron APIs.
-
 import React, { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import fs from 'fs';
 import path from 'path';
 import { ipcRenderer } from 'electron';
-
 import Project from './components/Project';
 import Splash from './components/Splash';
 
@@ -45,8 +43,7 @@ export default function App() {
   const [noProjectSelected, setNoProjectSelected] = useState<boolean>(false);
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
-  console.log('project data',projectData);
-  console.log('changing something else to fit')
+ 
 
   ipcRenderer.on('projectPath', (_event, folderName) => {
     console.log('Received project path:', folderName);
@@ -81,7 +78,7 @@ export default function App() {
       </ChakraProvider>
     );
   }
-  console.log('project data in spalsh',projectData)
+
   if (!projectData) {
     return (
       <ChakraProvider>
@@ -89,7 +86,7 @@ export default function App() {
       </ChakraProvider>
     );
   }
-console.log("is this loading?")
+
   return (
     <ChakraProvider>
       <Project folderPath={folderPath} />

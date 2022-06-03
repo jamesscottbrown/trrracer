@@ -28,7 +28,7 @@ class ForceMagic {
 
   let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
 
-  console.log(filtered)
+
 
   this.nodes = filtered.map((a: any) => {
     const node = {};

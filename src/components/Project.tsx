@@ -16,6 +16,7 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
+import { ParsedUrlQueryInput } from 'querystring';
 const queryString = require('query-string');
 
 interface ProjectProps {
@@ -157,13 +158,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
     }, dispatch 
   ] = useProjectState();
 
-  let viewParam = null;
+  // const [viewParam, setViewParam] = useState('overview');
+  const [viewType, setViewType] = useState<string>('overview');
 
   useEffect(()=> {
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
-      viewParam = parsed.view;
+      setViewType(parsed.view);
   
       if(parsed.granularity === 'thread'){
         //sample for thread url 
@@ -179,20 +181,47 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }else if(parsed.granularity === 'activity'){
         //sample for activity
         // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-        console.log('parsed idd',parsed.id);
+     
         dispatch({
           type: 'URL_SELECTED_ACTIVITY',
-          activity_id: parsed.id,
-        })
-      }
+          selectedActivityURL: parsed.id,
+        });
+
+      }else if(parsed.granularity === 'artifact'){
+      //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
+        
+        
+        let selected = projectData.entries.filter(en =>{
+          let fileTest = en.files.filter(f => f.artifact_uid === parsed.id);
+          return fileTest.length > 0
+        });
+
+        let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
+
      
+        const newHop = [{
+          activity: selected[0], 
+          artifactUid: parsed.id,
+          hopReason: 'first hop',
+          tag: null,
+        }]
+
+        dispatch({
+          type: 'SELECTED_ARTIFACT',
+          selectedArtifactEntry : selected.length > 0 ? selected[0] : null,
+          selectedArtifactIndex : selected.length > 0 ? artifact : null,
+          hopArray: newHop,
+        })
+
+        setViewType("detail view");
+      }
     }
 
-  }, [queryString])
+  }, [queryString, viewType])
 
   
 
-  const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
+ 
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);

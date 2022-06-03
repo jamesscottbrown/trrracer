@@ -33,8 +33,6 @@ const pickTagColor = (tags: TagType[]) => {
 
 export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, deleteFileAction: any, isReadOnly: boolean) => {
 
-  console.log('project state reducer in project context common');
-  
   return (state: any, action: any) => {
     /**
      *  function for set data that checks to see if the file exists and if not, creates one.
@@ -282,7 +280,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       case 'URL_SELECTED_ACTIVITY': {
         const { activity_id } = action;
-        console.log('ACTIVIT', activity_id);
+      
         return {...state, selectedActivityURL: activity_id }
       }
       case 'BOOKMARK_FRAGMENT':{
@@ -572,7 +570,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state,
           selectedArtifactEntry: action.selectedArtifactEntry,
           selectedArtifactIndex: action.selectedArtifactIndex,
-          hopArray: action.hopArray == Number ? hopArray : action.hopArray,
+          hopArray: []
         };
       }
 
@@ -622,7 +620,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         
         const newRT = state.researchThreads;
         newRT.research_threads = newRT.research_threads.filter((ft: any) => ft.rt_id != action.deleteThread);
-        console.log('newwww newww', newRT.research_threads);
+        
         return saveJSONRT(newRT, state.folderPath, state);
       } 
 
@@ -697,9 +695,9 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
               ? { ...d, [action.fieldName]: action.newValue }
               : d
         );
-        console.log('in project state', entries);
+       
         const newProjectData = { ...state.projectData, entries };
-        console.log('new project data in project context', newProjectData);
+       
         return saveJSON(newProjectData, state);
       }
 
@@ -745,7 +743,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_FILTER_TAGS': {
-        console.log('update filter', action.filterTags);
         return { ...state, filterTags: action.filterTags };
       }
 
@@ -780,7 +777,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'HOVER_THREAD': {
-        console.log('actionnnnn', action.researchThreadHover);
+      
 
         return {
           ...state,

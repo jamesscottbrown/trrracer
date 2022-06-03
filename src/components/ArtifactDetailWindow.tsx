@@ -724,6 +724,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     isReadOnly
   }, dispatch] = useProjectState();
 
+ 
+
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
