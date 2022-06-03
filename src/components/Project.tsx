@@ -162,11 +162,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
   useEffect(()=> {
 
     if(isReadOnly){
-  
       const parsed = queryString.parse(location.search);
       viewParam = parsed.view;
   
       if(parsed.granularity === 'thread'){
+        //sample for thread url 
+        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
+
         let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
         let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
         dispatch({
@@ -174,11 +176,19 @@ const Project = (ProjectPropValues: ProjectProps) => {
           filterRT: chosenRT,
           selectedThread: threadindex
         })
+      }else if(parsed.granularity === 'activity'){
+        //sample for activity
+        // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
+        console.log('parsed idd',parsed.id);
+        dispatch({
+          type: 'URL_SELECTED_ACTIVITY',
+          activity_id: parsed.id,
+        })
       }
      
     }
 
-  }, [viewParam])
+  }, [queryString])
 
   
 

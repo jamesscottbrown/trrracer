@@ -160,6 +160,8 @@ type ProjectState = {
   researchThreads?: ResearchThreadData;
   selectedThread?: number;
 
+  selectedActivityURL: null | string;
+
   highlightedTag?: string;
   highlightedType?: string;
 

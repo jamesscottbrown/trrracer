@@ -224,6 +224,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         hopArray: [],
         goBackView: 'overview',
         artifactTypes: artifact_types,
+        selectedActivityURL: null,
         threadTypeFilterArray: [
           { type: 'activity', show: true },
           { type: 'artifact', show: true },
@@ -279,7 +280,11 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
   
         return saveJSON(newProjectData, state);
       }
-     
+      case 'URL_SELECTED_ACTIVITY': {
+        const { activity_id } = action;
+        console.log('ACTIVIT', activity_id);
+        return {...state, selectedActivityURL: activity_id }
+      }
       case 'BOOKMARK_FRAGMENT':{
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
         let entryIndex = action.selectedArtifactEntry.index;

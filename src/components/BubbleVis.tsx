@@ -133,7 +133,7 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly}, dispatch] = useProjectState();
+  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly, selectedActivityURL }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -586,7 +586,8 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-  let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+  let highlightedActivities = (selectedActivityURL) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
+  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
   
   groupGroups.each((d, i, n)=> {
   
@@ -633,14 +634,25 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-  let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
-  
+
+ // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+ let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
+ : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+
+
+ 
   highlightedActivities.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
     }else if(filterType || filterTags.length > 0){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 1);
+    }else if(selectedActivityURL !== null){
+      highlightedActivities.select('.all-activities').attr('fill-opacity', 1);
+      highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      highlightedCircles.attr('fill', 'white');
+      
     }else{
       d3.select(event.target).attr('fill', 'gray');
     }
@@ -654,6 +666,12 @@ if (groupBy) {
     d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
    
 
+    }else if(selectedActivityURL !== null){
+      highlightedActivities.select('.all-activities').attr('fill-opacity', .5);
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedCircles.attr('fill', 'gray');
+      
+      
     }else{
     d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .5);
     }
@@ -675,16 +693,19 @@ if (groupBy) {
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
  
+  }else if(selectedActivityURL !== null){
+    highlightedActivities.select('.all-activities').attr('fill', 'red').attr('fill-opacity', .5);
+    highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+    let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedCircles.attr('fill', 'gray');
   }else{
 
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
-
   }
 
-  let hiddenCircles = allActivityGroups.filter(ac => {
-    return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
-  .selectAll('circle.artifact');
+  let hiddenCircles = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid !== selectedActivityURL)
+  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1).selectAll('circle.artifact');
 
   hiddenCircles.attr('fill', 'gray')
   .attr('fill-opacity', .3);
@@ -811,7 +832,7 @@ highlightedActivities
 
   }
 
-}, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
+}, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
 return (
 <div style={{ flex: flexAmount, paddingTop:'30px' }}>
