@@ -5,7 +5,6 @@ const { google } = require('googleapis');
 
 export const copyMoveGoogle = async (file, callback) => {
 
-
   console.log('file in copy Move Google', file);
   const oAuth2Client = new google.auth.OAuth2(
     googleCred.installed.client_id,

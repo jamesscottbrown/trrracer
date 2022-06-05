@@ -71,9 +71,9 @@ const ActivityTitlePopoverLogic = (props: any) => {
               </Button>
               <br/>
               <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this activity:</span>
-              <Badge
-              style={{wordWrap:'break-word'}}
-              >{activityData.activity_uid}</Badge>
+              <span
+                style={{fontSize:12, color:'black', lineHeight:1}}
+              >{String.raw`\trrracer{overview}{activity}{${activityData.activity_uid}}`}</span>
               </>
               
             )}

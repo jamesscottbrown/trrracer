@@ -377,7 +377,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                           </PopoverTrigger>
                           <PopoverContent>
                             <PopoverBody>
-                              copy this ref: {rt.rt_id}
+                              <span
+                                style={{display:'block'}}
+                              >copy this ref: </span>
+                              {String.raw`\trrracer{overview}{thread}{${rt.rt_id}}`}
                             </PopoverBody>
                           </PopoverContent>
                       </Popover>
@@ -392,7 +395,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         style={{display:'inline'}}
                         onClick={()=> {
                           setEditMode(i);
-                          console.log('editmode',editMode);
                           //dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
                         }}>
                           <FaEdit />

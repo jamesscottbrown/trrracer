@@ -1,20 +1,20 @@
-// import {
-//   openFile,
-//   readFile,
-//   writeFile,
-//   joinPath,
-//   readFileSync,
-//   stateUpdateWrapperUseJSON
-// } from './fileUtilElectron';
-
 import {
   openFile,
   readFile,
   writeFile,
-  readFileSync,
   joinPath,
+  readFileSync,
   stateUpdateWrapperUseJSON
-} from './fileUtilWeb';
+} from './fileUtilElectron';
+
+// import {
+//   openFile,
+//   readFile,
+//   writeFile,
+//   readFileSync,
+//   joinPath,
+//   stateUpdateWrapperUseJSON
+// } from './fileUtilWeb';
 
 function decode(input:any) {
   if (!input) return '';

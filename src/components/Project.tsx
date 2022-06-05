@@ -169,7 +169,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   
       if(parsed.granularity === 'thread'){
         //sample for thread url 
-        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
+        //http://127.0.0.1:8080/?view=overview&granularity=overview&id=202c5ede-1637-47a0-8bc6-c75700f34036
 
         let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
         let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);

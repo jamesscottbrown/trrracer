@@ -474,17 +474,14 @@ const DetailSidebar = (props: any) => {
             }
         </Box>
       </Box>
-      {
-        selectedArtifact && (
-          <Box>
-            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-            <Badge
-            style={{wordWrap:'break-word'}}
-            >{selectedArtifact ?  selectedArtifact.artifact_uid : "No Artifact to Cite"}</Badge>
-          </Box>
-        )
-      }
-     
+      
+      <Box>
+        <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
+        <Badge
+        style={{wordWrap:'break-word'}}
+        >{selectedArtifact ? String.raw`\trrracer{overview}{activity}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}</Badge>
+      </Box>
+        
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
           Activity Tags
