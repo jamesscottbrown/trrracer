@@ -359,19 +359,17 @@ const DetailSidebar = (props: any) => {
 
   const {
     fragSelected,
-    setFragSelected,
-    selectedArtifactEntry,
-    selectedArtifactIndex
+    setFragSelected
   } = props;
 
-  const [{ researchThreads, projectData, hopArray, isReadOnly }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, hopArray, selectedArtifactEntry, selectedArtifactIndex, isReadOnly }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
 
-  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry[selectedArtifactIndex] : null;
+  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
@@ -477,9 +475,7 @@ const DetailSidebar = (props: any) => {
       
       <Box>
         <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-        <Badge
-        style={{wordWrap:'break-word'}}
-        >{selectedArtifact ? String.raw`\trrracer{overview}{activity}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}</Badge>
+        {selectedArtifact ? String.raw`\trrracer{overview}{activity}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
       </Box>
         
       <Box>
