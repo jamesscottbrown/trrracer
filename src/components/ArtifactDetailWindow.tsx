@@ -474,6 +474,22 @@ const DetailSidebar = (props: any) => {
       </Box>
       
       <Box>
+        {
+          selectedArtifact && (
+            <Button
+            onClick={() => {
+              let indexTest = projectData.citations.map(c => c.id).indexOf(selectedArtifact.artifact_uid);
+              let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+              navigator.clipboard.writeText(String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}{${index}}`)
+              if(indexTest === -1){
+                let newCitations = [...projectData.citations, {"id": selectedArtifact.artifact_uid, "cIndex": index}]
+                dispatch({ type: 'ADD_CITATION', citations: newCitations});
+              }
+              
+            }}
+              >Copy this ref</Button>
+          )
+        }
         <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
         {selectedArtifact ? String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
       </Box>

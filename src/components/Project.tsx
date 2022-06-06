@@ -154,12 +154,15 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView,
-      isReadOnly
+      isReadOnly,
+      citations
     }, dispatch 
   ] = useProjectState();
 
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
+  
+  console.log(citations);
 
   useEffect(()=> {
 

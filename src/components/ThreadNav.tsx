@@ -379,8 +379,21 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                             <PopoverBody>
                               <span
                                 style={{display:'block'}}
-                              >copy this ref: </span>
-                              {String.raw`\trrracer{overview}{thread}{${rt.rt_id}}`}
+                              ><Button
+                                onClick={() => {
+                                  let indexTest = projectData.citations.map(c => c.id).indexOf(rt.rt_id);
+                                  let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+                                  navigator.clipboard.writeText(String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`)
+
+                                  if(indexTest === -1){
+                                   
+                                    let newCitations = [...projectData.citations, {"id": rt.rt_id, "cIndex": index}]
+                                    dispatch({ type: 'ADD_CITATION', citations: newCitations});
+                                  }
+                                  
+                                }}
+                              >Copy this ref</Button></span>
+                              {/* {String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`} */}
                             </PopoverBody>
                           </PopoverContent>
                       </Popover>

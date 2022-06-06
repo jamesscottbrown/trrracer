@@ -66,6 +66,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let google_comms: any;
       let linkData: any;
       let newEntries = [...action.projectData.entries];
+      let citationData = action.projectData.citations ? action.projectData.citations : [];
      
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
@@ -199,6 +200,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ...action.projectData,
         entries: newEntries,
         roles: roleData,
+        citations: citationData,
         eventArray: action.projectData.eventArray
           ? action.projectData.eventArray
           : []
@@ -228,7 +230,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           { type: 'artifact', show: true },
           { type: 'fragment', show: true },
           { type: 'tags', show: true }
-        ]
+        ],
+        // citations: citationData
       };
     };
 
@@ -338,6 +341,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
 
+      case 'ADD_CITATION': {
+        
+        const newProjectData = { ...state.projectData, citations: action.citations };
+        return saveJSON(newProjectData, state);
+      }
+
       case 'UPDATE_GO_BACK': {
         return {
           ...state,
@@ -369,7 +378,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           let filterThreads = newRT.research_threads
           newRT.research_threads[threadIndex].actions.push({action: "merge", to: newValue, when: new Date()});
           let newAddIndex = newRT.research_threads.indexOf(f => f.title === newValue);
-          console.log('newAddIndex',newAddIndex)
+          
           newRT.research_threads[newAddIndex].actions.push({action: "mergeAdd", from: newRT.research_threads[threadIndex].title, when: new Date()})
           newRT.research_threads[newAddIndex].evidence = [...newRT.research_threads[newAddIndex], newRT.research_threads[threadIndex].evidence]
         }
