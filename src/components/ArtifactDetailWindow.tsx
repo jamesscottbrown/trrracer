@@ -475,7 +475,7 @@ const DetailSidebar = (props: any) => {
       
       <Box>
         <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-        {selectedArtifact ? String.raw`\trrracer{overview}{activity}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
+        {selectedArtifact ? String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
       </Box>
         
       <Box>
