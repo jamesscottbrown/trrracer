@@ -165,8 +165,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
-      setViewType(parsed.view);
-  
+      if(parsed.view) setViewType(parsed.view);
+      console.log('parsed', parsed, viewType);
       if(parsed.granularity === 'thread'){
         //sample for thread url 
         //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036

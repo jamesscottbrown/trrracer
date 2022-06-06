@@ -664,13 +664,11 @@ if (groupBy) {
 
     d3.select(event.target).attr('fill', 'gray').attr('fill-opacity', .5);
     d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
-   
 
     }else if(selectedActivityURL !== null){
       highlightedActivities.select('.all-activities').attr('fill-opacity', .5);
       let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
-      
       
     }else{
     d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .5);
@@ -714,6 +712,8 @@ if (groupBy) {
    
     let linkDataBefore = [];
     let linkDataAfter = [];
+
+    
 
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
       let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);

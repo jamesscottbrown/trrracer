@@ -72,7 +72,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         <Heading as="h1">
           {
             isReadOnly ? <span
-            style={{fontSize:20, fontWeight:800, margin:10}}
+            style={{fontSize:30, fontWeight:800, margin:10}}
             >{projectData.title}</span>
             :
             <Editable
