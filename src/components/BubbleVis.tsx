@@ -135,6 +135,8 @@ const BubbleVis = (props: BubbleProps) => {
 
   const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly, selectedActivityURL }, dispatch] = useProjectState();
   
+  console.log('filterd activities',filteredActivities);
+
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(600);
@@ -146,10 +148,15 @@ const BubbleVis = (props: BubbleProps) => {
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
+  console.log('entriesssssss',projectData.entries)
+
   let packedCircData = calcCircles(projectData.entries);
   d3.select('#tooltip').style('opacity', 0);
 
+  console.log('packedddd', packedCircData);
+
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
+  console.log('forced',forced.nodes);
 
   useEffect(() => {
   if (svgRef.current) {
@@ -592,8 +599,6 @@ if (groupBy) {
   groupGroups.each((d, i, n)=> {
   
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
-
-  
 
     let linkDataBefore = [];
     let linkDataAfter = [];

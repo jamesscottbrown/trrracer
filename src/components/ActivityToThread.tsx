@@ -42,7 +42,7 @@ const ActivitytoThread = (props: any) => {
             onClick={() => {
               setShowDesc(false);
               setSeeThreadAssign(false);
-              closePopover();
+              // closePopover();
               dispatch({
                 type: 'ADD_ACTIVITY_TO_THREAD',
                 activity,

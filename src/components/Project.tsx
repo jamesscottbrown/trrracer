@@ -154,15 +154,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView,
-      isReadOnly,
-      citations
+      isReadOnly
     }, dispatch 
   ] = useProjectState();
 
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
   
-  console.log(citations);
 
   useEffect(()=> {
 
@@ -222,9 +220,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   }, [queryString, viewType])
 
-  
-
- 
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
@@ -331,6 +326,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
     filterQuery,
     threadTypeFilterArray,
   ]);
+
+  console.log('filtered activities',filteredActivities)
 
   if (viewType === 'query') {
     return (

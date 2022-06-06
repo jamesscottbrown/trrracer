@@ -194,7 +194,27 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       console.log('base dir in set data', baseDir);
       const research_threads = await checkRtFile(baseDir);
-      console.log({ research_threads });
+      console.log('research theeee', action.projectData.entries);
+
+      research_threads.research_threads = research_threads.research_threads.map(m => {
+        let actionDate = m.actions.filter(f => f.action  === 'created')[0];
+        // let newBub = {title: `Created thread: ${m.title}`, date: m.actions.filter(f => f.action  === 'created')[0].dob, description: "Thread was created."}
+        const newEntry: EntryType = {
+          title: `Created thread: ${m.title}`,
+          description: "created this thread",
+          files: [],
+          date: actionDate.when,
+          tags: [],
+          urls: [],
+          activity_uid: uuidv4(),
+        };
+
+        action.projectData.entries = [...action.projectData.entries, newEntry]
+        
+        console.log('newEntry!', newEntry)
+        return m;
+      })
+      
 
       const newProjectData = {
         ...action.projectData,
@@ -617,7 +637,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           description: action.threadDescription,
           associated_tags: [],
           color: `#${randomColor}`,
-          evidence: [],
+          evidence: action.evidence,
         };
         const newRT = state.researchThreads;
         newRT.research_threads.push(threadOb);

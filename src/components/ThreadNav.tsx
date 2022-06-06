@@ -518,6 +518,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 isActive={(threadName && description) ? true : false}
                 isDisabled={(threadName && description) ? false : true}
                 onClick={() => {
+                  let actTitle = `Created thread: ${threadName}`;
                   setName(null);
                   setDescription(null);
                   setShowCreateThread(false);
@@ -525,7 +526,21 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     type: 'CREATE_THREAD',
                     threadName,
                     threadDescription: description,
+                    evidence: [{
+                      activityTitle: actTitle,
+                      activity_index: projectData.entries.length,
+                      dob: new Date(),
+                      rationale: "Thread created",
+                      type: "activity"
+                    }]
                   });
+
+                 
+                  dispatch({  
+                    type: 'ADD_ENTRY',
+                    data: {title: actTitle, date: new Date(), description: description},
+                  });
+                
                 }}
               >
                 CREATE
