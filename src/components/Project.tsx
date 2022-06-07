@@ -16,7 +16,6 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { ParsedUrlQueryInput } from 'querystring';
 const queryString = require('query-string');
 
 interface ProjectProps {
@@ -229,7 +228,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
-
   // Update title when projectData changes.
   //
   const filteredActivities = useMemo(() => {
@@ -315,10 +313,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
+    console.log('query filtered', queryFiltered)
+    
     return queryFiltered;
 
   }, [
-    projectData.entries,
+    projectData.entries.length,
+    projectData.entries.flatMap(m => m.files).length,
     filterTags,
     filterType,
     filterDates,
@@ -327,7 +328,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
     threadTypeFilterArray,
   ]);
 
-  console.log('filtered activities',filteredActivities)
+  useEffect(()=> {
+    console.log('this changed', filteredActivities)
+    dispatch({type: 'SET_FILTERED_ACTIVITIES', filteredActivities});
+  }, [filteredActivities.length, projectData.entries.flatMap(m => m.files).length,])
 
   if (viewType === 'query') {
     return (
@@ -416,8 +420,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
         
           {
             addEntrySplash && (
-                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
-              )
+              <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
+            )
           }
          
           {
@@ -425,7 +429,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView
-                  filteredActivities={filteredActivities}
                   setViewType={setViewType}
                   viewType={viewType}
                 />

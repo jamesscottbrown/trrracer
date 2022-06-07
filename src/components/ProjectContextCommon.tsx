@@ -55,6 +55,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
+    const filterActivityData = (activities:any) => {
+
+    }
+
     const getData = async (action:any, isReadOnly:boolean) => {
       const baseDir = action.folderName;
 
@@ -194,27 +198,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       console.log('base dir in set data', baseDir);
       const research_threads = await checkRtFile(baseDir);
-      console.log('research theeee', action.projectData.entries);
-
-      research_threads.research_threads = research_threads.research_threads.map(m => {
-        let actionDate = m.actions.filter(f => f.action  === 'created')[0];
-        // let newBub = {title: `Created thread: ${m.title}`, date: m.actions.filter(f => f.action  === 'created')[0].dob, description: "Thread was created."}
-        const newEntry: EntryType = {
-          title: `Created thread: ${m.title}`,
-          description: "created this thread",
-          files: [],
-          date: actionDate.when,
-          tags: [],
-          urls: [],
-          activity_uid: uuidv4(),
-        };
-
-        action.projectData.entries = [...action.projectData.entries, newEntry]
-        
-        console.log('newEntry!', newEntry)
-        return m;
-      })
-      
 
       const newProjectData = {
         ...action.projectData,
@@ -226,9 +209,20 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           : []
       };
 
+      let filtered = filterActivityData(newProjectData.entries);
+
+      console.log(filtered);
+
+      // console.log('newProjectData', newProjectData.entries)
+      // newProjectData.entries = newProjectData.entries.map(m => {
+      //   m.activity_uid = m.activity_uid ? m.activity_uid : uuidv4();
+      //   return m;
+      // })
+
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
+        filteredActivities: newProjectData.entries,
         isReadOnly: isReadOnly,
         googleData: google_data,
         txtData: txt_data,
@@ -266,6 +260,11 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       case 'SAVE_DATA': {
         return action.data;
+      }
+
+      case 'SET_FILTERED_ACTIVITIES': {
+        console.log('filtered activities in projectData', action.filteredActivities);
+        return {...state, filteredActivities: action.filteredActivities }
       }
 
       case 'UPDATE_RT_TYPE_SHOWN': {

@@ -27,7 +27,7 @@ const ActivityWrap = (props: any) => {
     viewType,
   } = props;
 
-  const [{folderPath, researchThreads, filterRT}, dispatch] = useProjectState();
+  const [{filterRT}, dispatch] = useProjectState();
   const myRef = useRef(null);
 
   const updateEntryField = (
@@ -46,8 +46,9 @@ const ActivityWrap = (props: any) => {
       ref={myRef}>
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
-            key={`en-${activityData.title}-${activityData.index}-${index}`}
+            key={`en-${activityData.title}-${activityData.activity_uid}`}
             entryData={activityData}
+            files={activityData.files}
             entryIndex={activityData.index}
             openFile={openFile}
             updateEntryField={updateEntryField}

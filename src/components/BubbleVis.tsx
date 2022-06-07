@@ -135,8 +135,6 @@ const BubbleVis = (props: BubbleProps) => {
 
   const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly, selectedActivityURL }, dispatch] = useProjectState();
   
-  console.log('filterd activities',filteredActivities);
-
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
   const [svgWidth, setSvgWidth] = useState(600);
@@ -148,23 +146,17 @@ const BubbleVis = (props: BubbleProps) => {
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  console.log('entriesssssss',projectData.entries)
-
   let packedCircData = calcCircles(projectData.entries);
   d3.select('#tooltip').style('opacity', 0);
 
-  console.log('packedddd', packedCircData);
-
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
-  console.log('forced',forced.nodes);
 
   useEffect(() => {
   if (svgRef.current) {
     setNewHeight(window.getComputedStyle(svgRef.current).height);
   }
   if(groupBy){
-    
-    
+  
     setSvgWidth((researchThreads?.research_threads.length * 300))
   }else{
     setSvgWidth(600);
@@ -639,13 +631,10 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-
  // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
  let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
 
-
- 
   highlightedActivities.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){

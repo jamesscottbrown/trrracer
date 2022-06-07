@@ -103,6 +103,8 @@ interface EntryPropTypes {
     newData: any
   ) => void;
   makeNonEditable: () => void;
+  activity_uid: string;
+  files: File[];
 }
 
 interface ReactTag {
@@ -113,6 +115,7 @@ interface ReactTag {
 const Entry = (props: EntryPropTypes) => {
   const {
     entryData,
+    files,
     entryIndex,
     openFile,
     updateEntryField,
@@ -136,7 +139,7 @@ const Entry = (props: EntryPropTypes) => {
   }, [entryData]);
 
   const [selectedTab, setSelectedTab] =
-    React.useState<'write' | 'preview'>('preview');
+    React.useState<'write' | 'preview'>('write');
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
@@ -171,7 +174,9 @@ const Entry = (props: EntryPropTypes) => {
   };
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
-  const files = entryData.files.filter((f) => f.fileType !== 'url');
+  const filterfiles = files.filter((f) => f.fileType !== 'url');
+
+  console.log('FILE CHECK',files, files.length);
 
   return (
     <div style={{ margin: 'auto' }}>
@@ -250,7 +255,7 @@ const Entry = (props: EntryPropTypes) => {
           )
         }
         handleAddition={(tag: ReactTag) => {
-          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex });
+          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityId: entryData.activity_uid });
         }}
       />
 
@@ -297,7 +302,7 @@ const Entry = (props: EntryPropTypes) => {
         <span style={{ fontSize: 18, fontWeight: 700 }}>{'Artifacts: '}</span>
         <br />
         <UnorderedList>
-          {files.map((file: File, j: any) => (
+          {filterfiles.map((file: File, j: any) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt

@@ -76,7 +76,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
         }}
         onClick={() => {
           setViewType('detail view');
-          console.log('dispatch',dispatch)
+        
           dispatch({
             type: 'SELECTED_ARTIFACT',
             selectedArtifactEntry: entryData,
@@ -114,6 +114,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     if (tagFil.length > 0) return tagFil[tagFil.length - 1].color;
     return '#D4D4D4';
   };
+
+
 
   const urls = entryData.files.filter((f) => f.fileType === 'url');
   const files = entryData.files.filter((f) => f.fileType !== 'url');

@@ -5,15 +5,16 @@ import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
   const {
-    filteredActivities,
     setViewType,
     viewType,
   } = ProjectPropValues;
 
-  let [usedEntries, setUsedEntries] = useState(filteredActivities)
-
   //selectedActivityURL !== null
-  const [{projectData, selectedActivityURL},] = useProjectState();
+  const [{projectData, filteredActivities, selectedActivityURL},] = useProjectState();
+
+  console.log('filtered in project list view', filteredActivities);
+
+  let [usedEntries, setUsedEntries] = useState(filteredActivities)
 
   useEffect(() => {
 
@@ -38,7 +39,7 @@ const ProjectListView = (ProjectPropValues: any) => {
         Array.from(Array(projectData.entries.length), () => false)
       );
     }
-  }, [projectData]);
+  }, [projectData.entries.length, filteredActivities.length]);
 
   // useEffect(() => {
   //   setEditable(Array.from(Array(projectData.entries.length), () => false));
