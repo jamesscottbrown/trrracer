@@ -14,7 +14,6 @@ import eml_parser
 from email import message_from_file, policy, parser
 from extract_links import extract_links_from_pdf
 
-
 app = Flask(__name__)
 
 DOCUMENT_PATH_DERYA = '/Volumes/GoogleDrive/Shared drives/trrrace/Derya Artifact Trrracer/'
