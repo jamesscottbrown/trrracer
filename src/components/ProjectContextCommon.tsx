@@ -55,6 +55,88 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
+    const filterData = (fData:any, filterDates: any[], filterTags: any[], filterRT:any, filterType:any, filterQuery:any, researchThreads:any, threadTypeFilterArray:any) => {
+        // move that logic here
+      const tagFiltered = [...fData]
+        .filter((entryData: any) => {
+          return filterTags.every((requiredTag: string) =>
+            entryData.tags.includes(requiredTag)
+          );
+        })
+        .map((e, index) => ({ ...e, index }));
+
+      const typeFiltered = tagFiltered
+        .filter((entryData: any) => {
+          if (filterType) {
+            if (filterType.includes('undefined')) {
+              return entryData.files
+                .map((m: any) => !m.artifactType || m.artifactType === '')
+                .includes(true);
+            }
+            return entryData.files
+              .map((m: any) => m.artifactType)
+              .includes(filterType);
+          }
+          return entryData;
+        })
+        .map((e: EntryType, index: number) => ({ ...e, index }));
+
+      const rtFiltered = typeFiltered.filter((entryData: any) => {
+        if (filterRT) {
+          return (
+            // filterRT.key.includes(entryData.title) ||
+            // filterRT.associatedKey.includes(entryData.title)
+            filterRT.key.includes(entryData.title)
+          );
+        }
+        return typeFiltered;
+      });
+
+      const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
+        if (filterRT) {
+          let nono: any[] = [];
+          let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
+          
+          threadTypeFilterArray.forEach((ty, i)=> {
+            if(!ty.show){
+              if(ty.type != 'tags'){
+                let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
+                nono = [...nono, exclude];
+                
+              }
+            }
+          });
+        
+          return (
+            nono.indexOf(entryData.title) === -1 
+          );
+        }
+        return typeFiltered;
+      });
+
+      const timeFiltered =
+        filterDates[0] != null && filterDates[1] != null
+          ? rtTypesFiltered.filter(
+              (f) =>
+                new Date(f.date) >= filterDates[0] &&
+                new Date(f.date) <= filterDates[1]
+            )
+          : rtTypesFiltered;
+
+      timeFiltered.sort(
+        (a, b) =>
+          // (reversedOrder ? -1 : +1) *
+          (Number(new Date(a.date)) - Number(new Date(b.date)))
+      );
+
+      const queryFiltered =
+        filterQuery != null
+          ? timeFiltered.filter((f) => filterQuery.includes(f.title))
+          : timeFiltered;
+
+      return queryFiltered;
+    }
+
     const getData = async (action:any, isReadOnly:boolean) => {
       const baseDir = action.folderName;
 
@@ -207,6 +289,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
+        filteredActivities: newProjectData.entries,
         isReadOnly: isReadOnly,
         googleData: google_data,
         txtData: txt_data,
@@ -243,6 +326,20 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       case 'SAVE_DATA': {
         return action.data;
+      }
+
+      case 'FILTER_DATA':{
+        const newFiltered = filterData(
+          state.projectData.entries,
+          state.filterDates, 
+          state.filterTags,
+          state.filterRT, 
+          state.filterType, 
+          state.filterQuery,
+          state.researchThreads, 
+          state.threadTypeFilterArray
+          );
+        return {...state, filteredActivities: newFiltered }
       }
 
       case 'UPDATE_RT_TYPE_SHOWN': {

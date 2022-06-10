@@ -13,7 +13,6 @@ import { useProjectState } from './ProjectContext';
 const smalltalk = require('smalltalk');
 
 interface BubbleProps {
-  filteredActivities: EntryType[];
   setGroupBy:(gb:any)=> void;
   groupBy: any;
   flexAmount: number;
@@ -125,7 +124,6 @@ const ToolTip = (toolProp: any) => {
 
 const BubbleVis = (props: BubbleProps) => {
   const {
-    filteredActivities,
     groupBy,
     setGroupBy,
     flexAmount,
@@ -133,7 +131,17 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly, selectedActivityURL }, dispatch] = useProjectState();
+  const [{
+    projectData, 
+    filterType, 
+    filterRT, 
+    filterTags, 
+    selectedThread, 
+    researchThreads, 
+    isReadOnly, 
+    selectedActivityURL,
+    filteredActivities 
+  }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -593,8 +601,6 @@ if (groupBy) {
   
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
 
-  
-
     let linkDataBefore = [];
     let linkDataAfter = [];
 
@@ -634,13 +640,10 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-
  // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
  let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
 
-
- 
   highlightedActivities.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){

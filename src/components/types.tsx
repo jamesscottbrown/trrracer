@@ -168,7 +168,7 @@ type ProjectState = {
   selectedArtifactEntry: EntryTypeWithIndex; // ?
   selectedArtifactIndex: number;
 
-  
+  filteredActivities:any;
 
   hopArray: any[];
   
