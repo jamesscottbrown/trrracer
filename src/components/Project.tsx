@@ -16,38 +16,13 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { ParsedUrlQueryInput } from 'querystring';
+
+
 const queryString = require('query-string');
+
 
 interface ProjectProps {
   folderPath: string;
-}
-//two arrays are the same length,
-//you dont have a  - in object, each key is string or number.
-
-function compareObjects <T extends any>(objA: T, objB:T): boolean{
-  if(Object.keys(objA).length !== Object.keys(objB).length){
-    return false;
-  }else{
-    for(let key in Object.keys(objA)){
-      if(objA[key] !== objB[key]){
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
-function compareObjectList <T extends any[]>(listA: T, listB: T): boolean{
-  if(listA.length !== listB.length){
-    return false;
-  }
-  for(let i = 0; i < listA.length; ++i){
-    if(!compareObjects(listA[i], listB[i])){
-      return false;
-    }
-  }
-  return true;
 }
 
 const ResearchThreadTypeTags = () => {
@@ -155,75 +130,22 @@ const Project = (ProjectPropValues: ProjectProps) => {
       researchThreads,
       goBackView,
       isReadOnly
-    }, dispatch 
+    }, 
   ] = useProjectState();
 
-  // const [viewParam, setViewParam] = useState('overview');
-  const [viewType, setViewType] = useState<string>('overview');
+  let viewParam = null;
 
-  useEffect(()=> {
-    dispatch({
-      type: 'UPDATE_TITLE', title: projectData.title
-    })
-    if(isReadOnly){
-      const parsed = queryString.parse(location.search);
-      if(parsed.view) setViewType(parsed.view);
-      console.log('parsed', parsed, viewType);
-      if(parsed.granularity === 'thread'){
-        //sample for thread url 
-        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
-
-        let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
-        let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
-        dispatch({
-          type: 'THREAD_FILTER',
-          filterRT: chosenRT,
-          selectedThread: threadindex
-        })
-      }else if(parsed.granularity === 'activity'){
-        //sample for activity
-        // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-     
-        dispatch({
-          type: 'URL_SELECTED_ACTIVITY',
-          selectedActivityURL: parsed.id,
-        });
-
-      }else if(parsed.granularity === 'artifact'){
-      //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
-        
-        
-        let selected = projectData.entries.filter(en =>{
-          let fileTest = en.files.filter(f => f.artifact_uid === parsed.id);
-          return fileTest.length > 0
-        });
-
-        let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
-
-     
-        const newHop = [{
-          activity: selected[0], 
-          artifactUid: parsed.id,
-          hopReason: 'first hop',
-          tag: null,
-        }]
-
-        dispatch({
-          type: 'SELECTED_ARTIFACT',
-          selectedArtifactEntry : selected.length > 0 ? selected[0] : null,
-          selectedArtifactIndex : selected.length > 0 ? artifact : null,
-          hopArray: newHop,
-        })
-
-        setViewType("detail view");
-      }
-    }
-
-  }, [queryString, viewType])
-
+  if(isReadOnly){
   
-
+    const parsed = queryString.parse(location.search);
  
+    //=> {foo: 'bar'}
+    viewParam = parsed.view;
+    console.log(parsed)
+   
+  }
+
+  const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
