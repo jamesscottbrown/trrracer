@@ -13,7 +13,6 @@ import { useProjectState } from './ProjectContext';
 const smalltalk = require('smalltalk');
 
 interface BubbleProps {
-  filteredActivities: EntryType[];
   setGroupBy:(gb:any)=> void;
   groupBy: any;
   flexAmount: number;
@@ -105,7 +104,6 @@ const ToolTip = (toolProp: any) => {
     <div>
     {
       activityData.files.map((fi:any, i:any) => (
-      
         <div
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
@@ -125,7 +123,6 @@ const ToolTip = (toolProp: any) => {
 
 const BubbleVis = (props: BubbleProps) => {
   const {
-    filteredActivities,
     groupBy,
     setGroupBy,
     flexAmount,
@@ -133,7 +130,17 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly, selectedActivityURL }, dispatch] = useProjectState();
+  const [{
+    projectData, 
+    filterType, 
+    filterRT, 
+    filterTags, 
+    selectedThread, 
+    researchThreads, 
+    isReadOnly, 
+    selectedActivityURL,
+    filteredActivities 
+  }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -146,7 +153,7 @@ const BubbleVis = (props: BubbleProps) => {
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles(projectData.entries);
+  let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
@@ -593,8 +600,6 @@ if (groupBy) {
   
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
 
-  
-
     let linkDataBefore = [];
     let linkDataAfter = [];
 
@@ -634,13 +639,10 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-
  // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
  let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
 
-
- 
   highlightedActivities.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){
@@ -675,6 +677,7 @@ if (groupBy) {
     }
   });
 
+  //THIS IS WHERE I STOPPED COPYING OVER!! EVERYTHING BELOW IS NOT COPIED
   if(filterType){
 
     highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
@@ -712,8 +715,6 @@ if (groupBy) {
    
     let linkDataBefore = [];
     let linkDataAfter = [];
-
-    
 
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
       let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);

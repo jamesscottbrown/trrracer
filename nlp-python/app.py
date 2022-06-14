@@ -10,7 +10,6 @@ from word_extraction import extract_words_yake, use_yake_for_text
 from concordance import key_concord
 import datetime
 import json
-import eml_parser
 from email import message_from_file, policy, parser
 from extract_links import extract_links_from_pdf
 
@@ -81,6 +80,10 @@ def write_blobs_to_file(blob, document_path):
 @app.route("/")
 def index():
     return "nothing happening"
+
+@app.route("/pdf")
+def index():
+    return extract_links_from_pdf('filename')
 
 #/get_google_comments/EvoBio Design Study
 @app.route("/get_google_comments/<string:path>")
