@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 const {google} = require('googleapis');
-import *  as googleCred from '../../assets/google_cred_desktop_app.json';
+
 import { useProjectState } from './ProjectContext';
 import {
   Button,
@@ -11,6 +11,13 @@ import {
 } from '@chakra-ui/react';
 import { readFileSync } from '../fileUtil';
 
+let googleCred: any;
+const isElectron = process.env.NODE_ENV === 'development';
+
+if(isElectron){
+  googleCred = require('../../assets/google_cred_desktop_app.json');
+}
+
 
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
@@ -20,7 +27,6 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   const [{folderPath}, dispatch] = useProjectState();
   const [showFileCreate, setShowFileCreate] = useState(false);
   const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
-
 
   const googleFolderDict = (folder)=> {
     if(folder?.includes('EvoBio')){
@@ -48,7 +54,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   async function testGoog(){
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
     // const token = await readFile('token.json')
-    const token = readFileSync('token.json', {encoding: 'utf-8'});
+    const token = await readFileSync('token.json');
     oAuth2Client.setCredentials(JSON.parse(token))
     console.log('init client');
     console.log('auth Instance', google)
@@ -70,7 +76,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
     const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
     // const token = await readFile('token.json')
     
-    const token = readFileSync('token.json', {encoding: 'utf-8'});
+    const token = await readFileSync('token.json');
     oAuth2Client.setCredentials(JSON.parse(token))
     
     let drive = google.drive({version: 'v3', auth: oAuth2Client});
