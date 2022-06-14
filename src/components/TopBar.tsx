@@ -24,12 +24,10 @@ interface TopbarProps {
   setViewType: any;
   newTitle: string;
   setNewTitle: any;
-  filteredActivities: any;
   setHideByDefault: (boo: any) => void;
   hideByDefault: Boolean;
   setAddEntrySplash: (boo: any) => void;
 }
-
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
 
@@ -38,13 +36,12 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setViewType,
     newTitle,
     setNewTitle,
-    filteredActivities,
     setHideByDefault,
     hideByDefault,
     setAddEntrySplash,
   } = ProjectPropValues;
 
-  const [{ projectData, isReadOnly }, dispatch] = useProjectState();
+  const [{ projectData, filteredActivities, isReadOnly }, dispatch] = useProjectState();
 
   //USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
