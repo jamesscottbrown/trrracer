@@ -147,6 +147,21 @@
            'react-dom': 'react-dom/profiling',
            'scheduler/tracing': 'scheduler/tracing-profiling',
  //          'schedule/tracking': 'schedule/cjs/schedule-tracking.profiling.min'
-         }
+         },
+         fallback: {
+          "http": false,
+          "https": false,
+          "stream": false,
+          "tty": false,
+          "zlib": false,
+          "fs": false,
+          "crypto": false,
+          "path": false,
+          "os": false,
+          "constants": false,
+          "net": false,
+          "tls": false,
+          "child_process": false,
+        }
        }
  });
