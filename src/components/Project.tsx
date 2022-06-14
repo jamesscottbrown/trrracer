@@ -152,6 +152,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads,
+      filteredActivities,
       goBackView,
       isReadOnly
     }, dispatch 
@@ -160,17 +161,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
   
+  // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
+  const [newTitle, setNewTitle] = useState<string>(projectData.title);
+  const [groupBy, setGroupBy] = useState(null);
+  const [defineEvent, setDefineEvent] = useState<boolean>(false);
+  const [hideByDefault, setHideByDefault] = useState<boolean>(false);
+  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
+  const [granularity, setGranularity] = useState<null|string>(null);
+  const [cIndex, setcIndex] = useState<null|number>(null);
+  const [selectedId, setSelectedId] = useState<null|string>(null);
+
+  const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
+  
+    dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
-      setViewType(parsed.view);
-  
+      if(parsed.view) setViewType(parsed.view);
+      console.log('parsed', parsed, viewType);
+      setGranularity(parsed.granularity);
+      setcIndex(parsed.cIndex);
+
       if(parsed.granularity === 'thread'){
         //sample for thread url 
-        //http://127.0.0.1:8080/?view=overview&granularity=overview&id=202c5ede-1637-47a0-8bc6-c75700f34036
-
+        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
+        console.log('viewType');
         let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
         let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
         dispatch({
@@ -219,119 +236,22 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   }, [queryString, viewType])
 
-  // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
-  const [newTitle, setNewTitle] = useState<string>(projectData.title);
-  const [groupBy, setGroupBy] = useState(null);
-  const [defineEvent, setDefineEvent] = useState<boolean>(false);
-  const [hideByDefault, setHideByDefault] = useState<boolean>(false);
-  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
+  useEffect(()=> {
 
-  const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
+    dispatch({type:'FILTER_DATA'});
 
-  // Update title when projectData changes.
-  //
-  const filteredActivities = useMemo(() => {
-
-   // move that logic here
-    const tagFiltered = projectData.entries
-      .filter((entryData: any) => {
-        return filterTags.every((requiredTag: string) =>
-          entryData.tags.includes(requiredTag)
-        );
-      })
-      .map((e, index) => ({ ...e, index }));
-
-    const typeFiltered = tagFiltered
-      .filter((entryData: any) => {
-        if (filterType) {
-          if (filterType.includes('undefined')) {
-            return entryData.files
-              .map((m: any) => !m.artifactType || m.artifactType === '')
-              .includes(true);
-          }
-          return entryData.files
-            .map((m: any) => m.artifactType)
-            .includes(filterType);
-        }
-        return entryData;
-      })
-      .map((e: EntryType, index: number) => ({ ...e, index }));
-
-    const rtFiltered = typeFiltered.filter((entryData: any) => {
-      if (filterRT) {
-        return (
-          // filterRT.key.includes(entryData.title) ||
-          // filterRT.associatedKey.includes(entryData.title)
-          filterRT.key.includes(entryData.title)
-        );
-      }
-      return typeFiltered;
-    });
-
-    const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
-      if (filterRT) {
-        let nono = [];
-        let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
-        
-        threadTypeFilterArray.forEach((ty, i)=> {
-          if(!ty.show){
-            if(ty.type != 'tags'){
-              let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
-              nono = [...nono, exclude];
-              
-            }
-            // else{
-            //   nono = [...nono, ...filterRT.associatedKey.filter(as => filterRT.key.indexOf(as) === -1)]
-            // }
-          }
-        });
-       
-        return (
-          nono.indexOf(entryData.title) === -1 
-        );
-      }
-      return typeFiltered;
-    });
-
-    const timeFiltered =
-      filterDates[0] != null && filterDates[1] != null
-        ? rtTypesFiltered.filter(
-            (f) =>
-              new Date(f.date) >= filterDates[0] &&
-              new Date(f.date) <= filterDates[1]
-          )
-        : rtTypesFiltered;
-
-    timeFiltered.sort(
-      (a, b) =>
-        // (reversedOrder ? -1 : +1) *
-        (Number(new Date(a.date)) - Number(new Date(b.date)))
-    );
-
-    const queryFiltered =
-      filterQuery != null
-        ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-        : timeFiltered;
-
-    console.log('query filtered', queryFiltered)
-    
-    return queryFiltered;
-
-  }, [
-    projectData.entries.length,
-    projectData.entries.flatMap(m => m.files).length,
-    filterTags,
-    filterType,
-    filterDates,
-    filterRT,
-    filterQuery,
-    threadTypeFilterArray,
+  }, [ 
+      filterTags,
+      filterType,
+      filterDates,
+      filterRT,
+      filterQuery,
+      threadTypeFilterArray,
+      projectData.entries.length,
+      projectData.entries.flatMap(f => f.files).length
   ]);
 
-  useEffect(()=> {
-    console.log('this changed', filteredActivities)
-    dispatch({type: 'SET_FILTERED_ACTIVITIES', filteredActivities});
-  }, [filteredActivities.length, projectData.entries.flatMap(m => m.files).length,])
+  console.log('filter', filteredActivities);
 
   if (viewType === 'query') {
     return (
@@ -346,7 +266,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          filteredActivities={filteredActivities}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
@@ -360,7 +279,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             fromTop={fromTop}
           />
           <BubbleVis
-            filteredActivities={filteredActivities}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
@@ -397,7 +315,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
            viewType={viewType}
-           filteredActivities={filteredActivities}
+          //  filteredActivities={filteredActivities}
            setViewType={setViewType}
            newTitle={newTitle}
            setNewTitle={setNewTitle}
@@ -410,7 +328,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             fromTop={fromTop}
             />
           <BubbleVis
-            filteredActivities={filteredActivities}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
@@ -441,7 +358,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
-  if (viewType === 'explore paper') {
+  if (viewType === 'paper') {
     return (
       <div
         style={{
@@ -454,7 +371,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          filteredActivities={filteredActivities}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
@@ -462,7 +378,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash} 
         />
-        <PaperView folderPath={folderPath} />
+        <PaperView folderPath={folderPath} granularity={granularity} cIndex={cIndex}/>
       </div>
     );
   }

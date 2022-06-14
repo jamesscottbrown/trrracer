@@ -9,10 +9,9 @@ const ProjectListView = (ProjectPropValues: any) => {
     viewType,
   } = ProjectPropValues;
 
+ 
   //selectedActivityURL !== null
-  const [{projectData, filteredActivities, selectedActivityURL},] = useProjectState();
-
-  console.log('filtered in project list view', filteredActivities);
+  const [{projectData, selectedActivityURL, filteredActivities},] = useProjectState();
 
   let [usedEntries, setUsedEntries] = useState(filteredActivities)
 
