@@ -161,9 +161,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
-
-
-
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
@@ -177,7 +174,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-    console.log('PROJECT  DATA',projectData);
+  
+    dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);

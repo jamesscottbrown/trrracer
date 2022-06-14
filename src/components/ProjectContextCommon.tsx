@@ -353,7 +353,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       case 'SAVE_DATA': {
         console.log('savedataaa', action.data.projectData, action.data)
         return action.data;
-        // saveJSON(action.data.projectData, action.data);
+       
       }
 
       case 'FILTER_DATA':{
@@ -380,7 +380,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state.projectData,
           title: action.title,
         };
-
+        console.log('new title')
         return saveJSON(newProjectData, state);
       }
 
