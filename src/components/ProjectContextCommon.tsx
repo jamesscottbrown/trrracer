@@ -148,6 +148,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let google_comms: any;
       let linkData: any;
       let newEntries = [...action.projectData.entries];
+      // console.log('newTags ac', action.projectData);
+      let newTags = [...action.projectData.tags];
+
+      console.log('newTags', newTags)
      
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
@@ -205,12 +209,18 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         newEntries = action.projectData.entries.map((e, i) => {
-          e.index = i;
-          e.key_txt = txt_data
-            ? txt_data['text-data'].filter((td) => td['entry-index'] === i)
-            : [];
 
-          e.files = e.files.map((ef) => {
+          let actOb = {};
+          actOb.activity_uid = e.activity_uid;
+          actOb.date = e.date;
+          actOb.descriptio = e.description;
+          actOb.month = e.month;
+          actOb.tags = e.tags;
+          actOb.title = e.title;
+          actOb.urls = e.urls;
+          actOb.year = e.year;
+          actOb.index = i;
+          actOb.files = e.files.map((ef) => {
             if (ef.fileType === 'gdoc') {
               // ef.artifactType = 'notes'
               ef.emphasized = google_em ? google_em[ef.fileId] : [];
@@ -266,21 +276,34 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           });
           // }
 
-          return e;
+          return actOb;
         });
       } catch (e) {
         newEntries = action.projectData.entries;
-
         return e;
       }
-      console.log('base dir in set data', baseDir);
-      const research_threads = await checkRtFile(baseDir);
-      console.log({ research_threads });
 
+      try {
+        newTags = newTags.map(t => {
+          let newT = {}
+          newT.title = t.title;
+          newT.color = t.color;
+          newT.date = t.date;
+          // newT.matches = t.matches.map(m => m.activity_uid);
+          return newT;
+        });
+      }catch(e){
+        console.log('error with tags?')
+        newTags = newTags;
+      }
+      // console.log('base dir in set data', baseDir);
+      const research_threads = await checkRtFile(baseDir);
+     
       const newProjectData = {
         ...action.projectData,
         entries: newEntries,
         roles: roleData,
+        tags: newTags,
         eventArray: action.projectData.eventArray
           ? action.projectData.eventArray
           : []
@@ -314,6 +337,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ]
       };
     };
+    
+   
 
     switch (action.type) {
       
@@ -322,10 +347,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         // the simplest way to handle this is to handle this in an async function,
         // and dispatch a new message to save the project data when it is ready
         getData(action, isReadOnly).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
+
         return state;
       }
       case 'SAVE_DATA': {
+        console.log('savedataaa', action.data.projectData, action.data)
         return action.data;
+        // saveJSON(action.data.projectData, action.data);
       }
 
       case 'FILTER_DATA':{
@@ -339,6 +367,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           state.researchThreads, 
           state.threadTypeFilterArray
           );
+          saveJSON(state.projectData, state)
         return {...state, filteredActivities: newFiltered }
       }
 

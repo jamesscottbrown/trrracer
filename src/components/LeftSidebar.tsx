@@ -17,6 +17,7 @@ import { ToolIcon } from './Project';
 import { stateUpdateWrapperUseJSON } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import { MdCancel } from 'react-icons/md';
+import ActivityTitlePopoverLogic from './PopoverTitle';
 
 const LeftSidebar = (props: any) => {
   
@@ -28,10 +29,11 @@ const LeftSidebar = (props: any) => {
     matches: artifacts.length,
   });
 
-  const tags = projectData.tags.filter(f => filterTags?.indexOf(f.title) === -1).map((t) => {
-    t.matches = projectData.entries.filter((f) => {
+  const tags = [...projectData.tags].filter(f => filterTags?.indexOf(f.title) === -1).map((t) => {
+    let matches = [...projectData.entries].filter((f) => {
       return f.tags.indexOf(t.title) > -1;
     });
+    t.matches = matches.map(m => m.activity_uid);
     return t;
   });
 

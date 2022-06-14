@@ -104,7 +104,6 @@ const ToolTip = (toolProp: any) => {
     <div>
     {
       activityData.files.map((fi:any, i:any) => (
-      
         <div
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
@@ -154,7 +153,7 @@ const BubbleVis = (props: BubbleProps) => {
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles(projectData.entries);
+  let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
@@ -678,6 +677,7 @@ if (groupBy) {
     }
   });
 
+  //THIS IS WHERE I STOPPED COPYING OVER!! EVERYTHING BELOW IS NOT COPIED
   if(filterType){
 
     highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
@@ -715,8 +715,6 @@ if (groupBy) {
    
     let linkDataBefore = [];
     let linkDataAfter = [];
-
-    
 
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
       let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
