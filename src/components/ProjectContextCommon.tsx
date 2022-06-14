@@ -367,7 +367,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           state.researchThreads, 
           state.threadTypeFilterArray
           );
-          saveJSON(state.projectData, state)
+          // saveJSON(state.projectData, state)
         return {...state, filteredActivities: newFiltered }
       }
 

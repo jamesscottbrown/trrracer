@@ -177,6 +177,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
+    console.log('PROJECT  DATA',projectData);
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
