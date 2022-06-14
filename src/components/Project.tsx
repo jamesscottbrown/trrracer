@@ -162,7 +162,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [viewType, setViewType] = useState<string>('overview');
 
   useEffect(()=> {
-
+    dispatch({
+      type: 'UPDATE_TITLE', title: projectData.title
+    })
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
       if(parsed.view) setViewType(parsed.view);
