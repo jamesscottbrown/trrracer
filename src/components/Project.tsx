@@ -16,13 +16,38 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-
-
+import { ParsedUrlQueryInput } from 'querystring';
 const queryString = require('query-string');
-
 
 interface ProjectProps {
   folderPath: string;
+}
+//two arrays are the same length,
+//you dont have a  - in object, each key is string or number.
+
+function compareObjects <T extends any>(objA: T, objB:T): boolean{
+  if(Object.keys(objA).length !== Object.keys(objB).length){
+    return false;
+  }else{
+    for(let key in Object.keys(objA)){
+      if(objA[key] !== objB[key]){
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+function compareObjectList <T extends any[]>(listA: T, listB: T): boolean{
+  if(listA.length !== listB.length){
+    return false;
+  }
+  for(let i = 0; i < listA.length; ++i){
+    if(!compareObjects(listA[i], listB[i])){
+      return false;
+    }
+  }
+  return true;
 }
 
 const ResearchThreadTypeTags = () => {
@@ -128,130 +153,105 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads,
+      filteredActivities,
       goBackView,
       isReadOnly
-    }, 
+    }, dispatch 
   ] = useProjectState();
 
-  let viewParam = null;
-
-  if(isReadOnly){
-  
-    const parsed = queryString.parse(location.search);
- 
-    //=> {foo: 'bar'}
-    viewParam = parsed.view;
-    console.log(parsed)
-   
-  }
-
-  const [viewType, setViewType] = useState<string>(viewParam ? viewParam : 'overview');
+  // const [viewParam, setViewParam] = useState('overview');
+  const [viewType, setViewType] = useState<string>('overview');
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
+  const [granularity, setGranularity] = useState<null|string>(null);
+  const [cIndex, setcIndex] = useState<null|number>(null);
+  const [selectedId, setSelectedId] = useState<null|string>(null);
 
-  const fromTop = ((filterTags.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
+  const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
+  useEffect(()=> {
+  
+    dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
-  // Update title when projectData changes.
-  //
-  const filteredActivities = useMemo(() => {
+    if(isReadOnly){
+      const parsed = queryString.parse(location.search);
+      if(parsed.view) setViewType(parsed.view);
+      console.log('parsed', parsed, viewType);
+      setGranularity(parsed.granularity);
+      setcIndex(parsed.cIndex);
 
-   // move that logic here
-    const tagFiltered = projectData.entries
-      .filter((entryData: any) => {
-        return filterTags.every((requiredTag: string) =>
-          entryData.tags.includes(requiredTag)
-        );
-      })
-      .map((e, index) => ({ ...e, index }));
-
-    const typeFiltered = tagFiltered
-      .filter((entryData: any) => {
-        if (filterType) {
-          if (filterType.includes('undefined')) {
-            return entryData.files
-              .map((m: any) => !m.artifactType || m.artifactType === '')
-              .includes(true);
-          }
-          return entryData.files
-            .map((m: any) => m.artifactType)
-            .includes(filterType);
-        }
-        return entryData;
-      })
-      .map((e: EntryType, index: number) => ({ ...e, index }));
-
-    const rtFiltered = typeFiltered.filter((entryData: any) => {
-      if (filterRT) {
-        return (
-          // filterRT.key.includes(entryData.title) ||
-          // filterRT.associatedKey.includes(entryData.title)
-          filterRT.key.includes(entryData.title)
-        );
-      }
-      return typeFiltered;
-    });
-
-    const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
-      if (filterRT) {
-        let nono = [];
-        let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
-        
-        threadTypeFilterArray.forEach((ty, i)=> {
-          if(!ty.show){
-            if(ty.type != 'tags'){
-              let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
-              nono = [...nono, exclude];
-              
-            }
-            // else{
-            //   nono = [...nono, ...filterRT.associatedKey.filter(as => filterRT.key.indexOf(as) === -1)]
-            // }
-          }
+      if(parsed.granularity === 'thread'){
+        //sample for thread url 
+        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
+        console.log('viewType');
+        let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
+        let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
+        dispatch({
+          type: 'THREAD_FILTER',
+          filterRT: chosenRT,
+          selectedThread: threadindex
+        })
+      }else if(parsed.granularity === 'activity'){
+        //sample for activity
+        // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
+     
+        dispatch({
+          type: 'URL_SELECTED_ACTIVITY',
+          selectedActivityURL: parsed.id,
         });
-       
-        return (
-          nono.indexOf(entryData.title) === -1 
-        );
+
+      }else if(parsed.granularity === 'artifact'){
+      //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
+        
+        
+        let selected = projectData.entries.filter(en =>{
+          let fileTest = en.files.filter(f => f.artifact_uid === parsed.id);
+          return fileTest.length > 0
+        });
+
+        let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
+
+     
+        const newHop = [{
+          activity: selected[0], 
+          artifactUid: parsed.id,
+          hopReason: 'first hop',
+          tag: null,
+        }]
+
+        dispatch({
+          type: 'SELECTED_ARTIFACT',
+          selectedArtifactEntry : selected.length > 0 ? selected[0] : null,
+          selectedArtifactIndex : selected.length > 0 ? artifact : null,
+          hopArray: newHop,
+        })
+
+        setViewType("detail view");
       }
-      return typeFiltered;
-    });
+    }
 
-    const timeFiltered =
-      filterDates[0] != null && filterDates[1] != null
-        ? rtTypesFiltered.filter(
-            (f) =>
-              new Date(f.date) >= filterDates[0] &&
-              new Date(f.date) <= filterDates[1]
-          )
-        : rtTypesFiltered;
+  }, [queryString, viewType])
 
-    timeFiltered.sort(
-      (a, b) =>
-        // (reversedOrder ? -1 : +1) *
-        (Number(new Date(a.date)) - Number(new Date(b.date)))
-    );
+  useEffect(()=> {
 
-    const queryFiltered =
-      filterQuery != null
-        ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-        : timeFiltered;
+    dispatch({type:'FILTER_DATA'});
 
-    return queryFiltered;
-
-  }, [
-    projectData.entries,
-    filterTags,
-    filterType,
-    filterDates,
-    filterRT,
-    filterQuery,
-    threadTypeFilterArray,
+  }, [ 
+      filterTags,
+      filterType,
+      filterDates,
+      filterRT,
+      filterQuery,
+      threadTypeFilterArray,
+      projectData.entries.length,
+      projectData.entries.flatMap(f => f.files).length
   ]);
+
+  console.log('filter', filteredActivities);
 
   if (viewType === 'query') {
     return (
@@ -266,7 +266,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          filteredActivities={filteredActivities}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
@@ -280,7 +279,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             fromTop={fromTop}
           />
           <BubbleVis
-            filteredActivities={filteredActivities}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
@@ -317,7 +315,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
            viewType={viewType}
-           filteredActivities={filteredActivities}
+          //  filteredActivities={filteredActivities}
            setViewType={setViewType}
            newTitle={newTitle}
            setNewTitle={setNewTitle}
@@ -330,7 +328,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             fromTop={fromTop}
             />
           <BubbleVis
-            filteredActivities={filteredActivities}
             groupBy={groupBy}
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
@@ -349,7 +346,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView
-                  filteredActivities={filteredActivities}
                   setViewType={setViewType}
                   viewType={viewType}
                 />
@@ -362,7 +358,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       </div>
     );
   }
-  if (viewType === 'explore paper') {
+  if (viewType === 'paper') {
     return (
       <div
         style={{
@@ -375,7 +371,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
           viewType={viewType}
-          filteredActivities={filteredActivities}
           setViewType={setViewType}
           newTitle={newTitle}
           setNewTitle={setNewTitle}
@@ -383,7 +378,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash} 
         />
-        <PaperView folderPath={folderPath} />
+        <PaperView folderPath={folderPath} granularity={granularity} cIndex={cIndex}/>
       </div>
     );
   }
