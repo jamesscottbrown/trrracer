@@ -18,8 +18,6 @@ if(isElectron){
   googleCred = require('../../assets/google_cred_desktop_app.json');
 }
 
-
-
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
   const {fileType, text, entryIndex} = props;
