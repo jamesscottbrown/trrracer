@@ -18,7 +18,7 @@ if(isElectron){
   
   path =  require('path');
   fs  =  require('fs');
-  googleCred = require('../../assets/google_cred_desktop_app.json');
+  // googleCred = require('../../assets/google_cred_desktop_app.json');
   google = require('googleapis').google;
 }
 

@@ -10,7 +10,7 @@ import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { joinPath } from '../fileUtil';
-import { readFileSync } from '../fileUtil';
+
 
 
 const BubbleVisPaper = (props: any) => {

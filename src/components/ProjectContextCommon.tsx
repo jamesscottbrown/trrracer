@@ -194,6 +194,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
           return actOb;
         });
+        newEntries = newEntries.sort(
+          (a, b) =>
+            // (reversedOrder ? -1 : +1) *
+            (Number(new Date(a.date)) - Number(new Date(b.date)))
+        );
+        
       } catch (e) {
         newEntries = action.projectData.entries;
         return e;
@@ -348,7 +354,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ? timeFiltered.filter((f) => filterQuery.includes(f.title))
         : timeFiltered;
 
-    return queryFiltered;
+    return queryFiltered.sort(
+      (a, b) =>
+        // (reversedOrder ? -1 : +1) *
+        (Number(new Date(a.date)) - Number(new Date(b.date)))
+    );
+
     }
 
     switch (action.type) {
