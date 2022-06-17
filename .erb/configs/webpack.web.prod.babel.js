@@ -154,7 +154,6 @@
          fallback: {
           "http": false,
           "https": false,
-          "stream": false,
           "tty": false,
           "zlib": false,
           "fs": false,

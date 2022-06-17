@@ -287,6 +287,7 @@
     "smalltalk": "^4.0.7",
     "source-map-support": "^0.5.19",
     "stopword": "^1.0.11",
+    "stream": "^0.0.2",
     "tiny-invariant": "^1.2.0",
     "uuid": "^8.3.2",
     "wndb-with-exceptions": "^3.0.2"
