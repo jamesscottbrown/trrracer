@@ -133,6 +133,9 @@
        NODE_ENV: 'production',
        DEBUG_PROD: false,
      }),
+     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+     }),
      new MiniCssExtractPlugin({
        filename: 'style.css',
      }),
