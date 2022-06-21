@@ -1,9 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
-// import {toString} from 'nlcst-to-string'
-// import {retext} from 'retext'
-// import retextPos from 'retext-pos'
-// import retextKeywords from 'retext-keywords'
+
 
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
@@ -148,11 +145,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let google_comms: any;
       let linkData: any;
       let newEntries = [...action.projectData.entries];
-      // console.log('newTags ac', action.projectData);
       let newTags = [...action.projectData.tags];
 
-      console.log('newTags', newTags)
-     
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
         console.log('yes to google em file');

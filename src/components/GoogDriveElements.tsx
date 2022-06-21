@@ -23,7 +23,6 @@ const GoogInline = (googProps: any) => {
 
 const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmarked:any) => {
 
-
   const styleOb = { display: 'inline', cursor: 'pointer' };
   
   if (sectionData.textRun.textStyle) {
