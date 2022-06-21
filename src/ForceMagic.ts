@@ -26,7 +26,7 @@ class ForceMagic {
     .range([0, height - this.margin])
     .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
 
-  let filtered = projectEntries;//.filter(f => f.files && f.files.length > 0);
+  let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
 
   this.nodes = filtered.map((a: any) => {
     const node = {};
@@ -40,9 +40,8 @@ class ForceMagic {
     node.title = a.title;
     // node.activityTitle = splitBool ? a.activityTitle : null;
     // node.artifactType = splitBool ? a.artifactType : null;
-    node.activityTitle = a.title;
-    node.artifactType = a.artifactType;
-    node.activity_uid = a.activity_uid;
+    node.activityTitle = null;
+    node.artifactType = null;
     node.urls = a.urls;
     node.year = a.year;
     // node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);

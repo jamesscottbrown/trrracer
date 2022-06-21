@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-// const {google} = require('googleapis');
-
-// import { useProjectState } from './ProjectContext';
-// import {
-//   Button,
-//   ButtonGroup,
-//   Editable,
-//   EditableInput,
-//   EditablePreview
-// } from '@chakra-ui/react';
-// import { readFileSync } from '../fileUtil';
+import {getDriveFiles, createGoogleFile} from '../googleUtil'
+import { useProjectState } from './ProjectContext';
+import {
+  Button,
+  ButtonGroup,
+  Editable,
+  EditableInput,
+  EditablePreview
+} from '@chakra-ui/react';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
@@ -20,59 +18,27 @@ if(isElectron){
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
 
-  // const {fileType, text, entryIndex} = props;
+  const {fileType, text, entryIndex} = props;
 
-  // const [{folderPath}, dispatch] = useProjectState();
-  // const [showFileCreate, setShowFileCreate] = useState(false);
-  // const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
-
-  // const googleFolderDict = (folder)=> {
-  //   if(folder?.includes('EvoBio')){
-  //     return '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC'
-  //   }else if(folder?.includes('Derya')){
-  //     return '1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg';
-  //   }else if(folder?.includes('Jen')){
-  //     return '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp'
-  //   }else{
-  //     alert('google folder not found');
-  //   }
-  // }
-
-  // let test = googleFolderDict(folderPath);
-
-  // console.log('TESTING', test)
+  const [{folderPath}, dispatch] = useProjectState();
+  const [showFileCreate, setShowFileCreate] = useState(false);
+  const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
   
-  // const saveGoogleFile = () => {
+  const saveGoogleFile = () => {
     
-  //   createGoogleFile(googleFileName);
-  //   setShowFileCreate(false);
+    createGoogleFile(folderPath, googleFileName, fileType, googleCred, entryIndex).then((googl)=> {
+      console.log('TESTING',googl);
+      dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: googl?.fileType, name: googl?.fileId, entryIndex: googl?.entryIndex })
+    });
     
-  // };
-
-  // async function testGoog(){
-  //   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-  //   // const token = await readFile('token.json')
-  //   const token = await readFileSync('token.json');
-  //   oAuth2Client.setCredentials(JSON.parse(token))
-  //   console.log('init client');
-  //   console.log('auth Instance', google)
-  //   console.log('token', oAuth2Client.credentials)
-  //   let drive = google.drive({version: 'v3', auth: oAuth2Client});
-
-  //   drive.files.list({
-  //     q:"parents in '0AFyqaJXF-KkGUk9PVA' and trashed = false", 
-  //     fields:"nextPageToken, files(id, name)",
-  //     supportsAllDrives: true,
-  //     includeItemsFromAllDrives: true,
-  //   }).then((folder)=> console.log('folder',folder))
-
+    setShowFileCreate(false);
     
-  // }
+  };
+
 
   // async function createGoogleFile(name : string){
   
   //   const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-  //   // const token = await readFile('token.json')
     
   //   const token = await readFileSync('token.json');
   //   oAuth2Client.setCredentials(JSON.parse(token))
@@ -110,8 +76,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
     // <div>
     //  {showFileCreate ? (
     //     <>
-          
-    //         <Editable
+    //       <Editable
     //         defaultValue={googleFileName}
     //         startWithEditView={true}
     //         onChange={(val)=> setGoogleFileName(val)}
@@ -119,27 +84,33 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
     //         boxShadow="xs" p="4" rounded="md" bg="white"
     //         >
     //       <EditablePreview 
-    //       // display="inline"
-    //       border="1px"
-    //       borderColor="gray.200"
-    //       boxShadow="sm" p="2"
+    //         // display="inline"
+    //         border="1px"
+    //         borderColor="gray.200"
+    //         boxShadow="sm" p="2"
     //       />
     //       <EditableInput 
-    //       display="inline"
+    //         display="inline"
     //       />
     //       <ButtonGroup display="inline">
     //       <Button 
     //       color="primary" 
     //       display="inline-block" 
-    //       onClick={()=> saveGoogleFile()} 
-    //       type="button">
-           
+    //       onClick={()=> {
+            
+    //         saveGoogleFile()}} 
+    //         type="button">
     //         Create
     //       </Button>
     //       <Button color="red.400" 
     //       onClick={() => {
-    //         testGoog();
-    //         setShowFileCreate(false)}} 
+    //         getDriveFiles(folderPath, googleCred).then((googOb) => {
+    //           console.log(googOb);
+    //           dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+    //           dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+    //         });
+    //         setShowFileCreate(false);
+    //       }} 
     //         type="button">
     //         Cancel
     //       </Button>
@@ -150,7 +121,11 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
     //   ) : (
     //     <Button m="3px" 
     //     onClick={()=> {
-    //       testGoog();
+    //       getDriveFiles(folderPath, googleCred).then((googOb) => {
+    //         console.log(googOb);
+    //         dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+    //         dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+    //       });
     //       setShowFileCreate(true)}} 
     //       type="button">
     //       {text}
