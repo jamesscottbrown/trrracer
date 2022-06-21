@@ -28,7 +28,7 @@ const pickTagColor = (tags: TagType[]) => {
   return availableColors[Math.floor(Math.random() * availableColors.length)];
 };
 
-export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, deleteFileAction: any, isReadOnly: boolean) => {
+export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, saveJSONGoogDoc: any, deleteFileAction: any, isReadOnly: boolean) => {
 
   return (state: any, action: any) => {
     /**
@@ -64,29 +64,27 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let linkData: any;
       let newEntries = [...action.projectData.entries];
       let citationData = action.projectData.citations ? action.projectData.citations : [];
-      // console.log('newTags ac', action.projectData);
       let newTags = [...action.projectData.tags];
 
-      console.log('newTags', newTags)
-     
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-        console.log('yes to google em file');
+        // console.log('yes to google em file');
       } catch (e: any) {
         console.error('could not load google em file');
         google_em = null;
       }
 
       try {
-        google_data = await readProjectFile(baseDir, 'goog_data.json', null);
-        console.log('yes to goog data file');
+        // google_data = await readProjectFile(baseDir, 'goog_data.json', null);
+        google_data = await readProjectFile(baseDir, 'goog_doc_data.json', null);
+       
       } catch (e: any) {
         console.error('could not load google data file');
       }
 
       try {
         google_comms = await readProjectFile(baseDir, 'goog_comms.json', null);
-        console.log('yes to goog comments');
+        // console.log('yes to goog comments');
       } catch (e) {
         google_comms = null;
         console.log('could not load goog comments');
@@ -94,7 +92,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         txt_data = await readProjectFile(baseDir, 'text_data.json', null);
-        console.log('yes to txtData');
+        // console.log('yes to txtData');
       } catch (e) {
         txt_data = null;
         console.error('could not load text data');
@@ -102,14 +100,14 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         roleData = await readProjectFile(baseDir, 'roles.json', null);
-        console.log('yes to role data');
+        // console.log('yes to role data');
       } catch (e) {
         console.error('could not load role data');
       }
 
       try {
         artifact_types = await readProjectFile(baseDir, 'artifactTypes.json', null);
-        console.log('yes to artifact types data');
+        // console.log('yes to artifact types data');
       } catch (e) {
         artifact_types = null;
         console.error('could not load artifact types');
@@ -117,7 +115,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         linkData = await readProjectFile(baseDir, 'links.json', null);
-        console.log('yes to linkData');
+        // console.log('yes to linkData');
       } catch (e) {
         linkData = null;
         console.error('could not load linkData');
@@ -170,7 +168,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
                  //     //  
                  //     // })
 
-                 // //     console.log('Key-phrases:')
+                
                  // //     file.data.keyphrases.forEach((phrase) => {
                  // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
                  // //     })
@@ -218,16 +216,15 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         console.log('error with tags?')
         newTags = newTags;
       }
-      // console.log('base dir in set data', baseDir);
+      
       const research_threads = await checkRtFile(baseDir);
-      console.log('NEW PROJ DATA', action.projectData);
     
       const newProjectData = {
         entries: newEntries,
         roles: roleData,
         citations: citationData,
         tags: newTags,
-        citations: action.projectData.citations,
+        // citations: action.projectData.citations,
         date: action.projectData.date,
         description: action.projectData.description,
         title: action.projectData.title,
@@ -373,7 +370,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return state;
       }
       case 'SAVE_DATA': {
-        console.log('savedataaa', action.data.projectData, action.data)
+        
         return action.data;
        
       }
@@ -394,7 +391,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'SET_FILTERED_ACTIVITIES': {
-        console.log('filtered activities in projectData', action.filteredActivities);
+       
         return {...state, filteredActivities: action.filteredActivities }
       }
 
@@ -407,15 +404,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state.projectData,
           title: action.title,
         };
-        console.log('new title')
+       
         return saveJSON(newProjectData, state);
       }
 
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
-  
-        console.log("this is firing in GDOC NAMEEEEE", name, fileType, fileId, entryIndex);
   
         const currentFiles = state.projectData.entries[entryIndex].files;
         const newFiles = [
@@ -429,6 +424,26 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
   
         const newProjectData = { ...state.projectData, entries };
   
+        return saveJSON(newProjectData, state);
+      }
+      case 'UPDATE_GOOG_DOC_DATA' : {
+        
+        return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+      }
+      case 'UPDATE_GOOG_IDS' : {
+       
+        const entries = [...state.projectData.entries].map(
+          (d: EntryType, i: number) => {
+
+            let files = d.files.map((f:any, j:number)=> {
+              f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+              return f;
+            });
+            return d;
+          }
+        );
+        const newProjectData = { ...state.projectData, entries };
+        
         return saveJSON(newProjectData, state);
       }
       case 'URL_SELECTED_ACTIVITY': {
@@ -574,7 +589,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       case 'ADD_ACTIVITY_TO_THREAD': {
         const { activity, rationale, activityIndex, threadIndex } = action;
 
-        console.log('this is hitting', activity, rationale, activityIndex, threadIndex)
+    
         const newRT = state.researchThreads;
         const newA = {
           type: 'activity',
@@ -608,7 +623,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       case 'THREAD_FILTER': {
         if (action.filterRT) {
-         console.log('MADE IT TO CONTEXT',action.filterRT)
+        
           let associatedByTags = state.projectData.entries.filter(f => {
             let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
             return test.length > 0;
@@ -661,7 +676,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newColor = pickTagColor(state.projectData.tags);
         let newTags;
 
-        console.log(newTag, entryIndex);
+       
 
         if (!existingTags.includes(newTag.text)) {
           newTags = [
@@ -707,7 +722,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newProjectData = { ...state.projectData, entries };
 
         const newPD = saveJSON(newProjectData, state);
-        console.log('file list', fileList);
+       
 
         return newPD; 
       }
