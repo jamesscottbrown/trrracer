@@ -381,7 +381,7 @@ const DetailSidebar = (props: any) => {
     fieldName: string,
     newValue: any
   ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
 
   const isArtifactInThread = researchThreads.research_threads.filter(

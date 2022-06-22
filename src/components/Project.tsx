@@ -251,8 +251,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       projectData.entries.flatMap(f => f.files).length
   ]);
 
-  console.log('filter', filteredActivities);
-
   if (viewType === 'query') {
     return (
       <div

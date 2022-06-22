@@ -35,7 +35,8 @@ const ActivityWrap = (props: any) => {
     fieldName: string,
     newValue: any
   ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
+    console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: activityData.activity_uid });
   };
 
   if(editable[activityData.index]){
@@ -47,7 +48,7 @@ const ActivityWrap = (props: any) => {
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`en-${activityData.title}-${activityData.activity_uid}`}
-            entryData={activityData}
+            activityID={activityData.activity_uid}
             files={activityData.files}
             entryIndex={activityData.index}
             openFile={openFile}

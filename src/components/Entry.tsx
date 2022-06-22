@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Button,
   Editable,
@@ -94,7 +94,7 @@ const FileContext = (props: FileContextProps) => {
 };
 
 interface EntryPropTypes {
-  entryData: EntryType;
+  activityID: string;
   entryIndex: number;
   openFile: (a: any) => void;
   updateEntryField: (
@@ -114,7 +114,7 @@ interface ReactTag {
 
 const Entry = (props: EntryPropTypes) => {
   const {
-    entryData,
+    activityID,
     files,
     entryIndex,
     openFile,
@@ -124,19 +124,23 @@ const Entry = (props: EntryPropTypes) => {
 
   const [{projectData}, dispatch] = useProjectState();
 
-  const [value, setValue] = useState(entryData.description);
-  const [showDescription, setShowDescription] = useState(
-    !!entryData.description
-  );
-
   const allTags = projectData.tags;
+
+  const thisEntry = useMemo(() => {
+    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+  }, [allTags, projectData.entries]);
+
+  const [value, setValue] = useState(thisEntry.description);
+  const [showDescription, setShowDescription] = useState(
+    !!thisEntry.description
+  );
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel
   useEffect(() => {
-    setShowDescription(!!entryData.description);
-    setValue(entryData.description);
-  }, [entryData]);
+    setShowDescription(!!thisEntry.description);
+    setValue(thisEntry.description);
+  }, [thisEntry]);
 
   const [selectedTab, setSelectedTab] =
     React.useState<'write' | 'preview'>('write');
@@ -173,7 +177,7 @@ const Entry = (props: EntryPropTypes) => {
     enter: 13,
   };
 
-  const urls = entryData.files.filter((f) => f.fileType === 'url');
+  const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
   console.log('FILE CHECK',files, files.length);
@@ -183,7 +187,7 @@ const Entry = (props: EntryPropTypes) => {
       <br />
       <Heading as="h4">
         <Editable
-          defaultValue={entryData.title}
+          defaultValue={thisEntry.title}
           onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
         >
           <EditablePreview />
@@ -201,10 +205,10 @@ const Entry = (props: EntryPropTypes) => {
           style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() =>
-            updateEntryField(entryIndex, 'isPrivate', !entryData.isPrivate)
+            updateEntryField(entryIndex, 'isPrivate', !thisEntry.isPrivate)
           }
         >
-          {entryData.isPrivate ? (
+          {thisEntry.isPrivate ? (
             <FaLock title="Entry is currently private; click to make it public." />
           ) : (
             <FaLockOpen title="Entry is currently public; click to make it private." />
@@ -232,7 +236,7 @@ const Entry = (props: EntryPropTypes) => {
           }}
         >
           <EditDate
-            date={entryData.date}
+            date={thisEntry.date}
             entryIndex={entryIndex}
             updateEntryField={updateEntryField}
           />
@@ -244,18 +248,18 @@ const Entry = (props: EntryPropTypes) => {
         {'Tags: '}
       </span>
       <ReactTags
-        tags={entryData.tags.map((t) => ({ id: t, text: t }))}
+        tags={thisEntry.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
         delimiters={[KeyCodes.comma, KeyCodes.enter]}
         handleDelete={(i: number) =>
           updateEntryField(
             entryIndex,
             'tags',
-            entryData.tags.filter((_tag, index) => index !== i)
+            thisEntry.tags.filter((_tag, index) => index !== i)
           )
         }
         handleAddition={(tag: ReactTag) => {
-          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityId: entryData.activity_uid });
+          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityID: thisEntry.activity_uid });
         }}
       />
 
@@ -275,7 +279,7 @@ const Entry = (props: EntryPropTypes) => {
             }
           />
 
-          {value !== entryData.description && (
+          {value !== thisEntry.description && (
             <>
               <b style={{ color: 'red' }}>
                 You have made unsaved changes to this field. These will be lost

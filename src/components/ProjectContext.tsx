@@ -6,7 +6,7 @@ import { getAppStateReducer } from "./ProjectContextCommon";
 import { v4 as uuidv4 } from 'uuid';
 import React, { createContext, useContext, useReducer } from 'react';
 import { EntryType, File, FileObj, ProjectState } from './types';
-
+// import useGoogle from '../AuthenticateGoogleWeb';
 
 let path: any;
 let fs: any;
@@ -14,13 +14,13 @@ let googleCred: any;
 let google: any;
 
 if(isElectron){
-  console.log('esssss',isElectron);
-  
+
   path =  require('path');
   fs  =  require('fs');
   // googleCred = require('../../assets/google_cred_desktop_app.json');
-  google = require('googleapis').google;
+ // google = require('googleapis').google;
 }
+
 
 export const ProjectContext = createContext<DispatchType>();
 
@@ -264,7 +264,7 @@ export const readProjectFile = async (
 };
 
 const saveJSON = (newProjectData: any, state) => {
-  console.log('new projectdata', newProjectData);
+ 
   if(isElectron){
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
@@ -298,6 +298,24 @@ const saveJSONRT = (RTData: any, dir: string, state) => {
     console.log('RT DATA',RTData)
   }
   return { ...state, researchThreads: RTData };
+};
+
+const saveJSONGoogDoc = (GDData: any, dir: string, state) => {
+  if(isElectron){
+    fs.writeFileSync(
+      path.join(dir, 'goog_doc_data.json'),
+      JSON.stringify(GDData, null, 4),
+      (err) => {
+        if (err) {
+          console.log(`Error writing file to disk: ${err}`);
+        } else {
+          // parse JSON string to JSON object
+        }
+      }
+    );
+    console.log('GD DATA', GDData)
+  }
+  return { ...state, googDocData: GDData };
 };
 
 const deleteFileAction = (fileName, entryIndex, state) => {
@@ -361,6 +379,7 @@ const appStateReducer = getAppStateReducer(
   readProjectFile,
   saveJSON,
   saveJSONRT,
+  saveJSONGoogDoc,
   deleteFileAction,
   !isElectron,
 );

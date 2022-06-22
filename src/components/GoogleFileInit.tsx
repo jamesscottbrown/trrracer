@@ -13,7 +13,7 @@ let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 
 if(isElectron){
-  // googleCred = require('../../assets/google_cred_desktop_app.json');
+  googleCred = require('../../assets/google_cred_desktop_app.json');
 }
 
 const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number })=> {
@@ -72,67 +72,67 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   // }
 
   return(
-    <div>{'test'}</div>
-    // <div>
-    //  {showFileCreate ? (
-    //     <>
-    //       <Editable
-    //         defaultValue={googleFileName}
-    //         startWithEditView={true}
-    //         onChange={(val)=> setGoogleFileName(val)}
-    //         w="420px"
-    //         boxShadow="xs" p="4" rounded="md" bg="white"
-    //         >
-    //       <EditablePreview 
-    //         // display="inline"
-    //         border="1px"
-    //         borderColor="gray.200"
-    //         boxShadow="sm" p="2"
-    //       />
-    //       <EditableInput 
-    //         display="inline"
-    //       />
-    //       <ButtonGroup display="inline">
-    //       <Button 
-    //       color="primary" 
-    //       display="inline-block" 
-    //       onClick={()=> {
+    // <div>{'test'}</div>
+    <div>
+     {showFileCreate ? (
+        <>
+          <Editable
+            defaultValue={googleFileName}
+            startWithEditView={true}
+            onChange={(val)=> setGoogleFileName(val)}
+            w="420px"
+            boxShadow="xs" p="4" rounded="md" bg="white"
+            >
+          <EditablePreview 
+            // display="inline"
+            border="1px"
+            borderColor="gray.200"
+            boxShadow="sm" p="2"
+          />
+          <EditableInput 
+            display="inline"
+          />
+          <ButtonGroup display="inline">
+          <Button 
+          color="primary" 
+          display="inline-block" 
+          onClick={()=> {
             
-    //         saveGoogleFile()}} 
-    //         type="button">
-    //         Create
-    //       </Button>
-    //       <Button color="red.400" 
-    //       onClick={() => {
-    //         getDriveFiles(folderPath, googleCred).then((googOb) => {
-    //           console.log(googOb);
-    //           dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
-    //           dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
-    //         });
-    //         setShowFileCreate(false);
-    //       }} 
-    //         type="button">
-    //         Cancel
-    //       </Button>
-    //       </ButtonGroup>
-    //       </Editable>
-    //       {/* <input type="text" onChange={handleChange}/> */}
-    //     </>
-    //   ) : (
-    //     <Button m="3px" 
-    //     onClick={()=> {
-    //       getDriveFiles(folderPath, googleCred).then((googOb) => {
-    //         console.log(googOb);
-    //         dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
-    //         dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
-    //       });
-    //       setShowFileCreate(true)}} 
-    //       type="button">
-    //       {text}
-    //     </Button>
-    //   )} 
+            saveGoogleFile()}} 
+            type="button">
+            Create
+          </Button>
+          <Button color="red.400" 
+          onClick={() => {
+            getDriveFiles(folderPath, googleCred).then((googOb) => {
+              console.log(googOb);
+              dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+              dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+            });
+            setShowFileCreate(false);
+          }} 
+            type="button">
+            Cancel
+          </Button>
+          </ButtonGroup>
+          </Editable>
+          {/* <input type="text" onChange={handleChange}/> */}
+        </>
+      ) : (
+        <Button m="3px" 
+        onClick={()=> {
+          getDriveFiles(folderPath, googleCred).then((googOb) => {
+            console.log(googOb);
+            dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+            dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+          });
+          setShowFileCreate(true)}} 
+          type="button">
+          {text}
+        </Button>
+      )} 
       
-    // </div>
+    </div>
   )
 }
 

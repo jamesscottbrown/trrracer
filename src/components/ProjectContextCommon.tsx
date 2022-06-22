@@ -127,7 +127,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           let actOb = {};
           actOb.activity_uid = e.activity_uid;
           actOb.date = e.date;
-          actOb.descriptio = e.description;
+          actOb.description = e.description;
           actOb.month = e.month;
           actOb.tags = e.tags;
           actOb.title = e.title;
@@ -192,6 +192,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
           return actOb;
         });
+       
         newEntries = newEntries.sort(
           (a, b) =>
             // (reversedOrder ? -1 : +1) *
@@ -199,6 +200,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         );
         
       } catch (e) {
+        console.error('could not reformat entries',e)
         newEntries = action.projectData.entries;
         return e;
       }
@@ -408,6 +410,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
 
+      
+
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
@@ -453,7 +457,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
       case 'BOOKMARK_FRAGMENT':{
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
-        let entryIndex = action.selectedArtifactEntry.index;
+        
         bookmarks.push({ 'fragment': action.bookmarkFragment })
 
         const currentFiles = state.projectData.entries[entryIndex].files.map((f, i)=> {
@@ -465,7 +469,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-            entryIndex === i ? { ...d, files: currentFiles } : d
+          action.selectedArtifactEntry.activity_uid === d.activity_uid ? { ...d, files: currentFiles } : d
         );
 
         const newProjectData = { ...state.projectData, entries };
@@ -670,7 +674,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'ADD_TAG_TO_ENTRY': {
-        const { newTag, entryIndex } = action;
+        const { newTag, entryIndex, activityID } = action;
 
         const existingTags = state.projectData.tags.map((k) => k.title);
         const newColor = pickTagColor(state.projectData.tags);
@@ -694,9 +698,9 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
         const newEntries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-            entryIndex === i ? { ...d, tags: [...d.tags, newTag.text] } : d
+            activityID === d.activity_uid ? { ...d, tags: [...d.tags, newTag.text] } : d
         );
-
+        console.log('newEntries in tags', newEntries);
         const newProjectData = {
           ...state.projectData,
           tags: newTags,
@@ -863,9 +867,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_ENTRY_FIELD': {
-        const entries = state.projectData.entries.map(
+
+        const entries = [...state.projectData.entries].map(
           (d: EntryType, i: number) =>
-            action.entryIndex === i
+            d.activity_uid === action.activityId
               ? { ...d, [action.fieldName]: action.newValue }
               : d
         );
