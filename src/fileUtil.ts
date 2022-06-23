@@ -32,7 +32,7 @@ export const openFile = (fileName: string, folderPath: string) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
 
   }else{
-    window.open(`${folderPath}/${fileName}`, '_blank');
+    window.open(`${folderPath}${fileName}`, '_blank');
   }
   
 };
@@ -101,7 +101,7 @@ export function joinPath(...args: string[]) {
     return path.join(...args);
 
   }else{
-    return [...args].join('/');
+    return [...args].join('');
   }
 }
 
