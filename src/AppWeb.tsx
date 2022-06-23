@@ -40,7 +40,8 @@ export default function App() {
   const [{ projectData }, dispatch] = useProjectState();
 
   if (!folderPath) {
-    const isDev = process.env.NODE_ENV === 'development';
+    // const isDev = process.env.NODE_ENV === 'development';
+    const isDev = true;
     setPath(`${isDev ? 'http://localhost:9999' : '.'}/.netlify/functions/download-gdrive-file/?folderName=jen&fileName=`); // TODO: make not a constant
   }
 
