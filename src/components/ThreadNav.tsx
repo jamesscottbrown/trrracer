@@ -377,7 +377,23 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                           </PopoverTrigger>
                           <PopoverContent>
                             <PopoverBody>
-                              copy this ref: {rt.rt_id}
+                              <span
+                                style={{display:'block'}}
+                              ><Button
+                                onClick={() => {
+                                  let indexTest = projectData.citations.map(c => c.id).indexOf(rt.rt_id);
+                                  let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+                                  navigator.clipboard.writeText(String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`)
+
+                                  if(indexTest === -1){
+                                   
+                                    let newCitations = [...projectData.citations, {"id": rt.rt_id, "cIndex": index}]
+                                    dispatch({ type: 'ADD_CITATION', citations: newCitations});
+                                  }
+                                  
+                                }}
+                              >Copy this ref</Button></span>
+                              {/* {String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`} */}
                             </PopoverBody>
                           </PopoverContent>
                       </Popover>
@@ -392,7 +408,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         style={{display:'inline'}}
                         onClick={()=> {
                           setEditMode(i);
-                          console.log('editmode',editMode);
                           //dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
                         }}>
                           <FaEdit />
@@ -503,6 +518,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 isActive={(threadName && description) ? true : false}
                 isDisabled={(threadName && description) ? false : true}
                 onClick={() => {
+                  let actTitle = `Created thread: ${threadName}`;
                   setName(null);
                   setDescription(null);
                   setShowCreateThread(false);
@@ -510,7 +526,21 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     type: 'CREATE_THREAD',
                     threadName,
                     threadDescription: description,
+                    evidence: [{
+                      activityTitle: actTitle,
+                      activity_index: projectData.entries.length,
+                      dob: new Date(),
+                      rationale: "Thread created",
+                      type: "activity"
+                    }]
                   });
+
+                 
+                  dispatch({  
+                    type: 'ADD_ENTRY',
+                    data: {title: actTitle, date: new Date(), description: description},
+                  });
+                
                 }}
               >
                 CREATE

@@ -27,7 +27,7 @@ const ActivityWrap = (props: any) => {
     viewType,
   } = props;
 
-  const [{folderPath, researchThreads, filterRT}, dispatch] = useProjectState();
+  const [{filterRT}, dispatch] = useProjectState();
   const myRef = useRef(null);
 
   const updateEntryField = (
@@ -35,7 +35,8 @@ const ActivityWrap = (props: any) => {
     fieldName: string,
     newValue: any
   ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
+    console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: activityData.activity_uid });
   };
 
   if(editable[activityData.index]){
@@ -46,8 +47,9 @@ const ActivityWrap = (props: any) => {
       ref={myRef}>
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
-            key={`en-${activityData.title}-${activityData.index}-${index}`}
-            entryData={activityData}
+            key={`en-${activityData.title}-${activityData.activity_uid}`}
+            activityID={activityData.activity_uid}
+            files={activityData.files}
             entryIndex={activityData.index}
             openFile={openFile}
             updateEntryField={updateEntryField}
@@ -73,7 +75,7 @@ const ActivityWrap = (props: any) => {
          <ThreadedReadonlyEntry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`ro-${activityData.title}-${activityData.index}-${index}`}
-            entryData={activityData}
+            activityID={activityData.activity_uid}
             openFile={openFile}
             setViewType={setViewType}
             makeEditable={() => setEditableStatus(activityData.index, true)}
@@ -98,7 +100,7 @@ const ActivityWrap = (props: any) => {
          <ReadonlyEntry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`ro-${activityData.title}-${activityData.index}-${index}`}
-          entryData={activityData}
+          activityID={activityData.activity_uid}
           openFile={openFile}
           setViewType={setViewType}
           makeEditable={() => setEditableStatus(activityData.index, true)}

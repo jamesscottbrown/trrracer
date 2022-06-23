@@ -359,19 +359,17 @@ const DetailSidebar = (props: any) => {
 
   const {
     fragSelected,
-    setFragSelected,
-    selectedArtifactEntry,
-    selectedArtifactIndex
+    setFragSelected
   } = props;
 
-  const [{ researchThreads, projectData, hopArray, isReadOnly }, dispatch] = useProjectState();
+  const [{ researchThreads, projectData, hopArray, selectedArtifactEntry, selectedArtifactIndex, isReadOnly }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
 
-  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry[selectedArtifactIndex] : null;
+  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
 
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
@@ -383,7 +381,7 @@ const DetailSidebar = (props: any) => {
     fieldName: string,
     newValue: any
   ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue });
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
 
   const isArtifactInThread = researchThreads.research_threads.filter(
@@ -474,17 +472,28 @@ const DetailSidebar = (props: any) => {
             }
         </Box>
       </Box>
-      {
-        selectedArtifact && (
-          <Box>
-            <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-            <Badge
-            style={{wordWrap:'break-word'}}
-            >{selectedArtifact ?  selectedArtifact.artifact_uid : "No Artifact to Cite"}</Badge>
-          </Box>
-        )
-      }
-     
+      
+      <Box>
+        {
+          selectedArtifact && (
+            <Button
+            onClick={() => {
+              let indexTest = projectData.citations.map(c => c.id).indexOf(selectedArtifact.artifact_uid);
+              let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+              navigator.clipboard.writeText(String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}{${index}}`)
+              if(indexTest === -1){
+                let newCitations = [...projectData.citations, {"id": selectedArtifact.artifact_uid, "cIndex": index}]
+                dispatch({ type: 'ADD_CITATION', citations: newCitations});
+              }
+              
+            }}
+              >Copy this ref</Button>
+          )
+        }
+        <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
+        {selectedArtifact ? String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
+      </Box>
+        
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
           Activity Tags

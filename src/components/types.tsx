@@ -31,7 +31,7 @@ interface EntryType {
   tags: string[];
   quoteTags: string[];
   isPrivate: boolean;
-  artifact_uid: string;
+  activity_uid: string;
 }
 
 interface EntryTypeWithIndex {

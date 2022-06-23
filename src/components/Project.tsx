@@ -16,7 +16,6 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
-import { ParsedUrlQueryInput } from 'querystring';
 const queryString = require('query-string');
 
 interface ProjectProps {
@@ -161,6 +160,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
+  
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
@@ -251,8 +251,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       projectData.entries.flatMap(f => f.files).length
   ]);
 
-  console.log('filter', filteredActivities);
-
   if (viewType === 'query') {
     return (
       <div
@@ -337,8 +335,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
         
           {
             addEntrySplash && (
-                <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
-              )
+              <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
+            )
           }
          
           {

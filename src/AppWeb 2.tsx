@@ -12,6 +12,8 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
@@ -39,13 +41,12 @@ export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
 
-  if (!folderPath) {
-    const isDev = process.env.NODE_ENV === 'development';
-    setPath(`${isDev ? 'http://localhost:9999' : '.'}/.netlify/functions/download-gdrive-file/?folderName=jen&fileName=`); // TODO: make not a constant
+  if (!folderPath){
+    setPath('http://localhost:8081'); // TODO: make not a constant
   }
 
   if (folderPath && !projectData) {
-    fetch(`${folderPath}trrrace.json`)
+    fetch(`${folderPath}/trrrace.json`)
       .then((res) => res.json()) // ?
       .then((data) =>
         dispatch({
@@ -68,6 +69,6 @@ export default function App() {
   return (
     <ChakraProvider>
       <Project folderPath={folderPath} />
-    </ChakraProvider>
+    </ChakraProvider> 
   );
 }

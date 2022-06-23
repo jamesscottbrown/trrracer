@@ -40,8 +40,9 @@ class ForceMagic {
     node.title = a.title;
     // node.activityTitle = splitBool ? a.activityTitle : null;
     // node.artifactType = splitBool ? a.artifactType : null;
-    node.activityTitle = null;
-    node.artifactType = null;
+    node.activityTitle = a.title;
+    node.artifactType = a.artifactType;
+    node.activity_uid = a.activity_uid;
     node.urls = a.urls;
     node.year = a.year;
     // node.radius = a.r//splitBool ? 5 : this.circleScale(a.files.length);
