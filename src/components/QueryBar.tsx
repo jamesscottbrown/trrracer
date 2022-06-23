@@ -16,9 +16,9 @@ const processDataQuery = (
 
   const googMatches = Object.entries(googleData)
     .map((f) => {
-      const content = f[1].body.content
+      const content = (f[1] && f[1].body) ? f[1].body.content
         .filter((p) => p.paragraph)
-        .map((m) => m.paragraph.elements);
+        .map((m) => m.paragraph.elements) : [];
       const flatContent = content.flatMap((m) => m);
       const flatTextRun = flatContent.map((m) =>
         m.textRun ? m.textRun.content : ''
@@ -36,8 +36,15 @@ const processDataQuery = (
       const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
       return tmp.length > 0;
     });
+  
+  const titleMatches = activityData.filter(f => {
+    return f.title.includes(queryTerm)
+  }).map(m => m.activity_uid);
+
+  console.log('title matches',titleMatches);
 
   const matches = [];
+
   activityData.forEach((ent: any) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
     if (tempText.length > 0) {
@@ -107,8 +114,8 @@ const processDataQuery = (
       });
     }
 
-    if (tempText.length > 0 || tempG.length > 0) {
-      const entM = { entry: ent, textMatch: tempText, googMatch: tempG };
+    if (tempText.length > 0 || tempG.length > 0 || titleMatches.indexOf(ent.activity_uid) > -1) {
+      const entM = { entry: ent, textMatch: tempText, googMatch: tempG, titleMatch: titleMatches.indexOf(ent.activity_uid) > -1 };
       matches.push(entM);
     }
   });

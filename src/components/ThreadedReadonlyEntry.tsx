@@ -26,7 +26,7 @@ import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
 
 interface EntryPropTypes {
-  entryData: EntryType;
+  thisEntry: EntryType;
   openFile: (a: string, fp: string) => void;
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
@@ -40,7 +40,7 @@ const converter = new Showdown.Converter({
 });
 
 interface ReadonlyArtifactPropTypes {
-  entryData: EntryType;
+  thisEntry: EntryType;
   openFile: (a: string, fp: string) => void;
   setViewType: (viewType: string) => void;
   file: File;
@@ -48,7 +48,7 @@ interface ReadonlyArtifactPropTypes {
 }
 
 const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
-  const { entryData, openFile, setViewType, file, i } = props;
+  const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath }, dispatch] = useProjectState();
 
   const [onHover, setOnHover] = useState(false);
@@ -93,12 +93,12 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
           setViewType('detail view');
           dispatch({
             type: 'SELECTED_ARTIFACT',
-            selectedArtifactEntry: entryData,
+            selectedArtifactEntry: thisEntry,
             selectedArtifactIndex: i,
             hopArray: [ 
               { activity: 
-                entryData, 
-                artifactUid: entryData.files[i] ? entryData.files[i].artifact_uid : null,
+                thisEntry, 
+                artifactUid: thisEntry.files[i] ? thisEntry.files[i].artifact_uid : null,
                 hopReason: 'first hop',
               }],
            
@@ -120,7 +120,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props:any) => {
 
-  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, entryData, folderPath, i } = props;
+  const { isEntryInThread, selectedThread, setViewType, openFile, fileData, thisEntry, folderPath, i } = props;
 
   const [{researchThreads}, dispatch] = useProjectState();
 
@@ -146,12 +146,12 @@ const ThreadedArtifact = (props:any) => {
                 setViewType('detail view');
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: entryData,
+                  selectedArtifactEntry: thisEntry,
                   selectedArtifactIndex: i,
                   hopArray: [ 
                     { activity: 
-                      entryData, 
-                      artifactUid: entryData.files[i] ? entryData.files[i].artifact_uid : null,
+                      thisEntry, 
+                      artifactUid: thisEntry.files[i] ? thisEntry.files[i].artifact_uid : null,
                       hopReason: 'first hop',
                     }],
                 });
@@ -194,7 +194,7 @@ const ThreadedArtifact = (props:any) => {
 
 const ActivityTitleLogic = (props:any) => {
 
-  const { entryData, color } = props;
+  const { thisEntry, color } = props;
     return (
       <div style={{
           cursor:'pointer',
@@ -202,34 +202,38 @@ const ActivityTitleLogic = (props:any) => {
         }}
         onMouseOver={()=> {
           let circles = d3.selectAll('circle.all-activities');
-          circles.filter(f => f.title === entryData.title).attr('fill', 'red')
+          circles.filter(f => f.title === thisEntry.title).attr('fill', 'red')
         }}
         onMouseLeave={()=> {
           let circles = d3.selectAll('circle.all-activities');
           
-          circles.filter(f => f.title === entryData.title).attr('fill', color)
+          circles.filter(f => f.title === thisEntry.title).attr('fill', color)
         }}
       >
-        <span>{entryData.title}</span>
+        <span>{thisEntry.title}</span>
       </div>
     )
 }
 
 const ThreadedReadonlyEntry = (props: any) => {
 
-  const { entryData, makeEditable, openFile, setViewType, viewType } = props;
+  const { activityID, makeEditable, openFile, setViewType, viewType } = props;
 
-  const [{ researchThreads, filterRT, folderPath, isReadOnly }] = useProjectState();
+  const [{ projectData, researchThreads, filterRT, folderPath, isReadOnly }] = useProjectState();
+
+  const thisEntry = useMemo(() => {
+    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+  }, [projectData.entries]);
 
   let selectedThread = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
-  let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === entryData.title);
+  let isEntryInThread = selectedThread.evidence.filter(f => f.activityTitle === thisEntry.title);
 
   let isEntryInAnyThreads = researchThreads.research_threads.filter(f=> {
-    let temp = f.evidence.map(m=> m.activityTitle).filter(ev => entryData.title === ev)
+    let temp = f.evidence.map(m=> m.activityTitle).filter(ev => thisEntry.title === ev)
     return temp.length > 0});
 
-  const urls = entryData.files.filter((f) => f.fileType === 'url');
-  const files = entryData.files.filter((f) => f.fileType !== 'url');
+  const urls = thisEntry.files.filter((f) => f.fileType === 'url');
+  const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
   let activitiesAsEvidence = isEntryInThread.filter(f => f.type === 'fragment' || f.type === 'artifact');
 
@@ -242,8 +246,8 @@ const ThreadedReadonlyEntry = (props: any) => {
   let otherFiles = files.filter(f => activitiesAsEvidence.map(m=> m.artifactTitle).indexOf(f.title) === -1)
   let threadedActivity = isEntryInThread.filter(f => f.type === 'activity');
   
-  let threadedTags = entryData.tags.filter(f => selectedThread.associated_tags.includes(f));
-  let nonThreadedTags = entryData.tags.filter(f => selectedThread.associated_tags.indexOf(f) === -1);
+  let threadedTags = thisEntry.tags.filter(f => selectedThread.associated_tags.includes(f));
+  let nonThreadedTags = thisEntry.tags.filter(f => selectedThread.associated_tags.indexOf(f) === -1);
 
 
   const checkTagColor = (tagName: string) => {
@@ -256,14 +260,14 @@ const ThreadedReadonlyEntry = (props: any) => {
 
   // Cache the results of converting markdown to HTML, to avoid re-converting on every render
   const descriptionHTML = useMemo(() => {
-    converter.makeHtml(entryData.description);
-  }, [entryData.description]);
+    converter.makeHtml(thisEntry.description);
+  }, [thisEntry.description]);
 
   return (
     <Box>
       <div style={{padding:10}}>
       <span style={{ fontSize: 22, fontWeight: 'bold' }}>
-        {entryData.isPrivate && (
+        {thisEntry.isPrivate && (
           <FaLock
             title="This entry is private, and will be hidden when the Trrrace is exported."
             size="0.75em"
@@ -273,7 +277,7 @@ const ThreadedReadonlyEntry = (props: any) => {
         {viewType != 'detail' && (
          
           <div>
-            <ActivityTitleLogic color={selectedThread.color} entryData={entryData} /> 
+            <ActivityTitleLogic color={selectedThread.color} thisEntry={thisEntry} /> 
             <div style={{display:"inline", float:'right'}}>
             {(makeEditable && !isReadOnly) && (
                     <Button 
@@ -307,10 +311,10 @@ const ThreadedReadonlyEntry = (props: any) => {
       </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-        {format(new Date(entryData.date), 'dd MMMM yyyy')}
+        {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
       </Text>
       <div>
-        {entryData.tags.length === 0 ? (
+        {thisEntry.tags.length === 0 ? (
           <b>No tags.</b>
         ) : (
           <>
@@ -405,7 +409,7 @@ const ThreadedReadonlyEntry = (props: any) => {
         )
       }
 
-      {entryData.description != '' && (
+      {thisEntry.description != '' && (
         <div
           style={{
             fontSize: '12px',
@@ -414,7 +418,7 @@ const ThreadedReadonlyEntry = (props: any) => {
             marginBottom: 5,
           }}
         >
-          {entryData.description}
+          {thisEntry.description}
           <br />
         </div>
       )}
@@ -429,7 +433,7 @@ const ThreadedReadonlyEntry = (props: any) => {
             fileData={f}
             folderPath={folderPath}
             i={i} 
-            entryData={entryData}
+            thisEntry={thisEntry}
             setViewType={setViewType}
           />
         ))
@@ -440,7 +444,7 @@ const ThreadedReadonlyEntry = (props: any) => {
           otherFiles.map((f, i)=> (
             <ReadonlyArtifact
               key={`readonly-${i}`}
-              entryData={entryData}
+              thisEntry={thisEntry}
               openFile={openFile}
               setViewType={setViewType}
               file={f}

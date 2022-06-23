@@ -583,6 +583,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'QUERY_TERM': {
+        console.log(action.matches);
         return {
           ...state,
           query: { term: action.term, matches: action.matches },

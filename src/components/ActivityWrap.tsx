@@ -75,7 +75,7 @@ const ActivityWrap = (props: any) => {
          <ThreadedReadonlyEntry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`ro-${activityData.title}-${activityData.index}-${index}`}
-            entryData={activityData}
+            activityID={activityData.activity_uid}
             openFile={openFile}
             setViewType={setViewType}
             makeEditable={() => setEditableStatus(activityData.index, true)}
@@ -100,7 +100,7 @@ const ActivityWrap = (props: any) => {
          <ReadonlyEntry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`ro-${activityData.title}-${activityData.index}-${index}`}
-          entryData={activityData}
+          activityID={activityData.activity_uid}
           openFile={openFile}
           setViewType={setViewType}
           makeEditable={() => setEditableStatus(activityData.index, true)}

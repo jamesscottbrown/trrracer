@@ -128,7 +128,7 @@ const Entry = (props: EntryPropTypes) => {
 
   const thisEntry = useMemo(() => {
     return projectData.entries.filter(f => f.activity_uid === activityID)[0];
-  }, [allTags, projectData.entries]);
+  }, [allTags, projectData.entries.length, projectData.entries.flatMap(fm => fm.files).length]);
 
   const [value, setValue] = useState(thisEntry.description);
   const [showDescription, setShowDescription] = useState(
@@ -180,7 +180,7 @@ const Entry = (props: EntryPropTypes) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
-  console.log('FILE CHECK',files, files.length);
+
 
   return (
     <div style={{ margin: 'auto' }}>

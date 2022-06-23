@@ -27,8 +27,8 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
   const saveGoogleFile = () => {
     
     createGoogleFile(folderPath, googleFileName, fileType, googleCred, entryIndex).then((googl)=> {
-      console.log('TESTING',googl);
-      dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: googl?.fileType, name: googl?.fileId, entryIndex: googl?.entryIndex })
+      
+      dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: googl?.fileType, name: googl?.name, fileId: googl?.fileId, entryIndex: googl?.entryIndex })
     });
     
     setShowFileCreate(false);

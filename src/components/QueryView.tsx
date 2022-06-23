@@ -11,6 +11,7 @@ import {
 
 import { MdCancel } from 'react-icons/md';
 import { useProjectState } from './ProjectContext';
+import QueryMatchComponent from './QueryMatchComponent';
 
 interface QueryViewProps {
   setViewType: (viewType: string) => void;
@@ -112,37 +113,47 @@ const QueryView = (props: any) => {
             <div style={{ fontSize: 18, fontWeight: 700, marginTop: 30 }}>
               {m.entry.title}
             </div>
+
             {m.textMatch.length > 0 &&
+              
               m.textMatch.map((tm, j) => (
-                <div style={{ marginTop: 10 }} key={`tm-${j}`}>
-                  <HoverTitle
-                    title={tm['file-title']}
-                    entry={m.entry}
-                    match={tm}
-                    setViewType={setViewType}
-                  />
-                  <div>
-                    {tm.context.map((c, ci) => (
-                      <div key={`div-cont-${ci}`}>
-                        {c.map((m, mi) => (
-                          <span
-                            key={`span-con-${mi}`}
-                            style={{
-                              fontSize: 11,
-                              fontWeight: m.style ? 700 : 400,
-                              fontStyle: 'italic',
-                              backgroundColor: m.style ? 'yellow' : '#ffffff',
-                            }}
-                          >
-                            {m.context}
-                            {m.style ? '' : '. '}
-                          </span>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                <QueryMatchComponent m={m} tm={tm} setViewType={setViewType} j={j} />
+                // <div style={{ marginTop: 10 }} key={`tm-${j}`}>
+                //   <div>
+                //   <HoverTitle
+                //     title={tm['file-title']}
+                //     entry={m.entry}
+                //     match={tm}
+                //     setViewType={setViewType}
+                //   />
+                //   <span>{'show text'}</span>
+                //   </div>
+                //   { 
+                //   <div>
+                //     {tm.context.map((c, ci) => (
+                //       <div key={`div-cont-${ci}`}>
+                //         {c.map((m, mi) => (
+                //           <span
+                //             key={`span-con-${mi}`}
+                //             style={{
+                //               fontSize: 11,
+                //               fontWeight: m.style ? 700 : 400,
+                //               fontStyle: 'italic',
+                //               backgroundColor: m.style ? 'yellow' : '#ffffff',
+                //             }}
+                //           >
+                //             {m.context}
+                //             {m.style ? '' : '. '}
+                //           </span>
+                //         ))}
+                //       </div>
+                //     ))}
+                //   </div>
+                // }
+                // </div>
+              ))
+            }
+
             {m.googMatch.length > 0 &&
               m.googMatch.map((gm, j) => (
                 <div style={{ marginTop: 10 }} key={`gm-${j}`}>
