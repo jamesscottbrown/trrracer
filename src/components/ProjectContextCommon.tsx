@@ -134,6 +134,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           actOb.urls = e.urls;
           actOb.year = e.year;
           actOb.index = i;
+          actOb.isPrivate = e.isPrivate ? e.isPrivate : false;
           actOb.files = e.files.map((ef) => {
             if (ef.fileType === 'gdoc') {
               // ef.artifactType = 'notes'
@@ -868,14 +869,14 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_ENTRY_FIELD': {
-
+        console.log('action',action);
         const entries = [...state.projectData.entries].map(
-          (d: EntryType, i: number) =>
-            d.activity_uid === action.activityId
+          (d: EntryType, i: number) => {
+            return d.activity_uid === action.activityID
               ? { ...d, [action.fieldName]: action.newValue }
               : d
+          }
         );
-       
         const newProjectData = { ...state.projectData, entries };
        
         return saveJSON(newProjectData, state);

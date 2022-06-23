@@ -180,15 +180,15 @@ const Entry = (props: EntryPropTypes) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
-
-
   return (
     <div style={{ margin: 'auto' }}>
       <br />
       <Heading as="h4">
         <Editable
           defaultValue={thisEntry.title}
-          onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
+          onSubmit={(val) => {
+            console.log('entry field', val);
+            updateEntryField(entryIndex, 'title', val)}}
         >
           <EditablePreview />
           <EditableInput />
@@ -286,9 +286,9 @@ const Entry = (props: EntryPropTypes) => {
                 if you switch to editing a different field.
               </b>
               <Button
-                onClick={() =>
-                  updateEntryField(entryIndex, 'description', value)
-                }
+                onClick={() => {
+                  thisEntry.description = value;
+                  updateEntryField(entryIndex, 'description', value)}}
               >
                 Save
               </Button>
