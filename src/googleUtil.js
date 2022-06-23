@@ -1,5 +1,12 @@
 import { readFileSync } from './fileUtil';
-const {google} = require('googleapis');
+// const {google} = require('googleapis');
+
+let google;
+const isElectron = process.env.NODE_ENV === 'development';
+
+if(isElectron){
+  google = require('googleapis');
+}
 
 export function googleFolderDict(folder){
     if(folder?.includes('EvoBio')){
@@ -20,11 +27,7 @@ export async function getDriveFiles(folderName, googleCred){
     oAuth2Client.setCredentials(JSON.parse(token))
    
     let drive = google.drive({ version: 'v3', auth: oAuth2Client });
-
     let docs = google.docs({ version:'v1', auth: oAuth2Client });
-
-    console.log('DOCS??', docs);
-
     var parentId = googleFolderDict(folderName);
 
     /**
