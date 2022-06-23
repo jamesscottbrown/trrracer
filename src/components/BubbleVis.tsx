@@ -13,7 +13,6 @@ import { useProjectState } from './ProjectContext';
 const smalltalk = require('smalltalk');
 
 interface BubbleProps {
-  filteredActivities: EntryType[];
   setGroupBy:(gb:any)=> void;
   groupBy: any;
   flexAmount: number;
@@ -105,7 +104,6 @@ const ToolTip = (toolProp: any) => {
     <div>
     {
       activityData.files.map((fi:any, i:any) => (
-      
         <div
         key={`act-data-${i}`}
           style={{display:'inline-block', margin:5}}
@@ -125,7 +123,6 @@ const ToolTip = (toolProp: any) => {
 
 const BubbleVis = (props: BubbleProps) => {
   const {
-    filteredActivities,
     groupBy,
     setGroupBy,
     flexAmount,
@@ -133,7 +130,17 @@ const BubbleVis = (props: BubbleProps) => {
     defineEvent,
   } = props;
 
-  const [{projectData, filterType, filterRT, filterTags, selectedThread, researchThreads, isReadOnly}, dispatch] = useProjectState();
+  const [{
+    projectData, 
+    filterType, 
+    filterRT, 
+    filterTags, 
+    selectedThread, 
+    researchThreads, 
+    isReadOnly, 
+    selectedActivityURL,
+    filteredActivities 
+  }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState('1000px');
@@ -146,7 +153,7 @@ const BubbleVis = (props: BubbleProps) => {
   const height = +newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles(projectData.entries);
+  let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
@@ -156,8 +163,7 @@ const BubbleVis = (props: BubbleProps) => {
     setNewHeight(window.getComputedStyle(svgRef.current).height);
   }
   if(groupBy){
-    console.log('GROUP BY EXISTS', (researchThreads?.research_threads.length * 300));
-    
+  
     setSvgWidth((researchThreads?.research_threads.length * 300))
   }else{
     setSvgWidth(600);
@@ -586,13 +592,12 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-  let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+  let highlightedActivities = (selectedActivityURL) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
+  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
   
   groupGroups.each((d, i, n)=> {
   
     let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
-
-    console.log('chosen',chosenRT)
 
     let linkDataBefore = [];
     let linkDataAfter = [];
@@ -633,14 +638,22 @@ if (groupBy) {
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
-  let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
-  
+ // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+ let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
+ : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+
   highlightedActivities.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
     }else if(filterType || filterTags.length > 0){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 1);
+    }else if(selectedActivityURL !== null){
+      highlightedActivities.select('.all-activities').attr('fill-opacity', 1);
+      highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      highlightedCircles.attr('fill', 'white');
+      
     }else{
       d3.select(event.target).attr('fill', 'gray');
     }
@@ -652,13 +665,18 @@ if (groupBy) {
 
     d3.select(event.target).attr('fill', 'gray').attr('fill-opacity', .5);
     d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
-   
 
+    }else if(selectedActivityURL !== null){
+      highlightedActivities.select('.all-activities').attr('fill-opacity', .5);
+      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedCircles.attr('fill', 'gray');
+      
     }else{
     d3.select(event.target).attr('fill', '#d3d3d3').attr('stroke', '#d3d3d3').attr('stroke-width', .5);
     }
   });
 
+  //THIS IS WHERE I STOPPED COPYING OVER!! EVERYTHING BELOW IS NOT COPIED
   if(filterType){
 
     highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
@@ -675,16 +693,19 @@ if (groupBy) {
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
  
+  }else if(selectedActivityURL !== null){
+    highlightedActivities.select('.all-activities').attr('fill', 'red').attr('fill-opacity', .5);
+    highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+    let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedCircles.attr('fill', 'gray');
   }else{
 
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
-
   }
 
-  let hiddenCircles = allActivityGroups.filter(ac => {
-    return filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1})
-  .selectAll('circle.artifact');
+  let hiddenCircles = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid !== selectedActivityURL)
+  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1).selectAll('circle.artifact');
 
   hiddenCircles.attr('fill', 'gray')
   .attr('fill-opacity', .3);
@@ -694,10 +715,15 @@ if (groupBy) {
     let linkDataBefore = [];
     let linkDataAfter = [];
 
+    // console.log('filterRTTT',filterRT, researchThreads.research_threads, selectedThread)
+
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
+      console.log('FFFF', f)
       let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
     
     let chosenActivityData = temp.select('.all-activities').data()[0];
+
+    console.log('chosen activity data', chosenActivityData);
     
     if(f.type === 'activity'){
       temp.select('.all-activities')
@@ -811,7 +837,7 @@ highlightedActivities
 
   }
 
-}, [filteredActivities, groupBy, eventArray, filterType, defineEvent]);
+}, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
 return (
 <div style={{ flex: flexAmount, paddingTop:'30px' }}>
@@ -824,7 +850,7 @@ return (
         size={'sm'}
         style={{fontSize:"12px"}}
         onClick={() => {
-          console.log('is this working??')
+         
           defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
           }
         >

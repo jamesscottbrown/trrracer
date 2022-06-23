@@ -12,8 +12,6 @@ import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
@@ -69,6 +67,6 @@ export default function App() {
   return (
     <ChakraProvider>
       <Project folderPath={folderPath} />
-    </ChakraProvider> 
+    </ChakraProvider>
   );
 }

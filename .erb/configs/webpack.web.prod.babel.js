@@ -133,6 +133,12 @@
        NODE_ENV: 'production',
        DEBUG_PROD: false,
      }),
+     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+     }),
+     new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+     }),
      new MiniCssExtractPlugin({
        filename: 'style.css',
      }),
@@ -147,6 +153,22 @@
            'react-dom': 'react-dom/profiling',
            'scheduler/tracing': 'scheduler/tracing-profiling',
  //          'schedule/tracking': 'schedule/cjs/schedule-tracking.profiling.min'
-         }
+           'stream': 'stream-browserify',
+         },
+         fallback: {
+          "http": false,
+          "https": false,
+          "tty": false,
+          "zlib": false,
+          "fs": false,
+          "crypto": false,
+          "path": false,
+          "os": false,
+          "constants": false,
+          "net": false,
+          "tls": false,
+          "child_process": false,
+          "buffer": require.resolve("buffer"),
+        }
        }
  });

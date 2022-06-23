@@ -20,7 +20,7 @@ import { useProjectState } from './ProjectContext';
 
 
 interface EntryPropTypes {
-  entryData: EntryType;
+  activityID: string;
   openFile: (a: string, fp: string) => void;
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
@@ -35,7 +35,7 @@ const converter = new Showdown.Converter({
 });
 
 interface ReadonlyEntryFilePropTypes {
-  entryData: EntryType;
+  activityID: string;
   openFile: (a: string, fp: string) => void;
   setViewType: (viewType: string) => void;
   file: File;
@@ -45,7 +45,7 @@ interface ReadonlyEntryFilePropTypes {
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
-  const { entryData, openFile, setViewType, file, i, dispatch, folderPath } = props;
+  const { thisEntry, openFile, setViewType, file, i, dispatch, folderPath } = props;
   // const [{ folderPath }, dispatch] = useProjectState();
 
   return (
@@ -76,15 +76,15 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
         }}
         onClick={() => {
           setViewType('detail view');
-          console.log('dispatch',dispatch)
+        
           dispatch({
             type: 'SELECTED_ARTIFACT',
-            selectedArtifactEntry: entryData,
+            selectedArtifactEntry: thisEntry,
             selectedArtifactIndex: i,
             hopArray: [
               {
-                activity: entryData, 
-                artifactUid: entryData.files[i].artifact_uid,
+                activity: thisEntry, 
+                artifactUid: thisEntry.files[i].artifact_uid,
                 hopReason: 'first hop',
               }
             ],
@@ -103,9 +103,15 @@ type ActivityTitlePopoverLogicProps = {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { entryData, makeEditable, openFile, setViewType, viewType } = props;
+  const { activityID, makeEditable, openFile, setViewType, viewType } = props;
 
-  const [{researchThreads, folderPath, isReadOnly}, dispatch] = useProjectState();
+  const [{projectData, researchThreads, folderPath, isReadOnly}, dispatch] = useProjectState();
+
+  const thisEntry = useMemo(() => {
+    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+  }, [projectData.entries]);
+
+
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
@@ -115,13 +121,13 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return '#D4D4D4';
   };
 
-  const urls = entryData.files.filter((f) => f.fileType === 'url');
-  const files = entryData.files.filter((f) => f.fileType !== 'url');
+  const urls = thisEntry.files.filter((f) => f.fileType === 'url');
+  const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
   // Cache the results of converting markdown to HTML, to avoid re-converting on every render
   const descriptionHTML = useMemo(() => {
-    converter.makeHtml(entryData.description);
-  }, [entryData.description]);
+    converter.makeHtml(thisEntry.description);
+  }, [thisEntry.description]);
 
   return (
     <Box>
@@ -129,7 +135,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         style={{padding:10}}
       >
       <span style={{ fontSize: 22, fontWeight: 'bold' }}>
-        {entryData.isPrivate && (
+        {thisEntry.isPrivate && (
           <FaLock
             title="This entry is private, and will be hidden when the Trrrace is exported."
             size="0.75em"
@@ -138,7 +144,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         )}
          {viewType != 'detail' && (
           <ActivityTitlePopoverLogic
-            activityData={entryData}
+            activityData={thisEntry}
             researchThreads={researchThreads}
           />
         )}
@@ -154,14 +160,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-        {format(new Date(entryData.date), 'dd MMMM yyyy')}
+        {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
       </Text>
       <p>
-        {entryData.tags.length === 0 ? (
+        {thisEntry.tags.length === 0 ? (
           <b>No tags.</b>
         ) : (
           <>
-            {entryData.tags.map((t) => (
+            {thisEntry.tags.map((t) => (
               <Tag
                 key={t}
                 backgroundColor={`${checkTagColor(t)}50`}
@@ -177,7 +183,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </p>
       <br />
 
-      {entryData.description != '' && (
+      {thisEntry.description != '' && (
         <div
           style={{
             fontSize: '12px',
@@ -186,7 +192,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             marginBottom: 5,
           }}
         >
-          {entryData.description}
+          {thisEntry.description}
           <br />
         </div>
       )}
@@ -197,7 +203,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         {files.map((f, i) => (
           <ReadonlyEntryFile
             key={`readonly-${i}`}
-            entryData={entryData}
+            thisEntry={thisEntry}
             openFile={openFile}
             setViewType={setViewType}
             file={f}

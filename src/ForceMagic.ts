@@ -26,7 +26,7 @@ class ForceMagic {
     .range([0, height - this.margin])
     .domain(extent(projectEntries.map((e: any) => new Date(e.date))));
 
-  let filtered = projectEntries.filter(f => f.files && f.files.length > 0);
+  let filtered = projectEntries;//.filter(f => f.files && f.files.length > 0);
 
   this.nodes = filtered.map((a: any) => {
     const node = {};

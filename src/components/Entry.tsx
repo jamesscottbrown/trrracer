@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Button,
   Editable,
@@ -94,7 +94,7 @@ const FileContext = (props: FileContextProps) => {
 };
 
 interface EntryPropTypes {
-  entryData: EntryType;
+  activityID: string;
   entryIndex: number;
   openFile: (a: any) => void;
   updateEntryField: (
@@ -103,6 +103,8 @@ interface EntryPropTypes {
     newData: any
   ) => void;
   makeNonEditable: () => void;
+  activity_uid: string;
+  files: File[];
 }
 
 interface ReactTag {
@@ -112,7 +114,8 @@ interface ReactTag {
 
 const Entry = (props: EntryPropTypes) => {
   const {
-    entryData,
+    activityID,
+    files,
     entryIndex,
     openFile,
     updateEntryField,
@@ -121,22 +124,26 @@ const Entry = (props: EntryPropTypes) => {
 
   const [{projectData}, dispatch] = useProjectState();
 
-  const [value, setValue] = useState(entryData.description);
-  const [showDescription, setShowDescription] = useState(
-    !!entryData.description
-  );
-
   const allTags = projectData.tags;
+
+  const thisEntry = useMemo(() => {
+    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+  }, [allTags, projectData.entries.length, projectData.entries.flatMap(fm => fm.files).length]);
+
+  const [value, setValue] = useState(thisEntry.description);
+  const [showDescription, setShowDescription] = useState(
+    !!thisEntry.description
+  );
 
   // Update description details when entryData changes.
   // This happens on timeline view, when user selects different entry to view in detail panel
   useEffect(() => {
-    setShowDescription(!!entryData.description);
-    setValue(entryData.description);
-  }, [entryData]);
+    setShowDescription(!!thisEntry.description);
+    setValue(thisEntry.description);
+  }, [thisEntry]);
 
   const [selectedTab, setSelectedTab] =
-    React.useState<'write' | 'preview'>('preview');
+    React.useState<'write' | 'preview'>('write');
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
@@ -170,16 +177,18 @@ const Entry = (props: EntryPropTypes) => {
     enter: 13,
   };
 
-  const urls = entryData.files.filter((f) => f.fileType === 'url');
-  const files = entryData.files.filter((f) => f.fileType !== 'url');
+  const urls = thisEntry.files.filter((f) => f.fileType === 'url');
+  const filterfiles = files.filter((f) => f.fileType !== 'url');
 
   return (
     <div style={{ margin: 'auto' }}>
       <br />
       <Heading as="h4">
         <Editable
-          defaultValue={entryData.title}
-          onSubmit={(val) => updateEntryField(entryIndex, 'title', val)}
+          defaultValue={thisEntry.title}
+          onSubmit={(val) => {
+            console.log('entry field', val);
+            updateEntryField(entryIndex, 'title', val)}}
         >
           <EditablePreview />
           <EditableInput />
@@ -196,10 +205,10 @@ const Entry = (props: EntryPropTypes) => {
           style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() =>
-            updateEntryField(entryIndex, 'isPrivate', !entryData.isPrivate)
+            updateEntryField(entryIndex, 'isPrivate', !thisEntry.isPrivate)
           }
         >
-          {entryData.isPrivate ? (
+          {thisEntry.isPrivate ? (
             <FaLock title="Entry is currently private; click to make it public." />
           ) : (
             <FaLockOpen title="Entry is currently public; click to make it private." />
@@ -227,7 +236,7 @@ const Entry = (props: EntryPropTypes) => {
           }}
         >
           <EditDate
-            date={entryData.date}
+            date={thisEntry.date}
             entryIndex={entryIndex}
             updateEntryField={updateEntryField}
           />
@@ -239,18 +248,18 @@ const Entry = (props: EntryPropTypes) => {
         {'Tags: '}
       </span>
       <ReactTags
-        tags={entryData.tags.map((t) => ({ id: t, text: t }))}
+        tags={thisEntry.tags.map((t) => ({ id: t, text: t }))}
         suggestions={allTags.map((t) => ({ id: t.title, text: t.title }))}
         delimiters={[KeyCodes.comma, KeyCodes.enter]}
         handleDelete={(i: number) =>
           updateEntryField(
             entryIndex,
             'tags',
-            entryData.tags.filter((_tag, index) => index !== i)
+            thisEntry.tags.filter((_tag, index) => index !== i)
           )
         }
         handleAddition={(tag: ReactTag) => {
-          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex });
+          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityID: thisEntry.activity_uid });
         }}
       />
 
@@ -270,16 +279,16 @@ const Entry = (props: EntryPropTypes) => {
             }
           />
 
-          {value !== entryData.description && (
+          {value !== thisEntry.description && (
             <>
               <b style={{ color: 'red' }}>
                 You have made unsaved changes to this field. These will be lost
                 if you switch to editing a different field.
               </b>
               <Button
-                onClick={() =>
-                  updateEntryField(entryIndex, 'description', value)
-                }
+                onClick={() => {
+                  thisEntry.description = value;
+                  updateEntryField(entryIndex, 'description', value)}}
               >
                 Save
               </Button>
@@ -297,7 +306,7 @@ const Entry = (props: EntryPropTypes) => {
         <span style={{ fontSize: 18, fontWeight: 700 }}>{'Artifacts: '}</span>
         <br />
         <UnorderedList>
-          {files.map((file: File, j: any) => (
+          {filterfiles.map((file: File, j: any) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt

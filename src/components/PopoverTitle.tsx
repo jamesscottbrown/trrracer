@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import * as d3 from 'd3';
 import { Box, Button, Badge, Popover, PopoverContent, PopoverBody, PopoverFooter, PopoverArrow, PopoverTrigger } from '@chakra-ui/react';
 import ActivitytoThread from './ActivityToThread';
+import { useProjectState } from './ProjectContext';
 
 const ActivityTitlePopoverLogic = (props: any) => {
     const { activityData, researchThreads } = props;
     const [seeThreadAssign, setSeeThreadAssign] = useState(false);
+
+    const [{projectData}, dispatch] = useProjectState();
    
     return <Popover
               trigger={'hover'}
@@ -71,9 +74,23 @@ const ActivityTitlePopoverLogic = (props: any) => {
               </Button>
               <br/>
               <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this activity:</span>
-              <Badge
-              style={{wordWrap:'break-word'}}
-              >{activityData.activity_uid}</Badge>
+              <span
+                style={{fontSize:12, color:'black', lineHeight:1}}
+              >
+              <Button
+               onClick={() => {
+                              let indexTest = projectData.citations.map(c => c.id).indexOf(activityData.activity_uid);
+                              let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+                              navigator.clipboard.writeText(String.raw`\trrracer{overview}{activity}{${activityData.activity_uid}}{${index}}`)
+                              if(indexTest === -1){
+                                let newCitations = [...projectData.citations, {"id": activityData.activity_uid, "cIndex": index}]
+                                dispatch({ type: 'ADD_CITATION', citations: newCitations});
+                              }
+                              
+                            }}
+                              >Copy this ref</Button>
+                {/* {String.raw`\trrracer{overview}{activity}{${activityData.activity_uid}}`} */}
+                </span>
               </>
               
             )}

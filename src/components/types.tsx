@@ -31,7 +31,7 @@ interface EntryType {
   tags: string[];
   quoteTags: string[];
   isPrivate: boolean;
-  artifact_uid: string;
+  activity_uid: string;
 }
 
 interface EntryTypeWithIndex {
@@ -160,13 +160,15 @@ type ProjectState = {
   researchThreads?: ResearchThreadData;
   selectedThread?: number;
 
+  selectedActivityURL: null | string;
+
   highlightedTag?: string;
   highlightedType?: string;
 
   selectedArtifactEntry: EntryTypeWithIndex; // ?
   selectedArtifactIndex: number;
 
-  
+  filteredActivities:any;
 
   hopArray: any[];
   

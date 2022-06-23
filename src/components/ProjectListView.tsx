@@ -5,13 +5,24 @@ import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
   const {
-    filteredActivities,
     setViewType,
     viewType,
   } = ProjectPropValues;
 
+  //selectedActivityURL !== null
+  const [{projectData, selectedActivityURL, filteredActivities},] = useProjectState();
 
-  const [{projectData},] = useProjectState();
+  let [usedEntries, setUsedEntries] = useState(filteredActivities)
+
+  useEffect(() => {
+
+    if(selectedActivityURL !== null){
+      setUsedEntries(projectData.entries.filter(f => f.activity_uid === selectedActivityURL))
+    }else{
+      setUsedEntries(filteredActivities)
+    }
+
+  }, [selectedActivityURL, projectData.entries.length])
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -26,7 +37,7 @@ const ProjectListView = (ProjectPropValues: any) => {
         Array.from(Array(projectData.entries.length), () => false)
       );
     }
-  }, [projectData]);
+  }, [projectData.entries.length, filteredActivities.length]);
 
   // useEffect(() => {
   //   setEditable(Array.from(Array(projectData.entries.length), () => false));
@@ -42,7 +53,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   return (
     <div style={{ padding: '10px', marginTop: '20px' }}>
       
-      {filteredActivities.map((activityData: EntryTypeWithIndex, i: number) => (
+      {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
           activityData={activityData}

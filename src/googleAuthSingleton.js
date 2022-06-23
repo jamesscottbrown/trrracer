@@ -20,7 +20,7 @@ export const GoogleAuth = (function () {
         ? myApiOauth.setTokens({ refresh_token: _token })
         : myApiOauth.openAuthWindowAndGetTokens().then((token) => {
             _token = token;
-            console.log('TOKEN', token);
+           
 
             // save the token.refresh_token secured to use it the next time the app loading
             // use your token.access_token

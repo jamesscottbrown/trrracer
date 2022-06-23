@@ -2,8 +2,7 @@ import {retext} from 'retext'
 import retextPos from 'retext-pos'
 import retextKeywords from 'retext-keywords'
 import path from 'path'
-import { readFileSync } from './fileUtil'
-
+import { readFileSync } from 'fs'
 
 
 export const TextFileHandler = (fileList, folderPath) => {
