@@ -5,10 +5,10 @@ export const calcCircles = (activityData:any) => {
 
     let nodes = activityData.map((ad:any) => {
         
-        let filesWithRadius = ad.files.map(f => {
+        let filesWithRadius = ad.files.length > 0 ? ad.files.map(f => {
             f.r = (3 + (2 * Math.random()));
             return f;
-        });
+        }) : [{r: (3 + (2 * Math.random())), title: ad.title}];
 
         let packedSibs = d3.packSiblings(filesWithRadius);
         let parent = d3.packEnclose(packedSibs);
