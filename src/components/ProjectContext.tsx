@@ -253,7 +253,7 @@ export const readProjectFile = async (
     console.log('this is a text file', fileContents);
   }else{
 
-    const response = await fetch(`${folderPath}/${fileName}`);
+    const response = await fetch(`${folderPath}${fileName}`);
 
     if (!fileType) {
       return response.json();
