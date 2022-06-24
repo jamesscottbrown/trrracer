@@ -72,7 +72,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     dispatch
   ] = useProjectState();
   
-  const [newHeight, setNewHeight] = useState('1000px');
+  const [newHeight, setNewHeight] = useState(1000);
   const [svgWidth, setSvgWidth] = useState(widthSvg);
   const [translateY, setTranslateY] = useState(35);
   const [hoverData, setHoverData] = useState({fileData: projectData.entries[0].files[0], hopDataArray: [{hopReason:'null'}]});
@@ -80,7 +80,7 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   const width = 80;
 
-  const height = +newHeight.split('px')[0];
+  const height = +newHeight//.split('px')[0];
 
   const svgRef = React.useRef(null);
 
@@ -90,10 +90,18 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   const forced = new ForceMagic(packedCircData, width, 1000);
 
-  useEffect(() => {
+  useEffect(()=> {
     if (svgRef.current) {
-      setNewHeight(window.getComputedStyle(svgRef.current).height);
-    }
+       setNewHeight((window.innerHeight - 150));
+     }
+  
+      setSvgWidth(600);
+     
+  }, [window.innerHeight, window.innerWidth])
+  
+
+  useEffect(() => {
+   
 
     setSvgWidth(widthSvg);
     

@@ -188,7 +188,6 @@ interface EntryPropTypes {
   entryIndex: number;
   openFile: (a: string) => void;
   updateEntryField: (
-    entryIndex: number,
     fieldName: string,
     newData: any
   ) => void;
