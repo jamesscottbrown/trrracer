@@ -29,23 +29,20 @@ import GoogFileInit from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;
-  entryIndex: number;
   updateEntryField: (
-    entryIndex: number,
     fieldName: string,
     newData: any
   ) => void;
 }
 
 const EditDate = (props: EditDateTypes) => {
-  const { date, entryIndex, updateEntryField } = props;
+  const { date, updateEntryField } = props;
 
   const updateDate = (newDate: Date) => {
     // if in GMT, the time will be returned in UTC, so will be 11pm of the day before
     newDate.setHours(newDate.getHours() + 1);
 
     updateEntryField(
-      entryIndex,
       'date',
       newDate.toISOString().substring(0, 10)
     );
@@ -98,12 +95,10 @@ interface EntryPropTypes {
   entryIndex: number;
   openFile: (a: any) => void;
   updateEntryField: (
-    entryIndex: number,
     fieldName: string,
     newData: any
   ) => void;
   makeNonEditable: () => void;
-  activity_uid: string;
   files: File[];
 }
 
@@ -181,19 +176,27 @@ const Entry = (props: EntryPropTypes) => {
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
   return (
-    <div style={{ margin: 'auto' }}>
+    <div style={{ 
+      margin: 'auto',
+      padding:6,
+      border: '1px solid gray',
+      borderRadius: 5
+      }}>
       <br />
-      <Heading as="h4">
+      <span style={{
+        fontSize:28,
+      }}>
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
             console.log('entry field', val);
-            updateEntryField(entryIndex, 'title', val)}}
+            updateEntryField('title', val)}}
         >
           <EditablePreview />
           <EditableInput />
         </Editable>
         <Button
+          size={'xs'}
           style={{ display: 'inline' }}
           onClick={makeNonEditable}
           type="button"
@@ -202,10 +205,11 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
+          size={'xs'}
           style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() =>
-            updateEntryField(entryIndex, 'isPrivate', !thisEntry.isPrivate)
+            updateEntryField('isPrivate', !thisEntry.isPrivate)
           }
         >
           {thisEntry.isPrivate ? (
@@ -216,17 +220,28 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          style={{ display: 'inline' }}
+          size={'xs'}
+          style={{ display: 'inline', marginLeft:5 }}
           colorScheme="red"
           leftIcon={<DeleteIcon />}
           onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
         >
           Delete Activity
         </Button>
-      </Heading>
+      </span>
       <br />
-      <Flex alignItems="center">
-        <span style={{ fontWeight: 700 }}>{'Date Activity Happened: '}</span>
+      <div alignItems="left">
+        <span 
+        style={{ 
+          fontWeight: 500,
+          fontSize:14,
+          textAlign:'right',
+          paddingRight:5,
+          lineHeight:1
+         }}
+        >
+          {'Date Activity Happened: '}
+        </span>
         <div
           style={{
             border: '1px solid gray',
@@ -237,14 +252,13 @@ const Entry = (props: EntryPropTypes) => {
         >
           <EditDate
             date={thisEntry.date}
-            entryIndex={entryIndex}
             updateEntryField={updateEntryField}
           />
         </div>
-      </Flex>
+      </div>
 
       <br />
-      <span style={{ fontSize: 18, fontWeight: 700, display: 'block' }}>
+      <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Tags: '}
       </span>
       <ReactTags
@@ -253,7 +267,6 @@ const Entry = (props: EntryPropTypes) => {
         delimiters={[KeyCodes.comma, KeyCodes.enter]}
         handleDelete={(i: number) =>
           updateEntryField(
-            entryIndex,
             'tags',
             thisEntry.tags.filter((_tag, index) => index !== i)
           )
@@ -264,7 +277,7 @@ const Entry = (props: EntryPropTypes) => {
       />
 
       <br />
-      <span style={{ fontSize: 18, fontWeight: 700, display: 'block' }}>
+      <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Description: '}
       </span>
       {showDescription ? (
@@ -288,7 +301,7 @@ const Entry = (props: EntryPropTypes) => {
               <Button
                 onClick={() => {
                   thisEntry.description = value;
-                  updateEntryField(entryIndex, 'description', value)}}
+                  updateEntryField('description', value)}}
               >
                 Save
               </Button>
@@ -303,8 +316,8 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
       <div style={{ marginTop: 10 }}>
-        <span style={{ fontSize: 18, fontWeight: 700 }}>{'Artifacts: '}</span>
-        <br />
+      <br />
+        <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
           {filterfiles.map((file: File, j: any) => (
             <ListItem key={file.title}>
@@ -338,16 +351,14 @@ const Entry = (props: EntryPropTypes) => {
         </UnorderedList>
       </div>
       <br />
-      <span style={{ fontSize: 18, fontWeight: 700 }}>
-        {'Add more artifacts: '}
-      </span>
+   
       {showFileUpload ? (
         <>
           <Flex
             style={{
               borderColor: 'gray',
               borderRadius: 5,
-              alignItems: 'center',
+              // alignItems: 'center',
               justifyContent: 'left',
             }}
           >
@@ -368,23 +379,14 @@ const Entry = (props: EntryPropTypes) => {
         </>
       ) : (
         <Button onClick={() => setShowFileUpload(true)} type="button">
-          <FaPlus /> Add files
+          <FaPlus /> Add artifacts
         </Button>
       )}
-
       <GoogFileInit
         fileType="document"
         text="Create Google Doc"
         entryIndex={entryIndex}
       />
-
-      <GoogFileInit
-        fileType="spreadsheet"
-        text="Create Google Sheet"
-        entryIndex={entryIndex}
-      />
-
-      <br />
 
       <URLList urls={urls} entryIndex={entryIndex} dispatch={dispatch} />
     

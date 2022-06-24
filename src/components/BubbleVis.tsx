@@ -143,31 +143,32 @@ const BubbleVis = (props: BubbleProps) => {
   }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
-  const [newHeight, setNewHeight] = useState('1000px');
+  const [newHeight, setNewHeight] = useState(1000);
   const [svgWidth, setSvgWidth] = useState(600);
   const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 300;
-  const height = +newHeight.split('px')[0];
+  const height = newHeight//+newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
   let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
-
+  useEffect(()=> {
+    if (svgRef.current) {
+       setNewHeight((window.innerHeight - 150));
+     }
+     if(groupBy){
+       setSvgWidth((researchThreads?.research_threads.length * 300))
+     }else{
+       setSvgWidth(600);
+     }
+  }, [window.innerHeight, window.innerWidth])
   useEffect(() => {
-  if (svgRef.current) {
-    setNewHeight(window.getComputedStyle(svgRef.current).height);
-  }
-  if(groupBy){
-  
-    setSvgWidth((researchThreads?.research_threads.length * 300))
-  }else{
-    setSvgWidth(600);
-  }
+ 
 
 const svg = d3.select(svgRef.current);
 svg.selectAll('*').remove();
@@ -177,7 +178,7 @@ underWrap.attr('transform', `translate(130, ${translateY})`);
 const wrap = svg.append('g').attr('transform', `translate(130, ${translateY})`);
 
 const { yScale, margin } = forced;
-setTranslateY(margin / 3);
+setTranslateY(margin / 2);
 
 const marginTime = height * 0.25;
 
