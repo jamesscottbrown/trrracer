@@ -31,12 +31,11 @@ const ActivityWrap = (props: any) => {
   const myRef = useRef(null);
 
   const updateEntryField = (
-    entryIndex: number,
     fieldName: string,
     newValue: any
   ) => {
     console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: activityData.activity_uid });
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: activityData.activity_uid });
   };
 
   if(editable[activityData.index]){

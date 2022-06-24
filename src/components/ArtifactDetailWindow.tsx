@@ -377,11 +377,10 @@ const DetailSidebar = (props: any) => {
   const [showTagList, setShowTagList] = useState(true);
 
   const updateEntryField = (
-    entryIndex: number,
     fieldName: string,
     newValue: any
   ) => {
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', entryIndex, fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
+    dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
 
   const isArtifactInThread = researchThreads.research_threads.filter(
