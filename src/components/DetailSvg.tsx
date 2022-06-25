@@ -88,7 +88,7 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = new ForceMagic(packedCircData, width, 1000);
+  const forced = new ForceMagic(packedCircData, width, height - 100);
 
   useEffect(()=> {
     if (svgRef.current) {
@@ -103,7 +103,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   useEffect(() => {
    
 
-    setSvgWidth(widthSvg);
+    
     
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
@@ -113,7 +113,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     const wrap = svg.append('g').attr('transform', `translate(95, 20)`);
 
     const { yScale, margin } = forced;
-    setTranslateY(margin / 3);
+    setTranslateY(margin / 2);
 
     const yearMonth = dataStructureForTimeline(projectData.entries);
 

@@ -1,12 +1,17 @@
 import { readFileSync } from './fileUtil';
 // const {google} = require('googleapis');
 
-let google;
-const isElectron = process.env.NODE_ENV === 'development';
 
-if(isElectron){
-  google = require('googleapis');
-}
+const isElectron = process.env.NODE_ENV === 'development';
+const {google} = isElectron ? require('googleapis') : null;
+// const OAuth2Client = google ? google.auth.OAuth2 : null;
+
+const {OAuth2Client}  = google ? require('google-auth-library') : null;
+
+console.log('GOOGLE', google);
+// if(isElectron){
+//   google = require('googleapis');
+// }
 
 export function googleFolderDict(folder){
     if(folder?.includes('EvoBio')){
@@ -21,10 +26,20 @@ export function googleFolderDict(folder){
 }
 
 export async function getDriveFiles(folderName, googleCred){
-    const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
-   
+    // const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+    // const oAuth2Client = new OAuth2Client(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
+    //ABOVE IS THE OLD _ THIS IS THROWING ERROR SO TRYING NEW
+
+    const oAuth2Client = new OAuth2Client(
+      googleCred.installed.client_id, 
+      googleCred.installed.client_secret, 
+      googleCred.installed.redirect_uris[0]
+    );
+
     const token = await readFileSync('token.json');
     oAuth2Client.setCredentials(JSON.parse(token))
+
+    console.log('TOKEN', token);
    
     let drive = google.drive({ version: 'v3', auth: oAuth2Client });
     let docs = google.docs({ version:'v1', auth: oAuth2Client });
