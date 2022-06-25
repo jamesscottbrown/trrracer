@@ -230,7 +230,7 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
       </span>
       <br />
-      <div alignItems="left">
+      <div>
         <span 
         style={{ 
           fontWeight: 500,

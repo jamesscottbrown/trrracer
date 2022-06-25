@@ -832,7 +832,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state,
           selectedArtifactEntry: action.selectedArtifactEntry,
           selectedArtifactIndex: action.selectedArtifactIndex,
-          hopArray: []
+          hopArray: action.hopArray
         };
       }
 
