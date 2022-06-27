@@ -14,6 +14,10 @@ const ProjectListView = (ProjectPropValues: any) => {
 
   let [usedEntries, setUsedEntries] = useState(filteredActivities)
 
+  console.log('filtered activities', filteredActivities);
+
+  // console.log('USED ENTEIES', usedEntries)
+
   useEffect(() => {
 
     if(selectedActivityURL !== null){
@@ -22,7 +26,7 @@ const ProjectListView = (ProjectPropValues: any) => {
       setUsedEntries(filteredActivities)
     }
 
-  }, [selectedActivityURL, projectData.entries.length])
+  }, [selectedActivityURL, projectData.entries.length, filteredActivities.length])
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
