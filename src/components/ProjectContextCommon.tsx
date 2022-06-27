@@ -764,7 +764,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newColor = pickTagColor(state.projectData.tags);
         let newTags;
 
-       
+        console.log('NEW TAGSSSSS',newTag, entryIndex, activityID);
 
         if (!existingTags.includes(newTag.text)) {
           newTags = [
@@ -795,8 +795,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'ADD_FILES_TO_ENTRY': {
-        const { fileList, entryIndex } = action;
-        const currentFiles = state.projectData.entries[entryIndex].files;
+        const { fileList, entryIndex, activityID } = action;
+
+        const currentFiles = state.projectData.entries.filter(f => f.activity_uid === activityID)[0].files;
+        // const currentFiles = state.projectData.entries[entryIndex].files;
 
         const newFiles = [
           ...currentFiles,
@@ -804,14 +806,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ];
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-            entryIndex === i ? { ...d, files: newFiles } : d
+            d.activity_uid === activityID ? { ...d, files: newFiles } : d
         );
 
         const newProjectData = { ...state.projectData, entries };
-
         const newPD = saveJSON(newProjectData, state);
        
-
         return newPD; 
       }
 

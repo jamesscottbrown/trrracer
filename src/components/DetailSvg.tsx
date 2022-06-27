@@ -17,6 +17,8 @@ interface BubbleDetProps {
 const ToolTip = (toolProp: any) => {
   const {hoverData, position} = toolProp;
 
+  console.log('hover data', hoverData);
+
   return <div
     id={'tooltip'}
     style={{
@@ -34,12 +36,16 @@ const ToolTip = (toolProp: any) => {
       zIndex: 6000
     }}
   >
-    <span
-    style={{
-      font: '15px sans-serif',
-      fontWeight:600
-    }}
-    >{hoverData.fileData.title}</span>
+    {
+      hoverData.fileData ? <span
+      style={{
+        font: '15px sans-serif',
+        fontWeight:600
+      }}
+      >{hoverData.fileData.title}
+      </span> : <div>{'uknown'}</div>
+    }
+    
     <div>
     {
       hoverData.hopDataArray.map((fi:any, i:any) => (
@@ -102,9 +108,6 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   useEffect(() => {
    
-
-    
-    
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 

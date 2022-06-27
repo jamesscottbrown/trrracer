@@ -143,7 +143,8 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
+    console.log('fileListtt', fileList, 'activity uid',thisEntry.activity_uid)
+    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex, activityID: thisEntry.activity_uid });
     setShowFileUpload(false);
   };
 

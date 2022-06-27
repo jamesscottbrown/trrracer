@@ -6,6 +6,9 @@ import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
+
 import type {
   ResearchThread,
   ResearchThreadEvidence,
@@ -131,7 +134,6 @@ const FragmentToBookmark = (props: any) => {
     </Box>
   );
 };
-
 const FragmentToThread = (props: any) => {
   const [, dispatch] = useProjectState();
 
@@ -193,7 +195,6 @@ const FragmentToThread = (props: any) => {
     </Box>
   );
 };
-
 const InteractiveActivityTag = (props: any) => {
   const { selectedArtifactEntry, index, tag } = props;
   const [{ projectData, hopArray }, dispatch] = useProjectState();
@@ -732,7 +733,12 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     isReadOnly
   }, dispatch] = useProjectState();
 
- 
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
@@ -885,7 +891,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
           {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
         {
-          selectedArtifact && (
+          selectedArtifact ? (
             <Box flex="3.5">
               {(selectedArtifact.fileType ===
                 'txt' ||
@@ -967,7 +973,42 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               
             </Flex>
           </Box>
-          )
+          ) :
+          <Flex
+              style={{
+                justifyContent: 'center',
+                alignItems: 'stretch',
+                height: '90%',
+                paddingLeft: 20,
+                paddingRight: 20,
+                overflowY:'scroll'
+              }}
+            >
+              <div
+              onMouseUp={() => {
+                if (setFragSelected) {
+                  const selObj = window.getSelection();
+                  setFragSelected(selObj?.toString());
+                } else {
+                  console.log('mouseup');
+                }
+              }}
+              style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
+            >
+            <ReactMde
+              value={selectedArtifactEntry.description}
+              // onChange={setValue}
+              selectedTab={'preview'}
+              onTabChange={()=> null}
+            
+              generateMarkdownPreview={(markdown) =>
+                Promise.resolve(converter.makeHtml(markdown))
+              }
+              readOnly={true}
+              style={{height:'100%', overflowY:'scroll'}}
+              />
+              </div>
+          </Flex>
         }
         
       </Flex>
