@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
 
 import {
   Button,
@@ -12,7 +14,6 @@ import {
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
-import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
@@ -111,7 +112,12 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     return projectData.entries.filter(f => f.activity_uid === activityID)[0];
   }, [projectData.entries]);
 
-
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
 
   const checkTagColor = (tagName: string) => {
     const tagFil = researchThreads.research_threads.filter((f: any) => {
@@ -183,18 +189,47 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
       </p>
       <br />
 
-      {thisEntry.description != '' && (
-        <div
-          style={{
-            fontSize: '12px',
-            fontStyle: 'italic',
-            marginTop: '5px',
-            marginBottom: 5,
-          }}
-        >
-          {thisEntry.description}
-          <br />
-        </div>
+      {(thisEntry.description && thisEntry.description != '') && (
+        <div>
+        {thisEntry.tags.includes('email') ? 
+            <div>
+              <span>{`${thisEntry.description.split('.')[0]}...`}</span>
+              <Button
+            onClick={() => {
+              setViewType('detail view');
+            
+              dispatch({
+                type: 'SELECTED_ARTIFACT',
+                selectedArtifactEntry: thisEntry,
+                selectedArtifactIndex: null,
+                hopArray: [
+                  {
+                    activity: thisEntry, 
+                    artifactUid: null,//thisEntry.files[i].artifact_uid,
+                    hopReason: 'first hop',
+                  }
+                ],
+              });
+            }}
+          >{"VIEW EMAIL"}</Button>
+            </div>
+                :
+            <ReactMde
+            value={thisEntry.description}
+            // onChange={setValue}
+            selectedTab={'preview'}
+            // onTabChange={()=> null}
+            minPreviewHeight={100}
+            generateMarkdownPreview={(markdown) =>
+              Promise.resolve(converter.makeHtml(markdown))
+            }
+            readOnly={true}
+            style={{height:'100%', overflowY:'scroll'}}
+          />
+          }
+
+          </div>
+       
       )}
 
       </div>

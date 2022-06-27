@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useProjectState } from './ProjectContext';
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
 // import * as fs from 'fs';
 // import path from 'path';
 
 
 const EmailRender = (props: any) => {
-  const { title, setFragSelected } = props;
+  const { title, setFragSelected, artifactData, activityData } = props;
+
+  console.log('artifactData', artifactData, activityData);
+
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
 
   const [state] = useProjectState();
   const [emailData, setEmailData] = useState('Email failed to load');
+
+  useEffect(() => {
+    if(activityData.description){
+      setEmailData(activityData.description);
+    }
+  }, [title]);
+  
 
 //   var eml = fs.readFileSync(path.join(state.folderPath, title), "utf-8");
 //     emlformat.read(eml, function(error, data) {
@@ -55,10 +73,22 @@ const EmailRender = (props: any) => {
 // })
 
   return (
-    <div 
-    style={{ height: '95%', overflow: 'auto' }}
-    dangerouslySetInnerHTML={{__html: emailData}}
-    />
+    // <div 
+    // style={{ height: '95%', overflow: 'auto' }}
+    // dangerouslySetInnerHTML={{__html: emailData}}
+    // />
+
+    <ReactMde
+            value={emailData}
+            // onChange={setValue}
+            selectedTab={'preview'}
+            onTabChange={()=> null}
+            generateMarkdownPreview={(markdown) =>
+              Promise.resolve(converter.makeHtml(markdown))
+            }
+            readOnly={true}
+            style={{height:'100%', overflowY:'scroll'}}
+            />
     // <div style={{ height: '90%', overflow: 'auto' }}>
     //   {emailData.map((m, i) => (
     //     <div
