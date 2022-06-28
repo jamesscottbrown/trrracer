@@ -57,18 +57,17 @@ const TextRender = (textProps: any) => {
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const {
     setFragSelected,
-    fragSelected,
-    folderPath,
     activityID,
     artifactIndex,
     openFile,
   } = props;
-
+ 
 
   const [{
     googleData, 
     txtData,
-    projectData
+    projectData,
+    folderPath
   }, dispatch] = useProjectState();
 
   const activity = useMemo(()=> {

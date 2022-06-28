@@ -962,16 +962,10 @@ console.log('sleectedArtifact entry!!!!',selectedArtifactEntry.activity_uid);
               {
                 selectedArtifact ?
                 <DetailPreview
-                  // artifactRenderedRef={artifactRenderedRef}
                   setFragSelected={setFragSelected}
-                  fragSelected={fragSelected}
-                  folderPath={folderPath}
-                  artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
                   activityID={selectedArtifactEntry.activity_uid}
                   artifactIndex={selectedArtifactIndex}
                   openFile={openFile}
-                  googleData={googleData}
-                  txtData={txtData}
                 /> : <div>{'No Artifact for this activity'}</div>
               }
               
