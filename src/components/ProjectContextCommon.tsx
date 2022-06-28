@@ -407,8 +407,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
 
-      
-
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
@@ -428,8 +426,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
       case 'UPDATE_GOOG_DOC_DATA' : {
+        console.log('IN ACTION!',action.googDocData)
         
-        return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+        setTimeout(() => {
+          return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+        }, 1000)
+      
+        
       }
       case 'UPDATE_GOOG_IDS' : {
        

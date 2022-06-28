@@ -13,6 +13,7 @@ import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
 import { joinPath } from '../fileUtil';
+import { useProjectState } from './ProjectContext';
 
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
@@ -62,11 +63,17 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     activity,
     artifactIndex,
     openFile,
-    googleData,
-    txtData,
+    // googleData,
+    // txtData,
   } = props;
 
   const { title } = artifact;
+  const [{
+    googleData, 
+    txtData
+  }, dispatch] = useProjectState();
+  
+  console.log('googgg in detail',googleData);
 
   if (
     title.endsWith('.mp4') ||
@@ -114,10 +121,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
+    console.log('google in gdoc', googleData);
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
+
+      console.log('GOOGLE', googleData, googD);
 
       return (
         <Box style={{ 

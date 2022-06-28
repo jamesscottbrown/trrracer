@@ -14,10 +14,6 @@ const ProjectListView = (ProjectPropValues: any) => {
 
   let [usedEntries, setUsedEntries] = useState(filteredActivities)
 
-  console.log('filtered activities', filteredActivities);
-
-  // console.log('USED ENTEIES', usedEntries)
-
   useEffect(() => {
 
     if(selectedActivityURL !== null){

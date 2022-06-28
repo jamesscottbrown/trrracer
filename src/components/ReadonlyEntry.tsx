@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 
 import {
   Button,
@@ -9,7 +10,8 @@ import {
   Text,
   UnorderedList,
   Box,
-  SimpleGrid
+  SimpleGrid,
+  Tooltip
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
@@ -104,7 +106,7 @@ type ActivityTitlePopoverLogicProps = {
 }
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { activityID, makeEditable, openFile, setViewType, viewType } = props;
+  const { activityID, makeEditable, openFile, setViewType, viewType, foundIn } = props;
 
   const [{projectData, researchThreads, folderPath, isReadOnly}, dispatch] = useProjectState();
 
@@ -187,6 +189,35 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           </>
         )}
       </p>
+
+      {
+          foundIn.length > 0 && (
+            foundIn.map((fo, fi) => (
+              <React.Fragment
+              key={`tool-${fi}`}
+          >
+          <Tooltip 
+            
+            style={{padding:5}}
+            label={`Threaded in ${fo.title}`}>
+          <div
+          style={{
+            fontSize:20, 
+            backgroundColor: fo.color, 
+            borderRadius:50, 
+            width:26, 
+            display:'inline-block', 
+            padding:3,
+            margin:3,
+            // opacity: fo.title === selectedThread.title ? 1 : .4
+          }} 
+          ><GiSewingString size={'20px'}/>
+          </div>
+          </Tooltip>
+          </React.Fragment>
+          )))
+          
+        }
       <br />
 
       {(thisEntry.description && thisEntry.description != '') && (

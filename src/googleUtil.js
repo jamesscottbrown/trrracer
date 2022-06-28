@@ -9,9 +9,7 @@ const {google} = isElectron ? require('googleapis') : null;
 const {OAuth2Client}  = google ? require('google-auth-library') : null;
 
 console.log('GOOGLE', google);
-// if(isElectron){
-//   google = require('googleapis');
-// }
+
 
 export function googleFolderDict(folder){
     if(folder?.includes('EvoBio')){
@@ -64,7 +62,7 @@ export async function getDriveFiles(folderName, googleCred){
       pageSize: 1000
     });
 
-    console.log('fileList!!', fileList);
+    // console.log('fileList!!', fileList);
     let filZ = await fileList.data.files.map(async (m) => {
         if(m.mimeType === "application/vnd.google-apps.document"){
             
@@ -77,7 +75,9 @@ export async function getDriveFiles(folderName, googleCred){
         googFileIds[m.name] = {googId: m.id}
     });
 
-    return { goog_doc_data: googData, goog_file_ids: googFileIds }
+    console.log(await googData);
+
+    return { goog_doc_data: await googData, goog_file_ids: googFileIds }
 
 }
 

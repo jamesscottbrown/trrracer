@@ -83,7 +83,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
           style={{marginTop:5, marginBottom:5}}
         onClick={()=> {
           getDriveFiles(folderPath, googleCred).then((googOb) => {
-            console.log(googOb);
+            console.log('GOOGLE OB',googOb);
             dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
             dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
           });
