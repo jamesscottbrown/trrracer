@@ -4,7 +4,6 @@ import {
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  background,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
@@ -24,10 +23,7 @@ const GoogInline = (googProps: any) => {
 
 const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmarked:any) => {
 
-
   const styleOb = { display: 'inline', cursor: 'pointer' };
-
-  console.log('in stle', bookmarked);
   
   if (sectionData.textRun.textStyle) {
     Object.keys(sectionData.textRun.textStyle).forEach((m) => {
@@ -45,14 +41,18 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
         );
       }
     });
-    if (commentedOn) styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347';
-    if (bookmarked){ 
-      // console.log('boomark??', bookmarked)
-      styleOb.backgroundColor = '#FFFCBB';
-      styleOb.color = '#ffffff';
-    }
+    if (commentedOn) {styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347'}
+    if (spanColor) {styleOb.backgroundColor = '#FFB347'}
+     
   }
- 
+
+  if (bookmarked){ 
+   
+    styleOb.backgroundColor = 'gray';
+    styleOb.color = '#ffffff';
+  
+  }
+
   return styleOb;
 };
 
@@ -68,12 +68,11 @@ const GoogDriveSpans = (googProps: any) => {
   
   var styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
 
-  console.log(comments)
 
   useEffect(() => {
    
     const tempBookmark = (artifactBookmarks && artifactBookmarks.length > 0) ? artifactBookmarks.filter((f: any) => {
-      return googEl.textRun.content === (f.fragment)//(googEl.textRun && (googEl.textRun.content.includes(f.fragment) || f.fragment === (googEl.textRun.content)))
+      return googEl.textRun.content === (f.fragment)
     }) : []; 
 
    if(tempBookmark.length > 0){
@@ -85,34 +84,42 @@ const GoogDriveSpans = (googProps: any) => {
   
     
   }, [spanColor, artifactBookmarks]);
+
+
   
   return temp.length > 0 ? (
-    <Popover>
+    <Popover trigger='hover'>
       <PopoverTrigger>
-        <div key={`elem-${index}`} style={styleOb}>
-          <span>{googEl.textRun.content}</span>
-        </div>
+        {/* <div key={`elem-${index}`} > */}
+          <span key={`elem-${index}`} style={styleOb}>{googEl.textRun.content}</span>
+        {/* </div> */}
       </PopoverTrigger>
 
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
 
         <PopoverBody>
-          <div>TESTING THIS OUT</div>
+          <div>{temp.map((t, i)=> (
+            <div
+              key={`span-comment-${i}`}
+            >
+              <span dangerouslySetInnerHTML={{__html: t.htmlContent}}></span>
+             
+            </div>
+          ))}</div>
         </PopoverBody>
       </PopoverContent>
     </Popover>
   ) : (
-    <div 
-      key={`elem-${index}`} 
-      style={styleOb}
-      onMouseOver={() => setSpanColor(true)}
-      onMouseOut={() => setSpanColor(false)}
-      onClick={()=> setFragSelected(googEl.textRun.content)}
-      >
+
       <span
+       key={`elem-${index}`} 
+       style={styleOb}
+       onMouseOver={() => setSpanColor(true)}
+       onMouseOut={() => setSpanColor(false)}
+       onClick={()=> setFragSelected(googEl.textRun.content)}
       >{googEl.textRun.content}</span>
-    </div>
+   
   );
 };
 
@@ -166,7 +173,7 @@ const GoogDriveParagraph = (parProps: any) => {
         </span>
       );
   };
-  console.log('paragraphData', parData);
+
   return parData.paragraph.paragraphStyle.namedStyleType.includes('HEADING') ? (
     <div>{getHeading(parData.paragraph.paragraphStyle, parData.paragraph)}</div>
   ) : (
