@@ -363,7 +363,14 @@ const DetailSidebar = (props: any) => {
     setFragSelected
   } = props;
 
-  const [{ researchThreads, projectData, hopArray, selectedArtifactEntry, selectedArtifactIndex, isReadOnly }, dispatch] = useProjectState();
+  const [{ 
+    researchThreads, 
+    projectData, 
+    hopArray, 
+    selectedArtifactEntry, 
+    selectedArtifactIndex, 
+    isReadOnly 
+  }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
@@ -371,7 +378,11 @@ const DetailSidebar = (props: any) => {
   };
 
   const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
+  let isArtifactInThread = researchThreads?.research_threads.filter(f => {
+    let test = f.evidence.filter(e => e.activityTitle === selectedArtifactEntry.title);
+    return test.length > 0});
 
+  console.log('in in??',isArtifactInThread);
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -384,22 +395,7 @@ const DetailSidebar = (props: any) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
 
-  const isArtifactInThread = researchThreads.research_threads.filter(
-    (f: ResearchThread) => {
-      let temp = f.evidence.filter(
-        (e: ResearchThreadEvidence) => e.type === 'artifact'
-      );
-      temp =
-        temp.length > 0
-          ? temp.filter(
-              (tm: ResearchThreadEvidence) =>
-                tm.activityTitle === selectedArtifactEntry.title &&
-                tm.artifactIndex === selectedArtifactIndex
-            )
-          : [];
-      return temp.length > 0;
-    }
-  );
+  
 
   return (
     <Box
@@ -678,30 +674,43 @@ const DetailSidebar = (props: any) => {
         </React.Fragment>
         )}
       <Box>
-        {isArtifactInThread.length > 0 && (
+        {(isArtifactInThread &&  isArtifactInThread?.length > 0) && (
           <div>
             <span style={{ fontWeight: 600, fontSize:20, marginTop: 10, marginBottom: 10 }}>
               This artifact is associated with:
             </span>
               {
-                isArtifactInThread.map((a, i)=> (
+                isArtifactInThread?.map((a, i)=> (
                   <div
                     key={`thread-${i}`}
+                    style={{
+                      border:"1px solid gray",
+                      borderRadius:5,
+                      marginBottom:3
+                  }}
                   >
-
                     <div
-                    style={{backgroundColor: `${a.color}50`}}
+                    style={{
+                      padding:6,
+                      backgroundColor: `${a.color}50`}}
                     >{a.title}</div>
                     {
                       a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, j) => (
-                        <React.Fragment key={`evi-${j}`}>
+                        <div 
+                        key={`evi-${j}`}
+                        style={{padding:4}}
+                        >
                         {m.type === "fragment" && (
-                          <span>{m.anchors[0].frag_type}</span>
+                          <div
+                            style={{fontSize:11, fontStyle:'italic'}}
+                          >{`"${m.anchors[0].frag_type}"`}</div>
                         )}
                         {
-                          <span>{m.rationale}</span>
+                          <div
+                          style={{fontSize:12, fontWeight:700}}
+                          >{m.rationale}</div>
                         }
-                        </React.Fragment>
+                        </div>
                       ))
                     }
                   </div>
@@ -876,8 +885,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         <DetailSidebar
           fragSelected={fragSelected}
           setFragSelected={setFragSelected}
-          selectedArtifactEntry={selectedArtifactEntry}
-          selectedArtifactIndex={selectedArtifactIndex}
+          // selectedArtifactEntry={selectedArtifactEntry}
+          // selectedArtifactIndex={selectedArtifactIndex}
         />
 
         <div style={{ width:260 }}>
