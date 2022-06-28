@@ -31,7 +31,7 @@ const RTtooltip = (toolProp: any) => {
     style={{
       position:'absolute',
       left: position[0],
-      top: position[1] - 50,
+      top: 50,//evidence.length > 0 ? position[1] - 150 : position[1] - 50,
       textAlign: 'center',
       minWidth:100,
       maxWidth:400,
