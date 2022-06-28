@@ -73,8 +73,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   const { title } = artifact;
 
-  console.log('IS THIS firing a bunch', title);
-
   if (
     title.endsWith('.mp4') ||
     title.endsWith('.mov') ||
@@ -170,9 +168,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
 
-    console.log('in text section', title);
+ 
     const [textFile, setText] = useState<any>([]);
-    
+
     useEffect(()=> {
       readFileSync(`${folderPath}/${title}`).then((text) => {
 
