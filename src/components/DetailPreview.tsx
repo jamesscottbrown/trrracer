@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { Image, Box, background } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
@@ -12,7 +12,7 @@ import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
-import { joinPath } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 
 const url = (folderPath: string, title: string) => {
@@ -59,21 +59,27 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     setFragSelected,
     fragSelected,
     folderPath,
-    artifact,
-    activity,
+    activityID,
     artifactIndex,
     openFile,
-    // googleData,
-    // txtData,
   } = props;
 
-  const { title } = artifact;
+
   const [{
     googleData, 
-    txtData
+    txtData,
+    projectData
   }, dispatch] = useProjectState();
-  
-  console.log('googgg in detail',googleData);
+
+  const activity = useMemo(()=> {
+    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+  }, [activityID]);
+
+  const artifact = useMemo(()=> {
+    return activity.files[artifactIndex];
+  }, [activityID, artifactIndex]);
+
+  const { title } = artifact;
 
   if (
     title.endsWith('.mp4') ||
@@ -127,7 +133,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
-      console.log('GOOGLE', googleData, googD);
+      let comments = artifact.comments ? artifact.comments.comments : [];
 
       return (
         <Box style={{ 
@@ -148,7 +154,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 key={`par-${i}`}
                 parData={m}
                 index={i}
-                comments={artifact.comments.comments}
+                comments={comments}
                 setFragSelected={setFragSelected}
                 artifactBookmarks={artifact.bookmarks}
               />
@@ -172,9 +178,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const temp: TextEntry[] = txtData['text-data'].filter(
       (f: TextEntry) => f['entry-title'] === activity.title
     );
+
+    const [textFile, setText] = useState<any>([]);
     
-  
-    let textArray = (temp.length > 0) ? [{style:'normal', textData: temp[0].text}] : [];
+    readFileSync(`${folderPath}/${title}`).then((text) => {
+
+    let textArray = (text.length > 0) ? [{style:'normal', textData: text}] : [];
+    
     if(artifact.bookmarks){
       let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
       
@@ -207,8 +217,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           textArray = newArray;
         }
       }
-      
     }
+      setText(textArray);
+    });
+
+    
+    
 
     return (
       <div
@@ -227,7 +241,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             style={{backgroundColor: t.style === 'normal' ? "#fff" : "yellow" }}
           >{t.textData}</span>
         )): <span>{textArray.textData}</span> } */}
-        {textArray.length > 0 ? <TextRender textArray={textArray} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
+        {textFile.length > 0 ? <TextRender textArray={textFile} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
       </div>
     );
   }

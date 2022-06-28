@@ -767,6 +767,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     }
   }, [projectData]);
 
+console.log('sleectedArtifact entry!!!!',selectedArtifactEntry.activity_uid);
+
   return (
     <div style={{ height: '100vh', position: 'fixed', top: 0, bottom: 0 }}>
       <Box
@@ -965,7 +967,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   fragSelected={fragSelected}
                   folderPath={folderPath}
                   artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
-                  activity={selectedArtifactEntry}
+                  activityID={selectedArtifactEntry.activity_uid}
                   artifactIndex={selectedArtifactIndex}
                   openFile={openFile}
                   googleData={googleData}

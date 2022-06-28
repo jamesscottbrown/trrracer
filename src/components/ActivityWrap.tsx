@@ -34,13 +34,11 @@ const ActivityWrap = (props: any) => {
     let test= m.evidence.filter(f => f.activityTitle === activityData.title);
     return test.length > 0});
 
-  console.log('activit', foundIn);
-
   const updateEntryField = (
     fieldName: string,
     newValue: any
   ) => {
-    console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
+    // console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: activityData.activity_uid });
   };
 
