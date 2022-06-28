@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
@@ -723,13 +723,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
   const [{
     projectData, 
-    folderPath, 
     selectedArtifactEntry, 
     selectedArtifactIndex, 
     hopArray, 
-    researchThreads, 
-    googleData, 
-    txtData,
+    researchThreads,
     isReadOnly
   }, dispatch] = useProjectState();
 
@@ -744,17 +741,16 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
+  const selectedArtifact = useMemo(() => {
+    return selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null}, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
-
   const [newHeight, setNewHeight] = useState('1000px');
 
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * .15;
 
-  console.log('artifact detail window', selectedArtifact);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -765,9 +761,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         Array.from(Array(projectData.entries.length), (_) => false)
       );
     }
-  }, [projectData]);
-
-console.log('sleectedArtifact entry!!!!',selectedArtifactEntry.activity_uid);
+  }, [projectData.entries.length]);
 
   return (
     <div style={{ height: '100vh', position: 'fixed', top: 0, bottom: 0 }}>
@@ -888,11 +882,9 @@ console.log('sleectedArtifact entry!!!!',selectedArtifactEntry.activity_uid);
 
         <div style={{ width:260 }}>
           <DetailBubble 
-            filteredActivities={projectData.entries}
             widthSvg={260}
             filterType={null}
           />
-          {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
         {
           selectedArtifact ? (

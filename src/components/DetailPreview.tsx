@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Image, Box, background } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
@@ -25,15 +25,10 @@ const url = (folderPath: string, title: string) => {
 
 interface DetailPreviewPropsType {
   folderPath: string;
-  artifact: any;
-  activity: any;
+  activityID: string;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
-  fragSelected:any;
   artifactIndex: number;
-  googleData:any;
-  txtData:any;
-  // artifactRenderedRef:any;
 }
 
 const TextRender = (textProps: any) => {
@@ -57,28 +52,28 @@ const TextRender = (textProps: any) => {
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const {
     setFragSelected,
-    activityID,
-    artifactIndex,
     openFile,
   } = props;
  
-
   const [{
     googleData, 
-    txtData,
     projectData,
-    folderPath
+    folderPath,
+    selectedArtifactEntry,
+    selectedArtifactIndex
   }, dispatch] = useProjectState();
 
   const activity = useMemo(()=> {
-    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
-  }, [activityID]);
+    return projectData.entries.filter(f => f.activity_uid === selectedArtifactEntry.activity_uid)[0];
+  }, [selectedArtifactEntry.activity_uid]);
 
   const artifact = useMemo(()=> {
-    return activity.files[artifactIndex];
-  }, [activityID, artifactIndex]);
+    return activity.files[selectedArtifactIndex];
+  }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const { title } = artifact;
+
+  console.log('IS THIS firing a bunch', title);
 
   if (
     title.endsWith('.mp4') ||
@@ -174,53 +169,51 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    const temp: TextEntry[] = txtData['text-data'].filter(
-      (f: TextEntry) => f['entry-title'] === activity.title
-    );
 
+    console.log('in text section', title);
     const [textFile, setText] = useState<any>([]);
     
-    readFileSync(`${folderPath}/${title}`).then((text) => {
+    useEffect(()=> {
+      readFileSync(`${folderPath}/${title}`).then((text) => {
 
-    let textArray = (text.length > 0) ? [{style:'normal', textData: text}] : [];
-    
-    if(artifact.bookmarks){
-      let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
-      
-      textArray = [
-        {style:'normal', textData: start[0]},
-        {style:'highlight', textData: artifact.bookmarks[0].fragment},
-        {style:'normal', textData: start[1]}
-      ]
-      if(artifact.bookmarks.length > 1){
-
-        for(let j = 1; j < artifact.bookmarks.length; j++){
-      
-          let oldTextArray = textArray;
-          let frag = artifact.bookmarks[j].fragment;
-          let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
-
-          let newArray = oldTextArray.slice(0, findIndex);
+        let textArray = (text.length > 0) ? [{style:'normal', textData: text}] : [];
         
-          let addThis = oldTextArray[findIndex].textData.split(frag);
-          let makeArray = [
-            {style:'normal', textData: addThis[0] },
-            {style:'highlight', textData: frag },
-            {style:'normal', textData: addThis[1] },
-          ]
-          newArray = [...newArray, ...makeArray]
+        if(artifact.bookmarks){
+          let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
           
-          if(oldTextArray.length > (findIndex + 1)){
-            newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
-          }
-          textArray = newArray;
-        }
-      }
-    }
-      setText(textArray);
-    });
-
+          textArray = [
+            {style:'normal', textData: start[0]},
+            {style:'highlight', textData: artifact.bookmarks[0].fragment},
+            {style:'normal', textData: start[1]}
+          ]
+          if(artifact.bookmarks.length > 1){
     
+            for(let j = 1; j < artifact.bookmarks.length; j++){
+          
+              let oldTextArray = textArray;
+              let frag = artifact.bookmarks[j].fragment;
+              let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
+    
+              let newArray = oldTextArray.slice(0, findIndex);
+            
+              let addThis = oldTextArray[findIndex].textData.split(frag);
+              let makeArray = [
+                {style:'normal', textData: addThis[0] },
+                {style:'highlight', textData: frag },
+                {style:'normal', textData: addThis[1] },
+              ]
+              newArray = [...newArray, ...makeArray]
+              
+              if(oldTextArray.length > (findIndex + 1)){
+                newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+              }
+              textArray = newArray;
+            }
+          }
+        }
+          setText(textArray);
+        });
+    }, [folderPath, title])
     
 
     return (
@@ -235,11 +228,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         }}
         style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
       >
-        {/* {artifact.bookmarks ? textArray.map((t)=> (
-          <span
-            style={{backgroundColor: t.style === 'normal' ? "#fff" : "yellow" }}
-          >{t.textData}</span>
-        )): <span>{textArray.textData}</span> } */}
         {textFile.length > 0 ? <TextRender textArray={textFile} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
       </div>
     );
