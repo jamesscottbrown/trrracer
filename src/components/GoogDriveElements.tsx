@@ -62,9 +62,9 @@ const GoogDriveSpans = (googProps: any) => {
   const [spanColor, setSpanColor] = useState(false);
   const [bookmarkExist, setBookmarkExist] = useState(false);
 
-  const temp = comments.filter((f: any) =>
+  const temp = comments ? comments.filter((f: any) =>
     (googEl.textRun && googEl.textRun.content.includes(f.quotedFileContent.value))
-  ); 
+  ) : []; 
   
   var styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
 
@@ -80,19 +80,12 @@ const GoogDriveSpans = (googProps: any) => {
    }else{
     styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
    }
-   
-  
-    
   }, [spanColor, artifactBookmarks]);
 
-
-  
   return temp.length > 0 ? (
     <Popover trigger='hover'>
       <PopoverTrigger>
-        {/* <div key={`elem-${index}`} > */}
           <span key={`elem-${index}`} style={styleOb}>{googEl.textRun.content}</span>
-        {/* </div> */}
       </PopoverTrigger>
 
       <PopoverContent bg="white" color="gray">

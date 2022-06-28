@@ -9,7 +9,6 @@ import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 
 interface BubbleDetProps {
-  filteredActivities: EntryType[];
   widthSvg: number;
   filterType: null | any;
 }
@@ -68,13 +67,12 @@ const ToolTip = (toolProp: any) => {
 
 const DetailBubble = (props: BubbleDetProps) => {
   const {
-    filteredActivities,
     widthSvg,
     filterType
   } = props;
 
   const [
-    { projectData, selectedArtifactEntry, selectedArtifactIndex, hopArray },
+    { projectData, filteredActivities, selectedArtifactEntry, selectedArtifactIndex, hopArray },
     dispatch
   ] = useProjectState();
   
