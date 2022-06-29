@@ -9,6 +9,7 @@ import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { ToolIcon } from './Project';
 import { useProjectState } from './ProjectContext';
+import groupBubbles from './GroupBubbleVis';
 
 const smalltalk = require('smalltalk');
 
@@ -31,10 +32,10 @@ const RTtooltip = (toolProp: any) => {
     style={{
       position:'absolute',
       left: position[0],
-      top: 50,//evidence.length > 0 ? position[1] - 150 : position[1] - 50,
+      top: -30,//evidence.length > 0 ? position[1] - 150 : position[1] - 50,
       textAlign: 'center',
       minWidth:100,
-      maxWidth:400,
+      maxWidth:450,
       minHeight:50,
       padding:10,
       backgroundColor: '#fff',
@@ -139,7 +140,8 @@ const BubbleVis = (props: BubbleProps) => {
     researchThreads, 
     isReadOnly, 
     selectedActivityURL,
-    filteredActivities 
+    filteredActivities,
+   
   }, dispatch] = useProjectState();
   
   const {eventArray} = projectData;
@@ -162,14 +164,13 @@ const BubbleVis = (props: BubbleProps) => {
        setNewHeight((window.innerHeight - 150));
      }
      if(groupBy){
-       setSvgWidth((researchThreads?.research_threads.length * 300))
+       setSvgWidth((600))
      }else{
        setSvgWidth(600);
      }
-  }, [window.innerHeight, window.innerWidth])
+  }, [window.innerHeight, window.innerWidth, groupBy])
   useEffect(() => {
  
-
 const svg = d3.select(svgRef.current);
 svg.selectAll('*').remove();
 
@@ -557,67 +558,11 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  if (groupBy.type === 'research_threads') {
+  groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities);
 
-    const groupRTDATA = groupBy.data.map((m: any) => {
-      return { label: m.title, color: m.color };
-    });
 
-    const groupGroups = wrap
-      .selectAll('g.group')
-      .data(groupRTDATA)
-      .join('g')
-      .attr('class', 'group');
 
-    groupGroups.attr('transform', (d: any, i: any) => `translate(${(i * 230)}, 0)`);
 
-    let allActivityGroups = groupGroups
-    .selectAll('g.activity')
-    .data(forced.nodes)
-    .join('g')
-    .attr('class', 'activity');
-
-  allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-
-  let underGroup = groupGroups.append('g');
-
-  // allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-
-  let activityBubbles = new Bubbles(
-    allActivityGroups,
-    true,
-    'all-activities'
-  );
-
-  activityBubbles.bubbles.attr('fill', "gray").attr('fill-opacity', .1).attr('stroke', '#d3d3d3').attr('stroke-width', .5);
-  let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-  artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
-
-  let highlightedActivities = (selectedActivityURL) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
-  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
-  
-  groupGroups.each((d, i, n)=> {
-  
-    let chosenRT = researchThreads?.research_threads.filter(f => f.title === d.label)[0];
-
-    let linkDataBefore = [];
-    let linkDataAfter = [];
-
-    let rtActivities = chosenRT.evidence.map(m => m.activityTitle);
-    let colorCirc = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.includes(c.title));
-    colorCirc.attr('fill',  chosenRT.color);
-    colorCirc.attr('stroke-width', 1).attr('stroke', 'gray');
-
-    d3.select(n[i]).selectAll('.artifact').attr('fill', chosenRT.color);
-
-    let notColA = d3.select(n[i]).selectAll('.activity').filter(c => rtActivities.indexOf(c.title) === -1);
-    notColA.selectAll('.artifact').attr('fill', '#d3d3d3');
-
-    let notCol = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.indexOf(c.title) === -1);
-    notCol.attr('fill', '#d3d3d3');
-  })
-
-  }
 } else {
 
   let allActivityGroups = wrap
@@ -818,7 +763,16 @@ highlightedActivities
         .attr('y2', forced.yScale(new Date(d.date)))
         .attr('x1', (+d.x))
         .attr('stroke', 'black')
-        .attr('stroke-width', 1)
+        .attr('stroke-width', 1);
+
+      if(filterRT){
+        let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+          return n[i].innerText.includes(d.title);
+        });
+        console.log(activities)
+        activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+      
+      }
       
     })
     .on('mouseout', (event:any, d:any) => {
@@ -834,8 +788,6 @@ highlightedActivities
       });
       activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
-
-
   }
 
 }, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
@@ -851,7 +803,6 @@ return (
         size={'sm'}
         style={{fontSize:"12px"}}
         onClick={() => {
-         
           defineEvent ? setDefineEvent(false) : setDefineEvent(true)}
           }
         >
@@ -875,11 +826,14 @@ return (
         id="split-by"
         onChange={(event) => {
           event.target.checked
-            ? setGroupBy({
-                type: 'research_threads',
-                data: researchThreads.research_threads,
-              })
-            : setGroupBy(null);
+            ? setGroupBy(researchThreads?.research_threads.map(rt => {
+              return { title: rt.title, 
+                color: rt.color, 
+                id: rt.rt_id, 
+                activities: rt.evidence.map(m => m.activityTitle), 
+                dob: rt.actions.filter(a => a.action === "created")[0].when,
+                }}))
+            : setGroupBy([]);
         }}
       />
     </FormControl> 

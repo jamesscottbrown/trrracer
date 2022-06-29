@@ -235,16 +235,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ? action.projectData.eventArray
         : []
       }
-      // const newProjectData = {
-      //   ...action.projectData,
-      //   entries: newEntries,
-      //   roles: roleData,
-      //   tags: newTags,
-      //   eventArray: action.projectData.eventArray
-      //     ? action.projectData.eventArray
-      //     : []
-      // };
-
+  
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
@@ -271,6 +262,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           { type: 'fragment', show: true },
           { type: 'tags', show: true }
         ],
+        allRTs:[
+          {"title": "UI and Design", "id": "22fc1832-852c-43ac-9f2a-7cc057fdcd97", "color": "#1340a8"},
+          {"title": "Research Thread Concept", "id": "b973c840-f26c-4a21-99b3-b93e411d659c", "color": "#84309b"}
+        ]
         // citations: citationData
       };
     };
@@ -305,8 +300,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         if (filterRT) {
           console.log('filterrrrrttttt',filterRT);
           return (
-            // filterRT.key.includes(entryData.title) ||
-            // filterRT.associatedKey.includes(entryData.title)
+            
             filterRT.key.includes(entryData.title)
           );
         }
