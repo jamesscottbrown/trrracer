@@ -891,7 +891,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
         <div style={{ width:260 }}>
           <DetailBubble 
-            widthSvg={260}
+            widthSvg={360}
             filterType={null}
           />
         </div>
