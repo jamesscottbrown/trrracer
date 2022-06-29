@@ -68,7 +68,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-        // console.log('yes to google em file');
+        
       } catch (e: any) {
         console.error('could not load google em file');
         google_em = null;
@@ -298,7 +298,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       const rtFiltered = typeFiltered.filter((entryData: any) => {
         if (filterRT) {
-          console.log('filterrrrrttttt',filterRT);
+          // console.log('filterrrrrttttt',filterRT);
           return (
             
             filterRT.key.includes(entryData.title)
@@ -420,7 +420,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
       case 'UPDATE_GOOG_DOC_DATA' : {
-        console.log('IN ACTION!',action.googDocData)
         
         setTimeout(() => {
           return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
@@ -577,7 +576,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'QUERY_TERM': {
-        console.log(action.matches);
+        
         return {
           ...state,
           query: { term: action.term, matches: action.matches },
@@ -675,8 +674,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newColor = pickTagColor(state.projectData.tags);
         let newTags;
 
-        console.log('NEW TAGSSSSS',newTag, entryIndex, activityID);
-
         if (!existingTags.includes(newTag.text)) {
           newTags = [
             ...state.projectData.tags,
@@ -695,7 +692,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           (d: EntryType, i: number) =>
             activityID === d.activity_uid ? { ...d, tags: [...d.tags, newTag.text] } : d
         );
-        console.log('newEntries in tags', newEntries);
+       
         const newProjectData = {
           ...state.projectData,
           tags: newTags,
@@ -862,7 +859,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_ENTRY_FIELD': {
-        console.log('action',action);
+        
         const entries = [...state.projectData.entries].map(
           (d: EntryType, i: number) => {
             return d.activity_uid === action.activityID

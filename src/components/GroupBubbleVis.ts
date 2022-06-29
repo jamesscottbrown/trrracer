@@ -115,13 +115,13 @@ export default function groupBubbles(groupBy, wrap, underWrap, forced, selectedA
 
       d3.selectAll('.group-highlight')
       .on('mouseover', (event, n)=> {
-        // console.log(event.target, n)
+    
         d3.selectAll('.all-activities').filter(f=> {
           return f.title === n.title;
         }).attr('stroke-width', 3);
 
       }).on('mouseout', (event, n) => {
-        // console.log(event.target, n)
+      
         d3.selectAll('.all-activities').filter(f=> {
           return f.title === n.title;
         }).attr('stroke-width', 1);

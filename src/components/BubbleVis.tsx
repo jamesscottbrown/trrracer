@@ -661,15 +661,10 @@ if (groupBy) {
     let linkDataBefore = [];
     let linkDataAfter = [];
 
-    // console.log('filterRTTT',filterRT, researchThreads.research_threads, selectedThread)
-
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
-      console.log('FFFF', f)
       let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
     
     let chosenActivityData = temp.select('.all-activities').data()[0];
-
-    console.log('chosen activity data', chosenActivityData);
     
     if(f.type === 'activity'){
       temp.select('.all-activities')
@@ -769,7 +764,7 @@ highlightedActivities
         let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
           return n[i].innerText.includes(d.title);
         });
-        console.log(activities)
+      
         activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
       
       }
