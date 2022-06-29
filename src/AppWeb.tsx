@@ -41,7 +41,6 @@ export default function App() {
 
   if (!folderPath) {
     const isDev = process.env.NODE_ENV === 'development';
-    
     setPath(`${isDev ? 'http://localhost:9999' : '.'}/.netlify/functions/download-gdrive-file/?folderName=jen&fileName=`); // TODO: make not a constant
   }
 

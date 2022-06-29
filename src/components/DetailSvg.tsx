@@ -9,13 +9,14 @@ import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 
 interface BubbleDetProps {
-  filteredActivities: EntryType[];
   widthSvg: number;
   filterType: null | any;
 }
 
 const ToolTip = (toolProp: any) => {
   const {hoverData, position} = toolProp;
+
+  console.log('hover data', hoverData);
 
   return <div
     id={'tooltip'}
@@ -34,12 +35,16 @@ const ToolTip = (toolProp: any) => {
       zIndex: 6000
     }}
   >
-    <span
-    style={{
-      font: '15px sans-serif',
-      fontWeight:600
-    }}
-    >{hoverData.fileData.title}</span>
+    {
+      hoverData.fileData ? <span
+      style={{
+        font: '15px sans-serif',
+        fontWeight:600
+      }}
+      >{hoverData.fileData.title}
+      </span> : <div>{'uknown'}</div>
+    }
+    
     <div>
     {
       hoverData.hopDataArray.map((fi:any, i:any) => (
@@ -62,13 +67,12 @@ const ToolTip = (toolProp: any) => {
 
 const DetailBubble = (props: BubbleDetProps) => {
   const {
-    filteredActivities,
     widthSvg,
     filterType
   } = props;
 
   const [
-    { projectData, selectedArtifactEntry, selectedArtifactIndex, hopArray },
+    { projectData, filteredActivities, selectedArtifactEntry, selectedArtifactIndex, hopArray },
     dispatch
   ] = useProjectState();
   
@@ -79,38 +83,34 @@ const DetailBubble = (props: BubbleDetProps) => {
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 80;
-
   const height = +newHeight//.split('px')[0];
-
   const svgRef = React.useRef(null);
 
   let packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
 
-  const forced = new ForceMagic(packedCircData, width, height - 100);
+  // const forced = new ForceMagic(packedCircData, width, height - 100);
 
   useEffect(()=> {
     if (svgRef.current) {
        setNewHeight((window.innerHeight - 150));
      }
-  
       setSvgWidth(600);
-     
+
   }, [window.innerHeight, window.innerWidth])
+
+  const forced = new ForceMagic(packedCircData, width, newHeight - 100);
   
 
   useEffect(() => {
    
-
-    
-    
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('path-wrap', true)
-    underWrap.attr('transform', `translate(105, 20)`);
-    const wrap = svg.append('g').attr('transform', `translate(95, 20)`);
+    underWrap.attr('transform', `translate(115, ${translateY})`);
+    const wrap = svg.append('g').attr('transform', `translate(115, ${translateY})`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 2);
@@ -142,6 +142,35 @@ const DetailBubble = (props: BubbleDetProps) => {
     true,
     'all-activities'
     );
+
+    ////START AXIS
+
+    let checkGroup = svg.select('g.timeline-wrap');
+    let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+
+    wrapAxisGroup.selectAll('*').remove();
+    wrapAxisGroup.attr('transform', `translate(50, ${translateY})`);
+
+    const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
+
+    const yAxisGroup = wrapAxisGroup
+    .append('g')
+    // .attr('transform', `translate(-50, 0)`)
+    .call(yAxis);
+
+    yAxisGroup.select('.domain').remove();
+    yAxisGroup
+      .selectAll('line')
+      .enter()
+      .append('line')
+      .attr('stroke', 'gray.900');
+
+    const axisLabel = yAxisGroup
+      .selectAll('text')
+      .join('text')
+      .attr('font-size', '0.55rem')
+      .attr('opacity', 0.5);
+    ///AXIS
 
     activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
     
@@ -176,10 +205,6 @@ const DetailBubble = (props: BubbleDetProps) => {
     .attr('fill-opacity', .2);
 
     let linkData = [];
-    
-    // highlightedActivities.each(f => {
-    //     linkData.push({coord: [(f.x - 8), f.y], date: f.date})
-    // })
 
     hopArray.forEach((h, i) => {
         let temp = highlightedActivities.filter(f => h.activity.title === f.title);
@@ -189,7 +214,6 @@ const DetailBubble = (props: BubbleDetProps) => {
           linkData.push({coord: [(td.x - 8), td.y], date: td.date});
 
         }
-        
     });
  
     var lineGenerator = d3.line();
@@ -210,11 +234,56 @@ const DetailBubble = (props: BubbleDetProps) => {
             let hovData = {fileData: d, hopDataArray: hopData}
             setHoverData(hovData);
             d3.select('#tooltip').style('opacity', 1);
-        })
-        .on('mouseout', (event:any, d:any) => {
-          d3.select('#tooltip').style('opacity', 0);
-        }).on('click', (event:any, d:any)=> {
-          
+
+            let entry = projectData.entries.filter(en => {
+              let temp = en.files.filter(e => e.title === d.title);
+              return temp.length > 0;
+            })[0];
+
+            let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+            let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
+            labelG.attr('transform', `translate(0, ${yScale(new Date(entry.date))})`)
+
+            console.log(d, event.target.parentNode)
+
+            let parent = d3.select(event.target.parentNode);
+
+            console.log(parent.data()[0].y)
+
+            let rect = labelG.append('rect')
+            rect.attr('width', 50)
+            .attr('height', 15)
+            .attr('fill', '#fff')
+            .attr('fill-opacity', .9);
+            rect.attr('x', -50).attr('y', -12);
+
+            let text = labelG
+            .append('text')
+            .text(new Date(entry.date).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })).style('font-size', 9)
+            .style('text-anchor', 'end')
+            .style('font-weight', 600)
+
+              underWrap.append('line')
+              .attr('id', 'date_line')
+              .attr('y1', parent.data()[0].y)
+              .attr('x2', (0-70))
+              .attr('y2', forced.yScale(new Date(entry.date)))
+              .attr('x1', parent.data()[0].x)
+              .attr('stroke', 'black')
+              .attr('stroke-width', 1)
+              })
+              .on('mouseout', (event:any, d:any) => {
+                
+                d3.select('#tooltip').style('opacity', 0);
+                d3.select('#date_line').remove();
+                d3.select('#label-group').remove();
+              }).on('click', (event:any, d:any)=> {
+                
             let parentData = d3.select(event.target.parentNode).data()[0];
             let selectedArtIndex = parentData.files.map(f => f.artifact_uid).indexOf(d.artifact_uid);
           

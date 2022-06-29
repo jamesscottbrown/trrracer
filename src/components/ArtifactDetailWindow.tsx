@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
@@ -6,6 +6,9 @@ import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
+
 import type {
   ResearchThread,
   ResearchThreadEvidence,
@@ -131,7 +134,6 @@ const FragmentToBookmark = (props: any) => {
     </Box>
   );
 };
-
 const FragmentToThread = (props: any) => {
   const [, dispatch] = useProjectState();
 
@@ -193,7 +195,6 @@ const FragmentToThread = (props: any) => {
     </Box>
   );
 };
-
 const InteractiveActivityTag = (props: any) => {
   const { selectedArtifactEntry, index, tag } = props;
   const [{ projectData, hopArray }, dispatch] = useProjectState();
@@ -362,7 +363,14 @@ const DetailSidebar = (props: any) => {
     setFragSelected
   } = props;
 
-  const [{ researchThreads, projectData, hopArray, selectedArtifactEntry, selectedArtifactIndex, isReadOnly }, dispatch] = useProjectState();
+  const [{ 
+    researchThreads, 
+    projectData, 
+    hopArray, 
+    selectedArtifactEntry, 
+    selectedArtifactIndex, 
+    isReadOnly 
+  }, dispatch] = useProjectState();
 
   const KeyCodes = {
     comma: 188,
@@ -370,7 +378,11 @@ const DetailSidebar = (props: any) => {
   };
 
   const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
+  let isArtifactInThread = researchThreads?.research_threads.filter(f => {
+    let test = f.evidence.filter(e => e.activityTitle === selectedArtifactEntry.title);
+    return test.length > 0});
 
+  console.log('in in??',isArtifactInThread);
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -383,22 +395,7 @@ const DetailSidebar = (props: any) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
 
-  const isArtifactInThread = researchThreads.research_threads.filter(
-    (f: ResearchThread) => {
-      let temp = f.evidence.filter(
-        (e: ResearchThreadEvidence) => e.type === 'artifact'
-      );
-      temp =
-        temp.length > 0
-          ? temp.filter(
-              (tm: ResearchThreadEvidence) =>
-                tm.activityTitle === selectedArtifactEntry.title &&
-                tm.artifactIndex === selectedArtifactIndex
-            )
-          : [];
-      return temp.length > 0;
-    }
-  );
+  
 
   return (
     <Box
@@ -677,30 +674,43 @@ const DetailSidebar = (props: any) => {
         </React.Fragment>
         )}
       <Box>
-        {isArtifactInThread.length > 0 && (
+        {(isArtifactInThread &&  isArtifactInThread?.length > 0) && (
           <div>
             <span style={{ fontWeight: 600, fontSize:20, marginTop: 10, marginBottom: 10 }}>
               This artifact is associated with:
             </span>
               {
-                isArtifactInThread.map((a, i)=> (
+                isArtifactInThread?.map((a, i)=> (
                   <div
                     key={`thread-${i}`}
+                    style={{
+                      border:"1px solid gray",
+                      borderRadius:5,
+                      marginBottom:3
+                  }}
                   >
-
                     <div
-                    style={{backgroundColor: `${a.color}50`}}
+                    style={{
+                      padding:6,
+                      backgroundColor: `${a.color}50`}}
                     >{a.title}</div>
                     {
                       a.evidence.filter((e)=> e.artifactTitle === selectedArtifactEntry.files[selectedArtifactIndex].title).map((m, j) => (
-                        <React.Fragment key={`evi-${j}`}>
+                        <div 
+                        key={`evi-${j}`}
+                        style={{padding:4}}
+                        >
                         {m.type === "fragment" && (
-                          <span>{m.anchors[0].frag_type}</span>
+                          <div
+                            style={{fontSize:11, fontStyle:'italic'}}
+                          >{`"${m.anchors[0].frag_type}"`}</div>
                         )}
                         {
-                          <span>{m.rationale}</span>
+                          <div
+                          style={{fontSize:12, fontWeight:700}}
+                          >{m.rationale}</div>
                         }
-                        </React.Fragment>
+                        </div>
                       ))
                     }
                   </div>
@@ -722,31 +732,34 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
   const [{
     projectData, 
-    folderPath, 
     selectedArtifactEntry, 
     selectedArtifactIndex, 
     hopArray, 
-    researchThreads, 
-    googleData, 
-    txtData,
+    researchThreads,
     isReadOnly
   }, dispatch] = useProjectState();
 
- 
+  const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true,
+  });
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const selectedArtifact = selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null;
+  const selectedArtifact = useMemo(() => {
+    return selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null}, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
-
   const [newHeight, setNewHeight] = useState('1000px');
 
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * .15;
+
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -757,7 +770,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         Array.from(Array(projectData.entries.length), (_) => false)
       );
     }
-  }, [projectData]);
+  }, [projectData.entries.length]);
 
   return (
     <div style={{ height: '100vh', position: 'fixed', top: 0, bottom: 0 }}>
@@ -872,20 +885,18 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         <DetailSidebar
           fragSelected={fragSelected}
           setFragSelected={setFragSelected}
-          selectedArtifactEntry={selectedArtifactEntry}
-          selectedArtifactIndex={selectedArtifactIndex}
+          // selectedArtifactEntry={selectedArtifactEntry}
+          // selectedArtifactIndex={selectedArtifactIndex}
         />
 
         <div style={{ width:260 }}>
           <DetailBubble 
-            filteredActivities={projectData.entries}
-            widthSvg={260}
+            widthSvg={360}
             filterType={null}
           />
-          {/* <svg ref={svgRef} width={'calc(100% - 200px)'} height={height} style={{display:'inline'}}/> */}
         </div>
         {
-          selectedArtifact && (
+          selectedArtifact ? (
             <Box flex="3.5">
               {(selectedArtifact.fileType ===
                 'txt' ||
@@ -952,22 +963,51 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               {
                 selectedArtifact ?
                 <DetailPreview
-                  // artifactRenderedRef={artifactRenderedRef}
                   setFragSelected={setFragSelected}
-                  fragSelected={fragSelected}
-                  folderPath={folderPath}
-                  artifact={selectedArtifactEntry.files[selectedArtifactIndex]}
-                  activity={selectedArtifactEntry}
+                  activityID={selectedArtifactEntry.activity_uid}
                   artifactIndex={selectedArtifactIndex}
                   openFile={openFile}
-                  googleData={googleData}
-                  txtData={txtData}
                 /> : <div>{'No Artifact for this activity'}</div>
               }
               
             </Flex>
           </Box>
-          )
+          ) :
+          <Flex
+              style={{
+                justifyContent: 'center',
+                alignItems: 'stretch',
+                height: '90%',
+                paddingLeft: 20,
+                paddingRight: 20,
+                overflowY:'scroll'
+              }}
+            >
+              <div
+              onMouseUp={() => {
+                if (setFragSelected) {
+                  const selObj = window.getSelection();
+                  setFragSelected(selObj?.toString());
+                } else {
+                  console.log('mouseup');
+                }
+              }}
+              style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
+            >
+            <ReactMde
+              value={selectedArtifactEntry.description}
+              // onChange={setValue}
+              selectedTab={'preview'}
+              onTabChange={()=> null}
+            
+              generateMarkdownPreview={(markdown) =>
+                Promise.resolve(converter.makeHtml(markdown))
+              }
+              readOnly={true}
+              style={{height:'100%', overflowY:'scroll'}}
+              />
+              </div>
+          </Flex>
         }
         
       </Flex>

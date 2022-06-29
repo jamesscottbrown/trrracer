@@ -22,7 +22,7 @@ const ProjectListView = (ProjectPropValues: any) => {
       setUsedEntries(filteredActivities)
     }
 
-  }, [selectedActivityURL, projectData.entries.length])
+  }, [selectedActivityURL, projectData.entries.length, filteredActivities.length])
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)

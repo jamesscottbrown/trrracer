@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Image, Box, background } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
@@ -12,7 +12,8 @@ import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
-import { joinPath } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
+import { useProjectState } from './ProjectContext';
 
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
@@ -24,15 +25,10 @@ const url = (folderPath: string, title: string) => {
 
 interface DetailPreviewPropsType {
   folderPath: string;
-  artifact: any;
-  activity: any;
+  activityID: string;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
-  fragSelected:any;
   artifactIndex: number;
-  googleData:any;
-  txtData:any;
-  // artifactRenderedRef:any;
 }
 
 const TextRender = (textProps: any) => {
@@ -56,15 +52,24 @@ const TextRender = (textProps: any) => {
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const {
     setFragSelected,
-    fragSelected,
-    folderPath,
-    artifact,
-    activity,
-    artifactIndex,
     openFile,
-    googleData,
-    txtData,
   } = props;
+ 
+  const [{
+    googleData, 
+    projectData,
+    folderPath,
+    selectedArtifactEntry,
+    selectedArtifactIndex
+  }, dispatch] = useProjectState();
+
+  const activity = useMemo(()=> {
+    return projectData.entries.filter(f => f.activity_uid === selectedArtifactEntry.activity_uid)[0];
+  }, [selectedArtifactEntry.activity_uid]);
+
+  const artifact = useMemo(()=> {
+    return activity.files[selectedArtifactIndex];
+  }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const { title } = artifact;
 
@@ -114,10 +119,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
+    console.log('google in gdoc', googleData);
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
+
+      let comments = artifact.comments ? artifact.comments.comments : [];
 
       return (
         <Box style={{ 
@@ -138,7 +146,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                 key={`par-${i}`}
                 parData={m}
                 index={i}
-                comments={artifact.comments.comments}
+                comments={comments}
                 setFragSelected={setFragSelected}
                 artifactBookmarks={artifact.bookmarks}
               />
@@ -159,46 +167,52 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    const temp: TextEntry[] = txtData['text-data'].filter(
-      (f: TextEntry) => f['entry-title'] === activity.title
-    );
-    
-  
-    let textArray = (temp.length > 0) ? [{style:'normal', textData: temp[0].text}] : [];
-    if(artifact.bookmarks){
-      let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
-      
-      textArray = [
-        {style:'normal', textData: start[0]},
-        {style:'highlight', textData: artifact.bookmarks[0].fragment},
-        {style:'normal', textData: start[1]}
-      ]
-      if(artifact.bookmarks.length > 1){
 
-        for(let j = 1; j < artifact.bookmarks.length; j++){
-      
-          let oldTextArray = textArray;
-          let frag = artifact.bookmarks[j].fragment;
-          let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
+ 
+    const [textFile, setText] = useState<any>([]);
 
-          let newArray = oldTextArray.slice(0, findIndex);
+    useEffect(()=> {
+      readFileSync(`${folderPath}/${title}`).then((text) => {
+
+        let textArray = (text.length > 0) ? [{style:'normal', textData: text}] : [];
         
-          let addThis = oldTextArray[findIndex].textData.split(frag);
-          let makeArray = [
-            {style:'normal', textData: addThis[0] },
-            {style:'highlight', textData: frag },
-            {style:'normal', textData: addThis[1] },
-          ]
-          newArray = [...newArray, ...makeArray]
+        if(artifact.bookmarks){
+          let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
           
-          if(oldTextArray.length > (findIndex + 1)){
-            newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+          textArray = [
+            {style:'normal', textData: start[0]},
+            {style:'highlight', textData: artifact.bookmarks[0].fragment},
+            {style:'normal', textData: start[1]}
+          ]
+          if(artifact.bookmarks.length > 1){
+    
+            for(let j = 1; j < artifact.bookmarks.length; j++){
+          
+              let oldTextArray = textArray;
+              let frag = artifact.bookmarks[j].fragment;
+              let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
+    
+              let newArray = oldTextArray.slice(0, findIndex);
+            
+              let addThis = oldTextArray[findIndex].textData.split(frag);
+              let makeArray = [
+                {style:'normal', textData: addThis[0] },
+                {style:'highlight', textData: frag },
+                {style:'normal', textData: addThis[1] },
+              ]
+              newArray = [...newArray, ...makeArray]
+              
+              if(oldTextArray.length > (findIndex + 1)){
+                newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+              }
+              textArray = newArray;
+            }
           }
-          textArray = newArray;
         }
-      }
-      
-    }
+          setText(textArray);
+        });
+    }, [folderPath, title])
+    
 
     return (
       <div
@@ -212,12 +226,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         }}
         style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
       >
-        {/* {artifact.bookmarks ? textArray.map((t)=> (
-          <span
-            style={{backgroundColor: t.style === 'normal' ? "#fff" : "yellow" }}
-          >{t.textData}</span>
-        )): <span>{textArray.textData}</span> } */}
-        {textArray.length > 0 ? <TextRender textArray={textArray} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
+        {textFile.length > 0 ? <TextRender textArray={textFile} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
       </div>
     );
   }
@@ -234,7 +243,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     );
   }
   if (title.endsWith('.eml')) {
-    return <EmailRender setFragSelected={setFragSelected} title={title} />;
+    return <EmailRender setFragSelected={setFragSelected} title={title} artifactData={artifact} activityData={activity} />;
   }
 
   if (title.endsWith('.pdf')) {

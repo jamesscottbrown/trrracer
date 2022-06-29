@@ -235,16 +235,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ? action.projectData.eventArray
         : []
       }
-      // const newProjectData = {
-      //   ...action.projectData,
-      //   entries: newEntries,
-      //   roles: roleData,
-      //   tags: newTags,
-      //   eventArray: action.projectData.eventArray
-      //     ? action.projectData.eventArray
-      //     : []
-      // };
-
+  
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
@@ -271,96 +262,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           { type: 'fragment', show: true },
           { type: 'tags', show: true }
         ],
+        allRTs:[
+          {"title": "UI and Design", "id": "22fc1832-852c-43ac-9f2a-7cc057fdcd97", "color": "#1340a8"},
+          {"title": "Research Thread Concept", "id": "b973c840-f26c-4a21-99b3-b93e411d659c", "color": "#84309b"}
+        ]
         // citations: citationData
       };
     };
-    
-    // const filterData = (fData:any, filterDates: any[], filterTags: any[], filterRT:any, filterType:any, filterQuery:any, researchThreads:any, threadTypeFilterArray:any) => {
-    //   // move that logic here
-    //   const tagFiltered = [...fData]
-    //     .filter((entryData: any) => {
-    //       return filterTags.every((requiredTag: string) =>
-    //         entryData.tags.includes(requiredTag)
-    //       );
-    //     })
-    //     .map((e, index) => ({ ...e, index }));
-
-    //   const typeFiltered = tagFiltered
-    //     .filter((entryData: any) => {
-    //       if (filterType) {
-    //         if (filterType.includes('undefined')) {
-    //           return entryData.files
-    //             .map((m: any) => !m.artifactType || m.artifactType === '')
-    //             .includes(true);
-    //         }
-    //         return entryData.files
-    //           .map((m: any) => m.artifactType)
-    //           .includes(filterType);
-    //       }
-    //       return entryData;
-    //     })
-    //     .map((e: EntryType, index: number) => ({ ...e, index }));
-
-    //   const rtFiltered = typeFiltered.filter((entryData: any) => {
-    //     if (filterRT) {
-    //       return (
-    //         // filterRT.key.includes(entryData.title) ||
-    //         // filterRT.associatedKey.includes(entryData.title)
-    //         filterRT.key.includes(entryData.title)
-    //       );
-    //     }
-    //     return typeFiltered;
-    //   });
-
-    //   const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
-    //     if (filterRT) {
-    //       let nono: any[] = [];
-    //       let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
-          
-    //     threadTypeFilterArray.forEach((ty, i)=> {
-    //       if(!ty.show){
-    //         if(ty.type != 'tags'){
-    //           let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
-    //           nono = [...nono, exclude];
-              
-    //         }
-    //       }
-    //     });
-      
-    //     return (
-    //       nono.indexOf(entryData.title) === -1 
-    //     );
-    //   }
-    //   return typeFiltered;
-    // });
-
-    // const timeFiltered =
-    //   filterDates[0] != null && filterDates[1] != null
-    //     ? rtTypesFiltered.filter(
-    //         (f) =>
-    //           new Date(f.date) >= filterDates[0] &&
-    //           new Date(f.date) <= filterDates[1]
-    //       )
-    //     : rtTypesFiltered;
-
-    // timeFiltered.sort(
-    //   (a, b) =>
-    //     // (reversedOrder ? -1 : +1) *
-    //     (Number(new Date(a.date)) - Number(new Date(b.date)))
-    // );
-
-    // const queryFiltered =
-    //   filterQuery != null
-    //     ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-    //     : timeFiltered;
-
-    // return queryFiltered.sort(
-    //   (a, b) =>
-    //     // (reversedOrder ? -1 : +1) *
-    //     (Number(new Date(a.date)) - Number(new Date(b.date)))
-    // );
-
-    // }
 
     const filterData = (fData:any, filterDates: any[], filterTags: any[], filterRT:any, filterType:any, filterQuery:any, researchThreads:any, threadTypeFilterArray:any) => {
       // move that logic here
@@ -390,9 +298,9 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       const rtFiltered = typeFiltered.filter((entryData: any) => {
         if (filterRT) {
+          console.log('filterrrrrttttt',filterRT);
           return (
-            // filterRT.key.includes(entryData.title) ||
-            // filterRT.associatedKey.includes(entryData.title)
+            
             filterRT.key.includes(entryData.title)
           );
         }
@@ -493,8 +401,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
 
-      
-
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
@@ -514,8 +420,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
       case 'UPDATE_GOOG_DOC_DATA' : {
+        console.log('IN ACTION!',action.googDocData)
         
-        return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+        setTimeout(() => {
+          return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+        }, 1000)
+      
+        
       }
       case 'UPDATE_GOOG_IDS' : {
        
@@ -764,7 +675,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newColor = pickTagColor(state.projectData.tags);
         let newTags;
 
-       
+        console.log('NEW TAGSSSSS',newTag, entryIndex, activityID);
 
         if (!existingTags.includes(newTag.text)) {
           newTags = [
@@ -795,8 +706,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'ADD_FILES_TO_ENTRY': {
-        const { fileList, entryIndex } = action;
-        const currentFiles = state.projectData.entries[entryIndex].files;
+        const { fileList, entryIndex, activityID } = action;
+
+        const currentFiles = state.projectData.entries.filter(f => f.activity_uid === activityID)[0].files;
+        // const currentFiles = state.projectData.entries[entryIndex].files;
 
         const newFiles = [
           ...currentFiles,
@@ -804,14 +717,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         ];
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-            entryIndex === i ? { ...d, files: newFiles } : d
+            d.activity_uid === activityID ? { ...d, files: newFiles } : d
         );
 
         const newProjectData = { ...state.projectData, entries };
-
         const newPD = saveJSON(newProjectData, state);
        
-
         return newPD; 
       }
 

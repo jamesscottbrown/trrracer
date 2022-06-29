@@ -8,10 +8,12 @@ import {
   ListItem,
   UnorderedList,
   Flex,
+  Tooltip
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
+import { GiCancel, GiSewingString } from 'react-icons/gi';
 import {
   FaExternalLinkAlt,
   FaLock,
@@ -115,6 +117,7 @@ const Entry = (props: EntryPropTypes) => {
     openFile,
     updateEntryField,
     makeNonEditable,
+    foundIn
   } = props;
 
   const [{projectData}, dispatch] = useProjectState();
@@ -143,7 +146,8 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex });
+    console.log('fileListtt', fileList, 'activity uid',thisEntry.activity_uid)
+    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex, activityID: thisEntry.activity_uid });
     setShowFileUpload(false);
   };
 
@@ -256,7 +260,32 @@ const Entry = (props: EntryPropTypes) => {
           />
         </div>
       </div>
-
+        {
+          foundIn.length > 0 && (
+            <React.Fragment
+          key={`tool-${ti}`}
+          >
+          <Tooltip 
+            
+            style={{padding:5}}
+            label={`Threaded in ${m.title}`}>
+          <div
+          style={{
+            fontSize:20, 
+            backgroundColor: m.color, 
+            borderRadius:50, 
+            width:26, 
+            display:'inline-block', 
+            padding:3,
+            margin:3,
+            opacity: m.title === selectedThread.title ? 1 : .4
+          }} 
+          ><GiSewingString size={'20px'}/>
+          </div>
+          </Tooltip>
+          </React.Fragment>
+          )
+        }
       <br />
       <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Tags: '}

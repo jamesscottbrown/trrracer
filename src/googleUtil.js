@@ -8,11 +8,6 @@ const {google} = isElectron ? require('googleapis') : null;
 
 const {OAuth2Client}  = google ? require('google-auth-library') : null;
 
-console.log('GOOGLE', google);
-// if(isElectron){
-//   google = require('googleapis');
-// }
-
 export function googleFolderDict(folder){
     if(folder?.includes('EvoBio')){
       return '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC'
@@ -36,10 +31,12 @@ export async function getDriveFiles(folderName, googleCred){
       googleCred.installed.redirect_uris[0]
     );
 
+    
+
     const token = await readFileSync('token.json');
     oAuth2Client.setCredentials(JSON.parse(token))
 
-    console.log('TOKEN', token);
+   
    
     let drive = google.drive({ version: 'v3', auth: oAuth2Client });
     let docs = google.docs({ version:'v1', auth: oAuth2Client });
@@ -64,7 +61,6 @@ export async function getDriveFiles(folderName, googleCred){
       pageSize: 1000
     });
 
-    console.log('fileList!!', fileList);
     let filZ = await fileList.data.files.map(async (m) => {
         if(m.mimeType === "application/vnd.google-apps.document"){
             
@@ -77,7 +73,7 @@ export async function getDriveFiles(folderName, googleCred){
         googFileIds[m.name] = {googId: m.id}
     });
 
-    return { goog_doc_data: googData, goog_file_ids: googFileIds }
+    return { goog_doc_data: await googData, goog_file_ids: googFileIds }
 
 }
 
@@ -102,12 +98,10 @@ export async function createGoogleFile(folderPath, name, fileType, googleCred, e
       supportsAllDrives: true,
     });
 
-    console.log('response', response);
-
     switch(response.status){
         case 200:
           var file = response.result;
-          console.log('Created File data google', response, response.data.id);
+         
 
         //   dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
             return { fileType: fileType, name: name, fileId: response.data.id, entryIndex: entryIndex }

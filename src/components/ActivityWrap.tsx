@@ -27,14 +27,18 @@ const ActivityWrap = (props: any) => {
     viewType,
   } = props;
 
-  const [{filterRT}, dispatch] = useProjectState();
+  const [{filterRT, researchThreads}, dispatch] = useProjectState();
   const myRef = useRef(null);
+
+  let foundIn = researchThreads?.research_threads.filter(m => {
+    let test= m.evidence.filter(f => f.activityTitle === activityData.title);
+    return test.length > 0});
 
   const updateEntryField = (
     fieldName: string,
     newValue: any
   ) => {
-    console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
+    // console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: activityData.activity_uid });
   };
 
@@ -47,6 +51,7 @@ const ActivityWrap = (props: any) => {
           <Entry
             /* eslint-disable-next-line react/no-array-index-key */
             key={`en-${activityData.title}-${activityData.activity_uid}`}
+            foundIn={foundIn}
             activityID={activityData.activity_uid}
             files={activityData.files}
             entryIndex={activityData.index}
@@ -104,6 +109,7 @@ const ActivityWrap = (props: any) => {
           setViewType={setViewType}
           makeEditable={() => setEditableStatus(activityData.index, true)}
           viewType={viewType}
+          foundIn={foundIn}
         />
         
       </div>

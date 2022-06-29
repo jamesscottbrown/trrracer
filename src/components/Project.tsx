@@ -322,9 +322,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
            setAddEntrySplash={setAddEntrySplash} 
         />
         <Flex position="relative" top={`${fromTop}px`}>
-          <LeftSidebar  
-            fromTop={fromTop}
-            />
+          {
+            !groupBy && (
+              <LeftSidebar  
+              fromTop={fromTop}
+              groupBy={groupBy}
+              />
+            )
+          }
           <BubbleVis
             groupBy={groupBy}
             setGroupBy={setGroupBy}
@@ -340,7 +345,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           }
          
           {
-            (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
+            (!hideByDefault) && (
               <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView

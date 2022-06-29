@@ -29,7 +29,7 @@ class Bubbles {
 
     this.bubbles
       .attr('r', (d:any) => d.radius)
-    
+  
       .attr('cy', 0)
       .attr('cx', 0);
 
