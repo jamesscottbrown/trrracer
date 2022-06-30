@@ -764,8 +764,11 @@ highlightedActivities
         let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
           return n[i].innerText.includes(d.title);
         });
-      
-        activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+        if(activities.nodes().length > 0){
+          activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+        
       
       }
       
