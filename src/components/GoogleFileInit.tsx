@@ -82,11 +82,11 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
         <Button
           style={{marginTop:5, marginBottom:5}}
         onClick={()=> {
-          getDriveFiles(folderPath, googleCred).then((googOb) => {
+          // getDriveFiles(folderPath, googleCred).then((googOb) => {
             
-            dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
-            dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
-          });
+          //   dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+          //   dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+          // });
           setShowFileCreate(true)}} 
           type="button">
           {text}

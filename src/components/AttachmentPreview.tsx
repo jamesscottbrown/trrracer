@@ -13,6 +13,7 @@ import {
 } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
 import { joinPath } from '../fileUtil';
+import ImageRender from './ImageRender'
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -127,10 +128,14 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     );
   }
   return (
-    <Image
+    <ImageRender 
       src={url(folderPath, title)}
       onClick={() => openFile(title, folderPath)}
     />
+    // <Image
+    //   src={url(folderPath, title)}
+    //   onClick={() => openFile(title, folderPath)}
+    // />
   );
 };
 
