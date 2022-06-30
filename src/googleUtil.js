@@ -3,10 +3,10 @@ import { readFileSync } from './fileUtil';
 
 
 const isElectron = process.env.NODE_ENV === 'development';
-const {google} = isElectron ? require('googleapis') : null;
+const {google} = isElectron ? require('googleapis') : {};
 // const OAuth2Client = google ? google.auth.OAuth2 : null;
 
-const {OAuth2Client}  = google ? require('google-auth-library') : null;
+const {OAuth2Client}  = google ? require('google-auth-library') : {};
 
 export function googleFolderDict(folder){
     if(folder?.includes('EvoBio')){
