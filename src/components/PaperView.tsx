@@ -11,8 +11,6 @@ import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { joinPath } from '../fileUtil';
 
-
-
 const BubbleVisPaper = (props: any) => {
   const {
     selectedThreadData,
@@ -24,14 +22,11 @@ const BubbleVisPaper = (props: any) => {
   
   const {eventArray} = projectData;
 
- const svgBubbleRef = React.useRef(null);
+  const svgBubbleRef = React.useRef(null);
  
   const width = 300;
   const height = 1000;
 
-    ////TRY THIS HERE
-  // let selectedThreadData = researchThreads?.research_threads[index];
-  
   let packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
@@ -568,11 +563,13 @@ const PaperView = (props: any) => {
 
   console.log('filterd activities', filteredActivities, granularity, cIndex)
 
-  let passedLink = linkData.filter(f=> f.cIndex === cIndex);
+
+
+  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : [];
 
   console.log('LINK DATA', passedLink);
 
-  const anno = d3.groups(linkData, (d) => d.page);
+  const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
  
   const index = selectedThread || 0;
   const svgWidth = 600;
@@ -617,36 +614,43 @@ const PaperView = (props: any) => {
   }, [numPages]);  
   
     return (
+      linkData ? 
       <div style={{position:"relative", top:70, width:'100%'}}>
         <div
           style={{display:"block", margin:20}}
-        >
-            {
-              passedLink.map((m, i) => (
-                <div>
-                  <div
-                    style={{display:'inline', paddingRight:10}}
-                  >
+        >   
+        {
+          passedLink.length > 0 && (
+            <React.Fragment>
+              {
+                passedLink.map((m, i) => (
+                  <div>
                     <div
-                    style={{display: 'inline', fontWeight:800, fontSize:30}}
-                    >{`T${m.cIndex}-`}</div>
-                    <div
-                     style={{display: 'inline', fontWeight:800, fontSize:30}}
-                    >{granularity}</div>
-                  </div>
-                  {
-                    m.text.map((t, j) => (
+                      style={{display:'inline', paddingRight:10}}
+                    >
                       <div
-                        style={{display:'inline', fontSize:20, fontStyle:'italic'}}
-                      >{
-                        `"${t}"`
-                      }</div>
-                    ))
-                  }
-                </div>
-              ))
-            }
-
+                      style={{display: 'inline', fontWeight:800, fontSize:30}}
+                      >{`T${m.cIndex}-`}</div>
+                      <div
+                      style={{display: 'inline', fontWeight:800, fontSize:30}}
+                      >{granularity}</div>
+                    </div>
+                    {
+                      m.text.map((t, j) => (
+                        <div
+                          style={{display:'inline', fontSize:20, fontStyle:'italic'}}
+                        >{
+                          `"${t}"`
+                        }</div>
+                      ))
+                    }
+                  </div>
+                ))
+              }
+            </React.Fragment>
+          )
+        }
+          
           </div>
         <Flex>
           <Box
@@ -690,7 +694,10 @@ const PaperView = (props: any) => {
           
           </Box>
         </Flex>
-      </div>
+      </div> : <div
+      style={{display:'flex', paddingTop:200, fontSize:30, fontWeight:800, justifyContent:'center'}}
+      
+      >{"Oops! There is not a paper to explore for this project yet. Check back later!"}</div>
     );
   };
   
