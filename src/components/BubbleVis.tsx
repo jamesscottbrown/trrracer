@@ -560,9 +560,6 @@ if (groupBy) {
 
   groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities);
 
-
-
-
 } else {
 
   let allActivityGroups = wrap
@@ -669,6 +666,9 @@ if (groupBy) {
     if(f.type === 'activity'){
       temp.select('.all-activities')
         .attr('fill', researchThreads?.research_threads[selectedThread].color);
+      
+      temp.selectAll('circle.artifact')
+        .attr('fill', researchThreads?.research_threads[selectedThread].color);
     
     }else if(f.type === 'artifact' || f.type === 'fragment'){
      
@@ -769,7 +769,6 @@ highlightedActivities
           activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
         
-      
       }
       
     })
