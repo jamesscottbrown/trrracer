@@ -1,7 +1,13 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+// import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+// import { Document, Page, setOptions } from "react-pdf/build/entry";
+// setOptions({
+//   workerSrc: "/js/worker.pdf.js"
+// });
+const reactPdf = require('react-pdf/dist/esm/entry.webpack5')
+const { Document, Page } = reactPdf
 import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
@@ -450,6 +456,8 @@ const PageNavigation = (props:any) => {
   const bigRectWidth = 612;
   const annoSvgRef = React.useRef(null);
 
+  console.log('anno', anno)
+
   const yScaleBig = d3
   .scaleLinear()
   .domain([0, anno[0][1][0]['pdf-dim'][3]])
@@ -561,11 +569,9 @@ const PaperView = (props: any) => {
   
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
-  console.log('filterd activities', filteredActivities, granularity, cIndex)
+  console.log('filterd activities', filteredActivities, granularity, cIndex, linkData)
 
-
-
-  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : [];
+  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : linkData;
 
   console.log('LINK DATA', passedLink);
 
