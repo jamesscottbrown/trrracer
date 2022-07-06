@@ -155,10 +155,11 @@ const BubbleVis = (props: BubbleProps) => {
   const height = newHeight//+newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
+  let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [projectData.entries.length, projectData.entries.flatMap(f => f.files).length]);
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
+
   useEffect(()=> {
     if (svgRef.current) {
        setNewHeight((window.innerHeight - 150));

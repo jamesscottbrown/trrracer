@@ -277,7 +277,7 @@
     "react-image-marker": "^1.2.0",
     "react-intersection-observer": "^9.3.4",
     "react-mde": "^11.4.0",
-    "react-pdf": "5.7.0",
+    "react-pdf": "^5.7.2",
     "react-router-dom": "^5.2.0",
     "react-tag-input": "^6.5.4",
     "react-uuid": "^1.0.2",
