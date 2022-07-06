@@ -62,6 +62,7 @@ exports.handler = async function (event) {
   const fileType = fileQuery.data.files[0].mimeType;
 
   let file;
+  let fileData;
 
   if (fileType.includes('application/vnd.google-apps.document')) {
     file = await drive.files.export({
@@ -70,16 +71,42 @@ exports.handler = async function (event) {
       supportsAllDrives: true,
       mimeType: 'text/plain',
     });
+    fileData = file.data;
+  } else if (
+    fileName.split('.').at(-1) === 'pdf' ||
+    fileName.split('.').at(-1) === 'png'
+  ) {
+    file = await drive.files.get(
+      {
+        alt: 'media',
+        fileId,
+        supportsAllDrives: true,
+      },
+      {
+        responseType: 'arraybuffer',
+      }
+    );
+
+    fileData = new Uint8Array(file.data);
+    fileData = Buffer.from(fileData).toString('base64');
+  } else if (fileName.split('.').at(-1) === 'json') {
+    file = await drive.files.get({
+      alt: 'media',
+      fileId,
+      supportsAllDrives: true,
+    });
+    fileData = JSON.stringify(file.data);
   } else {
     file = await drive.files.get({
       alt: 'media',
       fileId,
       supportsAllDrives: true,
     });
+    fileData = file.data;
   }
 
   return {
     statusCode: 200,
-    body: JSON.stringify(file.data),
+    body: fileData,
   };
 };
