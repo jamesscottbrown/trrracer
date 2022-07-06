@@ -63,6 +63,8 @@ exports.handler = async function (event) {
 
   let file;
   let fileData;
+  const filePieces = fileName.split('.');
+  const fileExtension = filePieces[filePieces.length - 1];
 
   if (fileType.includes('application/vnd.google-apps.document')) {
     file = await drive.files.export({
@@ -72,10 +74,7 @@ exports.handler = async function (event) {
       mimeType: 'text/plain',
     });
     fileData = file.data;
-  } else if (
-    fileName.split('.').at(-1) === 'pdf' ||
-    fileName.split('.').at(-1) === 'png'
-  ) {
+  } else if (fileExtension === 'pdf' || fileExtension === 'png') {
     file = await drive.files.get(
       {
         alt: 'media',
@@ -89,7 +88,7 @@ exports.handler = async function (event) {
 
     fileData = new Uint8Array(file.data);
     fileData = Buffer.from(fileData).toString('base64');
-  } else if (fileName.split('.').at(-1) === 'json') {
+  } else if (fileExtension === 'json') {
     file = await drive.files.get({
       alt: 'media',
       fileId,
