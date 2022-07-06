@@ -6,8 +6,9 @@ import * as d3 from 'd3';
 // setOptions({
 //   workerSrc: "/js/worker.pdf.js"
 // });
-const reactPdf = require('react-pdf/dist/esm/entry.webpack5')
-const { Document, Page } = reactPdf
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack5';
+// const reactPdf = require('react-pdf/dist/esm/entry.webpack')
+// const { Document, Page } = reactPdf
 import ThreadNav from './ThreadNav';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
@@ -566,6 +567,8 @@ const PageNavigation = (props:any) => {
 const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+
+  console.log('perf',perf)
   
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
