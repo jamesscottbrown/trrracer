@@ -43,8 +43,6 @@ export default function App() {
   const [noProjectSelected, setNoProjectSelected] = useState<boolean>(false);
   const [recentPaths, setRecentPaths] = useState<string[]>([]);
 
- 
-
   ipcRenderer.on('projectPath', (_event, folderName) => {
     console.log('Received project path:', folderName);
 

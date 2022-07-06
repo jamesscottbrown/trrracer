@@ -18,6 +18,11 @@ import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
 const queryString = require('query-string');
 
+//CHANGE THE SEARCH PARAMS
+// See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+// const params = new URLSearchParams(location.search);
+// const viewType = params.get("view");
+
 interface ProjectProps {
   folderPath: string;
 }

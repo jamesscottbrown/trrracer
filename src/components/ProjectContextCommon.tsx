@@ -61,7 +61,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let artifact_types: any;
       let google_em: any;
       let google_comms: any;
-      let linkData: any;
+      let link_data: any;
       let newEntries = [...action.projectData.entries];
       let citationData = action.projectData.citations ? action.projectData.citations : [];
       let newTags = [...action.projectData.tags];
@@ -114,10 +114,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       try {
-        linkData = await readProjectFile(baseDir, 'links.json', null);
-        // console.log('yes to linkData');
+        link_data = await readProjectFile(baseDir, 'links.json', null);
+        console.log('yes to linkData');
       } catch (e) {
-        linkData = null;
+        link_data = null;
         console.error('could not load linkData');
       }
 
@@ -251,7 +251,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         filterRT: null,
         filterQuery: null,
         query: null,
-        linkData:linkData,
+        linkData:link_data,
         hopArray: [],
         goBackView: 'overview',
         artifactTypes: artifact_types,
@@ -363,7 +363,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return state;
       }
       case 'SAVE_DATA': {
-        
+        console.log('data',action.data)
         return action.data;
        
       }
