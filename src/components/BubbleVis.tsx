@@ -19,6 +19,8 @@ interface BubbleProps {
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
+  bubbleDivWidth:number;
+  setBubbleDivWidth: (gb:any)=> any;
 }
 
 const RTtooltip = (toolProp: any) => {
@@ -129,6 +131,8 @@ const BubbleVis = (props: BubbleProps) => {
     flexAmount,
     setDefineEvent,
     defineEvent,
+    bubbleDivWidth,
+    setBubbleDivWidth
   } = props;
 
   const [{
@@ -160,74 +164,74 @@ const BubbleVis = (props: BubbleProps) => {
   let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [projectData.entries.length, projectData.entries.flatMap(f => f.files).length]);
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
 
-  useEffect(()=> {
-    if (svgRef.current) {
-       setNewHeight((window.innerHeight - 150));
-     }
-     if(groupBy){
-       setSvgWidth((600))
-     }else{
-       setSvgWidth(600);
-     }
-  }, [window.innerHeight, window.innerWidth, groupBy])
+  // useEffect(()=> {
+  //   if (svgRef.current) {
+  //      setNewHeight((window.innerHeight - 150));
+  //    }
+  //    if(groupBy){
+  //      setSvgWidth((600))
+  //    }else{
+  //      setSvgWidth(600);
+  //    }
+  // }, [window.innerHeight, window.innerWidth, groupBy])
+
   useEffect(() => {
  
-const svg = d3.select(svgRef.current);
-svg.selectAll('*').remove();
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('*').remove();
 
-const underWrap = svg.append('g').classed('path-wrap', true)
-underWrap.attr('transform', `translate(130, ${translateY})`);
-const wrap = svg.append('g').attr('transform', `translate(130, ${translateY})`);
+    const underWrap = svg.append('g').classed('path-wrap', true)
+    underWrap.attr('transform', `translate(110, ${translateY})`);
+    const wrap = svg.append('g').attr('transform', `translate(110, ${translateY})`);
 
-const { yScale, margin } = forced;
-setTranslateY(margin / 2);
+    const { yScale, margin } = forced;
+    setTranslateY(margin / 2);
 
-const marginTime = height * 0.25;
+    const marginTime = height * 0.25;
+    const yearMonth = dataStructureForTimeline(projectData.entries);
 
-const yearMonth = dataStructureForTimeline(projectData.entries);
+    const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
+    const endIndex = getIndexOfMonth(
+      yearMonth[yearMonth.length - 1].months,
+      'last'
+    );
+    yearMonth[0].months = yearMonth[0].months.filter(
+      (f: any, i: number) => i > startIndex - 1
+    );
 
-const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
-const endIndex = getIndexOfMonth(
-  yearMonth[yearMonth.length - 1].months,
-  'last'
-);
-yearMonth[0].months = yearMonth[0].months.filter(
-  (f: any, i: number) => i > startIndex - 1
-);
+    yearMonth[yearMonth.length - 1].months = yearMonth[
+      yearMonth.length - 1
+    ].months.filter((f: any, i: number) => i < endIndex);
 
-yearMonth[yearMonth.length - 1].months = yearMonth[
-  yearMonth.length - 1
-].months.filter((f: any, i: number) => i < endIndex);
+    const filteredActivitiesExtent = d3.extent(
+      filteredActivities.map((m: any) => new Date(m.date))
+    );
 
-const filteredActivitiesExtent = d3.extent(
-  filteredActivities.map((m: any) => new Date(m.date))
-);
+    let checkGroup = svg.select('g.timeline-wrap');
+    let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
 
-let checkGroup = svg.select('g.timeline-wrap');
-let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+    wrapAxisGroup.selectAll('*').remove();
+    wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
 
-wrapAxisGroup.selectAll('*').remove();
-wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
+    const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
-const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
+    const yAxisGroup = wrapAxisGroup
+      .append('g')
+      .attr('transform', `translate(10, 0)`)
+      .call(yAxis);
 
-const yAxisGroup = wrapAxisGroup
-  .append('g')
-  .attr('transform', `translate(10, 0)`)
-  .call(yAxis);
+    yAxisGroup.select('.domain').remove();
+    yAxisGroup
+      .selectAll('line')
+      .enter()
+      .append('line')
+      .attr('stroke', 'gray.900');
 
-yAxisGroup.select('.domain').remove();
-yAxisGroup
-  .selectAll('line')
-  .enter()
-  .append('line')
-  .attr('stroke', 'gray.900');
-
-const axisLabel = yAxisGroup
-  .selectAll('text')
-  .join('text')
-  .attr('font-size', '0.55rem')
-  .attr('opacity', 0.5);
+    const axisLabel = yAxisGroup
+      .selectAll('text')
+      .join('text')
+      .attr('font-size', '0.55rem')
+      .attr('opacity', 0.5);
 
 if (!defineEvent) {
   const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
@@ -643,7 +647,6 @@ if (groupBy) {
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
   }else{
-
     let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
   }
@@ -653,6 +656,8 @@ if (groupBy) {
 
   hiddenCircles.attr('fill', 'gray')
   .attr('fill-opacity', .3);
+
+  console.log('WRAP NODE', wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100);
 
   if(filterRT && researchThreads?.research_threads[selectedThread].evidence.length > 0){
    
@@ -723,75 +728,89 @@ if (groupBy) {
     }
   }
 
-highlightedActivities
-    .on('mouseover', (event, d) => {
-      
-      setToolPosition([d.x, d.y])
-      setHoverData(d);
-      d3.select('#tooltip').style('opacity', 1);
+  highlightedActivities
+      .on('mouseover', (event, d) => {
+        
+        setToolPosition([d.x, d.y])
+        setHoverData(d);
+        d3.select('#tooltip').style('opacity', 1);
 
-      let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
-      let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
-      labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
+        let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+        let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
+        labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
 
-      let rect = labelG.append('rect')
-      rect.attr('width', 50)
-      .attr('height', 15)
-      .attr('fill', '#fff')
-      .attr('fill-opacity', .9);
-      rect.attr('x', -50).attr('y', -12);
+        let rect = labelG.append('rect')
+        rect.attr('width', 50)
+        .attr('height', 15)
+        .attr('fill', '#fff')
+        .attr('fill-opacity', .9);
+        rect.attr('x', -50).attr('y', -12);
 
-      let text = labelG
-      .append('text')
-      .text(new Date(d.date).toLocaleDateString('en-us', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })).style('font-size', 9)
-      .style('text-anchor', 'end')
-      .style('font-weight', 600)
+        let text = labelG
+        .append('text')
+        .text(new Date(d.date).toLocaleDateString('en-us', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })).style('font-size', 9)
+        .style('text-anchor', 'end')
+        .style('font-weight', 600)
 
-        underWrap.append('line')
-        .attr('id', 'date_line')
-        .attr('y1', d.y)
-        .attr('x2', (0-70))
-        .attr('y2', forced.yScale(new Date(d.date)))
-        .attr('x1', (+d.x))
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1);
+          underWrap.append('line')
+          .attr('id', 'date_line')
+          .attr('y1', d.y)
+          .attr('x2', (0-70))
+          .attr('y2', forced.yScale(new Date(d.date)))
+          .attr('x1', (+d.x))
+          .attr('stroke', 'black')
+          .attr('stroke-width', 1);
 
-      if(filterRT){
-        let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
-          return n[i].innerText.includes(d.title);
-        });
+        if(filterRT){
+          let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+            return n[i].innerText.includes(d.title);
+          });
 
-        if(activities.nodes().length > 0){
-          activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          if(activities.nodes().length > 0){
+            activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+          
         }
         
-      }
+      })
+      .on('mouseout', (event:any, d:any) => {
+    
+        d3.select('#tooltip').style('opacity', 0);
+        d3.select('#date_line').remove();
+        d3.select('#label-group').remove();
+    
+      }).on('click', (event:any, d:any)=> {
       
-    })
-    .on('mouseout', (event:any, d:any) => {
-  
-      d3.select('#tooltip').style('opacity', 0);
-      d3.select('#date_line').remove();
-      d3.select('#label-group').remove();
-  
-    }).on('click', (event:any, d:any)=> {
-     
-      let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
-        return d3.select(n[i]).attr('id') === d.title;
-      });
-      activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-  }
+        let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+          return d3.select(n[i]).attr('id') === d.title;
+        });
+        activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100)
+    setBubbleDivWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100)
 
 }, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
+useEffect(()=> {
+  if (svgRef.current) {
+     setNewHeight((window.innerHeight - 150));
+   }
+   if(groupBy){
+     setSvgWidth((600))
+   }else{
+    //  setSvgWidth(600);
+   }
+}, [window.innerHeight, window.innerWidth, groupBy]);
+
 return (
-<div style={{ flex: flexAmount, paddingTop:'30px' }}>
+<div style={{ flex: flexAmount, paddingTop:'30px', width: bubbleDivWidth }}>
   <div
     style={{width:'100%'}}
   >
@@ -809,7 +828,6 @@ return (
       )
     }
    
-
   <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
     <FormControl display="flex" alignItems="center" marginBottom={10}>
       <FormLabel
@@ -818,7 +836,7 @@ return (
         textAlign="right"
         fontSize="12px"
       >
-        Group by research threads
+        Facet by research threads
       </FormLabel>
       <Switch
         id="split-by"
@@ -830,7 +848,7 @@ return (
                 id: rt.rt_id, 
                 activities: rt.evidence.map(m => m.activityTitle), 
                 dob: rt.actions.filter(a => a.action === "created")[0].when,
-                }}))
+              }}))
             : setGroupBy([]);
         }}
       />
@@ -846,7 +864,9 @@ return (
     style={{ display: 'inline' }}
   />
   {
-    filterRT ? <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> : <ToolTip activityData={hoverData} position={toolPosition}/>
+    filterRT ? 
+    <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> 
+    : <ToolTip activityData={hoverData} position={toolPosition}/>
   }
  
 </div>

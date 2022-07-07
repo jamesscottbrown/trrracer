@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel, calc } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
@@ -174,11 +174,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [granularity, setGranularity] = useState<null|string>(null);
   const [cIndex, setcIndex] = useState<null|number>(null);
   const [selectedId, setSelectedId] = useState<null|string>(null);
+  const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-  
     dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
@@ -316,7 +316,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
            viewType={viewType}
-          //  filteredActivities={filteredActivities}
            setViewType={setViewType}
            newTitle={newTitle}
            setNewTitle={setNewTitle}
@@ -339,6 +338,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             flexAmount={2}
+            bubbleDivWidth={bubbleDivWidth}
+            setBubbleDivWidth={setBubbleDivWidth}
           />
         
           {
@@ -349,7 +350,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
          
           {
             (!hideByDefault) && (
-              <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+              <Box width={(window.innerWidth - (bubbleDivWidth + 370))} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView
                   setViewType={setViewType}
