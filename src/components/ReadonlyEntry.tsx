@@ -48,28 +48,35 @@ interface ReadonlyEntryFilePropTypes {
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
-  const { thisEntry, openFile, setViewType, file, i, dispatch, folderPath } = props;
-  // const [{ folderPath }, dispatch] = useProjectState();
+  const { thisEntry, openFile, setViewType, file, i } = props;
+  const [{ folderPath, isReadOnly }, dispatch] = useProjectState();
+
+  console.log('ISREADNONLY',isReadOnly);
 
   return (
     <>
     <Box bg="#ececec" p={3}>
     {['png', 'jpg', 'gif'].includes(file.fileType) && (
-                  <AttachmentPreview
-                    folderPath={folderPath}
-                    title={file.title}
-                    openFile={openFile}
-                  />
-                )}
+        <AttachmentPreview
+          folderPath={folderPath}
+          title={file.title}
+          openFile={openFile}
+        />
+      )}
       <div
       style={{marginTop:'8px'}}
       >{file.title}{' '}
-      <FaExternalLinkAlt
-                  onClick={() => openFile(file.title, folderPath)}
-                  title="Open file externally"
-                  size="13px"
-                  style={{ display: 'inline' }}
-                />
+      {
+        !isReadOnly && (
+          <FaExternalLinkAlt
+          onClick={() => openFile(file.title, folderPath)}
+          title="Open file externally"
+          size="13px"
+          style={{ display: 'inline' }}
+        />
+        )
+      }
+     
       <Button 
         size={'xs'}
         style={{

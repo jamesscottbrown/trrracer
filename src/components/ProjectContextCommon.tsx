@@ -115,7 +115,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         link_data = await readProjectFile(baseDir, 'links.json', null);
-        console.log('yes to linkData');
+        console.log('yes to linkData', baseDir);
       } catch (e) {
         link_data = null;
         console.error('could not load linkData');
