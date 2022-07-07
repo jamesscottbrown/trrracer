@@ -29,6 +29,8 @@ exports.handler = async function (event) {
   }
   const { fileName, folderName } = queryStringParameters;
 
+  console.log('netlify',fileName, folderName);
+
   const serviceAccountCredentials = JSON.parse(GOOGLE_DRIVE_CREDENTIALS);
   const client = await google.auth.getClient({
     credentials: serviceAccountCredentials,

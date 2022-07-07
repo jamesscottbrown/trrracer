@@ -243,6 +243,7 @@
     "@emotion/styled": "^11",
     "@getstation/electron-google-oauth2": "^2.1.0",
     "buffer": "^6.0.3",
+    "copy-webpack-plugin": "^11.0.0",
     "d3": "^7.0.1",
     "d3-array": "^2.12.1",
     "d3-format": "^3.0.1",

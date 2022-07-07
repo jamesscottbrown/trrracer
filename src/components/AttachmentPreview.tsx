@@ -33,7 +33,6 @@ const url = (folderPath: string, title: string) => {
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const { folderPath, title, openFile, size } = props;
   
-
   if (
     title.endsWith('.mp4') ||
     title.endsWith('.mov') ||

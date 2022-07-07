@@ -6,11 +6,11 @@ import * as d3 from 'd3';
 // setOptions({
 //   workerSrc: "/js/worker.pdf.js"
 // });
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack5';
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
 // const reactPdf = require('react-pdf/dist/esm/entry.webpack')
 // const { Document, Page } = reactPdf
 import ThreadNav from './ThreadNav';
-import { useProjectState } from './ProjectContext';
+import { readProjectFile, useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { calcCircles } from '../PackMagic';
@@ -506,7 +506,12 @@ const PageNavigation = (props:any) => {
         height: 'auto'
       }}
     >
-      <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
+      <Document file={{
+          url: perf,
+        }}
+        onLoadSuccess={onDocumentLoadSuccess}
+        onLoadError={() => `ERRORRR ${console.error}`}
+        >
         <svg
           style={{
             position: 'absolute',
@@ -570,6 +575,7 @@ const PaperView = (props: any) => {
 
   console.log('perf',perf)
   
+  
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
   console.log('filterd activities', filteredActivities, granularity, cIndex, linkData)
@@ -591,6 +597,7 @@ const PaperView = (props: any) => {
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   function onDocumentLoadSuccess({ numPages }) {
+    console.log('ID THIS WORKING??')
     setNumPages(numPages);
     setPageNumber(1);
   }
