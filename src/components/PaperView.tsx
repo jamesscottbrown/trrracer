@@ -26,7 +26,7 @@ const BubbleVisPaper = (props: any) => {
   } = props;
 
   const [{projectData, filteredActivities, researchThreads, selectedActivityURL, filterRT, selectedThread, filterType, filterTags}] = useProjectState();
-  
+  console.log(filterRT);
   const {eventArray} = projectData;
 
   const svgBubbleRef = React.useRef(null);
@@ -34,15 +34,14 @@ const BubbleVisPaper = (props: any) => {
   const width = 300;
   const height = 1000;
 
-  let packedCircData = calcCircles(projectData.entries);
+  let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [projectData.entries.length, projectData.entries.flatMap(f => f.files).length]);
+  const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
 
   d3.select('#tooltip').style('opacity', 0);
 
   const svgWrapTest = d3.select(svgBubbleRef.current).select('#bubble-wrap');
   const svgWrap = svgWrapTest.empty() ? d3.select(svgBubbleRef.current).append('g').attr('id', 'bubble-wrap') : svgWrapTest;
 
-  const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
-  
   svgWrap.selectAll('*').remove();
 
   const underWrap = svgWrap.append('g').classed('path-wrap', true)
