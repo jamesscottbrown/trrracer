@@ -211,7 +211,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }else if(parsed.granularity === 'artifact'){
       //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
         
-        
         let selected = projectData.entries.filter(en =>{
           let fileTest = en.files.filter(f => f.artifact_uid === parsed.id);
           return fileTest.length > 0
