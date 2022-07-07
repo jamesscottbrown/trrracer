@@ -118,23 +118,26 @@ const QueryView = (props: any) => {
               
               m.textMatch.map((tm, j) => (
                 <QueryMatchComponent m={m} tm={tm} setViewType={setViewType} j={j} />
-                // <div style={{ marginTop: 10 }} key={`tm-${j}`}>
-                //   <div>
+              ))
+            }
+
+            {m.googMatch.length > 0 &&
+              m.googMatch.map((gm, j) => (
+                <QueryMatchComponent m={m} tm={gm} setViewType={setViewType} j={j} />
+                // <div style={{ marginTop: 10 }} key={`gm-${j}`}>
                 //   <HoverTitle
-                //     title={tm['file-title']}
+                //     title={gm.title}
                 //     entry={m.entry}
-                //     match={tm}
+                //     match={gm}
                 //     setViewType={setViewType}
                 //   />
-                //   <span>{'show text'}</span>
-                //   </div>
-                //   { 
                 //   <div>
-                //     {tm.context.map((c, ci) => (
-                //       <div key={`div-cont-${ci}`}>
-                //         {c.map((m, mi) => (
+                //     {gm.context.map((c, k) => (
+                       
+                //       <div key={`in-gm-${k}`}>
+                //         {c.map((m, l) => (
                 //           <span
-                //             key={`span-con-${mi}`}
+                //             key={`span-${l}`}
                 //             style={{
                 //               fontSize: 11,
                 //               fontWeight: m.style ? 700 : 400,
@@ -143,47 +146,13 @@ const QueryView = (props: any) => {
                 //             }}
                 //           >
                 //             {m.context}
-                //             {m.style ? '' : '. '}
+                //             {'. '}
                 //           </span>
                 //         ))}
                 //       </div>
                 //     ))}
                 //   </div>
-                // }
                 // </div>
-              ))
-            }
-
-            {m.googMatch.length > 0 &&
-              m.googMatch.map((gm, j) => (
-                <div style={{ marginTop: 10 }} key={`gm-${j}`}>
-                  <HoverTitle
-                    title={gm.title}
-                    entry={m.entry}
-                    match={gm}
-                    setViewType={setViewType}
-                  />
-                  <div>
-                    {gm.context.map((c, k) => (
-                      <div key={`in-gm-${k}`}>
-                        {c.map((m, l) => (
-                          <span
-                            key={`span-${l}`}
-                            style={{
-                              fontSize: 11,
-                              fontWeight: m.style ? 700 : 400,
-                              fontStyle: 'italic',
-                              backgroundColor: m.style ? 'yellow' : '#ffffff',
-                            }}
-                          >
-                            {m.context}
-                            {'. '}
-                          </span>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </div>
               ))}
           </div>
         ))}
