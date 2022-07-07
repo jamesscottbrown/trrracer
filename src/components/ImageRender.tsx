@@ -9,18 +9,21 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 const ImageRender = (props:any) => {
 
     const { src, onClick } = props;
-    const [{folderPath}] = useProjectState();
+    const [{folderPath, isReadOnly}] = useProjectState();
 
     const [imgData, setImgData] = useState<any>(null);
 
     let end = src.split('.').at(-1);
 
-    // useEffect(() => {
-    //   readFileSync(folderPath+src).then((img) => {
-    //     console.log('img',img);
-    //     setImgData(img)
-    //   })
-    // }, [src])
+    // if(isReadOnly){
+    //   useEffect(() => {
+    //     readProjectFile(folderPath, src, end).then((img) => {
+    //       console.log('img',img);
+    //       setImgData(img)
+    //     })
+    //   }, [src]);
+    // }
+  
   
     return (
         <InView>
@@ -28,7 +31,7 @@ const ImageRender = (props:any) => {
           <div ref={ref}>
            {
             inView && (
-            <img src={`data:image/png;base64,${imgData}`} />
+            <img src={src} />
             )
            }
             
