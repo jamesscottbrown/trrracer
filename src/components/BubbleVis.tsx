@@ -155,10 +155,11 @@ const BubbleVis = (props: BubbleProps) => {
   const height = newHeight//+newHeight.split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles([...projectData.entries]);
   d3.select('#tooltip').style('opacity', 0);
 
+  let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [projectData.entries.length, projectData.entries.flatMap(f => f.files).length]);
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
+
   useEffect(()=> {
     if (svgRef.current) {
        setNewHeight((window.innerHeight - 150));
@@ -560,9 +561,6 @@ if (groupBy) {
 
   groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities);
 
-
-
-
 } else {
 
   let allActivityGroups = wrap
@@ -669,6 +667,9 @@ if (groupBy) {
     if(f.type === 'activity'){
       temp.select('.all-activities')
         .attr('fill', researchThreads?.research_threads[selectedThread].color);
+      
+      temp.selectAll('circle.artifact')
+        .attr('fill', researchThreads?.research_threads[selectedThread].color);
     
     }else if(f.type === 'artifact' || f.type === 'fragment'){
      
@@ -769,7 +770,6 @@ highlightedActivities
           activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
         
-      
       }
       
     })

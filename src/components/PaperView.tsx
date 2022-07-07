@@ -1,17 +1,22 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
+// import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+// import { Document, Page, setOptions } from "react-pdf/build/entry";
+// setOptions({
+//   workerSrc: "/js/worker.pdf.js"
+// });
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+// const reactPdf = require('react-pdf/dist/esm/entry.webpack')
+// const { Document, Page } = reactPdf
 import ThreadNav from './ThreadNav';
-import { useProjectState } from './ProjectContext';
+import { readProjectFile, useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 import { joinPath } from '../fileUtil';
-
-
 
 const BubbleVisPaper = (props: any) => {
   const {
@@ -24,14 +29,11 @@ const BubbleVisPaper = (props: any) => {
   
   const {eventArray} = projectData;
 
- const svgBubbleRef = React.useRef(null);
+  const svgBubbleRef = React.useRef(null);
  
   const width = 300;
   const height = 1000;
 
-    ////TRY THIS HERE
-  // let selectedThreadData = researchThreads?.research_threads[index];
-  
   let packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
@@ -455,6 +457,8 @@ const PageNavigation = (props:any) => {
   const bigRectWidth = 612;
   const annoSvgRef = React.useRef(null);
 
+  console.log('anno', anno)
+
   const yScaleBig = d3
   .scaleLinear()
   .domain([0, anno[0][1][0]['pdf-dim'][3]])
@@ -502,7 +506,12 @@ const PageNavigation = (props:any) => {
         height: 'auto'
       }}
     >
-      <Document file={perf} onLoadSuccess={onDocumentLoadSuccess}>
+      <Document file={{
+          url: perf,
+        }}
+        onLoadSuccess={onDocumentLoadSuccess}
+        onLoadError={() => `ERRORRR ${console.error}`}
+        >
         <svg
           style={{
             position: 'absolute',
@@ -563,16 +572,19 @@ const PageNavigation = (props:any) => {
 const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+
+  console.log('perf',perf)
+  
   
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
-  console.log('filterd activities', filteredActivities, granularity, cIndex)
+  console.log('filterd activities', filteredActivities, granularity, cIndex, linkData)
 
-  let passedLink = linkData.filter(f=> f.cIndex === cIndex);
+  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : linkData;
 
   console.log('LINK DATA', passedLink);
 
-  const anno = d3.groups(linkData, (d) => d.page);
+  const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
  
   const index = selectedThread || 0;
   const svgWidth = 600;
@@ -585,6 +597,7 @@ const PaperView = (props: any) => {
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   function onDocumentLoadSuccess({ numPages }) {
+    console.log('ID THIS WORKING??')
     setNumPages(numPages);
     setPageNumber(1);
   }
@@ -617,36 +630,43 @@ const PaperView = (props: any) => {
   }, [numPages]);  
   
     return (
+      linkData ? 
       <div style={{position:"relative", top:70, width:'100%'}}>
         <div
           style={{display:"block", margin:20}}
-        >
-            {
-              passedLink.map((m, i) => (
-                <div>
-                  <div
-                    style={{display:'inline', paddingRight:10}}
-                  >
+        >   
+        {
+          passedLink.length > 0 && (
+            <React.Fragment>
+              {
+                passedLink.map((m, i) => (
+                  <div>
                     <div
-                    style={{display: 'inline', fontWeight:800, fontSize:30}}
-                    >{`T${m.cIndex}-`}</div>
-                    <div
-                     style={{display: 'inline', fontWeight:800, fontSize:30}}
-                    >{granularity}</div>
-                  </div>
-                  {
-                    m.text.map((t, j) => (
+                      style={{display:'inline', paddingRight:10}}
+                    >
                       <div
-                        style={{display:'inline', fontSize:20, fontStyle:'italic'}}
-                      >{
-                        `"${t}"`
-                      }</div>
-                    ))
-                  }
-                </div>
-              ))
-            }
-
+                      style={{display: 'inline', fontWeight:800, fontSize:30}}
+                      >{`T${m.cIndex}-`}</div>
+                      <div
+                      style={{display: 'inline', fontWeight:800, fontSize:30}}
+                      >{granularity}</div>
+                    </div>
+                    {
+                      m.text.map((t, j) => (
+                        <div
+                          style={{display:'inline', fontSize:20, fontStyle:'italic'}}
+                        >{
+                          `"${t}"`
+                        }</div>
+                      ))
+                    }
+                  </div>
+                ))
+              }
+            </React.Fragment>
+          )
+        }
+          
           </div>
         <Flex>
           <Box
@@ -690,7 +710,10 @@ const PaperView = (props: any) => {
           
           </Box>
         </Flex>
-      </div>
+      </div> : <div
+      style={{display:'flex', paddingTop:200, fontSize:30, fontWeight:800, justifyContent:'center'}}
+      
+      >{"Oops! There is not a paper to explore for this project yet. Check back later!"}</div>
     );
   };
   

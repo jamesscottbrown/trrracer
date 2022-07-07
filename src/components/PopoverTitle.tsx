@@ -8,12 +8,15 @@ const ActivityTitlePopoverLogic = (props: any) => {
     const { activityData, researchThreads } = props;
     const [seeThreadAssign, setSeeThreadAssign] = useState(false);
 
-    const [{projectData}, dispatch] = useProjectState();
+    const [{projectData, isReadOnly}, dispatch] = useProjectState();
    
-    return <Popover
+    return(isReadOnly ?  <div
+      style={{
+        display:'inline',
+        marginTop:2
+      }}>{activityData.title}</div> : <Popover
               trigger={'hover'}
               style={{display:'inline'}}
-              
             >
             <PopoverTrigger>
             <div
@@ -96,7 +99,7 @@ const ActivityTitlePopoverLogic = (props: any) => {
             )}
           </PopoverFooter>
         </PopoverContent>
-      </Popover>
+      </Popover>)
   };
 
   export default ActivityTitlePopoverLogic;

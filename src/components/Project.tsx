@@ -18,6 +18,11 @@ import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
 const queryString = require('query-string');
 
+//CHANGE THE SEARCH PARAMS
+// See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+// const params = new URLSearchParams(location.search);
+// const viewType = params.get("view");
+
 interface ProjectProps {
   folderPath: string;
 }
@@ -160,7 +165,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   // const [viewParam, setViewParam] = useState('overview');
   const [viewType, setViewType] = useState<string>('overview');
-  
   // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);

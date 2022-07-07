@@ -23,7 +23,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
           width="max-content"
         >
           <option id="overview">overview</option>
-          <option id="explore paper">explore paper</option>
+          <option id="paper">paper</option>
         </Select>
       </FormControl>
     </>
