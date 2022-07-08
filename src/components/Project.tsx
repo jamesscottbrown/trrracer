@@ -184,14 +184,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
       if(parsed.view) setViewType(parsed.view);
-      console.log('parsed', parsed, viewType);
+     
       setGranularity(parsed.granularity);
       setcIndex(parsed.cIndex);
 
       if(parsed.granularity === 'thread'){
         //sample for thread url 
         //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
-        console.log('viewType');
+        
         let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
         let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
         dispatch({
@@ -238,6 +238,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
     }
 
   }, [queryString, viewType])
+
+  const barWidth = useMemo(()=> {
+    let handicap = window.innerWidth > 1300 ? 150 : 0;
+    return window.innerWidth - (bubbleDivWidth - handicap);
+  }, [bubbleDivWidth])
 
   useEffect(()=> {
 
@@ -337,7 +342,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            flexAmount={2}
+            // flexAmount={2}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
           />
@@ -350,7 +355,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
          
           {
             (!hideByDefault) && (
-              <Box width={(window.innerWidth - (bubbleDivWidth + 370))} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+              <Box w={barWidth} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView
                   setViewType={setViewType}

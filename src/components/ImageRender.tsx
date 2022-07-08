@@ -5,7 +5,6 @@ import { URL } from 'url';
 import { readFileSync } from '../fileUtil';
 import { readProjectFile, useProjectState } from './ProjectContext';
 
-
 const ImageRender = (props:any) => {
 
     const { src, onClick } = props;

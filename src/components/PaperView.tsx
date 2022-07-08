@@ -154,7 +154,7 @@ const BubbleVisPaper = (props: any) => {
     'all-activities'
   );
   
-  activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+  activityBubbles.bubbles.attr('fill', '#d3d3d3').attr('opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
   

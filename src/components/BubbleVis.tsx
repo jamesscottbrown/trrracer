@@ -208,14 +208,13 @@ const BubbleVis = (props: BubbleProps) => {
     return forced.nodes.filter(f => ids.indexOf(f.activity_uid) === -1);
   }, [filteredActivities.length]);
 
-  console.log(highlightedNodes, notNodes);
+ 
 
   useEffect(()=> {
     if(filterRT){
       let newColor = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].color;
       let hslColor = d3co.hsl(newColor);
-      // let newnew = {h: hsvColor.h, s: .1, v: hsvColor.v, opacity: 1};
-      console.log('newnew', hslColor);
+     
       setOnActivityColor(hslColor.copy({s: .4, l: .9})); 
       setOnArtifactColor(hslColor);
     }else{
@@ -699,14 +698,6 @@ if (groupBy) {
     highlightedCircles.attr('fill', 'gray');
   }
 
-  // let hiddenCircles = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid !== selectedActivityURL)
-  // : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1).selectAll('circle.artifact');
-
-  // hiddenCircles.attr('fill', 'gray')
-  // .attr('fill-opacity', .3);
-
-  console.log('WRAP NODE', wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100);
-
   if(filterRT && researchThreads?.research_threads[selectedThread].evidence.length > 0){
    
     let linkDataBefore = [];
@@ -838,8 +829,8 @@ if (groupBy) {
       })
     }
 
-    setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100)
-    setBubbleDivWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width + 100)
+    setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width)
+    setBubbleDivWidth(wrap.node().getBBox().width - 250)
 
 }, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
@@ -848,14 +839,12 @@ useEffect(()=> {
      setNewHeight((window.innerHeight - 150));
    }
    if(groupBy){
-     setSvgWidth((600))
-   }else{
-    //  setSvgWidth(600);
+     setSvgWidth((researchThreads?.research_threads.length * 200))
    }
 }, [window.innerHeight, window.innerWidth, groupBy]);
 
 return (
-<div style={{ flex: flexAmount, paddingTop:'30px', width: bubbleDivWidth }}>
+<div style={{ flex: flexAmount, paddingTop:'30px', paddingLeft: groupBy ? 30 : 0, width: bubbleDivWidth }}>
   <div
     style={{width:'100%'}}
   >

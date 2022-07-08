@@ -16,8 +16,6 @@ interface BubbleDetProps {
 const ToolTip = (toolProp: any) => {
   const {hoverData, position} = toolProp;
 
-  console.log('hover data', hoverData);
-
   return <div
     id={'tooltip'}
     style={{
@@ -244,11 +242,7 @@ const DetailBubble = (props: BubbleDetProps) => {
             let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
             labelG.attr('transform', `translate(0, ${yScale(new Date(entry.date))})`)
 
-            console.log(d, event.target.parentNode)
-
             let parent = d3.select(event.target.parentNode);
-
-            console.log(parent.data()[0].y)
 
             let rect = labelG.append('rect')
             rect.attr('width', 50)
