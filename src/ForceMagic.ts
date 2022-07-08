@@ -38,6 +38,7 @@ class ForceMagic {
     node.month = a.month;
     node.tags = a.tags;
     node.title = a.title;
+    node.activity_uid = a.activity_uid;
     // node.activityTitle = splitBool ? a.activityTitle : null;
     // node.artifactType = splitBool ? a.artifactType : null;
     node.activityTitle = null;
