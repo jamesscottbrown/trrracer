@@ -5,15 +5,13 @@ import * as d3co from 'd3-color';
 import { useProjectState } from './ProjectContext';
 
 
-export default function groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
+export default function groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
       
           const groupRTDATA = groupBy;
 
           d3.select('svg').attr('width', 1000)
           wrap.attr('transform', `translate(20, 50)`);
          
-          underWrap.attr('transform', `translate(20, 50)`);
-
           d3.select('.timeline-wrap').attr('transform', `translate(50, 50)`);
 
           const groupGroups = wrap
@@ -97,61 +95,60 @@ export default function groupBubbles(groupBy, wrap, underWrap, forced, selectedA
 
             let parentGroup = d3.select(nodes[i]);
 
-            chosenR.evidence.forEach((a:any, j:number)=> {
-              let actG = parentGroup.selectAll('.activity-g').filter(ha => ha.title === a.activityTitle);
+            let divideDate = new Date(chosenR.actions.filter(f => f.action === 'created')[0].when);
+
+
+            chosenR.evidence.forEach((r:any, j:number)=> {
+              let actG = parentGroup.selectAll('.activity-g').filter(ha => ha.title === r.activityTitle);
            
-              if(a.type === 'activity'){
+              if(r.type === 'activity'){
                 actG.selectAll('circle.artifact')
                   .attr('fill', gData.color);
             
-              }else if(a.type === 'artifact' || a.type === 'fragment'){
+              }else if(r.type === 'artifact' || r.type === 'fragment'){
 
-                actG.selectAll('circle.artifact').filter(art => art.title === a.artifactTitle)
+                actG.selectAll('circle.artifact').filter(art => art.title === r.artifactTitle)
                   .attr('fill', gData.color);
               }
-                
-              let divideDate = new Date(chosenR.actions.filter(f => f.action === 'created')[0].when);
+    
+              console.log('devide date',divideDate);
 
               if(new Date(actG.date) < divideDate){
                 linkDataBefore.push({coord: [actG.data()[0].x, actG.data()[0].y], date: actG.data()[0].date})
               }else{
                 linkDataAfter.push({coord: [actG.data()[0].x, actG.data()[0].y], date: actG.data()[0].date})
               }
+          });
+
+          var lineGenerator = d3.line();
+
+          if(linkDataAfter.length > 0){
+
+            linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+
+            let pathThing = midG.filter(f => f.id === gData.id).append('path')
+            .attr('d', pathStringSolid)
+            .attr('fill', 'none')
+            .attr('stroke', gData.color)
+            .attr('stroke-width', 1);
+
+          }
+          if(linkDataBefore.length > 0){
+
+            linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+            if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
             
-              // console.log(linkDataAfter, linkDataBefore)
-
-              var lineGenerator = d3.line();
-
-              if(linkDataAfter.length > 0){
-
-                linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
-
-                let pathThing = midG.filter(f => f.id === gData.id).append('path')
-                .attr('d', pathStringSolid)
-                .attr('fill', 'none')
-                .attr('stroke', gData.color)
-                .attr('stroke-width', 2);
-           
-              }
-              if(linkDataBefore.length > 0){
-
-                linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
-                if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
-                
-                var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
-            
-                let pathThing = midG.filter(f => f.id === gData.id).append('path')
-                  .attr('d', pathStringDash)
-                  .attr('fill', 'none')
-                  .attr('stroke', gData.color)
-                  .attr('stroke-width', 2)
-                  .style('stroke-dasharray', '5,5');
-
-              }
-
+            var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
         
-          })
+            let pathThing = midG.filter(f => f.id === gData.id).append('path')
+              .attr('d', pathStringDash)
+              .attr('fill', 'none')
+              .attr('stroke', gData.color)
+              .attr('stroke-width', 1)
+              .style('stroke-dasharray', '5,5');
+
+          }
         })
 }

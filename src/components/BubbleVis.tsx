@@ -593,7 +593,7 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
+  groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
 
 } else {
 
