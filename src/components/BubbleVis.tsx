@@ -593,7 +593,7 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
+  groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
 
 } else {
 
@@ -844,7 +844,7 @@ useEffect(()=> {
 }, [window.innerHeight, window.innerWidth, groupBy]);
 
 return (
-<div style={{ flex: flexAmount, paddingTop:'30px', paddingLeft: groupBy ? 30 : 0, width: bubbleDivWidth }}>
+<div style={{ flex: flexAmount, paddingTop:'30px', paddingLeft: groupBy ? 30 : 0, width: bubbleDivWidth, overflowX:'auto' }}>
   <div
     style={{width:'100%'}}
   >

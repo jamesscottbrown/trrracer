@@ -5,13 +5,13 @@ import * as d3co from 'd3-color';
 import { useProjectState } from './ProjectContext';
 
 
-export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
+export default function groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
       
           const groupRTDATA = groupBy;
 
           d3.select('svg').attr('width', 1000)
           wrap.attr('transform', `translate(20, 50)`);
-          // midWrap.attr('transform', `translate(20, 50)`);
+         
           underWrap.attr('transform', `translate(20, 50)`);
 
           d3.select('.timeline-wrap').attr('transform', `translate(50, 50)`);
@@ -23,6 +23,10 @@ export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, 
             .attr('class', 'group');
       
           groupGroups.attr('transform', (d: any, i: any) => `translate(${(i * 210)}, 0)`);
+
+          let label = groupGroups.append('text').text(d => d.title);
+          label.style('font-size','9px').style('text-anchor','middle')
+          label.attr('x', 150).attr('y', -20)
 
           let underGroup = groupGroups.selectAll('g.underWrap').data((d)=> {
             return [forced.nodes.filter(f => d.activities.indexOf(f.title) === -1)];
