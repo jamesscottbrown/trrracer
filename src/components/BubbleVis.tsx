@@ -593,7 +593,7 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setToolPosition);
+  groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
 
 } else {
 
@@ -883,7 +883,7 @@ return (
                 activities: rt.evidence.map(m => m.activityTitle), 
                 dob: rt.actions.filter(a => a.action === "created")[0].when,
               }}))
-            : setGroupBy([]);
+            : setGroupBy(null);
         }}
       />
     </FormControl> 

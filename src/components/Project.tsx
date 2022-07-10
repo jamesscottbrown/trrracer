@@ -179,7 +179,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-    dispatch({type: 'UPDATE_TITLE', title: projectData.title});
+    // dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
@@ -237,7 +237,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }
     }
 
-  }, [queryString, viewType])
+  }, [queryString, viewType, groupBy])
 
   const barWidth = useMemo(()=> {
     let handicap = window.innerWidth > 1300 ? 150 : 0;

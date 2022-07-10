@@ -2,17 +2,16 @@ import * as d3 from 'd3';
 import { useMemo } from 'react';
 import Bubbles from "../Bubbles";
 import * as d3co from 'd3-color';
+import { useProjectState } from './ProjectContext';
 
 
-export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setTool) {
+export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
       
           const groupRTDATA = groupBy;
 
-          console.log('grooooop',groupRTDATA)
-
           d3.select('svg').attr('width', 1000)
           wrap.attr('transform', `translate(20, 50)`);
-          midWrap.attr('transform', `translate(20, 50)`);
+          // midWrap.attr('transform', `translate(20, 50)`);
           underWrap.attr('transform', `translate(20, 50)`);
 
           d3.select('.timeline-wrap').attr('transform', `translate(50, 50)`);
@@ -29,9 +28,7 @@ export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, 
             return [forced.nodes.filter(f => d.activities.indexOf(f.title) === -1)];
           }).join('g').classed('underWrap', true);
 
-          groupGroups.append('g').classed('midGroup', true);
-
-          console.log('undergroup',underGroup)
+          let midG = groupGroups.append('g').classed('midGroup', true);
 
           let hiddenActivityGroups = underGroup.selectAll('g.hidden-activity')
           .data(d => d)
@@ -52,135 +49,105 @@ export default function groupBubbles(groupBy, wrap, midWrap, underWrap, forced, 
           hiddenCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
           hiddenCircles.attr('fill', '#d3d3d3');
 
-          // let topWrap = groupGroups.selectAll('g.topWrap').data((d)=> {
-          //   console.log(d);
-          //   let temp = forced.nodes.filter(f => d.activities.indexOf(f.title) > -1).map(m => {
-          //     m.color = d.color;
-          //     return m;
-          //   })
-          //   return [temp];
-          // });
+          let topWrap = groupGroups.selectAll('g.topWrap').data((d)=> {
+            
+            let temp = forced.nodes.filter(f => d.activities.indexOf(f.title) > -1).map(m => {
+              let ob = {...m}
+              ob.color = d.color;
+              ob.rt_id = d.id;
+              return ob;
+            })
+            return [temp];
+          }).join('g').classed('topWrap', true);
 
-          // let activityGroups = topWrap.selectAll('g.activity-g')
-          // .data(d => d)
-          // .join('g')
-          // .attr('class', 'activity-g');
+          let activityGroups = topWrap.selectAll('g.activity-g')
+          .data(d => d)
+          .join('g')
+          .attr('class', 'activity-g');
 
-          // activityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+          activityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
 
-          // let actBubbles = new Bubbles(
-          //   hiddenActivityGroups,
-          //   true,
-          //   'activity'
-          // );
+          let actBubbles = new Bubbles(
+            activityGroups,
+            true,
+            'activity'
+          );
+
+          let artifactCircles = activityGroups.selectAll('circle.artifact')
+            .data(d => d.files)
+            .join('circle').classed('artifact', true);
+
+          artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
+          artifactCircles.attr('fill', '#fff');
           
-      
-      //     let allActivityGroups = groupGroups
-      //     .selectAll('g.activity')
-      //     .data(forced.nodes)
-      //     .join('g')
-      //     .attr('class', 'activity');
-      
-      //     allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-      
-      //   let underGroup = groupGroups.append('g');
-      
-      //   // allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-      
-      //   let activityBubbles = new Bubbles(
-      //     allActivityGroups,
-      //     true,
-      //     'all-activities'
-      //   );
-      
-      //   activityBubbles.bubbles.attr('fill', "gray").attr('fill-opacity', .1).attr('stroke', '#d3d3d3').attr('stroke-width', .5);
-      //   let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
-      //   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
-      
-      //   let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
+          //COLOR AND STYLING
+          actBubbles.bubbles.attr('fill', (d)=> d3co.hsl(d.color).copy({l:.9}))
+          .attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+          
+          groupGroups.each((gData, i:number, nodes:any) => {
+           
+            let chosenR = researchThreads.research_threads.filter(rt => rt.rt_id === gData.id)[0];
+
+            let linkDataBefore = [];
+            let linkDataAfter = [];
+
+            let parentGroup = d3.select(nodes[i]);
+
+            chosenR.evidence.forEach((a:any, j:number)=> {
+              let actG = parentGroup.selectAll('.activity-g').filter(ha => ha.title === a.activityTitle);
+           
+              if(a.type === 'activity'){
+                actG.selectAll('circle.artifact')
+                  .attr('fill', gData.color);
+            
+              }else if(a.type === 'artifact' || a.type === 'fragment'){
+
+                actG.selectAll('circle.artifact').filter(art => art.title === a.artifactTitle)
+                  .attr('fill', gData.color);
+              }
+                
+              let divideDate = new Date(chosenR.actions.filter(f => f.action === 'created')[0].when);
+
+              if(new Date(actG.date) < divideDate){
+                linkDataBefore.push({coord: [actG.data()[0].x, actG.data()[0].y], date: actG.data()[0].date})
+              }else{
+                linkDataAfter.push({coord: [actG.data()[0].x, actG.data()[0].y], date: actG.data()[0].date})
+              }
+            
+              // console.log(linkDataAfter, linkDataBefore)
+
+              var lineGenerator = d3.line();
+
+              if(linkDataAfter.length > 0){
+
+                linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
+
+                let pathThing = midG.filter(f => f.id === gData.id).append('path')
+                .attr('d', pathStringSolid)
+                .attr('fill', 'none')
+                .attr('stroke', gData.color)
+                .attr('stroke-width', 2);
+           
+              }
+              if(linkDataBefore.length > 0){
+
+                linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
+                if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
+                
+                var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
+            
+                let pathThing = midG.filter(f => f.id === gData.id).append('path')
+                  .attr('d', pathStringDash)
+                  .attr('fill', 'none')
+                  .attr('stroke', gData.color)
+                  .attr('stroke-width', 2)
+                  .style('stroke-dasharray', '5,5');
+
+              }
+
         
-      //   groupGroups.each((d, i, n)=> {
-          
-      //     let chosenRT = d;//researchThreads?.research_threads.filter(f => f.title === d.label)[0];
-          
-      //     let linkDataBefore = [];
-      //     let linkDataAfter = [];
-      
-      //     // let rtActivities = chosenRT.evidence.map(m => m.activityTitle);
-      //     let rtActivities = chosenRT.activities;//chosenRT.evidence.map(m => m.activityTitle);
-      //     let colorCirc = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.includes(c.title));
-      //     colorCirc.attr('fill',  chosenRT.color);
-      //     colorCirc.attr('stroke-width', 1).attr('stroke', 'gray');
-
-      //     colorCirc.classed('group-highlight', true);
-      
-      //     d3.select(n[i]).selectAll('.artifact').attr('fill', chosenRT.color);
-      
-      //     let notColA = d3.select(n[i]).selectAll('.activity').filter(c => rtActivities.indexOf(c.title) === -1);
-      //     notColA.selectAll('.artifact').attr('fill', '#d3d3d3');
-      
-      //     let notCol = d3.select(n[i]).selectAll('circle.all-activities').filter(c => rtActivities.indexOf(c.title) === -1);
-      //     notCol.attr('fill', '#d3d3d3');
-
-      //     /////
-      //     let divideDate = new Date(chosenRT);
-
-      //     colorCirc.data().forEach((c, j)=> {
-
-      //     if(new Date(c.date) < divideDate){
-      //       linkDataBefore.push({coord: [c.x, c.y], date: c.date})
-      //     }else{
-      //       linkDataAfter.push({coord: [c.x, c.y], date: c.date})
-      //     }
-
-      //     var lineGenerator = d3.line();
-    
-      //     if(linkDataAfter.length > 0){
-      
-      //       linkDataAfter = linkDataAfter.sort((a, b) => new Date(a.date) - new Date(b.date));
-      
-      //       var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
-      
-      //       let path = underWrap.append('path')
-      //       .attr('d', pathStringSolid)
-      //       .attr('fill', 'none')
-      //       .attr('stroke', chosenRT.color)
-      //       .attr('stroke-width', 1);
-
-      //       path.attr('transform', `translate(${i*210}, 0)`)
-      //     }
-      //     if(linkDataBefore.length > 0){
-      
-      //       linkDataBefore = linkDataBefore.sort((a, b) => new Date(a.date) - new Date(b.date));
-      //       if(linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0])
-            
-      //       var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
-            
-      //       let path = underWrap.append('path')
-      //         .attr('d', pathStringDash)
-      //         .attr('fill', 'none')
-      //         .attr('stroke', chosenRT.color)
-      //         .attr('stroke-width', 2)
-      //         .style('stroke-dasharray', '5,5');
-      //         path.attr('transform', `translate(${i*210}, 0)`)
-      //     }
- 
-      //   });
-
-      // });
-
-      // d3.selectAll('.group-highlight')
-      // .on('mouseover', (event, n)=> {
-    
-      //   d3.selectAll('.all-activities').filter(f=> {
-      //     return f.title === n.title;
-      //   }).attr('stroke-width', 3);
-
-      // }).on('mouseout', (event, n) => {
-      
-      //   d3.selectAll('.all-activities').filter(f=> {
-      //     return f.title === n.title;
-      //   }).attr('stroke-width', 1);
-      // })
-
+          })
+        })
 }
