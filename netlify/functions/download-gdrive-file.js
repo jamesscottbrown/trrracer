@@ -29,7 +29,7 @@ exports.handler = async function (event) {
   }
   const { fileName, folderName } = queryStringParameters;
 
-  console.log('netlify',fileName, folderName);
+  // console.log('netlify',fileName, folderName);
 
   const serviceAccountCredentials = JSON.parse(GOOGLE_DRIVE_CREDENTIALS);
   const client = await google.auth.getClient({
@@ -90,6 +90,8 @@ exports.handler = async function (event) {
 
     fileData = new Uint8Array(file.data);
     fileData = Buffer.from(fileData).toString('base64');
+    // console.log('FILEDATA?', fileData);
+
   } else if (fileExtension === 'json') {
     file = await drive.files.get({
       alt: 'media',

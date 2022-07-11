@@ -193,8 +193,6 @@ const BubbleVisPaper = (props: any) => {
      }
    });
 
- 
-
    if(filterType){
     highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
     highlightedActivities.select('.all-activities').attr('stroke-width', 0);
@@ -447,7 +445,17 @@ const SmallPageNavigation = (props: any) => {
 const PageNavigation = (props:any) => {
 
   const { perf, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
-  const [{researchThreads}] = useProjectState();
+  const [{researchThreads, folderPath}] = useProjectState();
+  const [pageData, setPageData] = useState<any>(null);
+  useEffect(()=> {
+
+    readFileSync(perf).then((pap)=> {
+      setPageData(pap.body);
+
+      console.log(pageData, 'pageData');
+    });
+
+  }, [folderPath]);
 
   const bigRectHeight = 792;
   const bigRectWidth = 612;
@@ -501,7 +509,8 @@ const PageNavigation = (props:any) => {
       }}
     >
       <Document file={{
-          url: perf,
+          // url: perf,
+          data: `application/pdf;base64,${pageData}`
         }}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={() => `ERRORRR ${console.error}`}
@@ -567,10 +576,18 @@ const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
 
-  let test = readFileSync(perf).then((pap)=> {
-    console.log('pooooop',pap);
-    console.log('pooooop response', pap.response);
-  });
+  // useEffect(()=> {
+
+  //   let test = readFileSync(perf).then((pap)=> {
+  //     console.log('pap',pap);
+  //     console.log('pap response', pap.body);
+  //     let buff = Buffer.from(pap);
+
+      
+  //   });
+
+  // }, [folderPath]);
+ 
 
   // console.log('perf',perf)
   
