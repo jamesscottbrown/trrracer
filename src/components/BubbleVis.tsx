@@ -27,7 +27,7 @@ interface BubbleProps {
 const RTtooltip = (toolProp: any) => {
   
   const { activityData, position, researchThreads, filterRT } = toolProp;
-  console.log('activitirszsss RTTTT',researchThreads)
+
   const whatData = () => {
     if(filterRT){
       return researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
@@ -39,7 +39,7 @@ const RTtooltip = (toolProp: any) => {
   };
   let threadData = whatData();
 
-  console.log(threadData)
+  
   // let threadData = researchThreads.research_threads.filter(f=> f.title === compare)[0];
   let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
 
