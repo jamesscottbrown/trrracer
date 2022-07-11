@@ -850,6 +850,7 @@ useEffect(()=> {
      setNewHeight((window.innerHeight - 150));
    }
    if(groupBy){
+     setBubbleDivWidth(window.innerWidth);
      setSvgWidth((researchThreads?.research_threads.length * 200))
    }
 }, [window.innerHeight, window.innerWidth, groupBy]);
