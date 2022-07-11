@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel, calc } from '@chakra-ui/react';
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
@@ -174,24 +174,24 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [granularity, setGranularity] = useState<null|string>(null);
   const [cIndex, setcIndex] = useState<null|number>(null);
   const [selectedId, setSelectedId] = useState<null|string>(null);
+  const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-  
-    dispatch({type: 'UPDATE_TITLE', title: projectData.title});
+    // dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
       if(parsed.view) setViewType(parsed.view);
-      console.log('parsed', parsed, viewType);
+     
       setGranularity(parsed.granularity);
       setcIndex(parsed.cIndex);
 
       if(parsed.granularity === 'thread'){
         //sample for thread url 
         //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
-        console.log('viewType');
+        
         let chosenRT = researchThreads?.research_threads.filter(f => f.rt_id === parsed.id)[0];
         let threadindex = researchThreads?.research_threads.map(m => m.rt_id).indexOf(parsed.id);
         dispatch({
@@ -210,7 +210,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
       }else if(parsed.granularity === 'artifact'){
       //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
-        
         
         let selected = projectData.entries.filter(en =>{
           let fileTest = en.files.filter(f => f.artifact_uid === parsed.id);
@@ -238,7 +237,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }
     }
 
-  }, [queryString, viewType])
+  }, [queryString, viewType, groupBy])
+
+  const barWidth = useMemo(()=> {
+    let handicap = window.innerWidth > 1300 ? 150 : 0;
+    return window.innerWidth - (bubbleDivWidth - handicap);
+  }, [bubbleDivWidth])
 
   useEffect(()=> {
 
@@ -317,7 +321,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       >
         <TopBar
            viewType={viewType}
-          //  filteredActivities={filteredActivities}
            setViewType={setViewType}
            newTitle={newTitle}
            setNewTitle={setNewTitle}
@@ -339,7 +342,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            flexAmount={2}
+            // flexAmount={2}
+            bubbleDivWidth={bubbleDivWidth}
+            setBubbleDivWidth={setBubbleDivWidth}
           />
         
           {
@@ -349,8 +354,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           }
          
           {
-            (!hideByDefault) && (
-              <Box flex="1.5" h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
+            (!groupBy && !hideByDefault) && (
+              <Box w={barWidth} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView
                   setViewType={setViewType}

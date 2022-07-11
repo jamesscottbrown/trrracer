@@ -1,34 +1,36 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image } from '@chakra-ui/react';
-import { InView } from 'react-intersection-observer';
+import { InView, useInView } from 'react-intersection-observer';
 import { URL } from 'url';
 import { readFileSync } from '../fileUtil';
 import { readProjectFile, useProjectState } from './ProjectContext';
 
-
 const ImageRender = (props:any) => {
 
     const { src, onClick } = props;
-    const [{folderPath}] = useProjectState();
+    const [{folderPath, isReadOnly}] = useProjectState();
 
     const [imgData, setImgData] = useState<any>(null);
 
     let end = src.split('.').at(-1);
 
-    // useEffect(() => {
-    //   readFileSync(folderPath+src).then((img) => {
-    //     console.log('img',img);
-    //     setImgData(img)
-    //   })
-    // }, [src])
-  
     return (
-        <InView>
+        <InView onChange={(inView, entry) => {
+          console.log(inView)
+          if(isReadOnly){
+          readFileSync(src).then((img) => {
+            console.log('img', img.body);
+            setImgData(img)
+          })
+          }else{
+            setImgData(src);
+          }
+        }}>
         {({ inView, ref, entry }) => (
           <div ref={ref}>
            {
-            inView && (
-            <img src={`data:image/png;base64,${imgData}`} />
+            (inView && imgData) && (
+            <img src={src} />
             )
            }
             

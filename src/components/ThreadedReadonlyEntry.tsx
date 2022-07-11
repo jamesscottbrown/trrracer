@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import * as d3 from 'd3';
+import * as d3co from 'd3-color';
 import {
   Button,
   ListItem,
@@ -206,8 +207,7 @@ const ActivityTitleLogic = (props:any) => {
         }}
         onMouseLeave={()=> {
           let circles = d3.selectAll('circle.all-activities');
-          
-          circles.filter(f => f.title === thisEntry.title).attr('fill', color)
+          circles.filter(f => f.title === thisEntry.title).attr('fill', d3co.hsl(color).copy({l:.9}))
         }}
       >
         <span>{thisEntry.title}</span>

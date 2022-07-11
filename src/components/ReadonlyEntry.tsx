@@ -51,8 +51,6 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath, isReadOnly }, dispatch] = useProjectState();
 
-  console.log('ISREADNONLY',isReadOnly);
-
   return (
     <>
     <Box bg="#ececec" p={3}>

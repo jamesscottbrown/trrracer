@@ -33,7 +33,9 @@ const HoverTitle = (props: any) => {
         {showPopover ? (
           <Popover isOpen={showPopover} onClose={closePopover}>
             <PopoverTrigger>
-              <div>{title}</div>
+              <div
+              style={{display:'inline', marginRight:10}}
+              >{title}</div>
             </PopoverTrigger>
             <PopoverContent bg="white" color="gray">
               <PopoverArrow bg="white" />
@@ -67,7 +69,9 @@ const HoverTitle = (props: any) => {
             </PopoverContent>
           </Popover>
         ) : (
-          <div onMouseEnter={() => setShowPopover(true)}>{title}</div>
+          <div 
+          style={{display:'inline', marginRight:10}}
+          onMouseEnter={() => setShowPopover(true)}>{title}</div>
         )}
       </>
     );
@@ -77,19 +81,23 @@ const HoverTitle = (props: any) => {
 const QueryMatchComponent = (props:any) => {
     const {m, tm, j, setViewType} = props;
     const [show, setShow] = useState(false);
+
+    console.log(m, tm);
+
     return (
     // {matchArray.map((tm, j) => (
         <div style={{ marginTop: 10 }} key={`tm-${j}`}>
           <div>
           <HoverTitle
-            title={tm['file-title']}
+            title={tm['file-title'] ? tm['file-title'] : tm.title}
             entry={m.entry}
             match={tm}
             setViewType={setViewType}
           />
-          <span
-          onClick={() => show? setShow(false) : setShow(true)}
-          >{'show text'}</span>
+          <Button
+            size={'xs'}
+            onClick={() => show? setShow(false) : setShow(true)}
+          >{'show text'}</Button>
           </div>
           { show && (
           <div>

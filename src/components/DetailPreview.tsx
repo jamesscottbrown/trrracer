@@ -119,7 +119,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    console.log('google in gdoc', googleData);
+   
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 

@@ -253,8 +253,6 @@ export const readProjectFile = async (
     console.log('this is a text file', fileContents);
   }else{
 
-   console.log('folderpath in project data', `${folderPath}${fileName}`, fileType);
-
     const response = await fetch(`${folderPath}${fileName}`);
 
     if (!fileType) {

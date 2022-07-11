@@ -1,9 +1,10 @@
 import * as d3 from 'd3';
+import * as hsv from 'd3-hsv';
+import * as d3co from 'd3-color';
 import React, { useEffect, useMemo, useState } from 'react';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
-import type { EntryType } from './types';
 import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
@@ -19,12 +20,27 @@ interface BubbleProps {
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
+  bubbleDivWidth:number;
+  setBubbleDivWidth: (gb:any)=> any;
 }
 
 const RTtooltip = (toolProp: any) => {
-
+  
   const { activityData, position, researchThreads, filterRT } = toolProp;
-  let threadData = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
+  console.log('activitirszsss RTTTT',researchThreads)
+  const whatData = () => {
+    if(filterRT){
+      return researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
+    }else  if(activityData.rt_id){
+      return researchThreads.research_threads.filter(f=> f.rt_id === activityData.rt_id)[0];
+    }else{
+      return researchThreads.research_threads[0]; 
+    }
+  };
+  let threadData = whatData();
+
+  console.log(threadData)
+  // let threadData = researchThreads.research_threads.filter(f=> f.title === compare)[0];
   let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
 
   return <div
@@ -122,6 +138,33 @@ const ToolTip = (toolProp: any) => {
   </div>
 }
 
+const renderAxis = (wrap:any, yScale:any, translateY:any) => {
+
+  wrap.selectAll('*').remove();
+  wrap.attr('transform', `translate(110, ${translateY})`);
+
+  const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
+
+  const yAxisGroup = wrap
+    .append('g')
+    .attr('transform', `translate(10, 0)`)
+    .call(yAxis);
+
+  yAxisGroup.select('.domain').remove();
+  yAxisGroup
+    .selectAll('line')
+    .enter()
+    .append('line')
+    .attr('stroke', 'gray.900');
+
+  const axisLabel = yAxisGroup
+    .selectAll('text')
+    .join('text')
+    .attr('font-size', '0.55rem')
+    .attr('opacity', 0.5);
+
+}
+
 const BubbleVis = (props: BubbleProps) => {
   const {
     groupBy,
@@ -129,6 +172,8 @@ const BubbleVis = (props: BubbleProps) => {
     flexAmount,
     setDefineEvent,
     defineEvent,
+    bubbleDivWidth,
+    setBubbleDivWidth
   } = props;
 
   const [{
@@ -151,83 +196,85 @@ const BubbleVis = (props: BubbleProps) => {
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
+  const grayStart = hsv.hsv("#d3d3d3");
+  const grayLighter = {h: grayStart.h, s: .3, v: grayStart.v, opacity: 1};
+
+  const [onActivityColor, setOnActivityColor] = useState(grayLighter);
+  const [onArtifactColor, setOnArtifactColor] = useState(grayStart);
+  
   const width = 300;
   const height = newHeight//+newHeight.split('px')[0];
   const svgRef = React.useRef(null);
-
+ 
   d3.select('#tooltip').style('opacity', 0);
 
   let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [projectData.entries.length, projectData.entries.flatMap(f => f.files).length]);
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
 
+  const highlightedNodes = useMemo(()=> {
+    const ids = filteredActivities.map(m => m.activity_uid);
+    return forced.nodes.filter(f => ids.includes(f.activity_uid));
+  }, [filteredActivities.length]);
+
+  const notNodes = useMemo(()=> {
+    const ids = filteredActivities.map(m => m.activity_uid);
+    return forced.nodes.filter(f => ids.indexOf(f.activity_uid) === -1);
+  }, [filteredActivities.length]);
+
+ 
+
   useEffect(()=> {
-    if (svgRef.current) {
-       setNewHeight((window.innerHeight - 150));
-     }
-     if(groupBy){
-       setSvgWidth((600))
-     }else{
-       setSvgWidth(600);
-     }
-  }, [window.innerHeight, window.innerWidth, groupBy])
+    if(filterRT){
+      let newColor = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].color;
+      let hslColor = d3co.hsl(newColor);
+     
+      setOnActivityColor(hslColor.copy({s: .4, l: .9})); 
+      setOnArtifactColor(hslColor);
+    }else{
+      setOnActivityColor(d3co.hsl("#d3d3d3"));
+      setOnArtifactColor(d3co.hsl('gray'));
+    }
+  }, [filterRT]);
+
   useEffect(() => {
  
-const svg = d3.select(svgRef.current);
-svg.selectAll('*').remove();
+    const svg = d3.select(svgRef.current);
+    svg.selectAll('*').remove();
 
-const underWrap = svg.append('g').classed('path-wrap', true)
-underWrap.attr('transform', `translate(130, ${translateY})`);
-const wrap = svg.append('g').attr('transform', `translate(130, ${translateY})`);
+    const underWrap = svg.append('g').classed('under-wrap', true)
+    underWrap.attr('transform', `translate(110, ${translateY})`);
 
-const { yScale, margin } = forced;
-setTranslateY(margin / 2);
+    const midWrap = svg.append('g').classed('path-wrap', true)
+    midWrap.attr('transform', `translate(110, ${translateY})`);
 
-const marginTime = height * 0.25;
+    const wrap = svg.append('g').attr('transform', `translate(110, ${translateY})`);
 
-const yearMonth = dataStructureForTimeline(projectData.entries);
+    const { yScale, margin } = forced;
+    setTranslateY(margin / 2);
 
-const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
-const endIndex = getIndexOfMonth(
-  yearMonth[yearMonth.length - 1].months,
-  'last'
-);
-yearMonth[0].months = yearMonth[0].months.filter(
-  (f: any, i: number) => i > startIndex - 1
-);
+    const marginTime = height * 0.25;
+    const yearMonth = dataStructureForTimeline(projectData.entries);
 
-yearMonth[yearMonth.length - 1].months = yearMonth[
-  yearMonth.length - 1
-].months.filter((f: any, i: number) => i < endIndex);
+    const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
+    const endIndex = getIndexOfMonth(
+      yearMonth[yearMonth.length - 1].months,
+      'last'
+    );
+    yearMonth[0].months = yearMonth[0].months.filter(
+      (f: any, i: number) => i > startIndex - 1
+    );
 
-const filteredActivitiesExtent = d3.extent(
-  filteredActivities.map((m: any) => new Date(m.date))
-);
+    yearMonth[yearMonth.length - 1].months = yearMonth[
+      yearMonth.length - 1
+    ].months.filter((f: any, i: number) => i < endIndex);
 
-let checkGroup = svg.select('g.timeline-wrap');
-let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+    const filteredActivitiesExtent = d3.extent(
+      filteredActivities.map((m: any) => new Date(m.date))
+    );
 
-wrapAxisGroup.selectAll('*').remove();
-wrapAxisGroup.attr('transform', `translate(110, ${translateY})`);
-
-const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
-
-const yAxisGroup = wrapAxisGroup
-  .append('g')
-  .attr('transform', `translate(10, 0)`)
-  .call(yAxis);
-
-yAxisGroup.select('.domain').remove();
-yAxisGroup
-  .selectAll('line')
-  .enter()
-  .append('line')
-  .attr('stroke', 'gray.900');
-
-const axisLabel = yAxisGroup
-  .selectAll('text')
-  .join('text')
-  .attr('font-size', '0.55rem')
-  .attr('opacity', 0.5);
+    let checkGroup = svg.select('g.timeline-wrap');
+    let wrapAxisGroup = checkGroup.empty() ? svg.append('g').attr('class', 'timeline-wrap') : checkGroup;
+    renderAxis(wrapAxisGroup, yScale, translateY);
 
 if (!defineEvent) {
   const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
@@ -508,10 +555,8 @@ if (defineEvent) {
   bGroup.on('mouseleave', () => {
     let textTest = svg.select('text.hover-text');
     textTest.remove();
-    
   })
 }
-
 /*
 */
 const eventRectGroups = wrap
@@ -559,43 +604,60 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, underWrap, forced, selectedActivityURL, filteredActivities);
+  groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setToolPosition, setHoverData, researchThreads);
 
 } else {
 
-  let allActivityGroups = wrap
-    .selectAll('g.activity')
-    .data(forced.nodes)
+  let hiddenActivityGroups = underWrap.selectAll('g.hidden-activity')
+  .data(notNodes)
+  .join('g')
+  .attr('class', 'hidden-activity');
+
+  hiddenActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+  let hiddenBubbles = new Bubbles(
+    hiddenActivityGroups,
+    true,
+    'hidden'
+  );
+
+  hiddenBubbles.bubbles.attr('fill', d3co.hsl('#d3d3d3').copy({l:.94}))//.attr('fill-opacity', .3)
+  .attr('stroke', '#d3d3d3').attr('stroke-width', .4);
+  
+  let hiddenCircles = hiddenActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
+  hiddenCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
+  hiddenCircles.attr('fill', '#d3d3d3');
+
+  //HIGHLIGHTED ACTIVITIES
+  let highlightedActivityGroups = wrap.selectAll('g.activity')
+    .data(highlightedNodes)
     .join('g')
     .attr('class', 'activity');
 
-  allActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
-
+  highlightedActivityGroups.attr('transform', d => `translate(${d.x}, ${d.y})`);
+ 
   let activityBubbles = new Bubbles(
-    allActivityGroups,
+    highlightedActivityGroups,
     true,
     'all-activities'
   );
+
+  activityBubbles.bubbles.attr('fill', onActivityColor)//.attr('fill-opacity', .3)
+  .attr('stroke', '#d3d3d3').attr('stroke-width', .4);
   
-  activityBubbles.bubbles.attr('fill', "#d3d3d3").attr('fill-opacity', .3).attr('stroke', '#d3d3d3').attr('stroke-width', .4);
-  
-  let artifactCircles = allActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
+  let artifactCircles = highlightedActivityGroups.selectAll('circle.artifact').data(d => d.files).join('circle').classed('artifact', true);
   artifactCircles.attr('r', d => (3)).attr('cx', d => d.x).attr('cy', d => d.y);
 
- // let highlightedActivities = allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
- let highlightedActivities = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid === selectedActivityURL)
- : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).includes(ac.title));
-
-  highlightedActivities.select('.all-activities')
+  highlightedActivityGroups.select('.all-activities')
   .on('mouseover', (event, d) => {
     if(filterRT){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 2);
     }else if(filterType || filterTags.length > 0){
       d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 1);
     }else if(selectedActivityURL !== null){
-      highlightedActivities.select('.all-activities').attr('fill-opacity', 1);
-      highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
-      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      highlightedActivityGroups.select('.all-activities').attr('fill-opacity', 1);
+      highlightedActivityGroups.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+      let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact');
       highlightedCircles.attr('fill', 'white');
       
     }else{
@@ -611,8 +673,8 @@ if (groupBy) {
     d3.select(event.target).attr('stroke', 'gray').attr('stroke-width', 0);
 
     }else if(selectedActivityURL !== null){
-      highlightedActivities.select('.all-activities').attr('fill-opacity', .5);
-      let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+      highlightedActivityGroups.select('.all-activities').attr('fill-opacity', .5);
+      let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
       
     }else{
@@ -623,36 +685,29 @@ if (groupBy) {
   //THIS IS WHERE I STOPPED COPYING OVER!! EVERYTHING BELOW IS NOT COPIED
   if(filterType){
 
-    highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
-    highlightedActivities.select('.all-activities').attr('stroke-width', 0);
-    let highlightedCircles = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
+    highlightedActivityGroups.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
+    highlightedActivityGroups.select('.all-activities').attr('stroke-width', 0);
+    let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact').filter(f=> f.artifactType === filterType);
     highlightedCircles.attr('fill', 'gray').attr('fill-opacity', 1);
-    let highlightedCirclesNOT = highlightedActivities.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
+    let highlightedCirclesNOT = highlightedActivityGroups.selectAll('circle.artifact').filter(f=> f.artifactType != filterType);
     highlightedCirclesNOT.attr('fill', '#fff').attr('fill-opacity', .7);
 
   }else if(filterTags.length > 0){
 
-    highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
-    highlightedActivities.select('.all-activities').attr('stroke-width', 0);
-    let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedActivityGroups.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
+    highlightedActivityGroups.select('.all-activities').attr('stroke-width', 0);
+    let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
  
   }else if(selectedActivityURL !== null){
-    highlightedActivities.select('.all-activities').attr('fill', 'red').attr('fill-opacity', .5);
-    highlightedActivities.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
-    let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    highlightedActivityGroups.select('.all-activities').attr('fill', 'red').attr('fill-opacity', .5);
+    highlightedActivityGroups.select('.all-activities').attr('stroke-width', 1).attr('stroke', 'red');
+    let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
   }else{
-
-    let highlightedCircles = highlightedActivities.selectAll('circle.artifact');
+    let highlightedCircles = highlightedActivityGroups.selectAll('circle.artifact');
     highlightedCircles.attr('fill', 'gray');
   }
-
-  let hiddenCircles = (selectedActivityURL !== null) ? allActivityGroups.filter((ac) => ac.activity_uid !== selectedActivityURL)
-  : allActivityGroups.filter((ac) => filteredActivities.map((m:any) => m.title).indexOf(ac.title) === -1).selectAll('circle.artifact');
-
-  hiddenCircles.attr('fill', 'gray')
-  .attr('fill-opacity', .3);
 
   if(filterRT && researchThreads?.research_threads[selectedThread].evidence.length > 0){
    
@@ -660,27 +715,24 @@ if (groupBy) {
     let linkDataAfter = [];
 
     researchThreads?.research_threads[selectedThread].evidence.forEach(f => {
-      let temp = highlightedActivities.filter(ha => ha.title === f.activityTitle);
+      let temp = highlightedActivityGroups.filter(ha => ha.title === f.activityTitle);
     
     let chosenActivityData = temp.select('.all-activities').data()[0];
     
     if(f.type === 'activity'){
       temp.select('.all-activities')
-        .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        .attr('fill', onActivityColor);
       
       temp.selectAll('circle.artifact')
-        .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        .attr('fill', '#d3d3d3');
     
     }else if(f.type === 'artifact' || f.type === 'fragment'){
      
-      temp
-        .select('circle.background')
-        .attr('fill-opacity', 1);
       temp.selectAll('circle.artifact')
         .filter(art => art.title === f.artifactTitle)
-        .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        .attr('fill', onArtifactColor);
       temp.select('circle.all-activities')
-        .attr('fill', researchThreads?.research_threads[selectedThread].color);
+        .attr('fill', onActivityColor);
     }
       
     let divideDate = new Date(researchThreads?.research_threads[selectedThread].actions.filter(f => f.action === 'created')[0].when);
@@ -700,7 +752,7 @@ if (groupBy) {
 
       var pathStringSolid = lineGenerator(linkDataAfter.map(m=> m.coord));
 
-      underWrap.append('path')
+      midWrap.append('path')
       .attr('d', pathStringSolid)
       .attr('fill', 'none')
       .attr('stroke', researchThreads?.research_threads[selectedThread].color)
@@ -714,7 +766,7 @@ if (groupBy) {
       
       var pathStringDash = lineGenerator(linkDataBefore.map(m=> m.coord));
       
-      underWrap.append('path')
+      midWrap.append('path')
         .attr('d', pathStringDash)
         .attr('fill', 'none')
         .attr('stroke', researchThreads?.research_threads[selectedThread].color)
@@ -723,75 +775,88 @@ if (groupBy) {
     }
   }
 
-highlightedActivities
-    .on('mouseover', (event, d) => {
-      
-      setToolPosition([d.x, d.y])
-      setHoverData(d);
-      d3.select('#tooltip').style('opacity', 1);
+  highlightedActivityGroups
+      .on('mouseover', (event, d) => {
+        
+        setToolPosition([d.x, d.y])
+        setHoverData(d);
+        d3.select('#tooltip').style('opacity', 1);
 
-      let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
-      let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
-      labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
+        let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+        let labelG = labelGTest.empty() ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group') : labelGTest;
+        labelG.attr('transform', `translate(0, ${forced.yScale(new Date(d.date))})`)
 
-      let rect = labelG.append('rect')
-      rect.attr('width', 50)
-      .attr('height', 15)
-      .attr('fill', '#fff')
-      .attr('fill-opacity', .9);
-      rect.attr('x', -50).attr('y', -12);
+        let rect = labelG.append('rect')
+        rect.attr('width', 50)
+        .attr('height', 15)
+        .attr('fill', '#fff')
+        .attr('fill-opacity', .9);
+        rect.attr('x', -50).attr('y', -12);
 
-      let text = labelG
-      .append('text')
-      .text(new Date(d.date).toLocaleDateString('en-us', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })).style('font-size', 9)
-      .style('text-anchor', 'end')
-      .style('font-weight', 600)
+        let text = labelG
+        .append('text')
+        .text(new Date(d.date).toLocaleDateString('en-us', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })).style('font-size', 9)
+        .style('text-anchor', 'end')
+        .style('font-weight', 600)
 
-        underWrap.append('line')
-        .attr('id', 'date_line')
-        .attr('y1', d.y)
-        .attr('x2', (0-70))
-        .attr('y2', forced.yScale(new Date(d.date)))
-        .attr('x1', (+d.x))
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1);
+          midWrap.append('line')
+          .attr('id', 'date_line')
+          .attr('y1', d.y)
+          .attr('x2', (0-70))
+          .attr('y2', forced.yScale(new Date(d.date)))
+          .attr('x1', (+d.x))
+          .attr('stroke', 'black')
+          .attr('stroke-width', 1);
 
-      if(filterRT){
-        let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
-          return n[i].innerText.includes(d.title);
-        });
+        if(filterRT){
+          let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+            return n[i].innerText.includes(d.title);
+          });
 
-        if(activities.nodes().length > 0){
-          activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          if(activities.nodes().length > 0){
+            activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+          
         }
         
-      }
+      })
+      .on('mouseout', (event:any, d:any) => {
+    
+        d3.select('#tooltip').style('opacity', 0);
+        d3.select('#date_line').remove();
+        d3.select('#label-group').remove();
+    
+      }).on('click', (event:any, d:any)=> {
       
-    })
-    .on('mouseout', (event:any, d:any) => {
-  
-      d3.select('#tooltip').style('opacity', 0);
-      d3.select('#date_line').remove();
-      d3.select('#label-group').remove();
-  
-    }).on('click', (event:any, d:any)=> {
-     
-      let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
-        return d3.select(n[i]).attr('id') === d.title;
-      });
-      activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-  }
+        let activities = d3.selectAll('.list-activity').filter((f, i, n)=> {
+          return d3.select(n[i]).attr('id') === d.title;
+        });
+        activities.nodes()[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+
+    setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width)
+    setBubbleDivWidth(wrap.node().getBBox().width - 250)
 
 }, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
 
+useEffect(()=> {
+  if (svgRef.current) {
+     setNewHeight((window.innerHeight - 150));
+   }
+   if(groupBy){
+     setBubbleDivWidth(window.innerWidth);
+     setSvgWidth((researchThreads?.research_threads.length * 200))
+   }
+}, [window.innerHeight, window.innerWidth, groupBy]);
+
 return (
-<div style={{ flex: flexAmount, paddingTop:'30px' }}>
+<div style={{ flex: flexAmount, paddingTop:'30px', paddingLeft: groupBy ? 30 : 0, width: bubbleDivWidth, overflowX:'auto' }}>
   <div
     style={{width:'100%'}}
   >
@@ -809,7 +874,6 @@ return (
       )
     }
    
-
   <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
     <FormControl display="flex" alignItems="center" marginBottom={10}>
       <FormLabel
@@ -818,7 +882,7 @@ return (
         textAlign="right"
         fontSize="12px"
       >
-        Group by research threads
+        Facet by research threads
       </FormLabel>
       <Switch
         id="split-by"
@@ -830,8 +894,8 @@ return (
                 id: rt.rt_id, 
                 activities: rt.evidence.map(m => m.activityTitle), 
                 dob: rt.actions.filter(a => a.action === "created")[0].when,
-                }}))
-            : setGroupBy([]);
+              }}))
+            : setGroupBy(null);
         }}
       />
     </FormControl> 
@@ -841,12 +905,14 @@ return (
 
   <svg
     ref={svgRef}
-    width={groupBy !== null ? (researchThreads.research_threads.length * 350) : 600}
+    width={groupBy !== null ? (researchThreads.research_threads.length * 280) : 600}
     height={height}
     style={{ display: 'inline' }}
   />
   {
-    filterRT ? <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> : <ToolTip activityData={hoverData} position={toolPosition}/>
+    filterRT || groupBy ? 
+    <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> 
+    : <ToolTip activityData={hoverData} position={toolPosition}/>
   }
  
 </div>
