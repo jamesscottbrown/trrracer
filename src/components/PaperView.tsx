@@ -6,7 +6,8 @@ import * as d3 from 'd3';
 // setOptions({
 //   workerSrc: "/js/worker.pdf.js"
 // });
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
+import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 // const reactPdf = require('react-pdf/dist/esm/entry.webpack')
 // const { Document, Page } = reactPdf
 import ThreadNav from './ThreadNav';
@@ -444,19 +445,9 @@ const SmallPageNavigation = (props: any) => {
 
 const PageNavigation = (props:any) => {
 
-  const { perf, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
+  const { pageData, perf, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
   const [{researchThreads, folderPath}] = useProjectState();
-  const [pageData, setPageData] = useState<any>(null);
-  useEffect(()=> {
-
-    readFileSync(perf).then((pap)=> {
-      setPageData(pap.body);
-
-      console.log(pageData, 'pageData');
-    });
-
-  }, [folderPath]);
-
+  
   const bigRectHeight = 792;
   const bigRectWidth = 612;
   const annoSvgRef = React.useRef(null);
@@ -508,13 +499,11 @@ const PageNavigation = (props:any) => {
         height: 'auto'
       }}
     >
-      <Document file={{
-          // url: perf,
-          data: `application/pdf;base64,${pageData}`
-        }}
+      <Document 
+        file={`data:application/pdf;base64,${pageData}`}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={() => `ERRORRR ${console.error}`}
-        >
+      >
         <svg
           style={{
             position: 'absolute',
@@ -639,6 +628,18 @@ const PaperView = (props: any) => {
 
     return pageData;
   }, [numPages]);  
+
+  const [pageData, setPageData] = useState('');
+  
+  readFileSync(perf)
+      .then((res) => res.text())
+      .then((pap)=> {
+        setPageData(pap);
+      });
+
+  useEffect(() => {
+    console.log(pageData, 'pageData');
+  }, [pageData]);
   
     return (
       linkData ? 
@@ -702,7 +703,8 @@ const PaperView = (props: any) => {
               pageRectData={pageRectData}
               index={index}
             /> */}
-            <PageNavigation 
+            {pageData !== '' && (<PageNavigation
+              pageData={pageData} 
               perf={perf} 
               index={index}
               onDocumentLoadSuccess={onDocumentLoadSuccess} 
@@ -712,7 +714,8 @@ const PaperView = (props: any) => {
               nextPage={nextPage}
               pageRectData={pageRectData}
               anno={anno}
-            />
+            />)}
+
             <BubbleVisPaper  
               selectedThreadData={selectedThread}
               setTranslateY={setTranslateY}
