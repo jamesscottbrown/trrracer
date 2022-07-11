@@ -2,10 +2,10 @@ import * as d3 from 'd3';
 import { useMemo } from 'react';
 import Bubbles from "../Bubbles";
 import * as d3co from 'd3-color';
-import { useProjectState } from './ProjectContext';
 
 
-export default function groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setTool, researchThreads) {
+
+export default function groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setTool, setHoverData, researchThreads) {
       
     const groupRTDATA = groupBy;
 
@@ -156,7 +156,26 @@ export default function groupBubbles(groupBy, wrap, forced, selectedActivityURL,
         return f.activity_uid === d.activity_uid
       }else{ return f.title === d.title}
       }).attr('stroke', 'red').attr('stroke-width', '2px')
-  }).on('mouseout', (event, d) => {
+
+      //TOOLTIP
+      // const { activityData, position, researchThreads, filterRT } = toolProp;
+      setTool([d.x, d.y]);
+      setHoverData(d);
+      d3.select('#tooltip').style('opacity', 1);
+
+  }).on('mouseout', (event, d, i) => {
+    
+    //TOOLTIP
+    // const { activityData, position, researchThreads, filterRT } = toolProp;
+    console.log('ddddd', d, i);
+
+    setTool([0, 0]);
+    let ob = {...d}
+    ob.i = i;
+    setHoverData(ob);
+    d3.select('#tooltip').style('opacity', 0);
+
+
     d3.selectAll('.activity').filter(f => f.activity_uid === d.activity_uid).attr('stroke', 'gray').attr('stroke-width', .4)
     d3.selectAll('circle.hidden').filter(f => f.activity_uid === d.activity_uid).attr('stroke', 'gray').attr('stroke-width', .4)
   })

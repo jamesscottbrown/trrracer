@@ -354,7 +354,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           }
          
           {
-            (!hideByDefault) && (
+            (!groupBy && !hideByDefault) && (
               <Box w={barWidth} h={`calc(100vh - ${(fromTop + 5)}px)`} overflowY="auto">
                 <ResearchThreadTypeTags />
                 <ProjectListView

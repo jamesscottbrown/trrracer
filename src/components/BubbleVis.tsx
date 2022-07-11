@@ -25,9 +25,22 @@ interface BubbleProps {
 }
 
 const RTtooltip = (toolProp: any) => {
-
+  
   const { activityData, position, researchThreads, filterRT } = toolProp;
-  let threadData = researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
+  console.log('activitirszsss RTTTT',researchThreads)
+  const whatData = () => {
+    if(filterRT){
+      return researchThreads.research_threads.filter(f=> f.title === filterRT.title)[0];
+    }else  if(activityData.rt_id){
+      return researchThreads.research_threads.filter(f=> f.rt_id === activityData.rt_id)[0];
+    }else{
+      return researchThreads.research_threads[0]; 
+    }
+  };
+  let threadData = whatData();
+
+  console.log(threadData)
+  // let threadData = researchThreads.research_threads.filter(f=> f.title === compare)[0];
   let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
 
   return <div
@@ -542,10 +555,8 @@ if (defineEvent) {
   bGroup.on('mouseleave', () => {
     let textTest = svg.select('text.hover-text');
     textTest.remove();
-    
   })
 }
-
 /*
 */
 const eventRectGroups = wrap
@@ -593,7 +604,7 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setToolPosition, researchThreads);
+  groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setToolPosition, setHoverData, researchThreads);
 
 } else {
 
@@ -893,12 +904,12 @@ return (
 
   <svg
     ref={svgRef}
-    width={groupBy !== null ? (researchThreads.research_threads.length * 350) : 600}
+    width={groupBy !== null ? (researchThreads.research_threads.length * 280) : 600}
     height={height}
     style={{ display: 'inline' }}
   />
   {
-    filterRT ? 
+    filterRT || groupBy ? 
     <RTtooltip activityData={hoverData} position={toolPosition} filterRT={filterRT} researchThreads={researchThreads} /> 
     : <ToolTip activityData={hoverData} position={toolPosition}/>
   }
