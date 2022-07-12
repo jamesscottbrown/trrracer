@@ -439,8 +439,8 @@ const SmallPageNavigation = (props: any) => {
 
 const PageNavigation = (props:any) => {
 
-  const { pageData, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
-  const [{researchThreads, folderPath}] = useProjectState();
+  const { pageData, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, perf, index } = props;
+  const [{researchThreads, folderPath, isReadOnly}] = useProjectState();
   
   const bigRectHeight = 792;
   const bigRectWidth = 612;
@@ -458,19 +458,19 @@ const PageNavigation = (props:any) => {
 
   useEffect(()=> {
 
-  const svgAnno = d3.select(annoSvgRef.current);
-  svgAnno.selectAll('*').remove();
+    const svgAnno = d3.select(annoSvgRef.current);
+    svgAnno.selectAll('*').remove();
 
-  if (pageRectData.length > 0) {
-    const currentRectData = pageRectData.filter(
-      (f) => f.pageIndex === pageNumber
-    )[0];
+    if (pageRectData.length > 0) {
+      const currentRectData = pageRectData.filter(
+        (f) => f.pageIndex === pageNumber
+      )[0];
 
     const overlayRect = svgAnno
       .selectAll('rect.annotation_overlay')
       .data(currentRectData ? currentRectData.anno : [])
       .join('rect')
-      .classed('annotation_overlay', true);
+      .classed('annotation_overlay', true); 
 
       if (currentRectData) {
         overlayRect
@@ -501,7 +501,7 @@ const PageNavigation = (props:any) => {
       }}
     >
       <Document 
-        file={`data:application/pdf;base64,${pageData}`}
+        file={isReadOnly ? `data:application/pdf;base64,${pageData}`: {url: perf}}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={() => `ERRORRR ${console.error}`}
       >
@@ -566,7 +566,7 @@ const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   
-  const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
+  const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities, isReadOnly }, dispatch] = useProjectState();
 
   let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : linkData;
 
@@ -617,15 +617,23 @@ const PaperView = (props: any) => {
 
   const [pageData, setPageData] = useState('');
   
-  useEffect(()=> {
+ useEffect(() => {
+
+  if(isReadOnly){
+
     readFileSync(perf)
     .then((res) => res.text())
     .then((pap)=> {
       setPageData(pap);
-    });
-  }, [folderPath, perf]);
-  
+  });
+  }else{
+    setPageData(perf);
+  }
 
+ }, [folderPath, perf]);
+
+ 
+  
   useEffect(() => {
     console.log(pageData, 'pageData');
   }, [pageData]);
@@ -701,6 +709,7 @@ const PaperView = (props: any) => {
               previousPage={previousPage} 
               nextPage={nextPage}
               pageRectData={pageRectData}
+              perf={perf}
               anno={anno}
             />)}
 
