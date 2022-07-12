@@ -1,15 +1,9 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
-// import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
-// import { Document, Page, setOptions } from "react-pdf/build/entry";
-// setOptions({
-//   workerSrc: "/js/worker.pdf.js"
-// });
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-// const reactPdf = require('react-pdf/dist/esm/entry.webpack')
-// const { Document, Page } = reactPdf
+
 import ThreadNav from './ThreadNav';
 import { readProjectFile, useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
@@ -445,7 +439,7 @@ const SmallPageNavigation = (props: any) => {
 
 const PageNavigation = (props:any) => {
 
-  const { pageData, perf, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
+  const { pageData, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
   const [{researchThreads, folderPath}] = useProjectState();
   
   const bigRectHeight = 792;
@@ -571,21 +565,6 @@ const PageNavigation = (props:any) => {
 const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-
-  // useEffect(()=> {
-
-  //   let test = readFileSync(perf).then((pap)=> {
-  //     console.log('pap',pap);
-  //     console.log('pap response', pap.body);
-  //     let buff = Buffer.from(pap);
-
-      
-  //   });
-
-  // }, [folderPath]);
- 
-
-  // console.log('perf',perf)
   
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
@@ -715,7 +694,6 @@ const PaperView = (props: any) => {
             /> */}
             {pageData !== '' && (<PageNavigation
               pageData={pageData} 
-              perf={perf} 
               index={index}
               onDocumentLoadSuccess={onDocumentLoadSuccess} 
               pageNumber={pageNumber} 
