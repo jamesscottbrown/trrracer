@@ -38,7 +38,7 @@ const ActivityWrap = (props: any) => {
     fieldName: string,
     newValue: any
   ) => {
-    // console.log('UPDATE ENTRY FIELD CALLED', activityData.activity_uid, newValue);
+   
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: activityData.activity_uid });
   };
 

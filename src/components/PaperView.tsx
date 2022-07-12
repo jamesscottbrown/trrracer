@@ -1,14 +1,9 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
-// import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
-// import { Document, Page, setOptions } from "react-pdf/build/entry";
-// setOptions({
-//   workerSrc: "/js/worker.pdf.js"
-// });
-import { Document, Page } from 'react-pdf/dist/esm/entry.webpack';
-// const reactPdf = require('react-pdf/dist/esm/entry.webpack')
-// const { Document, Page } = reactPdf
+import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 import ThreadNav from './ThreadNav';
 import { readProjectFile, useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
@@ -16,7 +11,7 @@ import Bubbles from '../Bubbles';
 import { calcCircles } from '../PackMagic';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import { joinPath } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
 
 const BubbleVisPaper = (props: any) => {
   const {
@@ -26,7 +21,7 @@ const BubbleVisPaper = (props: any) => {
   } = props;
 
   const [{projectData, filteredActivities, researchThreads, selectedActivityURL, filterRT, selectedThread, filterType, filterTags}] = useProjectState();
-  console.log(filterRT);
+ 
   const {eventArray} = projectData;
 
   const svgBubbleRef = React.useRef(null);
@@ -193,8 +188,6 @@ const BubbleVisPaper = (props: any) => {
      }
    });
 
-   console.log('SSELECTED THREad', selectedThread)
-
    if(filterType){
     highlightedActivities.select('.all-activities').attr('fill', 'gray').attr('fill-opacity', .5);
     highlightedActivities.select('.all-activities').attr('stroke-width', 0);
@@ -233,7 +226,6 @@ const BubbleVisPaper = (props: any) => {
     
       let chosenActivityData = temp.select('.all-activities').data()[0];
 
-      console.log('chosen activity',chosenActivityData)
     
   //   if(f.type === 'activity'){
   //     temp.select('.all-activities')
@@ -447,16 +439,12 @@ const SmallPageNavigation = (props: any) => {
 
 const PageNavigation = (props:any) => {
 
-  const { perf, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
-  const [{researchThreads}] = useProjectState();
-
-  console.log('PERF', perf, 'pageNumber', pageNumber, 'numPages', numPages, 'nprevious', previousPage, nextPage, 'pageRectData', pageRectData, anno, index);
-
+  const { pageData, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, index } = props;
+  const [{researchThreads, folderPath}] = useProjectState();
+  
   const bigRectHeight = 792;
   const bigRectWidth = 612;
   const annoSvgRef = React.useRef(null);
-
-  console.log('anno', anno)
 
   const yScaleBig = d3
   .scaleLinear()
@@ -490,8 +478,15 @@ const PageNavigation = (props:any) => {
           .attr('height', 10)
           .attr('x', (d: any) => xScaleBig(d.position[0]))
           .attr('y', (d: any) => yScaleBig(d.position[3]))
-          .attr('fill', researchThreads.research_threads[index].color)
-          .style('fill-opacity', 0.5);
+          .attr('fill', 'red')
+          .style('fill-opacity', 0.5)
+          .attr("xlink:href", (d)=> d.url);
+
+        overlayRect.on('mouseover', (event, d)=> {
+          console.log(d);
+        }).on('click', (event, d)=> {
+          console.log(d.url)
+        })
       }
   }
 
@@ -505,12 +500,11 @@ const PageNavigation = (props:any) => {
         height: 'auto'
       }}
     >
-      <Document file={{
-          url: perf,
-        }}
+      <Document 
+        file={`data:application/pdf;base64,${pageData}`}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={() => `ERRORRR ${console.error}`}
-        >
+      >
         <svg
           style={{
             position: 'absolute',
@@ -571,17 +565,10 @@ const PageNavigation = (props:any) => {
 const PaperView = (props: any) => {
   const { folderPath, granularity, cIndex, id } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-
-  console.log('perf',perf)
-  
   
   const [{ projectData, researchThreads, selectedThread, linkData, filteredActivities }, dispatch] = useProjectState();
 
-  console.log('filterd activities', filteredActivities, granularity, cIndex, linkData)
-
   let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : linkData;
-
-  console.log('LINK DATA', passedLink);
 
   const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
  
@@ -627,6 +614,21 @@ const PaperView = (props: any) => {
 
     return pageData;
   }, [numPages]);  
+
+  const [pageData, setPageData] = useState('');
+  
+  useEffect(()=> {
+    readFileSync(perf)
+    .then((res) => res.text())
+    .then((pap)=> {
+      setPageData(pap);
+    });
+  }, [folderPath, perf]);
+  
+
+  useEffect(() => {
+    console.log(pageData, 'pageData');
+  }, [pageData]);
   
     return (
       linkData ? 
@@ -690,8 +692,8 @@ const PaperView = (props: any) => {
               pageRectData={pageRectData}
               index={index}
             /> */}
-            <PageNavigation 
-              perf={perf} 
+            {pageData !== '' && (<PageNavigation
+              pageData={pageData} 
               index={index}
               onDocumentLoadSuccess={onDocumentLoadSuccess} 
               pageNumber={pageNumber} 
@@ -700,7 +702,8 @@ const PaperView = (props: any) => {
               nextPage={nextPage}
               pageRectData={pageRectData}
               anno={anno}
-            />
+            />)}
+
             <BubbleVisPaper  
               selectedThreadData={selectedThread}
               setTranslateY={setTranslateY}

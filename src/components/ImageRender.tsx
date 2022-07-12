@@ -8,18 +8,18 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 const ImageRender = (props:any) => {
 
     const { src, onClick } = props;
-    const [{folderPath, isReadOnly}] = useProjectState();
+    const [{isReadOnly}] = useProjectState();
 
     const [imgData, setImgData] = useState<any>(null);
 
-    let end = src.split('.').at(-1);
-
     return (
         <InView onChange={(inView, entry) => {
-          console.log(inView)
-          if(isReadOnly){
-          readFileSync(src).then((img) => {
-            console.log('img', img.body);
+          
+          if(isReadOnly && inView){
+          readFileSync(src)
+          .then((res) => res.text())
+          .then((img) => {
+          
             setImgData(img)
           })
           }else{
@@ -30,7 +30,7 @@ const ImageRender = (props:any) => {
           <div ref={ref}>
            {
             (inView && imgData) && (
-            <img src={src} />
+            <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} />
             )
            }
             
@@ -40,46 +40,5 @@ const ImageRender = (props:any) => {
         
     );
 };
-
-// const ImageRenderer = ({ url, thumb, width, height }) => {
-//   const [isLoaded, setIsLoaded] = useState(false);
-//   const [isInView, setIsInView] = useState(false);
-//   const imgRef = useRef();
-//   useIntersection(imgRef, () => {
-//     setIsInView(true);
-//   });
-
-//   const handleOnLoad = () => {
-//     setIsLoaded(true);
-//   };
-//   return (
-//     <div
-//       className="image-container"
-//       ref={imgRef}
-//       style={{
-//         paddingBottom: `${(height / width) * 100}%`,
-//         width: '100%'
-//       }}
-//     >
-//       {isInView && (
-//         <>
-//           <img
-//             className={classnames('image', 'thumb', {
-//               ['isLoaded']: !!isLoaded
-//             })}
-//             src={thumb}
-//           />
-//           <img
-//             className={classnames('image', {
-//               ['isLoaded']: !!isLoaded
-//             })}
-//             src={url}
-//             onLoad={handleOnLoad}
-//           />
-//         </>
-//       )}
-//     </div>
-//   );
-// };
 
 export default ImageRender;

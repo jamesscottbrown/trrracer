@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image } from '@chakra-ui/react';
+
 import {
   GrDocumentCsv,
   GrDocumentPpt,
@@ -128,7 +128,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   }
   return (
     <ImageRender 
-      src={url(folderPath, title)}
+      src={joinPath(folderPath, title)}
       onClick={() => openFile(title, folderPath)}
     />
     // <Image
