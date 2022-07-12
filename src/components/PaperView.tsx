@@ -484,8 +484,15 @@ const PageNavigation = (props:any) => {
           .attr('height', 10)
           .attr('x', (d: any) => xScaleBig(d.position[0]))
           .attr('y', (d: any) => yScaleBig(d.position[3]))
-          .attr('fill', researchThreads.research_threads[index].color)
-          .style('fill-opacity', 0.5);
+          .attr('fill', 'red')
+          .style('fill-opacity', 0.5)
+          .attr("xlink:href", (d)=> d.url);
+
+        overlayRect.on('mouseover', (event, d)=> {
+          console.log(d);
+        }).on('click', (event, d)=> {
+          console.log(d.url)
+        })
       }
   }
 
@@ -631,11 +638,14 @@ const PaperView = (props: any) => {
 
   const [pageData, setPageData] = useState('');
   
-  readFileSync(perf)
-      .then((res) => res.text())
-      .then((pap)=> {
-        setPageData(pap);
-      });
+  useEffect(()=> {
+    readFileSync(perf)
+    .then((res) => res.text())
+    .then((pap)=> {
+      setPageData(pap);
+    });
+  }, [folderPath, perf]);
+  
 
   useEffect(() => {
     console.log(pageData, 'pageData');
