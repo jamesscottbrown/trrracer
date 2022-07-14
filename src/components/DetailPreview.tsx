@@ -14,6 +14,7 @@ import EmailRender from './EmailRender';
 import MarkableImage from './MarkableImage';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
+import ImageRender from './ImageRender';
 
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
@@ -24,11 +25,8 @@ const url = (folderPath: string, title: string) => {
 };
 
 interface DetailPreviewPropsType {
-  folderPath: string;
-  activityID: string;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
-  artifactIndex: number;
 }
 
 const TextRender = (textProps: any) => {
@@ -270,28 +268,35 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       />
     );
   }
-  if (title.endsWith('.png')) {
-    return (
-      <MarkableImage
-        activity={activity}
-        artifactIndex={artifactIndex}
-        imgPath={url(folderPath, title)}
-      />
-    );
-  }
+  // if (title.endsWith('.png')) {
+  //   return (
+  //     <MarkableImage
+  //       activity={activity}
+  //       artifactIndex={selectedArtifactIndex}
+  //       imgPath={url(folderPath, title)}
+  //     />
+  //   );
+  // }
   // imgPath, activity, artifactIndex
   return (
-    <Image
-      htmlWidth="90%"
-      htmlHeight="auto"
-      fit="contain"
+    // <Image
+    //   htmlWidth="90%"
+    //   htmlHeight="auto"
+    //   fit="contain"
+    //   src={url(folderPath, title)}
+    //   onClick={ () => {
+    //     !setFragSelected
+    //       ? openFile(title, folderPath)
+    //       : console.log(MouseEvent);
+    //   }}
+    // />
+    <ImageRender 
       src={url(folderPath, title)}
       onClick={ () => {
         !setFragSelected
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
-      }}
-    />
+      }}/>
   );
 };
 

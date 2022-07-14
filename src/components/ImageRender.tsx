@@ -8,14 +8,14 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 const ImageRender = (props:any) => {
 
     const { src, onClick } = props;
-    const [{isReadOnly}] = useProjectState();
+    const [{isReadOnly, selectedActivityURL, selectedArtifactEntry}] = useProjectState();
 
     const [imgData, setImgData] = useState<any>(null);
 
     return (
         <InView onChange={(inView, entry) => {
           
-          if(isReadOnly && inView){
+          if((isReadOnly && inView) || (isReadOnly && selectedActivityURL) || (isReadOnly && selectedArtifactEntry)){
           readFileSync(src)
           .then((res) => res.text())
           .then((img) => {

@@ -157,7 +157,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads,
-      filteredActivities,
       goBackView,
       isReadOnly
     }, dispatch 
@@ -181,8 +180,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
   useEffect(()=> {
     // dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
+    
+
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
+      console.log('PARSED??',parsed)
+
       if(parsed.view) setViewType(parsed.view);
      
       setGranularity(parsed.granularity);
@@ -202,7 +205,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }else if(parsed.granularity === 'activity'){
         //sample for activity
         // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-     
+        console.log('activityURL', parsed.id)
         dispatch({
           type: 'URL_SELECTED_ACTIVITY',
           selectedActivityURL: parsed.id,
@@ -217,8 +220,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         });
 
         let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
-
-     
+        console.log('artifact??',artifact);
         const newHop = [{
           activity: selected[0], 
           artifactUid: parsed.id,
@@ -233,7 +235,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hopArray: newHop,
         })
 
-        setViewType("detail view");
+        // setViewType("detail view");
+        setViewType(parsed.view);
+        console.log(parsed.view, parsed);
       }
     }
 

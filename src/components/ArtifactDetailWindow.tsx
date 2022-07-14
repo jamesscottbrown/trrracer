@@ -356,7 +356,7 @@ const InteractiveActivityTag = (props: any) => {
     </Box>
   );
 };
-const DetailSidebar = (props: any) => {
+export const DetailSidebar = (props: any) => {
 
   const {
     fragSelected,
@@ -394,8 +394,6 @@ const DetailSidebar = (props: any) => {
   ) => {
     dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: selectedArtifactEntry.activity_uid });
   };
-
-  
 
   return (
     <Box
@@ -468,27 +466,29 @@ const DetailSidebar = (props: any) => {
             }
         </Box>
       </Box>
-      
-      <Box>
-        {
-          selectedArtifact && (
-            <Button
-            onClick={() => {
-              let indexTest = projectData.citations.map(c => c.id).indexOf(selectedArtifact.artifact_uid);
-              let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
-              navigator.clipboard.writeText(String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}{${index}}`)
-              if(indexTest === -1){
-                let newCitations = [...projectData.citations, {"id": selectedArtifact.artifact_uid, "cIndex": index}]
-                dispatch({ type: 'ADD_CITATION', citations: newCitations});
-              }
-              
-            }}
-              >Copy this ref</Button>
-          )
-        }
-        <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
-        {selectedArtifact ? String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
-      </Box>
+      {
+        (selectedArtifact && !isReadOnly) && (
+          <Box>
+        
+              <Button
+              onClick={() => {
+                let indexTest = projectData.citations.map(c => c.id).indexOf(selectedArtifact.artifact_uid);
+                let index = indexTest > -1 ? (indexTest + 1) : (projectData.citations.length + 1);
+                navigator.clipboard.writeText(String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}{${index}}`)
+                if(indexTest === -1){
+                  let newCitations = [...projectData.citations, {"id": selectedArtifact.artifact_uid, "cIndex": index}]
+                  dispatch({ type: 'ADD_CITATION', citations: newCitations});
+                }
+                
+              }}
+                >Copy this ref</Button>
+            
+          <span style={{marginTop:10, fontSize:12, fontWeight:400, display:'block'}}>Copy to cite this artifact:</span>
+          {selectedArtifact ? String.raw`\trrracer{detail view}{artifact}{${selectedArtifact.artifact_uid}}` : "No Artifact to Cite"}
+        </Box>
+        )
+      }
+     
         
       <Box>
         <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
@@ -964,8 +964,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 selectedArtifact ?
                 <DetailPreview
                   setFragSelected={setFragSelected}
-                  activityID={selectedArtifactEntry.activity_uid}
-                  artifactIndex={selectedArtifactIndex}
                   openFile={openFile}
                 /> : <div>{'No Artifact for this activity'}</div>
               }

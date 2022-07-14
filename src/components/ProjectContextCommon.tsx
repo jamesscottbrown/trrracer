@@ -444,9 +444,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
       case 'URL_SELECTED_ACTIVITY': {
-        const { activity_id } = action;
-      
-        return {...state, selectedActivityURL: activity_id }
+        console.log('is this working in URL_SELECTED_ACTIVITY', action);
+        return {...state, selectedActivityURL: action.selectedActivityURL }
       }
       case 'BOOKMARK_FRAGMENT':{
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];

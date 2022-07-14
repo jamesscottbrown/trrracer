@@ -188,6 +188,10 @@ const BubbleVis = (props: BubbleProps) => {
     filteredActivities,
    
   }, dispatch] = useProjectState();
+
+  const usedEntries = useMemo(()=> {
+    return selectedActivityURL ? projectData.entries.filter(f => f.activity_uid === selectedActivityURL) : filteredActivities;
+  }, [selectedActivityURL, projectData.entries.length, filteredActivities.length])
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState(1000);
@@ -212,16 +216,14 @@ const BubbleVis = (props: BubbleProps) => {
   const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [packedCircData, width, height]);
 
   const highlightedNodes = useMemo(()=> {
-    const ids = filteredActivities.map(m => m.activity_uid);
+    const ids = usedEntries.map(m => m.activity_uid);
     return forced.nodes.filter(f => ids.includes(f.activity_uid));
-  }, [filteredActivities.length]);
+  }, [usedEntries.length]);
 
   const notNodes = useMemo(()=> {
-    const ids = filteredActivities.map(m => m.activity_uid);
+    const ids = usedEntries.map(m => m.activity_uid);
     return forced.nodes.filter(f => ids.indexOf(f.activity_uid) === -1);
-  }, [filteredActivities.length]);
-
- 
+  }, [usedEntries.length]);
 
   useEffect(()=> {
     if(filterRT){
@@ -250,7 +252,12 @@ const BubbleVis = (props: BubbleProps) => {
     const wrap = svg.append('g').attr('transform', `translate(110, ${translateY})`);
 
     const { yScale, margin } = forced;
-    setTranslateY(margin / 2);
+    if(selectedActivityURL){
+      setTranslateY(margin / 2);
+    }else{
+      setTranslateY(40);
+    }
+   
 
     const marginTime = height * 0.25;
     const yearMonth = dataStructureForTimeline(projectData.entries);
@@ -269,7 +276,7 @@ const BubbleVis = (props: BubbleProps) => {
     ].months.filter((f: any, i: number) => i < endIndex);
 
     const filteredActivitiesExtent = d3.extent(
-      filteredActivities.map((m: any) => new Date(m.date))
+      usedEntries.map((m: any) => new Date(m.date))
     );
 
     let checkGroup = svg.select('g.timeline-wrap');
@@ -428,20 +435,23 @@ if (!defineEvent) {
     .attr('y2', 0)
     .attr('stroke', 'black');
 
-  const resetTest = svg.select('text.reset');
+  if(!selectedActivityURL){
+    const resetTest = svg.select('text.reset');
 
-  const reset = resetTest.empty()
-    ?wrapAxisGroup.append('text').classed('reset', true)
-    : resetTest;
+    const reset = resetTest.empty()
+      ?wrapAxisGroup.append('text').classed('reset', true)
+      : resetTest;
+  
+    reset
+      .text('Reset Time')
+      .attr('transform', 'translate(-25, -30)')
+      .style('font-size', '12px')
+      .style('cursor', 'pointer')
+      .on('click', () => {
+        dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [null, null] });
+      });
+  }
 
-  reset
-    .text('Reset Time')
-    .attr('transform', 'translate(-25, -30)')
-    .style('font-size', '12px')
-    .style('cursor', 'pointer')
-    .on('click', () => {
-      dispatch({ type: 'UPDATE_FILTER_DATES', filterDates: [null, null] });
-    });
 }
 
 if (defineEvent) {
@@ -604,7 +614,7 @@ if (eventArray.length > 0) {
 
 if (groupBy) {
 
-  groupBubbles(groupBy, wrap, forced, selectedActivityURL, filteredActivities, setToolPosition, setHoverData, researchThreads);
+  groupBubbles(groupBy, wrap, forced, selectedActivityURL, usedEntries, setToolPosition, setHoverData, researchThreads);
 
 } else {
 
@@ -843,7 +853,7 @@ if (groupBy) {
     setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width)
     setBubbleDivWidth(wrap.node().getBBox().width - 250)
 
-}, [selectedActivityURL, filteredActivities, groupBy, eventArray, filterType, defineEvent]);
+}, [selectedActivityURL, usedEntries, groupBy, eventArray, filterType, defineEvent]);
 
 useEffect(()=> {
   if (svgRef.current) {
@@ -873,34 +883,36 @@ return (
         </Button>
       )
     }
-   
-  <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
-    <FormControl display="flex" alignItems="center" marginBottom={10}>
-      <FormLabel
-        htmlFor="split-by"
-        mb="0"
-        textAlign="right"
-        fontSize="12px"
-      >
-        Facet by research threads
-      </FormLabel>
-      <Switch
-        id="split-by"
-        onChange={(event) => {
-          event.target.checked
-            ? setGroupBy(researchThreads?.research_threads.map(rt => {
-              return { title: rt.title, 
-                color: rt.color, 
-                id: rt.rt_id, 
-                activities: rt.evidence.map(m => m.activityTitle), 
-                dob: rt.actions.filter(a => a.action === "created")[0].when,
-              }}))
-            : setGroupBy(null);
-        }}
-      />
-    </FormControl> 
-  </Box>
-       
+   {
+    !selectedActivityURL && (
+      <Box marginLeft="3px" padding="3px" height="40px" display={'inline-block'}>
+          <FormControl display="flex" alignItems="center" marginBottom={10}>
+            <FormLabel
+              htmlFor="split-by"
+              mb="0"
+              textAlign="right"
+              fontSize="12px"
+            >
+              Facet by research threads
+            </FormLabel>
+            <Switch
+              id="split-by"
+              onChange={(event) => {
+                event.target.checked
+                  ? setGroupBy(researchThreads?.research_threads.map(rt => {
+                    return { title: rt.title, 
+                      color: rt.color, 
+                      id: rt.rt_id, 
+                      activities: rt.evidence.map(m => m.activityTitle), 
+                      dob: rt.actions.filter(a => a.action === "created")[0].when,
+                    }}))
+                  : setGroupBy(null);
+              }}
+            />
+          </FormControl> 
+      </Box>
+    )
+   }
   </div>
 
   <svg
