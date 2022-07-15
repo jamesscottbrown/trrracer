@@ -268,35 +268,17 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       />
     );
   }
-  // if (title.endsWith('.png')) {
-  //   return (
-  //     <MarkableImage
-  //       activity={activity}
-  //       artifactIndex={selectedArtifactIndex}
-  //       imgPath={url(folderPath, title)}
-  //     />
-  //   );
-  // }
-  // imgPath, activity, artifactIndex
+ 
   return (
-    // <Image
-    //   htmlWidth="90%"
-    //   htmlHeight="auto"
-    //   fit="contain"
-    //   src={url(folderPath, title)}
-    //   onClick={ () => {
-    //     !setFragSelected
-    //       ? openFile(title, folderPath)
-    //       : console.log(MouseEvent);
-    //   }}
-    // />
     <ImageRender 
       src={url(folderPath, title)}
       onClick={ () => {
         !setFragSelected
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
-      }}/>
+      }}
+      autoLoad={true}
+      />
   );
 };
 

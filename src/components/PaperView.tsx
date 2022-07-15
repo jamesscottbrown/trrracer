@@ -1,18 +1,12 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Box, Flex } from '@chakra-ui/react';
+import { background, Box, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import * as hsv from 'd3-hsv';
 import * as d3co from 'd3-color';
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-import ThreadNav from './ThreadNav';
 import { readProjectFile, useProjectState } from './ProjectContext';
-import ForceMagic from '../ForceMagic';
-import Bubbles from '../Bubbles';
-import { calcCircles } from '../PackMagic';
-import { dataStructureForTimeline } from './VerticalAxis';
-import { getIndexOfMonth } from '../timeHelperFunctions';
 import { joinPath, readFileSync } from '../fileUtil';
 import BubbleVis from './BubbleVis';
 import { DetailSidebar } from './ArtifactDetailWindow';
@@ -28,7 +22,7 @@ const SmallPageNavigation = (props: any) => {
   let selectedThreadData = researchThreads?.research_threads[index];
 
   const svgSmallPagesRef = React.useRef(null);
-  const smallRectHeight = 70;
+  const smallRectHeight = 60;
 
   const yScaleSmall = d3
   .scaleLinear()
@@ -59,45 +53,68 @@ const SmallPageNavigation = (props: any) => {
       .join('rect')
       .classed('pag', true);
   
-  rect.attr('width', 50).attr('height', smallRectHeight);
+  rect.attr('width', 45).attr('height', smallRectHeight);
   
-    rect.attr('fill', '#C5C5C5');
-    rect.attr('fill-opacity', 0.5);
+  rect.attr('fill', '#C5C5C5');
+  rect.attr('fill-opacity', 0.5);
+
+  const links = pages
+  .selectAll('a.anno-link')
+  .data((d: any) => d.anno)
+  .join('a')
+  .classed('anno-link', true);
+
+  links.attr("xlink:href", (d)=> d.url);
+
+  const annog = links
+    .selectAll('rect.anno')
+    .data((d: any) => [d])
+    .join('rect')
+    .classed('anno', true);
   
-    const annog = pages
-      .selectAll('rect.anno')
-      .data((d: any) => d.anno)
-      .join('rect')
-      .classed('anno', true);
-  
-    annog.attr('width', 50);
-    annog.attr('height', 5);
-  
-    annog.attr('y', (d) => {
-      return yScaleSmall(d.position['1']);
-    });
-  
-    annog.attr('fill', 'gray');
-    annog.attr('opacity', 0.4);
-  
-    const selectedPage = pages.filter((f: any) => f.pageIndex === pageNumber);
-  
-    selectedPage
-      .selectAll('rect.pag')
-      .attr('fill', selectedThreadData.color)
-      .attr('fill-opacity', 1);
-  
-    selectedPage
-      .selectAll('rect.anno')
-      .attr('fill', '#FFF')
-      .attr('opacity', 0.4);
+  annog.attr('width', 45);
+  annog.attr('height', 5);
+
+  annog.attr('y', (d) => {
+    return yScaleSmall(d.position['1']);
+  });
+
+  annog.attr('fill', 'gray');
+  annog.attr('opacity', 0.4);
+  annog.style('cursor', 'pointer')
+
+  annog.on('mouseover', (event, d)=>{
+    console.log(event, d);
+    let tool = d3.select('#tooltip')
+    tool.style('opacity', 1).style('position', 'absolute').style('top', event.screenY).style('right', event.clientX);
+    tool.html(`<div><div
+    style="font-weight:800"
+    >Citing Text:</div><span style="font-style: italic; font-size: 11px">${d.text[0]}</span></div>`)
+    
+  }).on('mouseout', (event, d)=> {
+    let tool = d3.select('#tooltip')
+    tool.style('opacity', 0)
+  })
+
+  const selectedPage = pages.filter((f: any) => f.pageIndex === pageNumber);
+
+  selectedPage
+    .selectAll('rect.pag')
+    .attr('fill', selectedThreadData.color)
+    .attr('fill-opacity', 1);
+
+  selectedPage
+    .selectAll('rect.anno')
+    .attr('fill', '#FFF')
+    .attr('opacity', 0.4);
 
   return (
     <div
       style={{
         height:"100%",
         position:'absolute',
-        right:650
+        top:'90px',
+        right:'650px'
       }}
     >
       <svg 
@@ -258,18 +275,18 @@ const PaperView = (props: any) => {
   
   const [{ projectData, researchThreads, selectedThread, selectedArtifactIndex, selectedActivityURL, selectedArtifactEntry, linkData, filteredActivities, isReadOnly }, dispatch] = useProjectState();
 
-  console.log('selectedURL', selectedActivityURL);
+  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : [];
 
-  // let selectedActivity = useMemo(()=> {
-  //   return selectedActivityURL ? projectData.entries.filter(f => f.activity_uid === selectedActivityURL)[0] : selectedArtifactEntry;
-  // }, [selectedActivityURL, selectedArtifactEntry]);
-
-  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : linkData;
+  console.log('passedLink',passedLink)
   const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
   const index = selectedThread || 0;
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
+  const [pageNumber, setPageNumber] = useState(passedLink.length > 0 ? passedLink[0].page : 1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
+
+  useEffect(()=> {
+    passedLink.length > 0 ? setPageNumber(passedLink[0].page) : setPageNumber(1)
+  }, [passedLink]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -320,63 +337,34 @@ const PaperView = (props: any) => {
     return (
       linkData ? 
       <div style={{position:"relative", top:70, width:'100%', height: 'calc(100% - 70px)'}}>
-        <div
-          style={{display:"block", margin:20, }}
-        >   
-        {
-          passedLink.length > 0 && (
-            <div style={{float:'left', width:'calc(100vw - 700px)'}}>
-              <div
-                style={{display:'inline', paddingRight:10}}
-              >
-                <div
-                style={{display: 'inline', fontWeight:800, fontSize:20}}
-                >{`T${passedLink[0].cIndex}-`}</div>
-                <div
-                style={{display: 'inline', fontWeight:800, fontSize:20}}
-                >{granularity}</div>
-              </div>
-              {
-                passedLink[0].text.map((t, j) => (
-                  <div
-                    style={{display:'block', fontSize:'12px', lineHeight:'11px', fontStyle:'italic'}}
-                  >{
-                    `"${t}"`
-                  }</div>
-                ))
-              }
-            </div>
-        )
-        }
-        </div>
+   
         <div style={{float:'left', width:'calc(100vw - 700px)', display:"block", margin:20}}>
-          <div style={{display:'inline-block', height:'100vh', float:'left'}}>
+          <div style={{display:'inline-block', height:'100vh', float:'left', width:'250px'}}>
             <DetailComponent />
           </div>
           <div style={{height: '100%', float:'left'}}>
             {
               selectedArtifactEntry ? 
               <div>
-                <DetailBubble widthSvg={300} filterType={null}/>
                 <DetailPreview 
                  openFile={null} 
                 />
                 </div> :
                 <BubbleVis 
-                groupBy={null}
-                setGroupBy={null}
-                flexAmount={null}
-                setDefineEvent={null}
-                defineEvent={null}
-                bubbleDivWidth={bubbleDivWidth}
-                setBubbleDivWidth={setBubbleDivWidth} />
-            }
-             <SmallPageNavigation 
-              anno={anno} 
-              pageNumber={pageNumber} 
-              pageRectData={pageRectData}
-              index={index}
-            />
+                  groupBy={null}
+                  setGroupBy={null}
+                  flexAmount={null}
+                  setDefineEvent={null}
+                  defineEvent={null}
+                  bubbleDivWidth={bubbleDivWidth}
+                  setBubbleDivWidth={setBubbleDivWidth} />
+              }
+              {/* <SmallPageNavigation 
+                anno={anno} 
+                pageNumber={pageNumber} 
+                pageRectData={pageRectData}
+                index={index}
+              /> */}
           </div>
           <Box flex={4} h="calc(100vh - 80px)" 
             overflowY="auto" marginTop={5}>
@@ -393,15 +381,6 @@ const PaperView = (props: any) => {
               perf={perf}
               anno={anno}
             />)}
-
-            {/* <BubbleVis 
-              groupBy={null}
-              setGroupBy={null}
-              flexAmount={null}
-              setDefineEvent={null}
-              defineEvent={null}
-              bubbleDivWidth={bubbleDivWidth}
-              setBubbleDivWidth={setBubbleDivWidth} /> */}
           </Box>
         </div>
       </div> : <div
