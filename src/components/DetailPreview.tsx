@@ -11,7 +11,6 @@ import {
 import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
-import MarkableImage from './MarkableImage';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
@@ -166,7 +165,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
 
- 
     const [textFile, setText] = useState<any>([]);
 
     useEffect(()=> {

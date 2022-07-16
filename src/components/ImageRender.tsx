@@ -9,7 +9,6 @@ const ImageRender = (props:any) => {
 
     const { src, onClick, autoLoad } = props;
     const [{isReadOnly, selectedActivityURL, selectedArtifactEntry}] = useProjectState();
-
     const [imgData, setImgData] = useState<any>(null);
 
     useEffect(()=> {
@@ -18,7 +17,6 @@ const ImageRender = (props:any) => {
           readFileSync(src)
           .then((res) => res.text())
           .then((img) => {
-            console.log('image in logic',img)
             setImgData(img);
           })
         }else{
@@ -30,7 +28,7 @@ const ImageRender = (props:any) => {
     return (
         autoLoad ? <React.Fragment>{
           imgData && (<div
-          style={{display:'inline-block', marginLeft:'20px', float:'right', width:'700px', height:'auto'}}
+          style={{display:'inline-block', marginLeft:'20px', width:'750px', height:'auto'}}
           ><img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} /></div>)
           }</React.Fragment>  :
           <InView onChange={(inView, entry) => {
