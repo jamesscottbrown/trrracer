@@ -158,7 +158,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView,
-      isReadOnly
+      isReadOnly,
+      viewParams 
     }, dispatch 
   ] = useProjectState();
 
@@ -170,26 +171,34 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
-  const [granularity, setGranularity] = useState<null|string>(null);
-  const [cIndex, setcIndex] = useState<null|number>(null);
+  // const [granularity, setGranularity] = useState<null|string>(null);
+  // const [cIndex, setcIndex] = useState<null|number>(null);
   const [selectedId, setSelectedId] = useState<null|string>(null);
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-    // dispatch({type: 'UPDATE_TITLE', title: projectData.title});
-
-    
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
       console.log('PARSED??',parsed)
 
-      if(parsed.view) setViewType(parsed.view);
+      if(parsed.view){ 
+        setViewType(parsed.view);
+        dispatch({
+          type: 'VIEW_PARAMS',
+          viewParams: {view: parsed.view, granularity: parsed.granularity, id: parsed.id, cIndex: parsed.cIndex},
+        });
+      }else{
+        dispatch({
+          type: 'VIEW_PARAMS',
+          viewParams: null,
+        });
+      }
      
-      setGranularity(parsed.granularity);
-      setcIndex(parsed.cIndex);
+      // setGranularity(parsed.granularity);
+      // setcIndex(parsed.cIndex);
 
       if(parsed.granularity === 'thread'){
         //sample for thread url 
@@ -220,7 +229,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         });
 
         let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
-        console.log('artifact??',artifact);
+       
         const newHop = [{
           activity: selected[0], 
           artifactUid: parsed.id,
@@ -235,9 +244,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hopArray: newHop,
         })
 
-        // setViewType("detail view");
-        setViewType(parsed.view);
-        console.log(parsed.view, parsed);
+      
       }
     }
 
@@ -394,7 +401,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash} 
         />
-        <PaperView folderPath={folderPath} granularity={granularity} cIndex={cIndex}/>
+        <PaperView folderPath={folderPath} />
       </div>
     );
   }

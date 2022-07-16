@@ -254,6 +254,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         linkData:link_data,
         hopArray: [],
         goBackView: 'overview',
+        viewParams: null,
         artifactTypes: artifact_types,
         selectedActivityURL: null,
         threadTypeFilterArray: [
@@ -383,6 +384,11 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return {...state, filteredActivities: newFiltered }
       }
 
+      case 'VIEW_PARAMS': {
+        console.log(action.viewParams);
+        return {...state, viewParams: action.viewParams }
+      }
+
       case 'SET_FILTERED_ACTIVITIES': {
        
         return {...state, filteredActivities: action.filteredActivities }
@@ -424,8 +430,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         setTimeout(() => {
           return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
         }, 1000)
-      
-        
       }
       case 'UPDATE_GOOG_IDS' : {
        
