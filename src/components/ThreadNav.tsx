@@ -258,7 +258,7 @@ const EditableThread = (threadProps: any) => {
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
-  const [{ projectData, researchThreads, selectedThread, isReadOnly }, dispatch] = useProjectState();
+  const [{ projectData, researchThreads, selectedThread, isReadOnly, viewParams }, dispatch] = useProjectState();
   
   const checkIfSelectThread = (i: any) => {
     if (selectedThread != null) {
@@ -314,7 +314,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
           <Box style={{ 
             marginTop: 10, 
             marginBottom: 10,
-            
             }}>
             {filteredThreads.map((rt: any, i: number) => (
               <React.Fragment
@@ -333,7 +332,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       borderRadius: 6
                     }}
                 >
-                { (checkIfSelectThread(i) && selectedThread !== null) && (
+                {( (checkIfSelectThread(i) && selectedThread !== null) || (viewParams && viewParams.view != 'paper')) && (
                   <div
                     title="Unselect Thread"
                     style={{
