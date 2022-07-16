@@ -41,10 +41,24 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setAddEntrySplash,
   } = ProjectPropValues;
 
-  const [{ projectData, filteredActivities, isReadOnly }, dispatch] = useProjectState();
+  const [{ projectData, filteredActivities, selectedActivityURL, selectedArtifactEntry, selectedArtifactIndex, filterRT, isReadOnly, viewParams }, dispatch] = useProjectState();
 
   //USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
+  let getName = () => {
+    if(viewParams.granularity === 'thread'){
+      console.log('thread',filterRT)
+      return filterRT.title
+    }else if(viewParams.granularity === 'artifact'){
+      console.log('ARTIFACT', selectedArtifactEntry.files[selectedArtifactIndex])
+      return selectedArtifactEntry.files[selectedArtifactIndex].title;
+    }else if(viewParams.granularity === 'activity'){
+      console.log('activity', selectedActivityURL);
+      return projectData.entries.filter(f => f.activity_uid === viewParams.id)[0].title;
+    }else{
+      return "Unknown";
+    }
+  }
 
   return (
     <Box
@@ -88,13 +102,24 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         <div style={{ marginLeft: '20px', marginRight:'20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
-        
-        <QueryBar
-          artifactData={null}
-          setViewType={setViewType}
-          filteredActivities={filteredActivities}
-        />
+        {
+          (!viewParams || (viewParams && viewParams.view != 'paper')) && (
+            <QueryBar
+            artifactData={null}
+            setViewType={setViewType}
+            filteredActivities={filteredActivities}
+          />
+          )
+        }
 
+        {
+          (viewParams) && (
+            <div
+            style={{fontWeight: 600, fontSize: 22, marginLeft:'200px', marginRight:'100px', float:'right'}}
+            >Cited {viewParams.granularity}: {getName()}</div>
+          )
+        }
+        
         {(viewType === 'activity view' ||
                   viewType === 'timeline' ||
                   viewType === 'overview') && (
