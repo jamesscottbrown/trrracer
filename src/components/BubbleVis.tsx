@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import * as hsv from 'd3-hsv';
 import * as d3co from 'd3-color';
 import React, { useEffect, useMemo, useState } from 'react';
 import ForceMagic from '../ForceMagic';
@@ -200,8 +199,8 @@ const BubbleVis = (props: BubbleProps) => {
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
-  const grayStart = hsv.hsv("#d3d3d3");
-  const grayLighter = {h: grayStart.h, s: .3, v: grayStart.v, opacity: 1};
+  const grayStart = d3co.hsl("#d3d3d3");
+  const grayLighter = {h: grayStart.h, s: .3, l: grayStart.l, opacity: 1};
 
   const [onActivityColor, setOnActivityColor] = useState(grayLighter);
   const [onArtifactColor, setOnArtifactColor] = useState(grayStart);
@@ -224,7 +223,7 @@ const BubbleVis = (props: BubbleProps) => {
     const ids = usedEntries.map(m => m.activity_uid);
     return forced.nodes.filter(f => ids.indexOf(f.activity_uid) === -1);
   }, [usedEntries.length]);
-
+  console.log('FILTERRT', filterRT);
   useEffect(()=> {
     if(filterRT){
       let newColor = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].color;
@@ -258,7 +257,6 @@ const BubbleVis = (props: BubbleProps) => {
       setTranslateY(40);
     }
    
-
     const marginTime = height * 0.25;
     const yearMonth = dataStructureForTimeline(projectData.entries);
 

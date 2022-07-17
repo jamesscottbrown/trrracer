@@ -5,14 +5,14 @@ import * as hsv from 'd3-hsv';
 import * as d3co from 'd3-color';
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
 import { readProjectFile, useProjectState } from './ProjectContext';
 import { joinPath, readFileSync } from '../fileUtil';
 import BubbleVis from './BubbleVis';
-import { DetailSidebar } from './ArtifactDetailWindow';
 import DetailBubble from './DetailSvg';
 import DetailPreview from './DetailPreview';
 import ProjectListView from './ProjectListView';
+import ArtifactDetailSidebar from './ArtifactDetailSidebar';
+import ThreadNav from './ThreadNav';
 
 const SmallPageNavigation = (props: any) => {
 
@@ -253,40 +253,158 @@ const PageNavigation = (props:any) => {
 }
 
 const DetailComponent = (props:any) => {
-  const [{selectedArtifactEntry}] = useProjectState();
-  if(selectedArtifactEntry){
+  const [{selectedActivityURL, viewParams, researchThreads, projectData}] = useProjectState();
+
+  let associatedThreads = useMemo(()=> {
+    console.log('IN DETAIL COMP',researchThreads?.research_threads, projectData.entries.filter(f => f.activity_uid === viewParams.id)[0]);
+    if(viewParams.granularity === 'activity'){
+      let proj = projectData.entries.filter(f => f.activity_uid === viewParams.id)[0];
+      let temp = researchThreads?.research_threads.filter(rt => {
+        let test = rt.evidence.map(m => m.activityTitle);
+        console.log('TEST', test);
+        return test.includes(proj.title);
+      });
+      return []
+    }else{
+      return []
+    }
+  }, [viewParams.granularity]);
+
+  if(viewParams.granularity === 'artifact'){
     return (  
       <div>
-        <DetailSidebar />
+        <ArtifactDetailSidebar />
       </div>
     )
   }
   return  (
-    <div>
-      <ProjectListView />
+    
+    <div style={{height:'100vh'}}>
+      {
+        viewParams.granularity === 'thread' && (
+          <ThreadNav viewType={'paper'}/>
+        )
+      }
+      <div style={{overflow:'auto', height:'100vh'}}>
+        <ProjectListView />
+      </div>
+      
+      {
+        (associatedThreads.length > 0 && viewParams.granularity === 'activity') ? 
+        <Box 
+          flex="2" 
+          overflowY="auto" 
+          boxShadow={"3px 3px 8px #A3AAAF"}
+          border={"1px solid #A3AAAF"}
+          borderRadius={6}
+          p={5}
+        >
+          ACTIVITY HAS A THRED
+        </Box> :
+         <Box 
+         flex="2" 
+         overflowY="auto" 
+         boxShadow={"3px 3px 8px #A3AAAF"}
+         border={"1px solid #A3AAAF"}
+         borderRadius={6}
+         p={5}
+         >Activity is not associated with any threads</Box>
+      }
     </div>
   )
   
 }
 
+const CitationVis = (props: any) => {
+
+  const { anno, pageNumber, index, pageRectData } = props;
+  const [{linkData, viewParams}] = useProjectState();
+  const svgRef = React.useRef(null);
+
+  let wrapTest = d3.select(svgRef.current).select('.wrap');
+  let wrap = wrapTest.empty() ? d3.select(svgRef.current).append('g').classed('wrap', true) : wrapTest;
+
+  console.log(viewParams.cIndex, linkData);
+
+  let yScale = d3.scaleLinear().range([0, (linkData[0]['pdf-dim'][3]-20)]).domain([0, linkData.length]);
+
+  let citationGroups = wrap.selectAll('g.citation').data(linkData).join('g').classed('citation', true);
+  citationGroups.attr('transform', (d, i) => `translate(5, ${yScale(i)})`);
+
+  let citationA = citationGroups
+  .selectAll('a.anno-link')
+  .data((d: any) => [d])
+  .join('a')
+  .classed('anno-link', true);
+
+  citationA.attr("xlink:href", (d)=> d.url);
+
+  let citationSquares = citationA.selectAll('rect').data(d => [d]).join('rect').attr('width', 40).attr('height', 18);
+  citationSquares.attr('fill', '#d3d3d3');
+  citationSquares.filter(f => f.cIndex === viewParams.cIndex).attr('fill', 'red');
+  
+
+  citationGroups.on('mouseover', (event, d)=>{
+    console.log(event, d);
+    let tool = d3.select('#tooltip');
+
+    console.log('tooltip', tool);
+    tool.style('opacity', 1).style('position', 'absolute').style('top', 200).style('right', 200);
+    tool.html(`<div><div
+    style="font-weight:800"
+    >Citing Text:</div><span style="font-style: italic; font-size: 11px">${d.text[0]}</span></div>`)
+    
+  }).on('mouseout', (event, d)=> {
+    let tool = d3.select('#tooltip')
+    tool.style('opacity', 0)
+  })
+
+  return (
+    <div style={{position:'absolute', right:'650px', top:'90px'}}>
+      <svg 
+      style={{
+        height:"800px",
+        width:"50px",
+      }}
+      ref={svgRef}/>
+    </div>
+  )
+}
+
 const PaperView = (props: any) => {
-  const { folderPath, granularity, cIndex, id } = props;
+  const { folderPath } = props;
   const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   
-  const [{ projectData, researchThreads, selectedThread, selectedArtifactIndex, selectedActivityURL, selectedArtifactEntry, linkData, filteredActivities, isReadOnly }, dispatch] = useProjectState();
+  const [{ 
+    selectedThread, 
+    linkData, 
+    isReadOnly,
+    viewParams
+  }, dispatch] = useProjectState();
 
-  let passedLink = linkData ? linkData.filter(f=> f.cIndex === cIndex) : [];
-
-  console.log('passedLink',passedLink)
+  let passedLink = linkData ? linkData.filter(f=> f.cIndex === viewParams.cIndex) : [];
   const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
   const index = selectedThread || 0;
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(passedLink.length > 0 ? passedLink[0].page : 1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
+  const [pageData, setPageData] = useState('');
+  const [htmlData, setHtmlData] = useState('');
 
-  useEffect(()=> {
-    passedLink.length > 0 ? setPageNumber(passedLink[0].page) : setPageNumber(1)
-  }, [passedLink]);
+  // console.log('in paper view',viewParams);
+  // if(isReadOnly){
+  //   readFileSync('2020_trevo.html')
+  //   .then((res) => res.text())
+  //   .then((pap)=> {
+  //     console.log('html!!!', pap);
+  //     setHtmlData(pap);
+  // });
+  // }
+  
+  // useEffect(()=> {
+  //   passedLink.length > 0 ? setPageNumber(passedLink[0].page) : setPageNumber(1)
+
+  // }, [passedLink]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -320,8 +438,7 @@ const PaperView = (props: any) => {
     return pageData;
   }, [numPages]);  
 
-  const [pageData, setPageData] = useState('');
-  
+
  useEffect(() => {
     if(isReadOnly){
       readFileSync(perf)
@@ -337,14 +454,19 @@ const PaperView = (props: any) => {
     return (
       linkData ? 
       <div style={{position:"relative", top:70, width:'100%', height: 'calc(100% - 70px)'}}>
-   
+        {/* <div style={{float:'left', width:'800px', border:'1px solid gray'}}>
+        {htmlData != '' ? 
+        <div style={{width:'95%', overflowY:'auto'}} dangerouslySetInnerHTML={{__html: htmlData}}></div> 
+        : <div>{"NO PAPER LOADED"}</div>}
+        </div> */}
+        
         <div style={{float:'left', width:'calc(100vw - 700px)', display:"block", margin:20}}>
-          <div style={{display:'inline-block', height:'100vh', float:'left', width:'250px'}}>
+          <div style={{display:'inline-block', height:'100vh', float:'left', width:'350px'}}>
             <DetailComponent />
           </div>
           <div style={{height: '100%', float:'left'}}>
             {
-              selectedArtifactEntry ? 
+              (viewParams && viewParams.granularity === 'artifact') ? 
               <div>
                 <DetailPreview 
                  openFile={null} 
@@ -365,6 +487,11 @@ const PaperView = (props: any) => {
                 pageRectData={pageRectData}
                 index={index}
               /> */}
+              <CitationVis  
+                anno={anno} 
+                pageNumber={pageNumber} 
+                pageRectData={pageRectData}
+                index={index}/>
           </div>
           <Box flex={4} h="calc(100vh - 80px)" 
             overflowY="auto" marginTop={5}>

@@ -126,8 +126,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       return (
         <Box style={{ 
-          overflowY: 'scroll', 
-          height: '100%', 
+          overflow: 'scroll', 
+          height: 'calc(100vh - 150px)', 
+          width:'700px',
           display: 'inline', 
           boxShadow:"3px 3px 8px #A3AAAF",
           border:"1px solid #A3AAAF",
@@ -135,7 +136,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           padding:10,
           }}>
           <div
-            style={{ height: '100%', overflow: 'auto' }}
+            style={{ height: '100%', width:'700px', overflow: 'auto' }}
             id={'gdoc'}
           >
             {gContent.map((m: any, i: number) => (
