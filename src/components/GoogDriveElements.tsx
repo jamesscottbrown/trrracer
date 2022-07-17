@@ -62,7 +62,7 @@ const GoogDriveSpans = (googProps: any) => {
   const [spanColor, setSpanColor] = useState(false);
   const [bookmarkExist, setBookmarkExist] = useState(false);
 
-  const temp = comments ? comments.filter((f: any) =>
+  const temp = (comments && comments.length > 0) ? comments.filter((f: any) =>
     (googEl.textRun && googEl.textRun.content.includes(f.quotedFileContent.value))
   ) : []; 
   

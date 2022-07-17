@@ -14,6 +14,13 @@ import EmailRender from './EmailRender';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
+import { getDriveFiles } from '../googleUtil';
+let googleCred: any;
+const isElectron = process.env.NODE_ENV === 'development';
+
+if(isElectron){
+  googleCred = require('../../assets/google_cred_desktop_app.json');
+}
 
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
@@ -116,9 +123,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
+
+    console.log('is this reaching in gdoc', googleData, Object.keys(googleData).indexOf(artifact.fileId));
    
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
+
+      console.log(googD);
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
@@ -152,7 +163,50 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </div>
         </Box>
       );
-    }
+    }else{
+      getDriveFiles(folderPath, googleCred).then((googOb) => {
+             console.log('GOOGLE OB',googOb)
+        dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+        // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+        let chosen = googOb.goog_doc_data[artifact.fileId];
+
+        const gContent = chosen ? chosen.body.content.filter((f: any) => f.startIndex) : [];
+
+        let comments = artifact.comments ? artifact.comments.comments : [];
+
+        return (
+          chosen ? <Box style={{ 
+            overflow: 'scroll', 
+            height: 'calc(100vh - 150px)', 
+            width:'700px',
+            display: 'inline', 
+            boxShadow:"3px 3px 8px #A3AAAF",
+            border:"1px solid #A3AAAF",
+            borderRadius:6,
+            padding:10,
+            }}>
+            <div
+              style={{ height: '100%', width:'700px', overflow: 'auto' }}
+              id={'gdoc'}
+            >
+              {gContent.map((m: any, i: number) => (
+                <GoogDriveParagraph
+                  key={`par-${i}`}
+                  parData={m}
+                  index={i}
+                  comments={comments}
+                  setFragSelected={setFragSelected}
+                  artifactBookmarks={artifact.bookmarks}
+                />
+              ))}
+            </div>
+          </Box>
+          : <div>Oops could not load google doc</div>
+        );
+
+      });
+    } 
   }
 
   if (title.endsWith('.gsheet')) {
