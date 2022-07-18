@@ -288,7 +288,6 @@ const DetailComponent = (props:any) => {
       <div style={{overflow:'auto', height:'100vh'}}>
         <ProjectListView />
       </div>
-      
       {
         (associatedThreads.length > 0 && viewParams.granularity === 'activity') ? 
         <Box 
@@ -346,16 +345,28 @@ const CitationVis = (props: any) => {
 
   citationGroups.on('mouseover', (event, d)=>{
     console.log(event, d);
-    let tool = d3.select('#tooltip');
+    let toolTest = d3.select('#tooltip-cite');
+    let tool = toolTest.empty() ? d3.select('body').append('div').attr('id', 'tooltip-cite') : toolTest;
 
-    console.log('tooltip', tool);
-    tool.style('opacity', 1).style('position', 'absolute').style('top', 200).style('right', 200);
+    tool.style('opacity', 1)
+    .style('position', 'absolute')
+    .style('top', '200px')
+    .style('right', '200px')
+    .style('min-width', '100px')
+    .style('min-height', '50px')
+    .style('padding', '10px')
+    .style('background-color', '#fff')
+    .style('border', '2px solid gray')
+    .style('border-radius', 10)
+    .style('pointer-events', 'none')
+    .style('z-index', 6000)
+
     tool.html(`<div><div
     style="font-weight:800"
     >Citing Text:</div><span style="font-style: italic; font-size: 11px">${d.text[0]}</span></div>`)
     
   }).on('mouseout', (event, d)=> {
-    let tool = d3.select('#tooltip')
+    let tool = d3.select('#tooltip-cite')
     tool.style('opacity', 0)
   })
 
@@ -386,10 +397,11 @@ const PaperView = (props: any) => {
   const anno = linkData ? d3.groups(linkData, (d) => d.page): null;
   const index = selectedThread || 0;
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(passedLink.length > 0 ? passedLink[0].page : 1); // setting 1 to show fisrt page
+  const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
   const [pageData, setPageData] = useState('');
   const [htmlData, setHtmlData] = useState('');
+  const [beenClicked, setBeenClicked] = useState(false);
 
   // console.log('in paper view',viewParams);
   // if(isReadOnly){
@@ -401,10 +413,11 @@ const PaperView = (props: any) => {
   // });
   // }
   
-  // useEffect(()=> {
-  //   passedLink.length > 0 ? setPageNumber(passedLink[0].page) : setPageNumber(1)
+  useEffect(()=> {
 
-  // }, [passedLink]);
+    if(passedLink.length > 0 && !beenClicked) setPageNumber(passedLink[0].page);
+
+  }, [passedLink]);
 
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -412,6 +425,7 @@ const PaperView = (props: any) => {
   }
 
   function changePage(offset: any) {
+    setBeenClicked(true);
     setPageNumber((prevPageNumber) => prevPageNumber + offset);
   }
 
