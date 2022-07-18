@@ -13,6 +13,10 @@ import DetailPreview from './DetailPreview';
 import ProjectListView from './ProjectListView';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import ThreadNav from './ThreadNav';
+import { FaFonticons, FaPuzzlePiece, FaChartPie, FaFontAwesome } from 'react-icons/fa';
+import { GiPuzzle } from 'react-icons/gi';
+import { IconAward, IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
+const queryString = require('query-string');
 
 const SmallPageNavigation = (props: any) => {
 
@@ -314,70 +318,133 @@ const DetailComponent = (props:any) => {
   
 }
 
-const CitationVis = (props: any) => {
+const CitationIcon = (props:any) => {
+  const {link, yPos, setPosition, setHTML, index, total, rectWidth} = props;
 
+  let moveBack = rectWidth - 5;
+
+  const calcPos = (i:number)=> {
+    let xMove = i < 9 ? (i * 22) : ((i - 9) * 22);
+    let x = moveBack - xMove;
+    console.log('INDEX:', i, " ", "X: ", x);
+    let y = i < 9 ? 0 : 22;
+    return `translate(${x},${y})`
+  }
+
+  return (
+    <g
+    onMouseOver={(event) => {
+      setPosition([200, event.clientY - 50])
+      setHTML(`<div>${link.text[0]}<div>`);
+      d3.select('#tooltip-cite').style('opacity', 1);
+    }}
+    onMouseOut={()=> {
+      d3.select('#tooltip-cite').style('opacity', 0);
+      setPosition([0,0]);
+    }}
+    transform={calcPos(index)}
+    ><a href={link.url}>
+      <WhichFA url={link.url} index={index} />
+    </a></g>
+  )
+}
+
+const WhichFA = (props:any) => {
+  const {url, index} = props;
+  let param = queryString.parse(url)
+
+  if(param.granularity === "thread"){
+    return <g>
+      {/* <circle r={10} cx={0} cy={0} fill="#d3d3d3"/> */}
+      <IconChartDots3 
+        size={20} // set custom `width` and `height`
+        color={param.cIndex === index ? 'red' : 'gray'}
+        />
+    </g>
+    
+  }if(param.granularity === "activity"){
+    return <g>
+      <IconCircles
+      size={20}
+      color={param.cIndex === index ? 'red' : 'gray'}
+      /></g>
+  }
+  return <g transform={"translate(2, 2)"}>
+    <IconCircle
+    size={13}
+    color={param.cIndex === index ? 'red' : 'gray'}
+    /></g>
+}
+
+const CitationVis = (props: any) => {
   const { anno, pageNumber, index, pageRectData } = props;
   const [{linkData, viewParams}] = useProjectState();
   const svgRef = React.useRef(null);
+  const [position, setPosition] = useState([0,0]);
+  const [html, setHTML] = useState('<div>This is a start</div>')
+  const iconSize = 20;
+  const rectHeight = (792/10) - 10;
+  const maxAnno = d3.max(pageRectData.map(m => m.anno.length))
 
-  let wrapTest = d3.select(svgRef.current).select('.wrap');
-  let wrap = wrapTest.empty() ? d3.select(svgRef.current).append('g').classed('wrap', true) : wrapTest;
-
-  console.log(viewParams.cIndex, linkData);
-
-  let yScale = d3.scaleLinear().range([0, (linkData[0]['pdf-dim'][3]-20)]).domain([0, linkData.length]);
-
-  let citationGroups = wrap.selectAll('g.citation').data(linkData).join('g').classed('citation', true);
-  citationGroups.attr('transform', (d, i) => `translate(5, ${yScale(i)})`);
-
-  let citationA = citationGroups
-  .selectAll('a.anno-link')
-  .data((d: any) => [d])
-  .join('a')
-  .classed('anno-link', true);
-
-  citationA.attr("xlink:href", (d)=> d.url);
-
-  let citationSquares = citationA.selectAll('rect').data(d => [d]).join('rect').attr('width', 40).attr('height', 18);
-  citationSquares.attr('fill', '#d3d3d3');
-  citationSquares.filter(f => f.cIndex === viewParams.cIndex).attr('fill', 'red');
+  // let yScale = d3.scaleLinear().range([0, (linkData[0]['pdf-dim'][3]-20)]).domain([0, linkData.length]);
   
-
-  citationGroups.on('mouseover', (event, d)=>{
-    console.log(event, d);
-    let toolTest = d3.select('#tooltip-cite');
-    let tool = toolTest.empty() ? d3.select('body').append('div').attr('id', 'tooltip-cite') : toolTest;
-
-    tool.style('opacity', 1)
-    .style('position', 'absolute')
-    .style('top', '200px')
-    .style('right', '200px')
-    .style('min-width', '100px')
-    .style('min-height', '50px')
-    .style('padding', '10px')
-    .style('background-color', '#fff')
-    .style('border', '2px solid gray')
-    .style('border-radius', 10)
-    .style('pointer-events', 'none')
-    .style('z-index', 6000)
-
-    tool.html(`<div><div
-    style="font-weight:800"
-    >Citing Text:</div><span style="font-style: italic; font-size: 11px">${d.text[0]}</span></div>`)
-    
-  }).on('mouseout', (event, d)=> {
-    let tool = d3.select('#tooltip-cite')
-    tool.style('opacity', 0)
-  })
-
   return (
     <div style={{position:'absolute', right:'650px', top:'90px'}}>
+      <div
+        id={'tooltip-cite'}
+        style={{
+          position:'absolute',
+          left: position[0],
+          top: position[1] - 50,
+          textAlign: 'center',
+          width:450,
+          minHeight:50,
+          padding:10,
+          backgroundColor: '#fff',
+          border: '2px solid gray',
+          borderRadius: 10,
+          pointerEvents:'none',
+          zIndex: 6000,
+          opacity: 0
+        }}
+        dangerouslySetInnerHTML={{__html: html}}
+      ></div>
       <svg 
       style={{
         height:"800px",
-        width:"50px",
+        width: `${(maxAnno/2) * (iconSize + 2)}px`,
       }}
-      ref={svgRef}/>
+      ref={svgRef}>
+        {
+          pageRectData.map((prd, i)=> (
+            <g transform={`translate(${((maxAnno / 2) * iconSize) - ((prd.anno.length) * (iconSize + 2) - 5)}, ${(rectHeight * i) + 2})`}>
+              <rect 
+                height={rectHeight} 
+                width={(prd.anno.length) * (iconSize + 2)} 
+                fill={(i + 1) === pageNumber ? '#d3d3d3' : "#fff"} 
+                fillOpacity={.5}
+              />
+              <g>
+              {
+                prd.anno.map((link, j)=> (
+                  <CitationIcon 
+                    link={link} 
+                    index={j} 
+                    setPosition={setPosition} 
+                    setHTML={setHTML} 
+                    granularity={viewParams.granularity}
+                    rectH={rectHeight}
+                    total={prd.anno.length}
+                    rectWidth={(prd.anno.length) * (iconSize + 2)}
+                  />
+                ))
+              }
+              </g>
+            </g>
+            
+          ))
+        }
+      </svg>
     </div>
   )
 }
@@ -452,8 +519,7 @@ const PaperView = (props: any) => {
     return pageData;
   }, [numPages]);  
 
-
- useEffect(() => {
+  useEffect(() => {
     if(isReadOnly){
       readFileSync(perf)
       .then((res) => res.text())
@@ -463,7 +529,7 @@ const PaperView = (props: any) => {
     }else{
       setPageData(perf);
     }
-  }, [folderPath, perf]);
+    }, [folderPath, perf]);
   
     return (
       linkData ? 
@@ -495,21 +561,14 @@ const PaperView = (props: any) => {
                   bubbleDivWidth={bubbleDivWidth}
                   setBubbleDivWidth={setBubbleDivWidth} />
               }
-              {/* <SmallPageNavigation 
-                anno={anno} 
-                pageNumber={pageNumber} 
-                pageRectData={pageRectData}
-                index={index}
-              /> */}
-              <CitationVis  
-                anno={anno} 
-                pageNumber={pageNumber} 
-                pageRectData={pageRectData}
-                index={index}/>
+            <CitationVis  
+              anno={anno} 
+              pageNumber={pageNumber} 
+              pageRectData={pageRectData}
+              index={index}/>
           </div>
           <Box flex={4} h="calc(100vh - 80px)" 
             overflowY="auto" marginTop={5}>
-           
             {pageData !== '' && (<PageNavigation
               pageData={pageData} 
               index={index}
