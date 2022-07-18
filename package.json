@@ -242,6 +242,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@getstation/electron-google-oauth2": "^2.1.0",
+    "@tabler/icons": "^1.76.0",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "d3": "^7.0.1",
