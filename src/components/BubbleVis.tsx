@@ -38,7 +38,6 @@ const RTtooltip = (toolProp: any) => {
   };
   let threadData = whatData();
 
-  
   // let threadData = researchThreads.research_threads.filter(f=> f.title === compare)[0];
   let evidence = threadData.evidence.filter(e => e.activityTitle === activityData.title);
 
@@ -185,7 +184,7 @@ const BubbleVis = (props: BubbleProps) => {
     isReadOnly, 
     selectedActivityURL,
     filteredActivities,
-   
+    viewParams
   }, dispatch] = useProjectState();
 
   const usedEntries = useMemo(()=> {
@@ -194,7 +193,7 @@ const BubbleVis = (props: BubbleProps) => {
   
   const {eventArray} = projectData;
   const [newHeight, setNewHeight] = useState(1000);
-  const [svgWidth, setSvgWidth] = useState(600);
+  const [svgWidth, setSvgWidth] = useState(500);
   const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
@@ -206,6 +205,7 @@ const BubbleVis = (props: BubbleProps) => {
   const [onArtifactColor, setOnArtifactColor] = useState(grayStart);
   
   const width = 300;
+  const translateXforWraps = 90;
   const height = newHeight//+newHeight.split('px')[0];
   const svgRef = React.useRef(null);
  
@@ -223,19 +223,23 @@ const BubbleVis = (props: BubbleProps) => {
     const ids = usedEntries.map(m => m.activity_uid);
     return forced.nodes.filter(f => ids.indexOf(f.activity_uid) === -1);
   }, [usedEntries.length]);
-  console.log('FILTERRT', filterRT);
+
   useEffect(()=> {
     if(filterRT){
       let newColor = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].color;
       let hslColor = d3co.hsl(newColor);
+
+      console.log('HSL color', hslColor);
      
       setOnActivityColor(hslColor.copy({s: .4, l: .9})); 
       setOnArtifactColor(hslColor);
+
+      console.log(onArtifactColor);
     }else{
       setOnActivityColor(d3co.hsl("#d3d3d3"));
       setOnArtifactColor(d3co.hsl('gray'));
     }
-  }, [filterRT]);
+  }, [filterRT, highlightedNodes]);
 
   useEffect(() => {
  
@@ -243,12 +247,12 @@ const BubbleVis = (props: BubbleProps) => {
     svg.selectAll('*').remove();
 
     const underWrap = svg.append('g').classed('under-wrap', true)
-    underWrap.attr('transform', `translate(110, ${translateY})`);
+    underWrap.attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
     const midWrap = svg.append('g').classed('path-wrap', true)
-    midWrap.attr('transform', `translate(110, ${translateY})`);
+    midWrap.attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
-    const wrap = svg.append('g').attr('transform', `translate(110, ${translateY})`);
+    const wrap = svg.append('g').attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
     const { yScale, margin } = forced;
     if(selectedActivityURL){
@@ -851,7 +855,7 @@ if (groupBy) {
     setSvgWidth(wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width)
     setBubbleDivWidth(wrap.node().getBBox().width - 250)
 
-}, [selectedActivityURL, usedEntries, groupBy, eventArray, filterType, defineEvent]);
+}, [selectedActivityURL, usedEntries, groupBy, eventArray, filterType, defineEvent, viewParams]);
 
 useEffect(()=> {
   if (svgRef.current) {
