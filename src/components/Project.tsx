@@ -243,20 +243,17 @@ const Project = (ProjectPropValues: ProjectProps) => {
           selectedArtifactIndex : selected.length > 0 ? artifact : null,
           hopArray: newHop,
         })
-
-      
       }
     }
 
-  }, [queryString, viewType, groupBy])
+  }, [queryString, viewType, groupBy, window.history])
 
   const barWidth = useMemo(()=> {
-    let handicap = window.innerWidth > 1300 ? 150 : 0;
-    return window.innerWidth - (bubbleDivWidth - handicap);
-  }, [bubbleDivWidth])
+    let handicap = (window.innerWidth > 1300 && barWidth > 0) ? 150 : 0;
+    return bubbleDivWidth < 0 ? (window.innerWidth - 700) : (window.innerWidth - (bubbleDivWidth - handicap));
+  }, [bubbleDivWidth, window.innerWidth])
 
   useEffect(()=> {
-
     dispatch({type:'FILTER_DATA'});
 
   }, [ 

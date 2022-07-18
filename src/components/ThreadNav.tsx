@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Badge, Box, Button, Divider, Editable, EditableInput, EditablePreview, FormControl, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Select, Tag, Textarea } from '@chakra-ui/react';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
@@ -271,15 +271,29 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   };
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-  const [threadName, setName] = React.useState(null);
-  const [description, setDescription] = React.useState(null);
-  const [editMode, setEditMode] = React.useState<null|number>(null);
+  const [threadName, setName] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [editMode, setEditMode] = useState<null|number>(null);
+  const [hasCancel, sethasCancel] = useState(true);
 
-  const filteredThreads = researchThreads?.research_threads.filter(f => {
-   
-    let test = f.actions.map(m => m.action);
-    return test.indexOf("merge") === -1;
-  });
+  const filteredThreads = useMemo(() => {
+    if(viewParams && viewParams.view === 'paper'){
+      return researchThreads?.research_threads.filter((f, i) => i === selectedThread);
+    }else{
+      return researchThreads?.research_threads.filter(f => {
+        let test = f.actions.map(m => m.action);
+        return test.indexOf("merge") === -1;
+      });
+    }
+  }, [researchThreads?.research_threads, viewParams]);
+
+  useEffect(()=> {
+    if(viewParams && viewParams.view === 'paper'){
+      sethasCancel(false);
+    }else{
+      sethasCancel(true);
+    }
+  }, [viewParams]);
 
   const handleNameChange = (e: any) => {
     const inputValue = e.target.value;
@@ -292,7 +306,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   const headerStyle = { fontSize: '19px', fontWeight: 600, cursor: 'pointer' };
 
   const associatedTags = filteredThreads.map((rt, i) => {
-
     let tags = rt.evidence.flatMap(fm => {
       let match = projectData.entries.filter(f => f.title === fm.activityTitle)[0].tags;
       return match});
@@ -333,6 +346,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     }}
                 >
                 {( (checkIfSelectThread(i) && selectedThread !== null) || (viewParams && viewParams.view != 'paper')) && (
+                   
                   <div
                     title="Unselect Thread"
                     style={{
@@ -348,6 +362,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         selectedThread: null,
                       })}
                   ><MdCancel size={30} /></div>
+
                 )}
                 <div style={{
                   display: isReadOnly ? 'block' : 'inline'
