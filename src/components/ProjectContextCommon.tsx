@@ -437,7 +437,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           (d: EntryType, i: number) => {
 
             let files = d.files.map((f:any, j:number)=> {
-              f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+              
+              if(action.googFileIds && !f.title.includes('.txt')){
+                console.log('F', f)
+                f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+              }
+             
               return f;
             });
             return d;
