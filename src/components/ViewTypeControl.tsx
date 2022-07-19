@@ -11,8 +11,6 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
   const { viewType, setViewType } = props;
   const [{isReadOnly}, dispatch] = useProjectState();
 
-  console.log('history',window.history);
-
   return (
     <>
       <FormControl>

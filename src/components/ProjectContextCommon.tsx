@@ -386,6 +386,9 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       case 'VIEW_PARAMS': {
         console.log(action.viewParams);
+        if(action.viewParams === null){
+          return {...state, viewParams: action.viewParams, selectedActivityURL: null }
+        }
         return {...state, viewParams: action.viewParams }
       }
 
