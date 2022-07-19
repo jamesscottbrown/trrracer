@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { background, Box, Flex } from '@chakra-ui/react';
+import { background, Box, calc, Flex } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import * as hsv from 'd3-hsv';
 import * as d3co from 'd3-color';
@@ -13,129 +13,39 @@ import DetailPreview from './DetailPreview';
 import ProjectListView from './ProjectListView';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import ThreadNav from './ThreadNav';
-import { FaFonticons, FaPuzzlePiece, FaChartPie, FaFontAwesome } from 'react-icons/fa';
-import { GiPuzzle } from 'react-icons/gi';
-import { IconAward, IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
+import {  IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
 const queryString = require('query-string');
 
-const SmallPageNavigation = (props: any) => {
+const getName = (parsed:any, activities:any, researchThreads:any) => {
+  if(parsed.granularity === 'thread'){
+    return researchThreads?.research_threads.filter(f=> f.rt_id === parsed.id)[0].title;
+  }else if(parsed.granularity === 'activity'){
 
-  const { anno, pageNumber, index, pageRectData } = props;
-  const [{researchThreads}] = useProjectState();
+    return activities.filter(f => f.activity_uid === parsed.id)[0].title;
 
-  let selectedThreadData = researchThreads?.research_threads[index];
-
-  const svgSmallPagesRef = React.useRef(null);
-  const smallRectHeight = 60;
-
-  const yScaleSmall = d3
-  .scaleLinear()
-  .domain([0, anno[0][1][0]['pdf-dim'][3]])
-  .range([smallRectHeight, 0]);
-
-  const groupTest = d3.select(svgSmallPagesRef.current).select('.text-group');
-  
-  const group = groupTest.empty()
-      ? d3.select(svgSmallPagesRef.current).append('g').classed('text-group', true)
-      : groupTest;
-  
-  group.attr('transform', 'translate(5, 100)');
-  
-  const pages = group
-      .selectAll('g.pages')
-      .data(pageRectData)
-      .join('g')
-      .classed('pages', true);
-    pages.attr(
-      'transform',
-      (d, i) => `translate(0, ${i * (smallRectHeight + 5)})`
-    );
-  
-  const rect = pages
-      .selectAll('rect.pag')
-      .data((d: any) => [d])
-      .join('rect')
-      .classed('pag', true);
-  
-  rect.attr('width', 45).attr('height', smallRectHeight);
-  
-  rect.attr('fill', '#C5C5C5');
-  rect.attr('fill-opacity', 0.5);
-
-  const links = pages
-  .selectAll('a.anno-link')
-  .data((d: any) => d.anno)
-  .join('a')
-  .classed('anno-link', true);
-
-  links.attr("xlink:href", (d)=> d.url);
-
-  const annog = links
-    .selectAll('rect.anno')
-    .data((d: any) => [d])
-    .join('rect')
-    .classed('anno', true);
-  
-  annog.attr('width', 45);
-  annog.attr('height', 5);
-
-  annog.attr('y', (d) => {
-    return yScaleSmall(d.position['1']);
-  });
-
-  annog.attr('fill', 'gray');
-  annog.attr('opacity', 0.4);
-  annog.style('cursor', 'pointer')
-
-  annog.on('mouseover', (event, d)=>{
-    console.log(event, d);
-    let tool = d3.select('#tooltip')
-    tool.style('opacity', 1).style('position', 'absolute').style('top', event.screenY).style('right', event.clientX);
-    tool.html(`<div><div
-    style="font-weight:800"
-    >Citing Text:</div><span style="font-style: italic; font-size: 11px">${d.text[0]}</span></div>`)
-    
-  }).on('mouseout', (event, d)=> {
-    let tool = d3.select('#tooltip')
-    tool.style('opacity', 0)
-  })
-
-  const selectedPage = pages.filter((f: any) => f.pageIndex === pageNumber);
-
-  selectedPage
-    .selectAll('rect.pag')
-    .attr('fill', selectedThreadData.color)
-    .attr('fill-opacity', 1);
-
-  selectedPage
-    .selectAll('rect.anno')
-    .attr('fill', '#FFF')
-    .attr('opacity', 0.4);
-
-  return (
-    <div
-      style={{
-        height:"100%",
-        position:'absolute',
-        top:'90px',
-        right:'650px'
-      }}
-    >
-      <svg 
-        ref={svgSmallPagesRef} 
-        style={{
-          height:"100%",
-          width:"70px",
-        }}
-      />
-    </div>
-  )
+  }else if(parsed.granularity === 'artifact'){
+    let temp = activities.filter(act => act.files.map(f => f.artifact_uid).includes(parsed.id));
+ 
+    let file = temp[0].files.filter(f => f.artifact_uid)[0];
+    return file.title;
+  }
 }
 
 const PageNavigation = (props:any) => {
 
-  const { pageData, pageNumber, numPages, pageRectData, anno, onDocumentLoadSuccess, previousPage, nextPage, perf, index } = props;
-  const [{researchThreads, folderPath, isReadOnly}] = useProjectState();
+  const { pageData, 
+    pageNumber, 
+    numPages, 
+    pageRectData, 
+    anno, 
+    onDocumentLoadSuccess, 
+    previousPage, 
+    nextPage, perf, 
+    index,
+    setToolHtml,
+    setPosition,
+  } = props;
+  const [{projectData, researchThreads, folderPath, isReadOnly}] = useProjectState();
   
   const bigRectHeight = 792;
   const bigRectWidth = 612;
@@ -179,7 +89,22 @@ const PageNavigation = (props:any) => {
           .style('cursor', 'pointer')
           
         overlayRect.on('mouseover', (event, d)=> {
-          console.log(d);
+
+          let parsed = queryString.parse(d.url)
+          
+          setPosition([600, event.clientY])
+          setToolHtml(`<div>
+          <span
+          style="font-weight:800"
+          >Cited ${parsed.granularity}: ${getName(parsed, projectData.entries, researchThreads)}</span><br />
+          <span
+          style="font-style:italic; font-size: 11px"; line-height:1
+          >"${d.text[0]}"</span><div>`)
+          d3.select('#tooltip-cite').style('opacity', 1);
+        }).on('mouseout', (event, d)=> {
+          
+          d3.select('#tooltip-cite').style('opacity', 0);
+          setPosition([0, 0]);
         })
       }
   }
@@ -319,14 +244,15 @@ const DetailComponent = (props:any) => {
 }
 
 const CitationIcon = (props:any) => {
-  const {link, yPos, setPosition, setHTML, index, total, rectWidth} = props;
+  const {link, setPosition, setHTML, index, rectWidth} = props;
+  const [{projectData, researchThreads}] = useProjectState()
 
-  let moveBack = rectWidth - 5;
+  let moveBack = rectWidth - 20;
+  const parsed = queryString.parse(link.url);
 
   const calcPos = (i:number)=> {
     let xMove = i < 9 ? (i * 22) : ((i - 9) * 22);
     let x = moveBack - xMove;
-    console.log('INDEX:', i, " ", "X: ", x);
     let y = i < 9 ? 0 : 22;
     return `translate(${x},${y})`
   }
@@ -335,7 +261,13 @@ const CitationIcon = (props:any) => {
     <g
     onMouseOver={(event) => {
       setPosition([200, event.clientY - 50])
-      setHTML(`<div>${link.text[0]}<div>`);
+      setHTML(`<div>
+      <span
+      style="font-weight:800"
+      >Cited ${parsed.granularity}: ${getName(parsed, projectData.entries, researchThreads)}</span><br />
+      <span
+      style="font-style:italic; font-size: 11px"; line-height:1
+      >"${link.text[0]}"</span><div>`);
       d3.select('#tooltip-cite').style('opacity', 1);
     }}
     onMouseOut={()=> {
@@ -344,58 +276,69 @@ const CitationIcon = (props:any) => {
     }}
     transform={calcPos(index)}
     ><a href={link.url}>
-      <WhichFA url={link.url} index={index} />
+      <WhichFA link={link} index={index} />
     </a></g>
   )
 }
 
 const WhichFA = (props:any) => {
-  const {url, index} = props;
-  let param = queryString.parse(url)
+  const {link, index} = props;
+  const [{viewParams}] = useProjectState();
+
+  let param = queryString.parse(link.url)
 
   if(param.granularity === "thread"){
     return <g>
-      {/* <circle r={10} cx={0} cy={0} fill="#d3d3d3"/> */}
+      <circle r={10} cx={10} cy={10} fill={+viewParams.cIndex === (+param.cIndex) ? "#ff2626" : "#d3d3d3"}/>
       <IconChartDots3 
-        size={20} // set custom `width` and `height`
-        color={param.cIndex === index ? 'red' : 'gray'}
+        size={20} 
+        color={+viewParams.cIndex === (+param.cIndex) ? '#ffffff' : 'gray'}
         />
     </g>
     
   }if(param.granularity === "activity"){
     return <g>
+      <circle r={10} cx={10} cy={10} fill={+viewParams.cIndex === (+param.cIndex) ? "#ff2626" : "#d3d3d3"}/>
       <IconCircles
       size={20}
-      color={param.cIndex === index ? 'red' : 'gray'}
+      color={+viewParams.cIndex === (+param.cIndex) ? '#ffffff' : 'gray'}
       /></g>
   }
   return <g transform={"translate(2, 2)"}>
-    <IconCircle
+    <circle r={8} cx={10} cy={10} fill={+viewParams.cIndex === (+param.cIndex) ? "#ff2626" : "#d3d3d3"}/>
+    <g transform={"translate(4, 4)"}><IconCircle
     size={13}
-    color={param.cIndex === index ? 'red' : 'gray'}
+    color={+viewParams.cIndex === (+param.cIndex) ? '#ffffff' : 'gray'}
     /></g>
+    </g>
 }
 
 const CitationVis = (props: any) => {
-  const { anno, pageNumber, index, pageRectData } = props;
+  const { anno, pageNumber, index, pageRectData, setPosition, setToolHtml } = props;
   const [{linkData, viewParams}] = useProjectState();
   const svgRef = React.useRef(null);
-  const [position, setPosition] = useState([0,0]);
-  const [html, setHTML] = useState('<div>This is a start</div>')
+  // const [position, setPosition] = useState([0,0]);
+  // const [html, setHTML] = useState('<div>This is a start</div>')
   const iconSize = 20;
   const rectHeight = (792/10) - 10;
   const maxAnno = d3.max(pageRectData.map(m => m.anno.length))
 
-  // let yScale = d3.scaleLinear().range([0, (linkData[0]['pdf-dim'][3]-20)]).domain([0, linkData.length]);
-  
+  const calWidth = (dataLen: any) => {
+    if(dataLen > 8){
+      return (8 * (iconSize + 3)) 
+    }else{
+      return (dataLen * (iconSize + 3)) 
+    }
+  }
+
   return (
     <div style={{position:'absolute', right:'650px', top:'90px'}}>
-      <div
+      {/* <div
         id={'tooltip-cite'}
         style={{
           position:'absolute',
           left: position[0],
-          top: position[1] - 50,
+          top: position[1] - 150,
           textAlign: 'center',
           width:450,
           minHeight:50,
@@ -408,34 +351,34 @@ const CitationVis = (props: any) => {
           opacity: 0
         }}
         dangerouslySetInnerHTML={{__html: html}}
-      ></div>
+      ></div> */}
       <svg 
       style={{
         height:"800px",
-        width: `${(maxAnno/2) * (iconSize + 2)}px`,
+        width: `${calWidth(maxAnno)}px`,
       }}
       ref={svgRef}>
         {
           pageRectData.map((prd, i)=> (
-            <g transform={`translate(${((maxAnno / 2) * iconSize) - ((prd.anno.length) * (iconSize + 2) - 5)}, ${(rectHeight * i) + 2})`}>
+            <g transform={`translate(${calWidth(maxAnno) - calWidth(prd.anno.length) - 10}, ${(rectHeight * i) + 2})`}>
               <rect 
                 height={rectHeight} 
-                width={(prd.anno.length) * (iconSize + 2)} 
-                fill={(i + 1) === pageNumber ? '#d3d3d3' : "#fff"} 
-                fillOpacity={.5}
+                width={prd.anno.length > 0 ? (calWidth(prd.anno.length) + 10) : 23} 
+                fill={'#d3d3d3'} 
+                fillOpacity={(i + 1) === pageNumber ? .7 : .25}
               />
-              <g>
+              <g transform={`translate(0, ${prd.anno.length > 8 ? rectHeight/4 : rectHeight/3})`}>
               {
                 prd.anno.map((link, j)=> (
                   <CitationIcon 
                     link={link} 
                     index={j} 
                     setPosition={setPosition} 
-                    setHTML={setHTML} 
+                    setHTML={setToolHtml} 
                     granularity={viewParams.granularity}
                     rectH={rectHeight}
                     total={prd.anno.length}
-                    rectWidth={(prd.anno.length) * (iconSize + 2)}
+                    rectWidth={calWidth(prd.anno.length)}
                   />
                 ))
               }
@@ -451,8 +394,8 @@ const CitationVis = (props: any) => {
 
 const PaperView = (props: any) => {
   const { folderPath } = props;
-  const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-  
+  // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+  const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [{ 
     selectedThread, 
     linkData, 
@@ -469,6 +412,9 @@ const PaperView = (props: any) => {
   const [pageData, setPageData] = useState('');
   const [htmlData, setHtmlData] = useState('');
   const [beenClicked, setBeenClicked] = useState(false);
+  const [position, setPosition] = useState([0,0]);
+  const [toolhtml, setToolHtml] = useState('<div>This is a start</div>')
+
 
   // console.log('in paper view',viewParams);
   // if(isReadOnly){
@@ -565,7 +511,10 @@ const PaperView = (props: any) => {
               anno={anno} 
               pageNumber={pageNumber} 
               pageRectData={pageRectData}
-              index={index}/>
+              index={index}
+              setToolHtml={setToolHtml}
+              setPosition={setPosition}
+              />
           </div>
           <Box flex={4} h="calc(100vh - 80px)" 
             overflowY="auto" marginTop={5}>
@@ -580,9 +529,30 @@ const PaperView = (props: any) => {
               pageRectData={pageRectData}
               perf={perf}
               anno={anno}
+              setToolHtml={setToolHtml}
+              setPosition={setPosition}
             />)}
           </Box>
         </div>
+        <div
+        id={'tooltip-cite'}
+        style={{
+          position:'absolute',
+          right: position[0],
+          top: position[1] - 150,
+          textAlign: 'center',
+          width:450,
+          minHeight:50,
+          padding:10,
+          backgroundColor: '#fff',
+          border: '2px solid gray',
+          borderRadius: 10,
+          pointerEvents:'none',
+          zIndex: 6000,
+          opacity: 0
+        }}
+        dangerouslySetInnerHTML={{__html: toolhtml}}
+      ></div>
       </div> : <div
       style={{display:'flex', paddingTop:200, fontSize:30, fontWeight:800, justifyContent:'center'}}
       
