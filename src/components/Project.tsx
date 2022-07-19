@@ -157,9 +157,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterRT,
       threadTypeFilterArray,
       researchThreads,
-      filteredActivities,
       goBackView,
-      isReadOnly
+      isReadOnly,
+      viewParams 
     }, dispatch 
   ] = useProjectState();
 
@@ -171,22 +171,34 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
-  const [granularity, setGranularity] = useState<null|string>(null);
-  const [cIndex, setcIndex] = useState<null|number>(null);
+  // const [granularity, setGranularity] = useState<null|string>(null);
+  // const [cIndex, setcIndex] = useState<null|number>(null);
   const [selectedId, setSelectedId] = useState<null|string>(null);
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop = ((filterTags && filterTags?.length > 0) || (filterType != null) || (filterRT != null)) ? 110 : 70;
 
   useEffect(()=> {
-    // dispatch({type: 'UPDATE_TITLE', title: projectData.title});
 
     if(isReadOnly){
       const parsed = queryString.parse(location.search);
-      if(parsed.view) setViewType(parsed.view);
+      console.log('PARSED??',parsed)
+
+      if(parsed.view){ 
+        setViewType(parsed.view);
+        dispatch({
+          type: 'VIEW_PARAMS',
+          viewParams: {view: parsed.view, granularity: parsed.granularity, id: parsed.id, cIndex: parsed.cIndex},
+        });
+      }else{
+        dispatch({
+          type: 'VIEW_PARAMS',
+          viewParams: null,
+        });
+      }
      
-      setGranularity(parsed.granularity);
-      setcIndex(parsed.cIndex);
+      // setGranularity(parsed.granularity);
+      // setcIndex(parsed.cIndex);
 
       if(parsed.granularity === 'thread'){
         //sample for thread url 
@@ -202,7 +214,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       }else if(parsed.granularity === 'activity'){
         //sample for activity
         // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-     
+        console.log('activityURL', parsed.id)
         dispatch({
           type: 'URL_SELECTED_ACTIVITY',
           selectedActivityURL: parsed.id,
@@ -217,8 +229,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         });
 
         let artifact = selected[0].files.map(m => m.artifact_uid).indexOf(parsed.id);
-
-     
+       
         const newHop = [{
           activity: selected[0], 
           artifactUid: parsed.id,
@@ -232,20 +243,17 @@ const Project = (ProjectPropValues: ProjectProps) => {
           selectedArtifactIndex : selected.length > 0 ? artifact : null,
           hopArray: newHop,
         })
-
-        setViewType("detail view");
       }
     }
 
-  }, [queryString, viewType, groupBy])
+  }, [queryString, viewType, groupBy, window.history])
 
   const barWidth = useMemo(()=> {
-    let handicap = window.innerWidth > 1300 ? 150 : 0;
-    return window.innerWidth - (bubbleDivWidth - handicap);
-  }, [bubbleDivWidth])
+    let handicap = (window.innerWidth > 1300 && barWidth > 0) ? 150 : 0;
+    return bubbleDivWidth < 0 ? (window.innerWidth - 700) : (window.innerWidth - (bubbleDivWidth - handicap));
+  }, [bubbleDivWidth, window.innerWidth])
 
   useEffect(()=> {
-
     dispatch({type:'FILTER_DATA'});
 
   }, [ 
@@ -390,7 +398,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash} 
         />
-        <PaperView folderPath={folderPath} granularity={granularity} cIndex={cIndex}/>
+        <PaperView folderPath={folderPath} />
       </div>
     );
   }

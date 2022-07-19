@@ -254,6 +254,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         linkData:link_data,
         hopArray: [],
         goBackView: 'overview',
+        viewParams: null,
         artifactTypes: artifact_types,
         selectedActivityURL: null,
         threadTypeFilterArray: [
@@ -383,6 +384,14 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return {...state, filteredActivities: newFiltered }
       }
 
+      case 'VIEW_PARAMS': {
+        console.log(action.viewParams);
+        if(action.viewParams === null){
+          return {...state, viewParams: action.viewParams, selectedActivityURL: null }
+        }
+        return {...state, viewParams: action.viewParams }
+      }
+
       case 'SET_FILTERED_ACTIVITIES': {
        
         return {...state, filteredActivities: action.filteredActivities }
@@ -424,8 +433,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         setTimeout(() => {
           return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
         }, 1000)
-      
-        
       }
       case 'UPDATE_GOOG_IDS' : {
        
@@ -433,7 +440,12 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           (d: EntryType, i: number) => {
 
             let files = d.files.map((f:any, j:number)=> {
-              f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+              
+              if(action.googFileIds && !f.title.includes('.txt')){
+                console.log('F', f)
+                f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+              }
+             
               return f;
             });
             return d;
@@ -444,9 +456,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return saveJSON(newProjectData, state);
       }
       case 'URL_SELECTED_ACTIVITY': {
-        const { activity_id } = action;
-      
-        return {...state, selectedActivityURL: activity_id }
+        console.log('is this working in URL_SELECTED_ACTIVITY', action);
+        return {...state, selectedActivityURL: action.selectedActivityURL }
       }
       case 'BOOKMARK_FRAGMENT':{
         let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];

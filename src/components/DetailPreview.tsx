@@ -11,9 +11,16 @@ import {
 import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
-import MarkableImage from './MarkableImage';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
+import ImageRender from './ImageRender';
+import { getDriveFiles } from '../googleUtil';
+let googleCred: any;
+const isElectron = process.env.NODE_ENV === 'development';
+
+if(isElectron){
+  googleCred = require('../../assets/google_cred_desktop_app.json');
+}
 
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
@@ -24,11 +31,8 @@ const url = (folderPath: string, title: string) => {
 };
 
 interface DetailPreviewPropsType {
-  folderPath: string;
-  activityID: string;
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
-  artifactIndex: number;
 }
 
 const TextRender = (textProps: any) => {
@@ -119,9 +123,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
+
+    console.log('is this reaching in gdoc', googleData, Object.keys(googleData).indexOf(artifact.fileId));
    
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
+
+      console.log(googD);
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
@@ -129,8 +137,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       return (
         <Box style={{ 
-          overflowY: 'scroll', 
-          height: '100%', 
+          overflow: 'scroll', 
+          height: 'calc(100vh - 150px)', 
+          width:'700px',
           display: 'inline', 
           boxShadow:"3px 3px 8px #A3AAAF",
           border:"1px solid #A3AAAF",
@@ -138,7 +147,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           padding:10,
           }}>
           <div
-            style={{ height: '100%', overflow: 'auto' }}
+            style={{ height: '100%', width:'700px', overflow: 'auto' }}
             id={'gdoc'}
           >
             {gContent.map((m: any, i: number) => (
@@ -154,7 +163,50 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </div>
         </Box>
       );
-    }
+    }else{
+      getDriveFiles(folderPath, googleCred).then((googOb) => {
+             console.log('GOOGLE OB',googOb)
+        dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+        // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+        let chosen = googOb.goog_doc_data[artifact.fileId];
+
+        const gContent = chosen ? chosen.body.content.filter((f: any) => f.startIndex) : [];
+
+        let comments = artifact.comments ? artifact.comments.comments : [];
+
+        return (
+          chosen ? <Box style={{ 
+            overflow: 'scroll', 
+            height: 'calc(100vh - 150px)', 
+            width:'700px',
+            display: 'inline', 
+            boxShadow:"3px 3px 8px #A3AAAF",
+            border:"1px solid #A3AAAF",
+            borderRadius:6,
+            padding:10,
+            }}>
+            <div
+              style={{ height: '100%', width:'700px', overflow: 'auto' }}
+              id={'gdoc'}
+            >
+              {gContent.map((m: any, i: number) => (
+                <GoogDriveParagraph
+                  key={`par-${i}`}
+                  parData={m}
+                  index={i}
+                  comments={comments}
+                  setFragSelected={setFragSelected}
+                  artifactBookmarks={artifact.bookmarks}
+                />
+              ))}
+            </div>
+          </Box>
+          : <div>Oops could not load google doc</div>
+        );
+
+      });
+    } 
   }
 
   if (title.endsWith('.gsheet')) {
@@ -168,7 +220,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   if (title.endsWith('.txt')) {
 
- 
     const [textFile, setText] = useState<any>([]);
 
     useEffect(()=> {
@@ -270,28 +321,17 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       />
     );
   }
-  if (title.endsWith('.png')) {
-    return (
-      <MarkableImage
-        activity={activity}
-        artifactIndex={artifactIndex}
-        imgPath={url(folderPath, title)}
-      />
-    );
-  }
-  // imgPath, activity, artifactIndex
+ 
   return (
-    <Image
-      htmlWidth="90%"
-      htmlHeight="auto"
-      fit="contain"
+    <ImageRender 
       src={url(folderPath, title)}
       onClick={ () => {
         !setFragSelected
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
       }}
-    />
+      autoLoad={true}
+      />
   );
 };
 

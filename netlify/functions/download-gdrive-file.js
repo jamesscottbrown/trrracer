@@ -29,8 +29,6 @@ exports.handler = async function (event) {
   }
   const { fileName, folderName } = queryStringParameters;
 
-  // console.log('netlify',fileName, folderName);
-
   const serviceAccountCredentials = JSON.parse(GOOGLE_DRIVE_CREDENTIALS);
   const client = await google.auth.getClient({
     credentials: serviceAccountCredentials,
@@ -77,21 +75,42 @@ exports.handler = async function (event) {
     });
     fileData = file.data;
   } else if (fileExtension === 'pdf' || fileExtension === 'png') {
-    file = await drive.files.get(
-      {
-        alt: 'media',
-        fileId,
-        supportsAllDrives: true,
-      },
-      {
-        responseType: 'arraybuffer',
+    try {
+      file = await drive.files.get(
+        {
+          alt: 'media',
+          fileId,
+          supportsAllDrives: true,
+        },
+        {
+          responseType: 'arraybuffer',
+        }
+      );
+    } catch {
+      try {
+        file = await drive.files.get(
+          {
+            acknowledgeAbuse: true,
+            alt: 'media',
+            fileId,
+            supportsAllDrives: true,
+          },
+          {
+            responseType: 'arraybuffer',
+          }
+        );
+      } catch {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            message: 'Unknown error',
+          }),
+        };
       }
-    );
+    }
 
     fileData = new Uint8Array(file.data);
     fileData = Buffer.from(fileData).toString('base64');
-    // console.log('FILEDATA?', fileData);
-
   } else if (fileExtension === 'json') {
     file = await drive.files.get({
       alt: 'media',

@@ -67,7 +67,7 @@ const GoogFileInit = (props: { fileType: string, text:string, entryIndex: number
             getDriveFiles(folderPath, googleCred).then((googOb) => {
              
               dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
-              dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+              // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
             });
             setShowFileCreate(false);
           }} 

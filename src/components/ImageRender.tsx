@@ -7,25 +7,41 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 
 const ImageRender = (props:any) => {
 
-    const { src, onClick } = props;
-    const [{isReadOnly}] = useProjectState();
-
+    const { src, onClick, autoLoad } = props;
+    const [{isReadOnly, selectedActivityURL, selectedArtifactEntry}] = useProjectState();
     const [imgData, setImgData] = useState<any>(null);
 
-    return (
-        <InView onChange={(inView, entry) => {
-          
-          if(isReadOnly && inView){
+    useEffect(()=> {
+      if(autoLoad){
+        if(isReadOnly){
           readFileSync(src)
           .then((res) => res.text())
           .then((img) => {
-          
-            setImgData(img)
+            setImgData(img);
           })
-          }else{
-            setImgData(src);
-          }
-        }}>
+        }else{
+          setImgData(src);
+        }
+      }
+    }, [src])
+
+    return (
+        autoLoad ? <React.Fragment>{
+          imgData && (<div
+          style={{display:'inline-block', marginLeft:'20px', width:'750px', height:'auto'}}
+          ><img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} /></div>)
+          }</React.Fragment>  :
+          <InView onChange={(inView, entry) => {
+            if((isReadOnly && inView) || (isReadOnly && selectedActivityURL) || (isReadOnly && selectedArtifactEntry)){
+            readFileSync(src)
+            .then((res) => res.text())
+            .then((img) => {
+              setImgData(img)
+            })
+            }else{
+              setImgData(src);
+            }
+          }}>
         {({ inView, ref, entry }) => (
           <div ref={ref}>
            {
@@ -37,7 +53,7 @@ const ImageRender = (props:any) => {
           </div>
         )}
       </InView>
-        
+    
     );
 };
 

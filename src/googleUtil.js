@@ -1,7 +1,5 @@
 import { readFileSync } from './fileUtil';
 // const {google} = require('googleapis');
-
-
 const isElectron = process.env.NODE_ENV === 'development';
 const {google} = isElectron ? require('googleapis') : {};
 // const OAuth2Client = google ? google.auth.OAuth2 : null;
@@ -31,13 +29,9 @@ export async function getDriveFiles(folderName, googleCred){
       googleCred.installed.redirect_uris[0]
     );
 
-    
-
     const token = await readFileSync('token.json');
     oAuth2Client.setCredentials(JSON.parse(token))
 
-   
-   
     let drive = google.drive({ version: 'v3', auth: oAuth2Client });
     let docs = google.docs({ version:'v1', auth: oAuth2Client });
     var parentId = googleFolderDict(folderName);
@@ -63,6 +57,7 @@ export async function getDriveFiles(folderName, googleCred){
 
     let filZ = await fileList.data.files.map(async (m) => {
         if(m.mimeType === "application/vnd.google-apps.document"){
+            console.log('M', m);
             
             let docStuff = await docs.documents.get({
             documentId: m.id
