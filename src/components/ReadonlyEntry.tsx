@@ -61,6 +61,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
           />
         )}
         <div style={{ marginTop: '8px' }}>
+          <span>{`${file.artifactType}: `}</span>
           {file.title}{' '}
           {!isReadOnly && (
             <FaExternalLinkAlt
@@ -188,8 +189,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               {thisEntry.tags.map((t) => (
                 <Tag
                   key={t}
-                  backgroundColor={`${checkTagColor(t)}50`}
-                  stroke={`${checkTagColor(t)}`}
+                  backgroundColor={`#d3d3d3`}
+                  stroke={`#d3d3d3`}
                   marginRight="0.25em"
                   marginBottom="0.25em"
                 >
