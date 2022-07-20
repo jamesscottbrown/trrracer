@@ -72,8 +72,10 @@ const FileContext = (props: FileContextProps) => {
   const { file, entryIndex, fileIndex, dispatch } = props;
   const contextFill = file.meta ? file.meta : file.context;
 
+  console.log(file, contextFill);
+
   const contextStarter =
-    contextFill != 'null' ? contextFill : 'No context here yet.';
+    contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
 
   const [context, setContext] = useState(contextStarter);
 
@@ -102,6 +104,7 @@ interface EntryPropTypes {
   ) => void;
   makeNonEditable: () => void;
   files: File[];
+  foundIn: any;
 }
 
 interface ReactTag {
@@ -120,7 +123,9 @@ const Entry = (props: EntryPropTypes) => {
     foundIn
   } = props;
 
-  const [{projectData}, dispatch] = useProjectState();
+  console.log('foundin', foundIn);
+
+  const [{projectData, filterRT}, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
@@ -262,28 +267,30 @@ const Entry = (props: EntryPropTypes) => {
       </div>
         {
           foundIn.length > 0 && (
-            <React.Fragment
-          key={`tool-${ti}`}
-          >
-          <Tooltip 
-            
-            style={{padding:5}}
-            label={`Threaded in ${m.title}`}>
-          <div
-          style={{
-            fontSize:20, 
-            backgroundColor: m.color, 
-            borderRadius:50, 
-            width:26, 
-            display:'inline-block', 
-            padding:3,
-            margin:3,
-            opacity: m.title === selectedThread.title ? 1 : .4
-          }} 
-          ><GiSewingString size={'20px'}/>
-          </div>
-          </Tooltip>
-          </React.Fragment>
+            foundIn.map((fi, fIndex)=> (
+              <React.Fragment
+              key={`tool-${fIndex}`}
+              >
+            <Tooltip 
+              style={{padding:5}}
+              label={`Threaded in ${fi.title}`}>
+              <div
+              style={{
+                fontSize:20, 
+                backgroundColor: fi.color, 
+                borderRadius:50, 
+                width:26, 
+                display:'inline-block', 
+                padding:3,
+                margin:3,
+                opacity: (filterRT && fi.title === filterRT.title) ? 1 : .4
+              }} 
+              ><GiSewingString size={'20px'}/>
+              </div>
+              </Tooltip>
+              </React.Fragment>
+            ))
+           
           )
         }
       <br />

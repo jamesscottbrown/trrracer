@@ -52,7 +52,7 @@ interface ReadonlyEntryFilePropTypes {
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
-
+  console.log('file', file);
   return (
     <>
     <Box bg="#ececec" p={3}>
@@ -65,7 +65,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
       )}
       <div
       style={{marginTop:'8px'}}
-      >{file.title}{' '}
+      ><span style={{fontWeight:800, fontSize:16}}>{file.artifactType}:</span>{`  ${file.title}`}{' '}
       {
         !isReadOnly && (
           <FaExternalLinkAlt
@@ -125,11 +125,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
 
             pop.style('height', '800px')
-            console.log('FILE', file);
-
-            
+            console.log('FILE', file)
           }
-          
         }}
       >See in detail</Button>
       </div>
@@ -216,8 +213,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             {thisEntry.tags.map((t) => (
               <Tag
                 key={t}
-                // backgroundColor={`${checkTagColor(t)}50`}
-                // stroke={`${checkTagColor(t)}`}
                 backgroundColor={`#d3d3d3`}
                 stroke={`#d3d3d3`}
                 marginRight="0.25em"
