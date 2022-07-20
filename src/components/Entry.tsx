@@ -65,8 +65,10 @@ const FileContext = (props: FileContextProps) => {
   const { file, entryIndex, fileIndex, dispatch } = props;
   const contextFill = file.meta ? file.meta : file.context;
 
+  console.log(file, contextFill);
+
   const contextStarter =
-    contextFill != 'null' ? contextFill : 'No context here yet.';
+    contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
 
   const [context, setContext] = useState(contextStarter);
 
@@ -92,6 +94,7 @@ interface EntryPropTypes {
   updateEntryField: (fieldName: string, newData: any) => void;
   makeNonEditable: () => void;
   files: File[];
+  foundIn: any;
 }
 
 interface ReactTag {
@@ -110,7 +113,7 @@ const Entry = (props: EntryPropTypes) => {
     foundIn,
   } = props;
 
-  const [{ projectData }, dispatch] = useProjectState();
+  const [{ projectData, filterRT }, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
@@ -260,19 +263,25 @@ const Entry = (props: EntryPropTypes) => {
           <EditDate date={thisEntry.date} updateEntryField={updateEntryField} />
         </div>
       </div>
-      {foundIn.length > 0 && (
-        <React.Fragment key={`tool-${ti}`}>
-          <Tooltip style={{ padding: 5 }} label={`Threaded in ${m.title}`}>
-            <div
+        {
+          foundIn.length > 0 && (
+            foundIn.map((fi, fIndex)=> (
+              <React.Fragment
+              key={`tool-${fIndex}`}
+              >
+            <Tooltip 
+              style={{padding:5}}
+              label={`Threaded in ${fi.title}`}>
+              <div
               style={{
                 fontSize: 20,
-                backgroundColor: m.color,
+                backgroundColor: fi.color,
                 borderRadius: 50,
                 width: 26,
                 display: 'inline-block',
                 padding: 3,
                 margin: 3,
-                opacity: m.title === selectedThread.title ? 1 : 0.4,
+                opacity: (filterRT && fi.title === filterRT.title) ? 1 : .4
               }}
             >
               <GiSewingString size='20px' />
@@ -280,6 +289,7 @@ const Entry = (props: EntryPropTypes) => {
           </Tooltip>
         </React.Fragment>
       )}
+
       <br />
       <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Tags: '}

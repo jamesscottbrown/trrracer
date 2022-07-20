@@ -40,8 +40,8 @@ export default function App() {
   const [{ projectData }, dispatch] = useProjectState();
 
   if (!folderPath) {
-    const isDev = process.env.NODE_ENV === 'development';
-    // const isDev = true;
+    //const isDev = process.env.NODE_ENV === 'development';
+    const isDev = true;
     setPath(
       `${
         isDev ? 'http://localhost:9999' : '.'

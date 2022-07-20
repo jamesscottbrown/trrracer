@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import { GiSewingString } from 'react-icons/gi';
-
+import * as d3 from 'd3';
 import {
   Button,
   ListItem,
@@ -20,6 +20,8 @@ import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
+import { drive_v3 } from 'googleapis';
+import { readFileSync } from '../fileUtil';
 
 interface EntryPropTypes {
   activityID: string;
@@ -48,10 +50,10 @@ interface ReadonlyEntryFilePropTypes {
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
-  const [{ folderPath, isReadOnly }, dispatch] = useProjectState();
-
+  const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
+  console.log('file', file);
   return (
-    <>
+    <React.Fragment>
       <Box bg="#ececec" p={3}>
         {['png', 'jpg', 'gif'].includes(file.fileType) && (
           <AttachmentPreview
@@ -61,6 +63,9 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
           />
         )}
         <div style={{ marginTop: '8px' }}>
+          <span
+          style={{fontWeight:800, fontSize:16}}
+          >{`${file.artifactType}: `}</span>
           {file.title}{' '}
           {!isReadOnly && (
             <FaExternalLinkAlt
@@ -78,27 +83,54 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-              setViewType('detail view');
 
-              dispatch({
-                type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: thisEntry,
-                selectedArtifactIndex: i,
-                hopArray: [
-                  {
-                    activity: thisEntry,
-                    artifactUid: thisEntry.files[i].artifact_uid,
-                    hopReason: 'first hop',
-                  },
-                ],
-              });
-            }}
-          >
-            See in detail
-          </Button>
-        </div>
-      </Box>
-    </>
+              if(viewParams && viewParams.view === 'paper'){
+                setViewType('detail view');
+
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  selectedArtifactEntry: thisEntry,
+                  selectedArtifactIndex: i,
+                  hopArray: [
+                    {
+                      activity: thisEntry, 
+                      artifactUid: thisEntry.files[i].artifact_uid,
+                      hopReason: 'first hop',
+                    }
+                  ],
+                });
+
+              }else{
+                d3.select('#popover-det').remove();
+                let pop = d3.select('body').append('div').attr('id', 'popover-det');
+                pop.style('position', 'absolute')
+                .style('left', '370px')
+                .style('top', '100px')
+                .style('width', '700px')
+                .style('padding', '10px')
+                .style('background-color', '#fff')
+                .style('border', '2px solid gray')
+                .style('border-radius', '10px')
+                .style('z-index', '6000');
+                let cancel = pop.append('div')
+                .style('background-color', '#d3d3d3')
+                .style('border-radius', '6px');
+                cancel.append('text').text('x').style('font-weight', '900');
+                cancel.style('float', 'right')
+                cancel.style('cursor', 'pointer')
+                cancel.on('click', () => pop.remove())
+
+                let textDiv = pop.append('div')
+                textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
+
+                pop.style('height', '800px')
+                console.log('FILE', file)
+              }
+        }}
+      >See in detail</Button>
+      </div>
+      </Box> 
+    </React.Fragment>
   );
 };
 
@@ -177,28 +209,28 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           )}
         </span>
 
-        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-          {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
-        </Text>
-        <p>
-          {thisEntry.tags.length === 0 ? (
-            <b>No tags.</b>
-          ) : (
-            <>
-              {thisEntry.tags.map((t) => (
-                <Tag
-                  key={t}
-                  backgroundColor={`${checkTagColor(t)}50`}
-                  stroke={`${checkTagColor(t)}`}
-                  marginRight="0.25em"
-                  marginBottom="0.25em"
-                >
-                  {t}
-                </Tag>
-              ))}
-            </>
-          )}
-        </p>
+      <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
+        {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
+      </Text>
+      <p>
+        {thisEntry.tags.length === 0 ? (
+          <b>No tags.</b>
+        ) : (
+          <>
+            {thisEntry.tags.map((t) => (
+              <Tag
+                key={t}
+                backgroundColor={`#d3d3d3`}
+                stroke={`#d3d3d3`}
+                marginRight="0.25em"
+                marginBottom="0.25em"
+              >
+                {t}
+              </Tag>
+            ))}
+          </>
+        )}
+      </p>
 
         {foundIn.length > 0 &&
           foundIn.map((fo, fi) => (
