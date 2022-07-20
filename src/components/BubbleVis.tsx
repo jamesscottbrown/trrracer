@@ -1046,7 +1046,7 @@ const BubbleVis = (props: BubbleProps) => {
             Add events to timeline
           </Button>
         )}
-        {!selectedActivityURL && (
+        {(!selectedActivityURL && !viewParams)&& (
           <Box
             marginLeft="3px"
             padding="3px"

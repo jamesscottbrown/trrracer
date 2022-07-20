@@ -63,7 +63,9 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
           />
         )}
         <div style={{ marginTop: '8px' }}>
-          <span>{`${file.artifactType}: `}</span>
+          <span
+          style={{fontWeight:800, fontSize:16}}
+          >{`${file.artifactType}: `}</span>
           {file.title}{' '}
           {!isReadOnly && (
             <FaExternalLinkAlt
