@@ -148,12 +148,12 @@ type ProjectState = {
   filterTypes: string[] | null;
 
   //NEED TO MAKE THESE MORE SPECIFIC
-  filterDates:any;
-  filterQuery:any;
-  filterRT:any;
-  threadTypeFilterArray:any;
-  query:any;
-  artifactTypes:any;
+  filterDates: any;
+  filterQuery: any;
+  filterRT: any;
+  threadTypeFilterArray: any;
+  query: any;
+  artifactTypes: any;
 
   googleData?: GoogleData;
   txtData?: TxtData[];
@@ -168,10 +168,9 @@ type ProjectState = {
   selectedArtifactEntry: EntryTypeWithIndex; // ?
   selectedArtifactIndex: number;
 
-  filteredActivities:any;
+  filteredActivities: any;
 
   hopArray: any[];
-  
 };
 
 interface ProjectViewProps {
@@ -187,10 +186,7 @@ interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
   openFile: (a: string) => void;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
   allTags: TagType[];
   makeNonEditable: () => void;
 }

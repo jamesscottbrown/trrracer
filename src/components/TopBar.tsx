@@ -30,7 +30,6 @@ interface TopbarProps {
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-
   const {
     viewType,
     setViewType,
@@ -41,24 +40,41 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setAddEntrySplash,
   } = ProjectPropValues;
 
-  const [{ projectData, filteredActivities, selectedActivityURL, selectedArtifactEntry, selectedArtifactIndex, filterRT, isReadOnly, viewParams }, dispatch] = useProjectState();
+  const [
+    {
+      projectData,
+      filteredActivities,
+      selectedActivityURL,
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+      filterRT,
+      isReadOnly,
+      viewParams,
+    },
+    dispatch,
+  ] = useProjectState();
 
   //USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
   let getName = () => {
-    if(viewParams.granularity === 'thread'){
-      console.log('thread',filterRT)
-      return filterRT.title
-    }else if(viewParams.granularity === 'artifact'){
-      console.log('ARTIFACT', selectedArtifactEntry.files[selectedArtifactIndex])
+    if (viewParams.granularity === 'thread') {
+      console.log('thread', filterRT);
+      return filterRT.title;
+    } else if (viewParams.granularity === 'artifact') {
+      console.log(
+        'ARTIFACT',
+        selectedArtifactEntry.files[selectedArtifactIndex]
+      );
       return selectedArtifactEntry.files[selectedArtifactIndex].title;
-    }else if(viewParams.granularity === 'activity'){
+    } else if (viewParams.granularity === 'activity') {
       console.log('activity', selectedActivityURL);
-      return projectData.entries.filter(f => f.activity_uid === viewParams.id)[0].title;
-    }else{
-      return "Unknown";
+      return projectData.entries.filter(
+        (f) => f.activity_uid === viewParams.id
+      )[0].title;
+    } else {
+      return 'Unknown';
     }
-  }
+  };
 
   return (
     <Box
@@ -81,11 +97,11 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         align="center"
       >
         <Heading as="h1">
-          {
-            isReadOnly ? <span
-            style={{fontSize:30, fontWeight:800, margin:10}}
-            >{projectData.title}</span>
-            :
+          {isReadOnly ? (
+            <span style={{ fontSize: 30, fontWeight: 800, margin: 10 }}>
+              {projectData.title}
+            </span>
+          ) : (
             <Editable
               value={newTitle}
               onChange={(val) => setNewTitle(val)}
@@ -95,88 +111,94 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               <EditablePreview />
               <EditableInput />
             </Editable>
-          }
-          
+          )}
         </Heading>
 
-        <div style={{ marginLeft: '20px', marginRight:'20px' }}>
+        <div style={{ marginLeft: '20px', marginRight: '20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
-        {
-          (!viewParams || (viewParams && viewParams.view != 'paper')) && (
-            <QueryBar
+        {(!viewParams || (viewParams && viewParams.view != 'paper')) && (
+          <QueryBar
             artifactData={null}
             setViewType={setViewType}
             filteredActivities={filteredActivities}
           />
-          )
-        }
+        )}
 
-        {
-          (viewParams) && (
-            <div
-            style={{fontWeight: 600, fontSize: 22, marginLeft:'200px', marginRight:'100px', float:'right'}}
-            >Cited {viewParams.granularity}: {getName()}</div>
-          )
-        }
-        
-        {(viewType === 'activity view' ||
-                  viewType === 'timeline' ||
-                  viewType === 'overview') && (
+        {viewParams && (
           <div
             style={{
-              float:'right',
+              fontWeight: 600,
+              fontSize: 22,
+              marginLeft: '200px',
+              marginRight: '100px',
+              float: 'right',
+            }}
+          >
+            Cited {viewParams.granularity}: {getName()}
+          </div>
+        )}
+
+        {(viewType === 'activity view' ||
+          viewType === 'timeline' ||
+          viewType === 'overview') && (
+          <div
+            style={{
+              float: 'right',
               fontSize: 24,
               fontWeight: 700,
               textAlign: 'end',
             }}
           >
             <div
-            style={{
-              display:'inline-block', 
-              fontSize:"14px",
-              paddingRight:15,
-            }}> 
-          <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Hide all by default
-          </FormLabel>
-          <Switch
-            id="show-all"
-            onChange={(event) => {
-            hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
-            }}
-          />
-        </FormControl> 
+              style={{
+                display: 'inline-block',
+                fontSize: '14px',
+                paddingRight: 15,
+              }}
+            >
+              <FormControl display="flex" alignItems="center" marginBottom={10}>
+                <FormLabel
+                  htmlFor="split-by"
+                  mb="0"
+                  textAlign="right"
+                  fontSize="12px"
+                >
+                  Hide all by default
+                </FormLabel>
+                <Switch
+                  id="show-all"
+                  onChange={(event) => {
+                    hideByDefault
+                      ? setHideByDefault(false)
+                      : setHideByDefault(true);
+                  }}
+                />
+              </FormControl>
             </div>
-            {
-              (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
-                <div
-                  style={{display:'inline-block', fontSize:"14px", marginRight:15}}
-                >{`${filteredActivities.length} Activities Shown  `}</div> 
-              )
-            }
-            {
-              !isReadOnly && (
-                <Button
+            {(filteredActivities.length != projectData.entries.length ||
+              !hideByDefault) && (
+              <div
+                style={{
+                  display: 'inline-block',
+                  fontSize: '14px',
+                  marginRight: 15,
+                }}
+              >{`${filteredActivities.length} Activities Shown  `}</div>
+            )}
+            {!isReadOnly && (
+              <Button
                 marginLeft="3px"
                 alignSelf="end"
                 // onClick={addEntry}
                 onClick={(event) => setAddEntrySplash(true)}
                 type="button"
-                >
-                  <FaPlus /> Add activity
-                </Button>
-              )
-            }
-           
+              >
+                <FaPlus /> Add activity
+              </Button>
+            )}
           </div>
-          )}
+        )}
       </Flex>
       {/* <Flex style={{ 
         height: filterTags.length > 0 ? 70 : 0 }}>

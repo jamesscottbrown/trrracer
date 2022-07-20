@@ -13,7 +13,7 @@ import {
 } from 'react-icons/gr';
 import { ImFilePdf } from 'react-icons/im';
 import { joinPath } from '../fileUtil';
-import ImageRender from './ImageRender'
+import ImageRender from './ImageRender';
 
 interface AttachmentPreviewPropsType {
   folderPath: string;
@@ -23,7 +23,7 @@ interface AttachmentPreviewPropsType {
 }
 
 const url = (folderPath: string, title: string) => {
-  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+  if (folderPath.startsWith('http://') || folderPath.startsWith('https://')) {
     return `${joinPath(folderPath, title)}`;
   } else {
     return `file://${joinPath(folderPath, title)}`;
@@ -32,7 +32,7 @@ const url = (folderPath: string, title: string) => {
 
 const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   const { folderPath, title, openFile, size } = props;
-  
+
   if (
     title.endsWith('.mp4') ||
     title.endsWith('.mov') ||
@@ -127,7 +127,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
     );
   }
   return (
-    <ImageRender 
+    <ImageRender
       src={joinPath(folderPath, title)}
       onClick={() => openFile(title, folderPath)}
     />

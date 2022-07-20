@@ -21,7 +21,6 @@ import { FaExternalLinkAlt, FaPlus } from 'react-icons/fa';
 
 import { URLAttachment } from './types';
 
-
 interface URLListProps {
   urls: URLAttachment[];
   entryIndex: number;
@@ -46,10 +45,8 @@ const URLList = (props: URLListProps) => {
     setAdditionTitle('');
   };
 
-
   if (addingURL) {
     return (
-
       <Modal isOpen={addingURL} onClose={() => setAddingUrl(false)}>
         <ModalOverlay />
 

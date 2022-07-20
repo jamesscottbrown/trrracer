@@ -5,7 +5,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Button
+  Button,
 } from '@chakra-ui/react';
 
 import { FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
@@ -20,25 +20,31 @@ import { MdCancel } from 'react-icons/md';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
 const LeftSidebar = (props: any) => {
-  
   const { fromTop } = props;
-  const [{projectData, researchThreads, artifactTypes, selectedThread, filterTags}, dispatch] = useProjectState();
+  const [
+    { projectData, researchThreads, artifactTypes, selectedThread, filterTags },
+    dispatch,
+  ] = useProjectState();
   const artifacts = projectData.entries.flatMap((f) => f.files);
   const [fileTypeShown, setFileTypeShown] = useState({
     title: 'all',
     matches: artifacts.length,
   });
 
-  const tags = [...projectData.tags].filter(f => filterTags?.indexOf(f.title) === -1).map((t) => {
-    let matches = [...projectData.entries].filter((f) => {
-      return f.tags.indexOf(t.title) > -1;
+  const tags = [...projectData.tags]
+    .filter((f) => filterTags?.indexOf(f.title) === -1)
+    .map((t) => {
+      let matches = [...projectData.entries].filter((f) => {
+        return f.tags.indexOf(t.title) > -1;
+      });
+      t.matches = matches.map((m) => m.activity_uid);
+      return t;
     });
-    t.matches = matches.map(m => m.activity_uid);
-    return t;
-  });
 
-  const [ sortedTags, setSortedTags ] = useState(tags.sort((a, b) => b.matches.length - a.matches.length))
-  
+  const [sortedTags, setSortedTags] = useState(
+    tags.sort((a, b) => b.matches.length - a.matches.length)
+  );
+
   const types = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
@@ -48,8 +54,14 @@ const LeftSidebar = (props: any) => {
   const aTypes = d3
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
-      let colorTest = artifactTypes.artifact_types.filter(f => f.type === ty[0])
-      return { title: ty[0] ? ty[0] : 'undefined', matches: ty[1].length, color: colorTest.length > 0 ? colorTest[0].color : 'gray'};
+      let colorTest = artifactTypes.artifact_types.filter(
+        (f) => f.type === ty[0]
+      );
+      return {
+        title: ty[0] ? ty[0] : 'undefined',
+        matches: ty[1].length,
+        color: colorTest.length > 0 ? colorTest[0].color : 'gray',
+      };
     });
 
   const sortedTypes = types.sort((a, b) => b.matches - a.matches);
@@ -62,33 +74,29 @@ const LeftSidebar = (props: any) => {
   return (
     <Box
       margin="8px"
-      style={{ 
-        paddingLeft: 5, 
-        paddingRight: 5 
+      style={{
+        paddingLeft: 5,
+        paddingRight: 5,
       }}
       // flex={1}
-      width='400px'
+      width="400px"
       flexDirection="column"
-      h={`calc(100vh - ${(fromTop + 5)}px)`}
+      h={`calc(100vh - ${fromTop + 5}px)`}
       overflow="auto"
       borderRight={'1px solid #A3AAAF'}
-      boxShadow={"0 3px 8px #A3AAAF"}
+      boxShadow={'0 3px 8px #A3AAAF'}
       borderRadius={6}
       p={3}
     >
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType={"overview"}
+        viewType={'overview'}
         selectedThread={selectedThread}
         projectData={projectData}
         dispatch={dispatch}
       />
       <br />
-      <Box
-        marginTop="10px"
-        marginBottom="10px"
-        padding="3px"
-      >
+      <Box marginTop="10px" marginBottom="10px" padding="3px">
         <Menu>
           <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
             {`View ${fileTypeShown.title} artifacts (${fileTypeShown.matches})`}
@@ -101,7 +109,7 @@ const LeftSidebar = (props: any) => {
                 data={m}
                 index={i}
                 onClick={() => {
-                  stateUpdateWrapperUseJSON(fileTypeShown, m, setFileTypeShown)
+                  stateUpdateWrapperUseJSON(fileTypeShown, m, setFileTypeShown);
                   // setFileTypeShown(m);
                   if (m.title !== 'all') {
                     dispatch({
@@ -112,33 +120,43 @@ const LeftSidebar = (props: any) => {
                     dispatch({ type: 'UPDATE_FILTER_TYPES', filterType: null });
                   }
                 }}
-              >{`${m.title} (${m.matches})`}<ToolIcon artifactType={m.title} size={18} style={{ color: m.color, display: 'inline' }}/></MenuItem>
+              >
+                {`${m.title} (${m.matches})`}
+                <ToolIcon
+                  artifactType={m.title}
+                  size={18}
+                  style={{ color: m.color, display: 'inline' }}
+                />
+              </MenuItem>
             ))}
           </MenuList>
         </Menu>
       </Box>
       <br />
 
-      <span style={headerStyle}>{`${tags.length} Tags`} 
-      <FaSortAlphaUp 
-        style={{
-          display:'inline-block', 
-          marginLeft:'5px',
-          cursor:'pointer'
-        }} 
-        onClick={()=>  {
-          let temp = tags.sort((a, b) => a.title.localeCompare(b.title))
-          setSortedTags(temp) }}
+      <span style={headerStyle}>
+        {`${tags.length} Tags`}
+        <FaSortAlphaUp
+          style={{
+            display: 'inline-block',
+            marginLeft: '5px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            let temp = tags.sort((a, b) => a.title.localeCompare(b.title));
+            setSortedTags(temp);
+          }}
         />
-      <FaSortAmountDown 
-        style={{
-          display:'inline-block', 
-          marginLeft:'5px',
-          cursor:'pointer'
-        }} 
-        onClick={()=> {
-          let temp = tags.sort((a, b) => b.matches.length - a.matches.length)
-          setSortedTags(temp)}}
+        <FaSortAmountDown
+          style={{
+            display: 'inline-block',
+            marginLeft: '5px',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            let temp = tags.sort((a, b) => b.matches.length - a.matches.length);
+            setSortedTags(temp);
+          }}
         />
       </span>
       <br />
@@ -148,38 +166,41 @@ const LeftSidebar = (props: any) => {
         borderLeftWidth="1px"
         padding="3px"
       >
-        {
-          (filterTags.length > 0) && (
-            filterTags.map(ft => (
-              <div
-                style={{
-                  background:`#dadada90`, 
-                  padding:5, 
-                  borderRadius:5
-                }}
-              ><span>{`Tag filter: ${ft}`}</span>
+        {filterTags.length > 0 &&
+          filterTags.map((ft) => (
+            <div
+              style={{
+                background: `#dadada90`,
+                padding: 5,
+                borderRadius: 5,
+              }}
+            >
+              <span>{`Tag filter: ${ft}`}</span>
               <span
                 style={{
-                  float:'right', 
-                  padding:5,
-                  cursor:'pointer'
+                  float: 'right',
+                  padding: 5,
+                  cursor: 'pointer',
                 }}
-                onClick={()=> 
+                onClick={() =>
                   dispatch({
-                  type: 'UPDATE_FILTER_TAGS',
-                  filterTags: filterTags.filter((f) => f != ft),
-                })}
-              ><MdCancel /></span></div>
-            ))
-          )
-        }
+                    type: 'UPDATE_FILTER_TAGS',
+                    filterTags: filterTags.filter((f) => f != ft),
+                  })
+                }
+              >
+                <MdCancel />
+              </span>
+            </div>
+          ))}
         {sortedTags.map((st: any, s: any) => (
           <React.Fragment key={`tag-${s}-frag`}>
-            <SidebarButton isTag 
-              data={st} 
-              index={s} 
-              researchThread={researchThreads} 
-              filterTags={filterTags} 
+            <SidebarButton
+              isTag
+              data={st}
+              index={s}
+              researchThread={researchThreads}
+              filterTags={filterTags}
               dispatch={dispatch}
             />
           </React.Fragment>

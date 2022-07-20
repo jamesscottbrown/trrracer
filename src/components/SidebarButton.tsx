@@ -19,35 +19,38 @@ const SidebarButton = (sidebarProps: any) => {
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
 
-  return(
+  return (
     <Box
-    style={{ cursor: 'pointer' }}
-    bg={barColor}
-    key={`${data.title}-${index}`}
-    onMouseOver={()=> setBarColor('#D3D3D3')}
-    onMouseOut={()=> setBarColor('#FFF')}
-  >
-    <span>{`${data.title}  (${data.matches.length})`} 
-      <Button 
-      title='Filter by.' 
-      size={"xs"}
-      style={{marginLeft:10}}
-      onClick={() => {
-        console.log('tags filter check', filterTags);
-        // nee to make a tag filter function
-        if (filterTags.includes(data.title)) {
-          alert('tag filter already exists');
-        } else {
-          dispatch({
-            type: 'UPDATE_FILTER_TAGS',
-            filterTags: [...filterTags, data.title],
-          });
-        }
-      }}
-      >{<FaFilter />}</Button>
-      {/* <Button title='Add to thread.' size={"xs"}>{<GrAddCircle />}</Button> */}
-    </span>
-  </Box>
+      style={{ cursor: 'pointer' }}
+      bg={barColor}
+      key={`${data.title}-${index}`}
+      onMouseOver={() => setBarColor('#D3D3D3')}
+      onMouseOut={() => setBarColor('#FFF')}
+    >
+      <span>
+        {`${data.title}  (${data.matches.length})`}
+        <Button
+          title="Filter by."
+          size={'xs'}
+          style={{ marginLeft: 10 }}
+          onClick={() => {
+            console.log('tags filter check', filterTags);
+            // nee to make a tag filter function
+            if (filterTags.includes(data.title)) {
+              alert('tag filter already exists');
+            } else {
+              dispatch({
+                type: 'UPDATE_FILTER_TAGS',
+                filterTags: [...filterTags, data.title],
+              });
+            }
+          }}
+        >
+          {<FaFilter />}
+        </Button>
+        {/* <Button title='Add to thread.' size={"xs"}>{<GrAddCircle />}</Button> */}
+      </span>
+    </Box>
 
     // <Popover
     //   trigger='hover'
@@ -63,10 +66,10 @@ const SidebarButton = (sidebarProps: any) => {
     //       <span>{`${data.title}  (${data.matches.length})`} <Button size={"xs"}>{<FaFilter />}</Button><Button size={"xs"}>{<GrAddCircle />}</Button></span>
     //     </Box>
     //   </PopoverTrigger>
-    //   <PopoverContent bg="white" color="gray"> 
+    //   <PopoverContent bg="white" color="gray">
     //     <PopoverArrow bg="white" />
     //     <PopoverBody>
-    //       <Button 
+    //       <Button
     //         style={{
     //             display:'inline-block',
     //             margin:5
@@ -116,7 +119,7 @@ const SidebarButton = (sidebarProps: any) => {
     //           <Button onClick={() => setShowThreadPop(false)}>cancel</Button>
     //         </Box>
     //       ) : (
-    //         <Button 
+    //         <Button
     //         style={{
     //           display:'inline-block',
     //           margin:5
@@ -125,13 +128,11 @@ const SidebarButton = (sidebarProps: any) => {
     //           Add this tag to a thread.
     //         </Button>
     //       )}
-          
+
     //     </PopoverBody>
     //   </PopoverContent>
     // </Popover>
-
-
-  )
+  );
 };
 
 export default SidebarButton;

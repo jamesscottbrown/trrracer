@@ -21,7 +21,7 @@ interface QueryViewProps {
 const HoverTitle = (props: any) => {
   const { title, entry, match, setViewType } = props;
 
-  const [{query}, dispatch] = useProjectState();
+  const [{ query }, dispatch] = useProjectState();
 
   const fileIndex =
     match.fileType === 'gdoc'
@@ -46,19 +46,21 @@ const HoverTitle = (props: any) => {
             <PopoverBody>
               <Button
                 onClick={() => {
-
-                  console.log('matches??',match)
+                  console.log('matches??', match);
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
                     selectedArtifactEntry: entry,
                     selectedArtifactIndex: fileIndex,
-                    hopArray: [ 
-                      { activity: 
-                        entry, 
-                        artifactUid: entry.files[fileIndex] ? entry.files[fileIndex].artifact_uid : null,
+                    hopArray: [
+                      {
+                        activity: entry,
+                        artifactUid: entry.files[fileIndex]
+                          ? entry.files[fileIndex].artifact_uid
+                          : null,
                         hopReason: 'first hop',
-                      }]
+                      },
+                    ],
                   });
                   dispatch({
                     type: 'UPDATE_GO_BACK',
@@ -81,10 +83,10 @@ const HoverTitle = (props: any) => {
 
 const QueryView = (props: any) => {
   const { setViewType } = props;
-  const [{query}, dispatch] = useProjectState();
+  const [{ query }, dispatch] = useProjectState();
 
-  console.log('query matchessss',query.matches)
-  
+  console.log('query matchessss', query.matches);
+
   return (
     <div>
       <div
@@ -115,16 +117,23 @@ const QueryView = (props: any) => {
             </div>
 
             {m.textMatch.length > 0 &&
-              
               m.textMatch.map((tm, j) => (
-                <QueryMatchComponent m={m} tm={tm} setViewType={setViewType} j={j} />
-              ))
-            }
+                <QueryMatchComponent
+                  m={m}
+                  tm={tm}
+                  setViewType={setViewType}
+                  j={j}
+                />
+              ))}
 
             {m.googMatch.length > 0 &&
               m.googMatch.map((gm, j) => (
-                <QueryMatchComponent m={m} tm={gm} setViewType={setViewType} j={j} />
-               
+                <QueryMatchComponent
+                  m={m}
+                  tm={gm}
+                  setViewType={setViewType}
+                  j={j}
+                />
               ))}
           </div>
         ))}

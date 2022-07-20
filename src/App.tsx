@@ -24,7 +24,7 @@ const migrateTrrraceFormat = (projectData: any) => {
       files: e.urls
         ? [
             ...e.files,
-            ...e.urls.map((u :any) => ({
+            ...e.urls.map((u: any) => ({
               title: u.title,
               url: u.url,
               fileType: 'url',
