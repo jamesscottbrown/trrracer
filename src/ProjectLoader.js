@@ -13,7 +13,7 @@ class ProjectLoader {
     const { homedir, username } = os.userInfo();
     this.homedir = homedir;
     this.username = username;
-    console.log('ProjectLoader is called')
+    console.log('ProjectLoader is called');
     //
     console.log('User data path:', app.getPath('userData'));
     // console.log('json for google cred', googleCred.installed);

@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
 
@@ -28,15 +27,22 @@ const pickTagColor = (tags: TagType[]) => {
   return availableColors[Math.floor(Math.random() * availableColors.length)];
 };
 
-export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSON: any, saveJSONRT: any, saveJSONGoogDoc: any, deleteFileAction: any, isReadOnly: boolean) => {
-
+export const getAppStateReducer = (
+  copyFiles: any,
+  readProjectFile: any,
+  saveJSON: any,
+  saveJSONRT: any,
+  saveJSONGoogDoc: any,
+  deleteFileAction: any,
+  isReadOnly: boolean
+) => {
   return (state: any, action: any) => {
     /**
      *  function for set data that checks to see if the file exists and if not, creates one.
      * research_threads = readProjectFile(baseDir, 'research_threads.json');
      */
 
-     const checkRtFile = async (dir: any) => {
+    const checkRtFile = async (dir: any) => {
       const filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
 
       try {
@@ -52,7 +58,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
     };
 
-    const getData = async (action:any, isReadOnly:boolean) => {
+    const getData = async (action: any, isReadOnly: boolean) => {
       const baseDir = action.folderName;
 
       let roleData;
@@ -63,22 +69,26 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let google_comms: any;
       let link_data: any;
       let newEntries = [...action.projectData.entries];
-      let citationData = action.projectData.citations ? action.projectData.citations : [];
+      let citationData = action.projectData.citations
+        ? action.projectData.citations
+        : [];
       let newTags = [...action.projectData.tags];
 
       try {
         google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-        
-      } catch (e: any) {
+      } catch (e) {
         console.error('could not load google em file');
         google_em = null;
       }
 
       try {
         // google_data = await readProjectFile(baseDir, 'goog_data.json', null);
-        google_data = await readProjectFile(baseDir, 'goog_doc_data.json', null);
-       
-      } catch (e: any) {
+        google_data = await readProjectFile(
+          baseDir,
+          'goog_doc_data.json',
+          null
+        );
+      } catch (e) {
         console.error('could not load google data file');
       }
 
@@ -106,7 +116,11 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       try {
-        artifact_types = await readProjectFile(baseDir, 'artifactTypes.json', null);
+        artifact_types = await readProjectFile(
+          baseDir,
+          'artifactTypes.json',
+          null
+        );
         // console.log('yes to artifact types data');
       } catch (e) {
         artifact_types = null;
@@ -123,7 +137,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         newEntries = action.projectData.entries.map((e, i) => {
-
           let actOb = {};
           actOb.activity_uid = e.activity_uid;
           actOb.date = e.date;
@@ -153,27 +166,26 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
             // }
             // else if(ef.fileType === 'txt'){
             //   ef.artifactType = 'transcript';
-             //           // if(j < 2){
+            //           // if(j < 2){
 
-                 //   const file = readSync(`${baseDir}/${ef.title}`)
+            //   const file = readSync(`${baseDir}/${ef.title}`)
 
-                 //   retext()
-                 //     .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
-                 //     .use(retextKeywords)
-                 //     .process(file)
-                 //     .then((file) => {
-                    
-                 //       ef.keywords = file.data.keywords;
-                 //       ef.keyPhrases = file.data.keyphrases;
-                 //     // file.data.keywords.forEach((keyword) => {
-                 //     //  
-                 //     // })
+            //   retext()
+            //     .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+            //     .use(retextKeywords)
+            //     .process(file)
+            //     .then((file) => {
 
-                
-                 // //     file.data.keyphrases.forEach((phrase) => {
-                 // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
-                 // //     })
-                 //   })
+            //       ef.keywords = file.data.keywords;
+            //       ef.keyPhrases = file.data.keyphrases;
+            //     // file.data.keywords.forEach((keyword) => {
+            //     //
+            //     // })
+
+            // //     file.data.keyphrases.forEach((phrase) => {
+            // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
+            // //     })
+            //   })
             // }
             // else if(ef.fileType === 'eml'){
             //   ef.artifactType = 'correspondence'
@@ -193,35 +205,34 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
           return actOb;
         });
-       
+
         newEntries = newEntries.sort(
           (a, b) =>
             // (reversedOrder ? -1 : +1) *
-            (Number(new Date(a.date)) - Number(new Date(b.date)))
+            Number(new Date(a.date)) - Number(new Date(b.date))
         );
-        
       } catch (e) {
-        console.error('could not reformat entries',e)
+        console.error('could not reformat entries', e);
         newEntries = action.projectData.entries;
         return e;
       }
 
       try {
-        newTags = newTags.map(t => {
-          let newT = {}
+        newTags = newTags.map((t) => {
+          let newT = {};
           newT.title = t.title;
           newT.color = t.color;
           newT.date = t.date;
           // newT.matches = t.matches.map(m => m.activity_uid);
           return newT;
         });
-      }catch(e){
-        console.log('error with tags?')
+      } catch (e) {
+        console.log('error with tags?');
         newTags = newTags;
       }
-      
+
       const research_threads = await checkRtFile(baseDir);
-    
+
       const newProjectData = {
         entries: newEntries,
         roles: roleData,
@@ -232,10 +243,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         description: action.projectData.description,
         title: action.projectData.title,
         eventArray: action.projectData.eventArray
-        ? action.projectData.eventArray
-        : []
-      }
-  
+          ? action.projectData.eventArray
+          : [],
+      };
+
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
@@ -251,7 +262,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         filterRT: null,
         filterQuery: null,
         query: null,
-        linkData:link_data,
+        linkData: link_data,
         hopArray: [],
         goBackView: 'overview',
         viewParams: null,
@@ -261,17 +272,34 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           { type: 'activity', show: true },
           { type: 'artifact', show: true },
           { type: 'fragment', show: true },
-          { type: 'tags', show: true }
+          { type: 'tags', show: true },
         ],
-        allRTs:[
-          {"title": "UI and Design", "id": "22fc1832-852c-43ac-9f2a-7cc057fdcd97", "color": "#1340a8"},
-          {"title": "Research Thread Concept", "id": "b973c840-f26c-4a21-99b3-b93e411d659c", "color": "#84309b"}
-        ]
+        allRTs: [
+          {
+            title: 'UI and Design',
+            id: '22fc1832-852c-43ac-9f2a-7cc057fdcd97',
+            color: '#1340a8',
+          },
+          {
+            title: 'Research Thread Concept',
+            id: 'b973c840-f26c-4a21-99b3-b93e411d659c',
+            color: '#84309b',
+          },
+        ],
         // citations: citationData
       };
     };
 
-    const filterData = (fData:any, filterDates: any[], filterTags: any[], filterRT:any, filterType:any, filterQuery:any, researchThreads:any, threadTypeFilterArray:any) => {
+    const filterData = (
+      fData: any,
+      filterDates: any[],
+      filterTags: any[],
+      filterRT: any,
+      filterType: any,
+      filterQuery: any,
+      researchThreads: any,
+      threadTypeFilterArray: any
+    ) => {
       // move that logic here
       const tagFiltered = [...fData]
         .filter((entryData: any) => {
@@ -300,10 +328,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       const rtFiltered = typeFiltered.filter((entryData: any) => {
         if (filterRT) {
           // console.log('filterrrrrttttt',filterRT);
-          return (
-            
-            filterRT.key.includes(entryData.title)
-          );
+          return filterRT.key.includes(entryData.title);
         }
         return typeFiltered;
       });
@@ -311,94 +336,101 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       const rtTypesFiltered = rtFiltered.filter((entryData: any) => {
         if (filterRT) {
           let nono: any[] = [];
-          let evidence = researchThreads?.research_threads.filter(f => f.title === filterRT.title)[0].evidence;
-          
-        threadTypeFilterArray.forEach((ty, i)=> {
-          if(!ty.show){
-            if(ty.type != 'tags'){
-              let exclude = evidence?.filter(e => e.type === ty.type).map(m => m.activityTitle);
-              nono = [...nono, exclude];
-              
+          let evidence = researchThreads?.research_threads.filter(
+            (f) => f.title === filterRT.title
+          )[0].evidence;
+
+          threadTypeFilterArray.forEach((ty, i) => {
+            if (!ty.show) {
+              if (ty.type != 'tags') {
+                let exclude = evidence
+                  ?.filter((e) => e.type === ty.type)
+                  .map((m) => m.activityTitle);
+                nono = [...nono, exclude];
+              }
             }
-          }
-        });
-      
-        return (
-          nono.indexOf(entryData.title) === -1 
-        );
-      }
-      return typeFiltered;
-    });
+          });
 
-    const timeFiltered =
-      filterDates[0] != null && filterDates[1] != null
-        ? rtTypesFiltered.filter(
-            (f) =>
-              new Date(f.date) >= filterDates[0] &&
-              new Date(f.date) <= filterDates[1]
-          )
-        : rtTypesFiltered;
+          return nono.indexOf(entryData.title) === -1;
+        }
+        return typeFiltered;
+      });
 
-    timeFiltered.sort(
-      (a, b) =>
-        // (reversedOrder ? -1 : +1) *
-        (Number(new Date(a.date)) - Number(new Date(b.date)))
-    );
+      const timeFiltered =
+        filterDates[0] != null && filterDates[1] != null
+          ? rtTypesFiltered.filter(
+              (f) =>
+                new Date(f.date) >= filterDates[0] &&
+                new Date(f.date) <= filterDates[1]
+            )
+          : rtTypesFiltered;
 
-    const queryFiltered =
-      filterQuery != null
-        ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-        : timeFiltered;
+      timeFiltered.sort(
+        (a, b) =>
+          // (reversedOrder ? -1 : +1) *
+          Number(new Date(a.date)) - Number(new Date(b.date))
+      );
 
-    return queryFiltered;
-    }
+      const queryFiltered =
+        filterQuery != null
+          ? timeFiltered.filter((f) => filterQuery.includes(f.title))
+          : timeFiltered;
+
+      return queryFiltered;
+    };
 
     switch (action.type) {
-      
       case 'SET_DATA': {
         // loading a project requires waiting for files to load over the network
         // the simplest way to handle this is to handle this in an async function,
         // and dispatch a new message to save the project data when it is ready
-        getData(action, isReadOnly).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
+        getData(action, isReadOnly).then((data) =>
+          action.dispatch({ type: 'SAVE_DATA', data })
+        );
 
         return state;
       }
       case 'SAVE_DATA': {
-        console.log('data',action.data)
+        console.log('data', action.data);
         return action.data;
-       
       }
 
-      case 'FILTER_DATA':{
+      case 'FILTER_DATA': {
         const newFiltered = filterData(
           state.projectData.entries,
-          state.filterDates, 
+          state.filterDates,
           state.filterTags,
-          state.filterRT, 
-          state.filterType, 
+          state.filterRT,
+          state.filterType,
           state.filterQuery,
-          state.researchThreads, 
+          state.researchThreads,
           state.threadTypeFilterArray
-          );
-          // saveJSON(state.projectData, state)
-        return {...state, filteredActivities: newFiltered }
+        );
+        // saveJSON(state.projectData, state)
+        return { ...state, filteredActivities: newFiltered };
       }
 
       case 'VIEW_PARAMS': {
         console.log(action.viewParams);
-        if(action.viewParams === null){
-          return {...state, viewParams: action.viewParams, selectedActivityURL: null }
+        if (action.viewParams === null) {
+          return {
+            ...state,
+            viewParams: action.viewParams,
+            selectedActivityURL: null,
+          };
         }
-        return {...state, viewParams: action.viewParams }
+        return { ...state, viewParams: action.viewParams };
       }
 
       case 'SET_FILTERED_ACTIVITIES': {
-       
-        return {...state, filteredActivities: action.filteredActivities }
+        return { ...state, filteredActivities: action.filteredActivities };
       }
 
       case 'UPDATE_RT_TYPE_SHOWN': {
-        return {...state, threadTypeFilterArray : action.threadTypeFilterArray}
+        return {
+          ...state,
+          threadTypeFilterArray: action.threadTypeFilterArray,
+        };
       }
 
       case 'UPDATE_TITLE': {
@@ -406,74 +438,88 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state.projectData,
           title: action.title,
         };
-       
+
         return saveJSON(newProjectData, state);
       }
 
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
-  
+
         const currentFiles = state.projectData.entries[entryIndex].files;
         const newFiles = [
           ...currentFiles,
-        
-          {title: `${name}.${extension}`, fileType: extension, artifactType:'memo', fileId: fileId, context: "null"}
+
+          {
+            title: `${name}.${extension}`,
+            fileType: extension,
+            artifactType: 'memo',
+            fileId: fileId,
+            context: 'null',
+          },
         ];
-        const entries = state.projectData.entries.map((d: EntryType, i: number) =>
-          entryIndex === i ? { ...d, files: newFiles } : d
+        const entries = state.projectData.entries.map(
+          (d: EntryType, i: number) =>
+            entryIndex === i ? { ...d, files: newFiles } : d
         );
-  
+
         const newProjectData = { ...state.projectData, entries };
-  
+
         return saveJSON(newProjectData, state);
       }
-      case 'UPDATE_GOOG_DOC_DATA' : {
-        
+      case 'UPDATE_GOOG_DOC_DATA': {
         setTimeout(() => {
           return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
-        }, 1000)
+        }, 1000);
       }
-      case 'UPDATE_GOOG_IDS' : {
-       
+      case 'UPDATE_GOOG_IDS': {
         const entries = [...state.projectData.entries].map(
           (d: EntryType, i: number) => {
-
-            let files = d.files.map((f:any, j:number)=> {
-              
-              if(action.googFileIds && !f.title.includes('.txt')){
-                console.log('F', f)
-                f.goog_ids = action.googFileIds[f.title] ? action.googFileIds[f.title] : null;
+            let files = d.files.map((f: any, j: number) => {
+              if (action.googFileIds && !f.title.includes('.txt')) {
+                console.log('F', f);
+                f.goog_ids = action.googFileIds[f.title]
+                  ? action.googFileIds[f.title]
+                  : null;
               }
-             
+
               return f;
             });
             return d;
           }
         );
         const newProjectData = { ...state.projectData, entries };
-        
+
         return saveJSON(newProjectData, state);
       }
       case 'URL_SELECTED_ACTIVITY': {
         console.log('is this working in URL_SELECTED_ACTIVITY', action);
-        return {...state, selectedActivityURL: action.selectedActivityURL }
+        return { ...state, selectedActivityURL: action.selectedActivityURL };
       }
-      case 'BOOKMARK_FRAGMENT':{
-        let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
-        
-        bookmarks.push({ 'fragment': action.bookmarkFragment })
+      case 'BOOKMARK_FRAGMENT': {
+        let bookmarks = action.selectedArtifactEntry.files[
+          action.selectedArtifactIndex
+        ].bookmarks
+          ? action.selectedArtifactEntry.files[action.selectedArtifactIndex]
+              .bookmarks
+          : [];
 
-        const currentFiles = state.projectData.entries[entryIndex].files.map((f, i)=> {
-          if(i === action.selectedArtifactIndex){
-            f.bookmarks = bookmarks;
+        bookmarks.push({ fragment: action.bookmarkFragment });
+
+        const currentFiles = state.projectData.entries[entryIndex].files.map(
+          (f, i) => {
+            if (i === action.selectedArtifactIndex) {
+              f.bookmarks = bookmarks;
+            }
+            return f;
           }
-          return f;
-        });
+        );
 
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-          action.selectedArtifactEntry.activity_uid === d.activity_uid ? { ...d, files: currentFiles } : d
+            action.selectedArtifactEntry.activity_uid === d.activity_uid
+              ? { ...d, files: currentFiles }
+              : d
         );
 
         const newProjectData = { ...state.projectData, entries };
@@ -481,18 +527,21 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         return newPD;
       }
 
-      case 'REMOVE_BOOKMARK':{
-
-        let bookmarks = action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks// ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
+      case 'REMOVE_BOOKMARK': {
+        let bookmarks =
+          action.selectedArtifactEntry.files[action.selectedArtifactIndex]
+            .bookmarks; // ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
         let entryIndex = action.selectedArtifactEntry.index;
-        bookmarks = bookmarks.filter((f, i) => i != action.fragIndex);//.push({ 'fragment': action.bookmarkFragment })
+        bookmarks = bookmarks.filter((f, i) => i != action.fragIndex); //.push({ 'fragment': action.bookmarkFragment })
 
-        const currentFiles = state.projectData.entries[entryIndex].files.map((f, i)=> {
-          if(i === action.selectedArtifactIndex){
-            f.bookmarks = bookmarks;
+        const currentFiles = state.projectData.entries[entryIndex].files.map(
+          (f, i) => {
+            if (i === action.selectedArtifactIndex) {
+              f.bookmarks = bookmarks;
+            }
+            return f;
           }
-          return f;
-        });
+        );
 
         const entries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
@@ -504,7 +553,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
         const newPD = saveJSON(newProjectData, state);
         return newPD;
       }
-      
+
       case 'ADD_EVENT': {
         const newProjectData = {
           ...state.projectData,
@@ -515,8 +564,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'ADD_CITATION': {
-        
-        const newProjectData = { ...state.projectData, citations: action.citations };
+        const newProjectData = {
+          ...state.projectData,
+          citations: action.citations,
+        };
         return saveJSON(newProjectData, state);
       }
 
@@ -539,55 +590,80 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_THREAD_FIELD': {
-        const {threadIndex, fieldName, newValue } = action;
+        const { threadIndex, fieldName, newValue } = action;
         const newRT = { ...state.researchThreads };
-        if(fieldName === 'title'){
+        if (fieldName === 'title') {
           newRT.research_threads[threadIndex].title = newValue;
         }
-        if(fieldName === 'description'){
+        if (fieldName === 'description') {
           newRT.research_threads[threadIndex].description = newValue;
         }
-        if(fieldName === 'merge'){
-          let filterThreads = newRT.research_threads
-          newRT.research_threads[threadIndex].actions.push({action: "merge", to: newValue, when: new Date()});
-          let newAddIndex = newRT.research_threads.indexOf(f => f.title === newValue);
-          
-          newRT.research_threads[newAddIndex].actions.push({action: "mergeAdd", from: newRT.research_threads[threadIndex].title, when: new Date()})
-          newRT.research_threads[newAddIndex].evidence = [...newRT.research_threads[newAddIndex], newRT.research_threads[threadIndex].evidence]
+        if (fieldName === 'merge') {
+          let filterThreads = newRT.research_threads;
+          newRT.research_threads[threadIndex].actions.push({
+            action: 'merge',
+            to: newValue,
+            when: new Date(),
+          });
+          let newAddIndex = newRT.research_threads.indexOf(
+            (f) => f.title === newValue
+          );
+
+          newRT.research_threads[newAddIndex].actions.push({
+            action: 'mergeAdd',
+            from: newRT.research_threads[threadIndex].title,
+            when: new Date(),
+          });
+          newRT.research_threads[newAddIndex].evidence = [
+            ...newRT.research_threads[newAddIndex],
+            newRT.research_threads[threadIndex].evidence,
+          ];
         }
-    
+
         return saveJSONRT(newRT, state.folderPath, state);
       }
 
-      case 'MERGE_THREADS':{
-        const {fromThread, toThread} = action;
+      case 'MERGE_THREADS': {
+        const { fromThread, toThread } = action;
 
         const newRT = { ...state.researchThreads };
 
-        let fromIndex = newRT.research_threads.map(m => m.title).indexOf(fromThread);
-        let toIndex = newRT.research_threads.map(m => m.title).indexOf(toThread);
+        let fromIndex = newRT.research_threads
+          .map((m) => m.title)
+          .indexOf(fromThread);
+        let toIndex = newRT.research_threads
+          .map((m) => m.title)
+          .indexOf(toThread);
 
-        newRT.research_threads[fromIndex].actions.push({action: "merge", to: newRT.research_threads[toIndex].title, when: new Date()});
-        
-        newRT.research_threads[toIndex].actions.push({action: "mergeAdd", from: newRT.research_threads[fromIndex].title, when: new Date()})
-      
-        let fromEvidence = newRT.research_threads[fromIndex].evidence.map(m => {
-          m.mergedFrom = fromThread;
-          return m;
-        })
-        let newEvidence = [...fromEvidence, ...newRT.research_threads[toIndex].evidence]
-        
-        
+        newRT.research_threads[fromIndex].actions.push({
+          action: 'merge',
+          to: newRT.research_threads[toIndex].title,
+          when: new Date(),
+        });
+
+        newRT.research_threads[toIndex].actions.push({
+          action: 'mergeAdd',
+          from: newRT.research_threads[fromIndex].title,
+          when: new Date(),
+        });
+
+        let fromEvidence = newRT.research_threads[fromIndex].evidence.map(
+          (m) => {
+            m.mergedFrom = fromThread;
+            return m;
+          }
+        );
+        let newEvidence = [
+          ...fromEvidence,
+          ...newRT.research_threads[toIndex].evidence,
+        ];
+
         newRT.research_threads[toIndex].evidence = newEvidence;
-      
-    
+
         return saveJSONRT(newRT, state.folderPath, state);
-
-
       }
 
       case 'QUERY_TERM': {
-        
         return {
           ...state,
           query: { term: action.term, matches: action.matches },
@@ -598,7 +674,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       case 'ADD_ACTIVITY_TO_THREAD': {
         const { activity, rationale, activityIndex, threadIndex } = action;
 
-    
         const newRT = state.researchThreads;
         const newA = {
           type: 'activity',
@@ -615,7 +690,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       case 'ADD_ARTIFACT_TO_THREAD': {
         const { activity, rationale, artifactIndex, threadIndex } = action;
         const newRT = state.researchThreads;
-       
+
         const newA = {
           type: 'artifact',
           dob: activity.date,
@@ -632,20 +707,31 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       case 'THREAD_FILTER': {
         if (action.filterRT) {
-        
-          let associatedByTags = state.projectData.entries.filter(f => {
-            let test = f.tags.filter(tt => action.filterRT.associated_tags.includes(tt))
+          let associatedByTags = state.projectData.entries.filter((f) => {
+            let test = f.tags.filter((tt) =>
+              action.filterRT.associated_tags.includes(tt)
+            );
             return test.length > 0;
           });
-          let associatedTest = associatedByTags.length > 0 ? associatedByTags.map(as => as.title).filter(at => action.filterRT.evidence.map((m) => m.activityTitle).indexOf(at) === -1) : []
-          
+          let associatedTest =
+            associatedByTags.length > 0
+              ? associatedByTags
+                  .map((as) => as.title)
+                  .filter(
+                    (at) =>
+                      action.filterRT.evidence
+                        .map((m) => m.activityTitle)
+                        .indexOf(at) === -1
+                  )
+              : [];
+
           return {
             ...state,
             filterDates: [null, null],
             filterRT: {
               title: action.filterRT.title,
               key: action.filterRT.evidence.map((m) => m.activityTitle),
-              associatedKey: associatedTest
+              associatedKey: associatedTest,
             },
             selectedThread: action.selectedThread,
           };
@@ -701,9 +787,11 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
         const newEntries = state.projectData.entries.map(
           (d: EntryType, i: number) =>
-            activityID === d.activity_uid ? { ...d, tags: [...d.tags, newTag.text] } : d
+            activityID === d.activity_uid
+              ? { ...d, tags: [...d.tags, newTag.text] }
+              : d
         );
-       
+
         const newProjectData = {
           ...state.projectData,
           tags: newTags,
@@ -716,7 +804,9 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       case 'ADD_FILES_TO_ENTRY': {
         const { fileList, entryIndex, activityID } = action;
 
-        const currentFiles = state.projectData.entries.filter(f => f.activity_uid === activityID)[0].files;
+        const currentFiles = state.projectData.entries.filter(
+          (f) => f.activity_uid === activityID
+        )[0].files;
         // const currentFiles = state.projectData.entries[entryIndex].files;
 
         const newFiles = [
@@ -730,8 +820,8 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
         const newProjectData = { ...state.projectData, entries };
         const newPD = saveJSON(newProjectData, state);
-       
-        return newPD; 
+
+        return newPD;
       }
 
       case 'CREATED_GOOGLE_IN_ENTRY': {
@@ -751,7 +841,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
           ...state,
           selectedArtifactEntry: action.selectedArtifactEntry,
           selectedArtifactIndex: action.selectedArtifactIndex,
-          hopArray: action.hopArray
+          hopArray: action.hopArray,
         };
       }
 
@@ -798,12 +888,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'DELETE_THREAD': {
-        
         const newRT = state.researchThreads;
-        newRT.research_threads = newRT.research_threads.filter((ft: any) => ft.rt_id != action.deleteThread);
-        
+        newRT.research_threads = newRT.research_threads.filter(
+          (ft: any) => ft.rt_id != action.deleteThread
+        );
+
         return saveJSONRT(newRT, state.folderPath, state);
-      } 
+      }
 
       case 'ADD_FILES': {
         const { fileList } = action;
@@ -827,13 +918,10 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'DELETE_FILE': {
-
         return deleteFileAction(action.fileName, action.entryIndex, state);
-
       }
 
       case 'ADD_ENTRY': {
-
         const newEntry: EntryType = {
           title: action.data.title,
           description: action.data.description,
@@ -870,16 +958,15 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'UPDATE_ENTRY_FIELD': {
-        
         const entries = [...state.projectData.entries].map(
           (d: EntryType, i: number) => {
             return d.activity_uid === action.activityID
               ? { ...d, [action.fieldName]: action.newValue }
-              : d
+              : d;
           }
         );
         const newProjectData = { ...state.projectData, entries };
-       
+
         return saveJSON(newProjectData, state);
       }
 
@@ -959,8 +1046,6 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       case 'HOVER_THREAD': {
-      
-
         return {
           ...state,
           researchThreadHover: action.researchThreadHover,

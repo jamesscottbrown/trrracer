@@ -32,4 +32,3 @@ export const dataStructureForTimeline = (activityData: any) => {
       return { year: year[0], months: wrapper };
     });
 };
-

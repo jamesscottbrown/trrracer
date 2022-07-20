@@ -3,7 +3,6 @@ import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
 
-
 const processDataQuery = (
   queryTerm: string,
   txtData: any,
@@ -16,9 +15,12 @@ const processDataQuery = (
 
   const googMatches = Object.entries(googleData)
     .map((f) => {
-      const content = (f[1] && f[1].body) ? f[1].body.content
-        .filter((p) => p.paragraph)
-        .map((m) => m.paragraph.elements) : [];
+      const content =
+        f[1] && f[1].body
+          ? f[1].body.content
+              .filter((p) => p.paragraph)
+              .map((m) => m.paragraph.elements)
+          : [];
       const flatContent = content.flatMap((m) => m);
       const flatTextRun = flatContent.map((m) =>
         m.textRun ? m.textRun.content : ''
@@ -36,12 +38,14 @@ const processDataQuery = (
       const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
       return tmp.length > 0;
     });
-  
-  const titleMatches = activityData.filter(f => {
-    return f.title.includes(queryTerm)
-  }).map(m => m.activity_uid);
 
-  console.log('title matches',titleMatches);
+  const titleMatches = activityData
+    .filter((f) => {
+      return f.title.includes(queryTerm);
+    })
+    .map((m) => m.activity_uid);
+
+  console.log('title matches', titleMatches);
 
   const matches = [];
 
@@ -114,8 +118,17 @@ const processDataQuery = (
       });
     }
 
-    if (tempText.length > 0 || tempG.length > 0 || titleMatches.indexOf(ent.activity_uid) > -1) {
-      const entM = { entry: ent, textMatch: tempText, googMatch: tempG, titleMatch: titleMatches.indexOf(ent.activity_uid) > -1 };
+    if (
+      tempText.length > 0 ||
+      tempG.length > 0 ||
+      titleMatches.indexOf(ent.activity_uid) > -1
+    ) {
+      const entM = {
+        entry: ent,
+        textMatch: tempText,
+        googMatch: tempG,
+        titleMatch: titleMatches.indexOf(ent.activity_uid) > -1,
+      };
       matches.push(entM);
     }
   });
@@ -147,10 +160,12 @@ const QueryBar = (queryProps: QueryProps) => {
     //         (f) => f['file-title'] === artifactData.title
     //       )[0].text
     //     : googleData[artifactData.fileId];
-    if((artifactData.fileType === 'txt') && (txtData)){
-      let dataCheck = txtData['text-data'].filter((f) => f['file-title'] === artifactData.title);
+    if (artifactData.fileType === 'txt' && txtData) {
+      let dataCheck = txtData['text-data'].filter(
+        (f) => f['file-title'] === artifactData.title
+      );
       data = dataCheck.length > 0 ? dataCheck[0].text : [];
-    }else{
+    } else {
       data = googleData[artifactData.fileId];
     }
   }
@@ -169,19 +184,17 @@ const QueryBar = (queryProps: QueryProps) => {
           onClick={() => {
             if (artifactData) {
               console.log('DATA ON CLICK', data);
-              if(data.documentId){
+              if (data.documentId) {
                 console.log('this is a google doc.');
-              }else{
-                console.log('this is text file', data)
-                if(data){
+              } else {
+                console.log('this is text file', data);
+                if (data) {
                   const matchArray = data.split(term);
                   alert(`${matchArray.length - 1} matches`);
-                }else{
+                } else {
                   alert('notext data for this file yet');
                 }
-                
               }
-              
             } else {
               const matches = processDataQuery(
                 term,
