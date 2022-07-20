@@ -41,8 +41,8 @@ const AddEntryForm = (props: any) => {
       data: {
         title: activityName,
         index: activityIndex,
-        description: description,
-        date: date,
+        description,
+        date,
       },
     });
 
@@ -129,31 +129,31 @@ const AddEntryForm = (props: any) => {
       <span style={{ fontSize: 18, fontWeight: 700, display: 'block' }}>
         {'Description: '}
       </span>
-      {
-        <div className="markdownEditorContainer">
-          <ReactMde
-            value={value}
-            onChange={setValue}
-            selectedTab={selectedTab}
-            onTabChange={handleChangeTab}
-            generateMarkdownPreview={(markdown) =>
-              Promise.resolve(converter.makeHtml(markdown))
-            }
-          />
 
-          {value !== description && (
-            <>
-              <b style={{ color: 'red' }}>
-                You have made unsaved changes to this field. These will be lost
-                if you switch to editing a different field.
-              </b>
-              <Button onClick={() => setDescription(value)}>
-                Save Description
-              </Button>
-            </>
-          )}
-        </div>
-      }
+      <div className="markdownEditorContainer">
+        <ReactMde
+          value={value}
+          onChange={setValue}
+          selectedTab={selectedTab}
+          onTabChange={handleChangeTab}
+          generateMarkdownPreview={(markdown) =>
+            Promise.resolve(converter.makeHtml(markdown))
+          }
+        />
+
+        {value !== description && (
+          <>
+            <b style={{ color: 'red' }}>
+              You have made unsaved changes to this field. These will be lost
+              if you switch to editing a different field.
+            </b>
+            <Button onClick={() => setDescription(value)}>
+              Save Description
+            </Button>
+          </>
+        )}
+      </div>
+
       <Button
         onClick={() => {
           setAddEntrySplash(false);

@@ -147,7 +147,7 @@ type ProjectState = {
   filterType: string | null;
   filterTypes: string[] | null;
 
-  //NEED TO MAKE THESE MORE SPECIFIC
+  // NEED TO MAKE THESE MORE SPECIFIC
   filterDates: any;
   filterQuery: any;
   filterRT: any;

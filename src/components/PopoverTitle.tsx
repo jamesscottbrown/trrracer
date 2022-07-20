@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 import {
   Box,
   Button,
-  Badge,
   Popover,
   PopoverContent,
   PopoverBody,
@@ -30,7 +29,7 @@ const ActivityTitlePopoverLogic = (props: any) => {
       {activityData.title}
     </div>
   ) : (
-    <Popover trigger={'hover'} style={{ display: 'inline' }}>
+    <Popover trigger='hover' style={{ display: 'inline' }}>
       <PopoverTrigger>
         <div
           style={{
@@ -39,14 +38,14 @@ const ActivityTitlePopoverLogic = (props: any) => {
             cursor: 'pointer',
           }}
           onMouseOver={() => {
-            let circles = d3.selectAll('circle.all-activities');
+            const circles = d3.selectAll('circle.all-activities');
 
             circles
               .filter((f) => f.title === activityData.title)
               .attr('fill', 'red');
           }}
           onMouseLeave={() => {
-            let circles = d3.selectAll('circle.all-activities');
+            const circles = d3.selectAll('circle.all-activities');
 
             circles
               .filter((f) => f.title === activityData.title)
@@ -107,10 +106,10 @@ const ActivityTitlePopoverLogic = (props: any) => {
               <span style={{ fontSize: 12, color: 'black', lineHeight: 1 }}>
                 <Button
                   onClick={() => {
-                    let indexTest = projectData.citations
+                    const indexTest = projectData.citations
                       .map((c) => c.id)
                       .indexOf(activityData.activity_uid);
-                    let index =
+                    const index =
                       indexTest > -1
                         ? indexTest + 1
                         : projectData.citations.length + 1;
@@ -118,7 +117,7 @@ const ActivityTitlePopoverLogic = (props: any) => {
                       String.raw`\trrracer{overview}{activity}{${activityData.activity_uid}}{${index}}`
                     );
                     if (indexTest === -1) {
-                      let newCitations = [
+                      const newCitations = [
                         ...projectData.citations,
                         { id: activityData.activity_uid, cIndex: index },
                       ];

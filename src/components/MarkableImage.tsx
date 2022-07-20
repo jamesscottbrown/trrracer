@@ -36,7 +36,7 @@ type MarkableImageProps = {
 };
 
 const MarkableImage = (props: MarkableImageProps) => {
-  const [{}, dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
   const { imgPath, activity, artifactIndex } = props;
   console.log(imgPath, activity, artifactIndex);
   const [markers, setMarkers] = useState([]);

@@ -4,30 +4,27 @@ import {
   Box,
   Button,
   Spacer,
-  Textarea,
-  Badge,
   Tag,
   TagLabel,
   TagCloseButton,
   Tooltip,
 } from '@chakra-ui/react';
-import { WithContext as ReactTags } from 'react-tag-input';
+
 import {
   FaArrowLeft,
   FaArrowRight,
-  FaEye,
-  FaEyeSlash,
   FaMapPin,
 } from 'react-icons/fa';
+
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
+
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
-import ReactMde from 'react-mde';
-import * as Showdown from 'showdown';
 
-import type { ResearchThread, ResearchThreadEvidence, ReactTag } from './types';
 import DetailBubble from './DetailSvg';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
@@ -237,7 +234,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                           label={`"${f.fragment}"`}
                         >
                           <Tag
-                            size={'md'}
+                            size='md'
                             borderRadius="full"
                             variant="solid"
                             colorScheme="gray"
@@ -254,8 +251,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                               onClick={() => {
                                 dispatch({
                                   type: 'REMOVE_BOOKMARK',
-                                  selectedArtifactEntry: selectedArtifactEntry,
-                                  selectedArtifactIndex: selectedArtifactIndex,
+                                  selectedArtifactEntry,
+                                  selectedArtifactIndex,
                                   fragIndex: i,
                                 });
                               }}
@@ -283,7 +280,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   openFile={openFile}
                 />
               ) : (
-                <div>{'No Artifact for this activity'}</div>
+                <div>No Artifact for this activity</div>
               )}
             </Flex>
           </Box>
@@ -317,7 +314,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               <ReactMde
                 value={selectedArtifactEntry.description}
                 // onChange={setValue}
-                selectedTab={'preview'}
+                selectedTab='preview'
                 onTabChange={() => null}
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))

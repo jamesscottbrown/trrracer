@@ -25,7 +25,7 @@ interface TopbarProps {
   newTitle: string;
   setNewTitle: any;
   setHideByDefault: (boo: any) => void;
-  hideByDefault: Boolean;
+  hideByDefault: boolean;
   setAddEntrySplash: (boo: any) => void;
 }
 
@@ -54,26 +54,27 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch,
   ] = useProjectState();
 
-  //USE callback when you pass anonymous functions to big components!!
+  // USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
   let getName = () => {
     if (viewParams.granularity === 'thread') {
       console.log('thread', filterRT);
       return filterRT.title;
-    } else if (viewParams.granularity === 'artifact') {
+    }
+    if (viewParams.granularity === 'artifact') {
       console.log(
         'ARTIFACT',
         selectedArtifactEntry.files[selectedArtifactIndex]
       );
       return selectedArtifactEntry.files[selectedArtifactIndex].title;
-    } else if (viewParams.granularity === 'activity') {
+    }
+    if (viewParams.granularity === 'activity') {
       console.log('activity', selectedActivityURL);
       return projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0].title;
-    } else {
-      return 'Unknown';
     }
+    return 'Unknown';
   };
 
   return (
@@ -117,7 +118,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         <div style={{ marginLeft: '20px', marginRight: '20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
-        {(!viewParams || (viewParams && viewParams.view != 'paper')) && (
+        {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
           <QueryBar
             artifactData={null}
             setViewType={setViewType}
@@ -176,7 +177,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 />
               </FormControl>
             </div>
-            {(filteredActivities.length != projectData.entries.length ||
+            {(filteredActivities.length !== projectData.entries.length ||
               !hideByDefault) && (
               <div
                 style={{
@@ -200,7 +201,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           </div>
         )}
       </Flex>
-      {/* <Flex style={{ 
+      {/* <Flex style={{
         height: filterTags.length > 0 ? 70 : 0 }}>
         <Flex flex={4} flexDirection="column">
           <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
@@ -231,7 +232,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   </span>
                 </div>
               ))}
-           
+
           </Box>
         </Flex>
       </Flex> */}

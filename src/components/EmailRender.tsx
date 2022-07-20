@@ -6,7 +6,7 @@ import * as Showdown from 'showdown';
 // import path from 'path';
 
 const EmailRender = (props: any) => {
-  const { title, setFragSelected, artifactData, activityData } = props;
+  const { title, artifactData, activityData } = props;
 
   console.log('artifactData', artifactData, activityData);
 
@@ -17,7 +17,6 @@ const EmailRender = (props: any) => {
     tasklists: true,
   });
 
-  const [state] = useProjectState();
   const [emailData, setEmailData] = useState('Email failed to load');
 
   useEffect(() => {

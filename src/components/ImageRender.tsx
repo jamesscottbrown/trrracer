@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image } from '@chakra-ui/react';
-import { InView, useInView } from 'react-intersection-observer';
-import { URL } from 'url';
+import { InView } from 'react-intersection-observer';
 import { readFileSync } from '../fileUtil';
-import { readProjectFile, useProjectState } from './ProjectContext';
+import { useProjectState } from './ProjectContext';
 
 const ImageRender = (props: any) => {
   const { src, onClick, autoLoad } = props;

@@ -1,14 +1,12 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { background, Box, calc, Flex } from '@chakra-ui/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Box } from '@chakra-ui/react';
 import * as d3 from 'd3';
-import * as hsv from 'd3-hsv';
-import * as d3co from 'd3-color';
+
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-import { readProjectFile, useProjectState } from './ProjectContext';
+import { useProjectState } from './ProjectContext';
 import { joinPath, readFileSync } from '../fileUtil';
 import BubbleVis from './BubbleVis';
-import DetailBubble from './DetailSvg';
 import DetailPreview from './DetailPreview';
 import ProjectListView from './ProjectListView';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
@@ -49,7 +47,7 @@ const PageNavigation = (props: any) => {
     setPosition,
   } = props;
   const [
-    { projectData, researchThreads, folderPath, isReadOnly },
+    { projectData, researchThreads, isReadOnly },
   ] = useProjectState();
 
   const bigRectHeight = 792;
@@ -98,7 +96,7 @@ const PageNavigation = (props: any) => {
 
         overlayRect
           .on('mouseover', (event, d) => {
-            let parsed = queryString.parse(d.url);
+            const parsed = queryString.parse(d.url);
 
             setPosition([600, event.clientY]);
             setToolHtml(`<div>
@@ -192,9 +190,7 @@ const PageNavigation = (props: any) => {
 };
 
 const DetailComponent = (props: any) => {
-  const [
-    { selectedActivityURL, viewParams, researchThreads, projectData },
-  ] = useProjectState();
+  const [ { viewParams, researchThreads, projectData }, ] = useProjectState();
 
   let associatedThreads = useMemo(() => {
     console.log(
@@ -203,11 +199,11 @@ const DetailComponent = (props: any) => {
       projectData.entries.filter((f) => f.activity_uid === viewParams.id)[0]
     );
     if (viewParams.granularity === 'activity') {
-      let proj = projectData.entries.filter(
+      const proj = projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0];
-      let temp = researchThreads?.research_threads.filter((rt) => {
-        let test = rt.evidence.map((m) => m.activityTitle);
+      const temp = researchThreads?.research_threads.filter((rt) => {
+        const test = rt.evidence.map((m) => m.activityTitle);
         console.log('TEST', test);
         return test.includes(proj.title);
       });
@@ -235,7 +231,7 @@ const DetailComponent = (props: any) => {
           flex="2"
           overflowY="auto"
           boxShadow={'3px 3px 8px #A3AAAF'}
-          border={'1px solid #A3AAAF'}
+          border='1px solid #A3AAAF'
           borderRadius={6}
           p={5}
         >
@@ -245,8 +241,8 @@ const DetailComponent = (props: any) => {
         <Box
           flex="2"
           overflowY="auto"
-          boxShadow={'3px 3px 8px #A3AAAF'}
-          border={'1px solid #A3AAAF'}
+          boxShadow='3px 3px 8px #A3AAAF'
+          border='1px solid #A3AAAF'
           borderRadius={6}
           p={5}
         >
@@ -261,13 +257,13 @@ const CitationIcon = (props: any) => {
   const { link, setPosition, setHTML, index, rectWidth } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
-  let moveBack = rectWidth - 20;
+  const moveBack = rectWidth - 20;
   const parsed = queryString.parse(link.url);
 
   const calcPos = (i: number) => {
-    let xMove = i < 9 ? i * 22 : (i - 9) * 22;
-    let x = moveBack - xMove;
-    let y = i < 9 ? 0 : 22;
+    const xMove = i < 9 ? i * 22 : (i - 9) * 22;
+    const x = moveBack - xMove;
+    const y = i < 9 ? 0 : 22;
     return `translate(${x},${y})`;
   };
 
@@ -302,10 +298,10 @@ const CitationIcon = (props: any) => {
 };
 
 const WhichFA = (props: any) => {
-  const { link, index } = props;
+  const { link } = props;
   const [{ viewParams }] = useProjectState();
 
-  let param = queryString.parse(link.url);
+  const param = queryString.parse(link.url);
 
   if (param.granularity === 'thread') {
     return (
@@ -340,14 +336,14 @@ const WhichFA = (props: any) => {
     );
   }
   return (
-    <g transform={'translate(2, 2)'}>
+    <g transform='translate(2, 2)'>
       <circle
         r={8}
         cx={10}
         cy={10}
         fill={+viewParams.cIndex === +param.cIndex ? '#ff2626' : '#d3d3d3'}
       />
-      <g transform={'translate(4, 4)'}>
+      <g transform='translate(4, 4)'>
         <IconCircle
           size={13}
           color={+viewParams.cIndex === +param.cIndex ? '#ffffff' : 'gray'}
@@ -359,14 +355,12 @@ const WhichFA = (props: any) => {
 
 const CitationVis = (props: any) => {
   const {
-    anno,
     pageNumber,
-    index,
     pageRectData,
     setPosition,
     setToolHtml,
   } = props;
-  const [{ linkData, viewParams }] = useProjectState();
+  const [{ viewParams }] = useProjectState();
   const svgRef = React.useRef(null);
   // const [position, setPosition] = useState([0,0]);
   // const [html, setHTML] = useState('<div>This is a start</div>')
@@ -377,9 +371,8 @@ const CitationVis = (props: any) => {
   const calWidth = (dataLen: any) => {
     if (dataLen > 8) {
       return 8 * (iconSize + 3);
-    } else {
-      return dataLen * (iconSize + 3);
     }
+    return dataLen * (iconSize + 3);
   };
 
   return (
@@ -451,10 +444,7 @@ const PaperView = (props: any) => {
   const { folderPath } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
-  const [
-    { selectedThread, linkData, isReadOnly, viewParams },
-    dispatch,
-  ] = useProjectState();
+  const [ { selectedThread, linkData, isReadOnly, viewParams }, ] = useProjectState();
 
   let passedLink = linkData
     ? linkData.filter((f) => f.cIndex === viewParams.cIndex)
@@ -465,7 +455,6 @@ const PaperView = (props: any) => {
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
   const [pageData, setPageData] = useState('');
-  const [htmlData, setHtmlData] = useState('');
   const [beenClicked, setBeenClicked] = useState(false);
   const [position, setPosition] = useState([0, 0]);
   const [toolhtml, setToolHtml] = useState('<div>This is a start</div>');
@@ -539,8 +528,8 @@ const PaperView = (props: any) => {
       }}
     >
       {/* <div style={{float:'left', width:'800px', border:'1px solid gray'}}>
-        {htmlData != '' ? 
-        <div style={{width:'95%', overflowY:'auto'}} dangerouslySetInnerHTML={{__html: htmlData}}></div> 
+        {htmlData != '' ?
+        <div style={{width:'95%', overflowY:'auto'}} dangerouslySetInnerHTML={{__html: htmlData}}></div>
         : <div>{"NO PAPER LOADED"}</div>}
         </div> */}
 
@@ -607,7 +596,7 @@ const PaperView = (props: any) => {
         </Box>
       </div>
       <div
-        id={'tooltip-cite'}
+        id='tooltip-cite'
         style={{
           position: 'absolute',
           right: position[0],
@@ -636,9 +625,7 @@ const PaperView = (props: any) => {
         justifyContent: 'center',
       }}
     >
-      {
-        'Oops! There is not a paper to explore for this project yet. Check back later!'
-      }
+      Oops! There is not a paper to explore for this project yet. Check back later!
     </div>
   );
 };

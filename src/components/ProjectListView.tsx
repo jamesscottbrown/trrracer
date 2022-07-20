@@ -6,12 +6,12 @@ import { useProjectState } from './ProjectContext';
 const ProjectListView = (ProjectPropValues: any) => {
   const { setViewType, viewType } = ProjectPropValues;
 
-  //selectedActivityURL !== null
+  // selectedActivityURL !== null
   const [
     { projectData, selectedActivityURL, filteredActivities },
   ] = useProjectState();
 
-  let [usedEntries, setUsedEntries] = useState(filteredActivities);
+  const [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
     if (selectedActivityURL !== null) {

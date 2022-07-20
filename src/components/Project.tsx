@@ -1,12 +1,17 @@
 /* eslint no-console: off */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Tag, TagLabel, calc } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+
+import { MdComment, MdPresentToAll } from 'react-icons/md';
+import { GrNotes } from 'react-icons/gr';
+import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
+import { BiQuestionMark } from 'react-icons/bi';
+
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
 import { useProjectState } from './ProjectContext';
 import LeftSidebar from './LeftSidebar';
 import ArtifactDetailWindow from './ArtifactDetailWindow';
-import { EntryType } from './types';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
@@ -18,13 +23,9 @@ import {
   FaPaperPlane,
   FaPencilAlt,
 } from 'react-icons/fa';
-import { MdComment, MdPresentToAll } from 'react-icons/md';
-import { GrNotes } from 'react-icons/gr';
-import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
-import { BiQuestionMark } from 'react-icons/bi';
 const queryString = require('query-string');
 
-//CHANGE THE SEARCH PARAMS
+// CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 // const params = new URLSearchParams(location.search);
 // const viewType = params.get("view");
@@ -32,20 +33,20 @@ const queryString = require('query-string');
 interface ProjectProps {
   folderPath: string;
 }
-//two arrays are the same length,
-//you dont have a  - in object, each key is string or number.
+// two arrays are the same length,
+// you dont have a  - in object, each key is string or number.
 
 function compareObjects<T extends any>(objA: T, objB: T): boolean {
   if (Object.keys(objA).length !== Object.keys(objB).length) {
     return false;
-  } else {
-    for (let key in Object.keys(objA)) {
-      if (objA[key] !== objB[key]) {
-        return false;
-      }
-    }
-    return true;
   }
+
+  for (const key in Object.keys(objA)) {
+    if (objA[key] !== objB[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function compareObjectList<T extends any[]>(listA: T, listB: T): boolean {
@@ -119,7 +120,7 @@ const ResearchThreadTypeTags = () => {
                 opacity: tg.show && tg.matches.length > 0 ? 1 : 0.4,
               }}
               onClick={() => {
-                let temp = threadTypeFilterArray.map((m) => {
+                const temp = threadTypeFilterArray.map((m) => {
                   if (m.type === tg.type) {
                     m.show ? (m.show = false) : (m.show = true);
                   }
@@ -272,13 +273,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
       // setcIndex(parsed.cIndex);
 
       if (parsed.granularity === 'thread') {
-        //sample for thread url
-        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
+        // sample for thread url
+        // http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
 
-        let chosenRT = researchThreads?.research_threads.filter(
+        const chosenRT = researchThreads?.research_threads.filter(
           (f) => f.rt_id === parsed.id
         )[0];
-        let threadindex = researchThreads?.research_threads
+        const threadindex = researchThreads?.research_threads
           .map((m) => m.rt_id)
           .indexOf(parsed.id);
         dispatch({
@@ -287,7 +288,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           selectedThread: threadindex,
         });
       } else if (parsed.granularity === 'activity') {
-        //sample for activity
+        // sample for activity
         // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
         console.log('activityURL', parsed.id);
         dispatch({
@@ -295,14 +296,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
           selectedActivityURL: parsed.id,
         });
       } else if (parsed.granularity === 'artifact') {
-        //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
+        // http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
 
-        let selected = projectData.entries.filter((en) => {
-          let fileTest = en.files.filter((f) => f.artifact_uid === parsed.id);
+        const selected = projectData.entries.filter((en) => {
+          const fileTest = en.files.filter((f) => f.artifact_uid === parsed.id);
           return fileTest.length > 0;
         });
 
-        let artifact = selected[0].files
+        const artifact = selected[0].files
           .map((m) => m.artifact_uid)
           .indexOf(parsed.id);
 
@@ -326,7 +327,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   }, [queryString, viewType, groupBy, window.history]);
 
   const barWidth = useMemo(() => {
-    let handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
+    const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
       ? window.innerWidth - 700
       : window.innerWidth - (bubbleDivWidth - handicap);

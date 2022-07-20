@@ -4,7 +4,6 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  Heading,
   ListItem,
   UnorderedList,
   Flex,
@@ -13,7 +12,7 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiSewingString } from 'react-icons/gi';
 import {
   FaExternalLinkAlt,
   FaLock,
@@ -24,7 +23,7 @@ import {
 import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
 import FileUpload from './FileUpload';
-import { EntryType, File, FileObj, TagType } from './types';
+import { File, FileObj } from './types';
 import URLList from './URLList';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
@@ -206,7 +205,7 @@ const Entry = (props: EntryPropTypes) => {
           <EditableInput />
         </Editable>
         <Button
-          size={'xs'}
+          size='xs'
           style={{ display: 'inline' }}
           onClick={makeNonEditable}
           type="button"
@@ -215,7 +214,7 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
+          size='xs'
           style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() => updateEntryField('isPrivate', !thisEntry.isPrivate)}
@@ -228,7 +227,7 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
+          size='xs'
           style={{ display: 'inline', marginLeft: 5 }}
           colorScheme="red"
           leftIcon={<DeleteIcon />}
@@ -276,7 +275,7 @@ const Entry = (props: EntryPropTypes) => {
                 opacity: m.title === selectedThread.title ? 1 : 0.4,
               }}
             >
-              <GiSewingString size={'20px'} />
+              <GiSewingString size='20px' />
             </div>
           </Tooltip>
         </React.Fragment>

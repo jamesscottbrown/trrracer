@@ -14,17 +14,17 @@ import {
   PopoverContent,
   PopoverTrigger,
   Select,
-  Tag,
   Textarea,
 } from '@chakra-ui/react';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
-import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
+
+import { useProjectState } from './ProjectContext';
+import type { EntryType } from './types';
 
 export const jitter = (val: any) => Math.random() * val;
 
@@ -111,7 +111,7 @@ const EditableThread = (threadProps: any) => {
   const [{ researchThreads }, dispatch] = useProjectState();
 
   const filteredThreads = researchThreads?.research_threads.filter((f) => {
-    let test = f.actions.map((m) => m.action);
+    const test = f.actions.map((m) => m.action);
     return test.indexOf('merge') === -1;
   });
 
@@ -175,16 +175,16 @@ const EditableThread = (threadProps: any) => {
             </Editable>
           </span>
           {!mergeWindow ? (
-            <Button size={'xs'} onClick={() => setMergeWindow(true)}>
-              {'Merge into Another'}
+            <Button size='xs' onClick={() => setMergeWindow(true)}>
+              Merge into Another
             </Button>
           ) : (
             <div>
-              <Button size={'xs'} onClick={() => setMergeWindow(false)}>
+              <Button size='xs' onClick={() => setMergeWindow(false)}>
                 Cancel
               </Button>
               <Button
-                size={'xs'}
+                size='xs'
                 onClick={() => {
                   dispatch({
                     type: 'MERGE_THREADS',
@@ -216,7 +216,7 @@ const EditableThread = (threadProps: any) => {
         <div style={{ display: 'inline', float: 'right' }}>
           <span style={{ display: 'inline' }}>
             <Button
-              size={'xs'}
+              size='xs'
               style={{ display: 'inline' }}
               onClick={() => {
                 setEditMode(null);
@@ -225,8 +225,8 @@ const EditableThread = (threadProps: any) => {
               Go Back
             </Button>
             <Button
-              size={'xs'}
-              bgColor={'#ff6863'}
+              size='xs'
+              bgColor='#ff6863'
               style={{ display: 'inline', margin: 2 }}
               onClick={() => {
                 dispatch({
@@ -236,7 +236,7 @@ const EditableThread = (threadProps: any) => {
               }}
             >
               <BiTrash style={{ display: 'inline' }} />
-              {'DELETE'}
+              DELETE
             </Button>
           </span>
         </div>
@@ -302,7 +302,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
       );
     } else {
       return researchThreads?.research_threads.filter((f) => {
-        let test = f.actions.map((m) => m.action);
+        const test = f.actions.map((m) => m.action);
         return test.indexOf('merge') === -1;
       });
     }
@@ -327,14 +327,14 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   const headerStyle = { fontSize: '19px', fontWeight: 600, cursor: 'pointer' };
 
   const associatedTags = filteredThreads.map((rt, i) => {
-    let tags = rt.evidence.flatMap((fm) => {
-      let match = projectData.entries.filter(
+    const tags = rt.evidence.flatMap((fm) => {
+      const match = projectData.entries.filter(
         (f) => f.title === fm.activityTitle
       )[0].tags;
       return match;
     });
-    let groupTags = Array.from(d3.group(tags, (d) => d));
-    let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
+    const groupTags = Array.from(d3.group(tags, (d) => d));
+    const sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
 
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
@@ -373,7 +373,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     }}
                   >
                     {((checkIfSelectThread(i) && selectedThread !== null) ||
-                      (viewParams && viewParams.view != 'paper')) && (
+                      (viewParams && viewParams.view !== 'paper')) && (
                       <div
                         title="Unselect Thread"
                         style={{
@@ -419,7 +419,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         <span>
                           <Popover>
                             <PopoverTrigger>
-                              <Button size={'xs'} style={{ display: 'inline' }}>
+                              <Button size='xs' style={{ display: 'inline' }}>
                                 Cite thread
                               </Button>
                             </PopoverTrigger>
@@ -428,10 +428,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                                 <span style={{ display: 'block' }}>
                                   <Button
                                     onClick={() => {
-                                      let indexTest = projectData.citations
+                                      const indexTest = projectData.citations
                                         .map((c) => c.id)
                                         .indexOf(rt.rt_id);
-                                      let index =
+                                      const index =
                                         indexTest > -1
                                           ? indexTest + 1
                                           : projectData.citations.length + 1;
@@ -440,7 +440,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                                       );
 
                                       if (indexTest === -1) {
-                                        let newCitations = [
+                                        const newCitations = [
                                           ...projectData.citations,
                                           { id: rt.rt_id, cIndex: index },
                                         ];
@@ -465,7 +465,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       <div style={{ display: 'inline', float: 'right' }}>
                         <span style={{ display: 'inline' }}>
                           <Button
-                            size={'xs'}
+                            size='xs'
                             style={{ display: 'inline' }}
                             onClick={() => {
                               setEditMode(i);
@@ -552,7 +552,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
         )}
       </Box>
 
-      {viewType != 'detail' && (
+      {viewType !== 'detail' && (
         <>
           {!isReadOnly && (
             <Button
@@ -590,7 +590,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 isActive={threadName && description ? true : false}
                 isDisabled={threadName && description ? false : true}
                 onClick={() => {
-                  let actTitle = `Created thread: ${threadName}`;
+                  const actTitle = `Created thread: ${threadName}`;
                   setName(null);
                   setDescription(null);
                   setShowCreateThread(false);

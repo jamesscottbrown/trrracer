@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiSewingString } from 'react-icons/gi';
 
 import {
   Button,
@@ -71,7 +71,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             />
           )}
           <Button
-            size={'xs'}
+            size='xs'
             style={{
               marginLeft: '7px',
               color: '#ffffff',
@@ -160,7 +160,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               style={{ display: 'inline', fill: 'lightgrey' }}
             />
           )}
-          {viewType != 'detail' && (
+          {viewType !== 'detail' && (
             <ActivityTitlePopoverLogic
               activityData={thisEntry}
               researchThreads={researchThreads}
@@ -216,14 +216,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                     // opacity: fo.title === selectedThread.title ? 1 : .4
                   }}
                 >
-                  <GiSewingString size={'20px'} />
+                  <GiSewingString size='20px' />
                 </div>
               </Tooltip>
             </React.Fragment>
           ))}
         <br />
 
-        {thisEntry.description && thisEntry.description != '' && (
+        {thisEntry.description && thisEntry.description !== '' && (
           <div>
             {thisEntry.tags.includes('email') ? (
               <div>
@@ -253,7 +253,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               <ReactMde
                 value={thisEntry.description}
                 // onChange={setValue}
-                selectedTab={'preview'}
+                selectedTab='preview'
                 // onTabChange={()=> null}
                 minPreviewHeight={100}
                 generateMarkdownPreview={(markdown) =>
