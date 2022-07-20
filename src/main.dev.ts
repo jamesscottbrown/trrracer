@@ -106,8 +106,8 @@ const openProjectWindow = async (projectPath: string) => {
     } else {
       mainWindow.show();
       mainWindow.focus();
-      
-      console.log('NEED TO ADD THIS BACK IN')
+
+      console.log('NEED TO ADD THIS BACK IN');
       authenticate();
     }
 
@@ -143,7 +143,7 @@ interface MenuDivider {
 }
 
 async function createSplashWindow() {
-  console.log('create splash window')
+  console.log('create splash window');
   const splashWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -268,7 +268,7 @@ app.on('window-all-closed', () => {
 app.whenReady().then(createSplashWindow).catch(console.log);
 
 app.on('activate', () => {
-  console.log('activated!!!!', mainWindow)
+  console.log('activated!!!!', mainWindow);
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   // if (mainWindow === null) createSplashWindow().catch(console.log);

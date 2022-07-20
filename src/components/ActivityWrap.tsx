@@ -27,81 +27,78 @@ const ActivityWrap = (props: any) => {
     viewType,
   } = props;
 
-  const [{filterRT, researchThreads}, dispatch] = useProjectState();
+  const [{ filterRT, researchThreads }, dispatch] = useProjectState();
   const myRef = useRef(null);
 
-  let foundIn = researchThreads?.research_threads.filter(m => {
-    let test= m.evidence.filter(f => f.activityTitle === activityData.title);
-    return test.length > 0});
+  let foundIn = researchThreads?.research_threads.filter((m) => {
+    let test = m.evidence.filter((f) => f.activityTitle === activityData.title);
+    return test.length > 0;
+  });
 
-  const updateEntryField = (
-    fieldName: string,
-    newValue: any
-  ) => {
-   
-    dispatch({ type: 'UPDATE_ENTRY_FIELD', fieldName, newValue, activityID: activityData.activity_uid });
+  const updateEntryField = (fieldName: string, newValue: any) => {
+    dispatch({
+      type: 'UPDATE_ENTRY_FIELD',
+      fieldName,
+      newValue,
+      activityID: activityData.activity_uid,
+    });
   };
 
-  if(editable[activityData.index]){
-
+  if (editable[activityData.index]) {
     return (
-      <div 
-      className='list-activity'
-      ref={myRef}>
-          <Entry
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={`en-${activityData.title}-${activityData.activity_uid}`}
-            foundIn={foundIn}
-            activityID={activityData.activity_uid}
-            files={activityData.files}
-            entryIndex={activityData.index}
-            openFile={openFile}
-            updateEntryField={updateEntryField}
-            makeNonEditable={() => setEditableStatus(activityData.index, false)}
-            viewType={viewType}
-          />
+      <div className="list-activity" ref={myRef}>
+        <Entry
+          /* eslint-disable-next-line react/no-array-index-key */
+          key={`en-${activityData.title}-${activityData.activity_uid}`}
+          foundIn={foundIn}
+          activityID={activityData.activity_uid}
+          files={activityData.files}
+          entryIndex={activityData.index}
+          openFile={openFile}
+          updateEntryField={updateEntryField}
+          makeNonEditable={() => setEditableStatus(activityData.index, false)}
+          viewType={viewType}
+        />
         <Divider marginTop="1em" marginBottom="1em" />
       </div>
     );
-
-  }else if(filterRT){
-
+  } else if (filterRT) {
     return (
-      <div 
-        className='list-activity'
-        ref={myRef} 
+      <div
+        className="list-activity"
+        ref={myRef}
         style={{
-          border:".5px solid #A3AAAF", 
-          borderRadius:6,
-          margin:5,
-          boxShadow: "3px 3px 8px #A3AAAF"
-          }}>
-         <ThreadedReadonlyEntry
-            /* eslint-disable-next-line react/no-array-index-key */
-            key={`ro-${activityData.title}-${activityData.index}-${index}`}
-            activityID={activityData.activity_uid}
-            openFile={openFile}
-            setViewType={setViewType}
-            makeEditable={() => setEditableStatus(activityData.index, true)}
-            viewType={viewType}
+          border: '.5px solid #A3AAAF',
+          borderRadius: 6,
+          margin: 5,
+          boxShadow: '3px 3px 8px #A3AAAF',
+        }}
+      >
+        <ThreadedReadonlyEntry
+          /* eslint-disable-next-line react/no-array-index-key */
+          key={`ro-${activityData.title}-${activityData.index}-${index}`}
+          activityID={activityData.activity_uid}
+          openFile={openFile}
+          setViewType={setViewType}
+          makeEditable={() => setEditableStatus(activityData.index, true)}
+          viewType={viewType}
         />
       </div>
     );
-
-  }else{
-
+  } else {
     return (
-      <div 
-      className='list-activity'
-      id={activityData.title}
-      ref={myRef}
+      <div
+        className="list-activity"
+        id={activityData.title}
+        ref={myRef}
         style={{
-          border:".5px solid #A3AAAF", 
-          borderRadius:6,
-          margin:5,
-          boxShadow: "3px 3px 8px #A3AAAF"
-          }}>
-         <ReadonlyEntry
+          border: '.5px solid #A3AAAF',
+          borderRadius: 6,
+          margin: 5,
+          boxShadow: '3px 3px 8px #A3AAAF',
+        }}
+      >
+        <ReadonlyEntry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`ro-${activityData.title}-${activityData.index}-${index}`}
           activityID={activityData.activity_uid}
@@ -111,12 +108,9 @@ const ActivityWrap = (props: any) => {
           viewType={viewType}
           foundIn={foundIn}
         />
-        
       </div>
     );
-
   }
-
 };
 
 export default ActivityWrap;

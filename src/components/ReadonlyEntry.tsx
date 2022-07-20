@@ -11,7 +11,7 @@ import {
   UnorderedList,
   Box,
   SimpleGrid,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
@@ -22,7 +22,6 @@ import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
 import { drive_v3 } from 'googleapis';
 import { readFileSync } from '../fileUtil';
-
 
 interface EntryPropTypes {
   activityID: string;
@@ -45,7 +44,7 @@ interface ReadonlyEntryFilePropTypes {
   setViewType: (viewType: string) => void;
   file: File;
   i: number;
-  dispatch: (dis:any) => void;
+  dispatch: (dis: any) => void;
   folderPath: string;
 }
 
@@ -138,15 +137,25 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
 type ActivityTitlePopoverLogicProps = {
   activityData: EntryType;
   researchThreads: ResearchThreadData | undefined;
-}
+};
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const { activityID, makeEditable, openFile, setViewType, viewType, foundIn } = props;
+  const {
+    activityID,
+    makeEditable,
+    openFile,
+    setViewType,
+    viewType,
+    foundIn,
+  } = props;
 
-  const [{projectData, researchThreads, folderPath, isReadOnly}, dispatch] = useProjectState();
+  const [
+    { projectData, researchThreads, folderPath, isReadOnly },
+    dispatch,
+  ] = useProjectState();
 
   const thisEntry = useMemo(() => {
-    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
+    return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
   }, [projectData.entries]);
 
   const converter = new Showdown.Converter({
@@ -174,33 +183,31 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
   return (
     <Box>
-      <div
-        style={{padding:10}}
-      >
-      <span style={{ fontSize: 22, fontWeight: 'bold' }}>
-        {thisEntry.isPrivate && (
-          <FaLock
-            title="This entry is private, and will be hidden when the Trrrace is exported."
-            size="0.75em"
-            style={{ display: 'inline', fill: 'lightgrey' }}
-          />
-        )}
-         {viewType != 'detail' && (
-          <ActivityTitlePopoverLogic
-            activityData={thisEntry}
-            researchThreads={researchThreads}
-          />
-        )}
-         {(!isReadOnly && makeEditable) && (
-          <Button 
-          leftIcon={<EditIcon />} 
-          onClick={makeEditable}
-          style={{display:'inline', float:'right'}}
-          >
-            Edit
-          </Button>
-        )}
-      </span>
+      <div style={{ padding: 10 }}>
+        <span style={{ fontSize: 22, fontWeight: 'bold' }}>
+          {thisEntry.isPrivate && (
+            <FaLock
+              title="This entry is private, and will be hidden when the Trrrace is exported."
+              size="0.75em"
+              style={{ display: 'inline', fill: 'lightgrey' }}
+            />
+          )}
+          {viewType != 'detail' && (
+            <ActivityTitlePopoverLogic
+              activityData={thisEntry}
+              researchThreads={researchThreads}
+            />
+          )}
+          {!isReadOnly && makeEditable && (
+            <Button
+              leftIcon={<EditIcon />}
+              onClick={makeEditable}
+              style={{ display: 'inline', float: 'right' }}
+            >
+              Edit
+            </Button>
+          )}
+        </span>
 
       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
         {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
@@ -225,79 +232,71 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
         )}
       </p>
 
-      {
-          foundIn.length > 0 && (
-            foundIn.map((fo, fi) => (
-              <React.Fragment
-              key={`tool-${fi}`}
-          >
-          <Tooltip 
-            
-            style={{padding:5}}
-            label={`Threaded in ${fo.title}`}>
-          <div
-          style={{
-            fontSize:20, 
-            backgroundColor: fo.color, 
-            borderRadius:50, 
-            width:26, 
-            display:'inline-block', 
-            padding:3,
-            margin:3,
-            // opacity: fo.title === selectedThread.title ? 1 : .4
-          }} 
-          ><GiSewingString size={'20px'}/>
+        {foundIn.length > 0 &&
+          foundIn.map((fo, fi) => (
+            <React.Fragment key={`tool-${fi}`}>
+              <Tooltip style={{ padding: 5 }} label={`Threaded in ${fo.title}`}>
+                <div
+                  style={{
+                    fontSize: 20,
+                    backgroundColor: fo.color,
+                    borderRadius: 50,
+                    width: 26,
+                    display: 'inline-block',
+                    padding: 3,
+                    margin: 3,
+                    // opacity: fo.title === selectedThread.title ? 1 : .4
+                  }}
+                >
+                  <GiSewingString size={'20px'} />
+                </div>
+              </Tooltip>
+            </React.Fragment>
+          ))}
+        <br />
+
+        {thisEntry.description && thisEntry.description != '' && (
+          <div>
+            {thisEntry.tags.includes('email') ? (
+              <div>
+                <span>{`${thisEntry.description.split('.')[0]}...`}</span>
+                <Button
+                  onClick={() => {
+                    setViewType('detail view');
+
+                    dispatch({
+                      type: 'SELECTED_ARTIFACT',
+                      selectedArtifactEntry: thisEntry,
+                      selectedArtifactIndex: null,
+                      hopArray: [
+                        {
+                          activity: thisEntry,
+                          artifactUid: null, //thisEntry.files[i].artifact_uid,
+                          hopReason: 'first hop',
+                        },
+                      ],
+                    });
+                  }}
+                >
+                  {'VIEW EMAIL'}
+                </Button>
+              </div>
+            ) : (
+              <ReactMde
+                value={thisEntry.description}
+                // onChange={setValue}
+                selectedTab={'preview'}
+                // onTabChange={()=> null}
+                minPreviewHeight={100}
+                generateMarkdownPreview={(markdown) =>
+                  Promise.resolve(converter.makeHtml(markdown))
+                }
+                readOnly={true}
+                style={{ height: '100%', overflowY: 'scroll' }}
+              />
+            )}
           </div>
-          </Tooltip>
-          </React.Fragment>
-          )))
-          
-        }
-      <br />
-
-      {(thisEntry.description && thisEntry.description != '') && (
-        <div>
-        {thisEntry.tags.includes('email') ? 
-            <div>
-              <span>{`${thisEntry.description.split('.')[0]}...`}</span>
-              <Button
-            onClick={() => {
-              setViewType('detail view');
-            
-              dispatch({
-                type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: thisEntry,
-                selectedArtifactIndex: null,
-                hopArray: [
-                  {
-                    activity: thisEntry, 
-                    artifactUid: null,//thisEntry.files[i].artifact_uid,
-                    hopReason: 'first hop',
-                  }
-                ],
-              });
-            }}
-          >{"VIEW EMAIL"}</Button>
-            </div>
-                :
-            <ReactMde
-            value={thisEntry.description}
-            // onChange={setValue}
-            selectedTab={'preview'}
-            // onTabChange={()=> null}
-            minPreviewHeight={100}
-            generateMarkdownPreview={(markdown) =>
-              Promise.resolve(converter.makeHtml(markdown))
-            }
-            readOnly={true}
-            style={{height:'100%', overflowY:'scroll'}}
-          />
-          }
-
-          </div>
-       
-      )}
-
+        )}
       </div>
 
       <SimpleGrid columns={1} spacing={1}>
@@ -309,18 +308,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             setViewType={setViewType}
             file={f}
             i={i}
-            dispatch={dispatch} 
+            dispatch={dispatch}
             folderPath={folderPath}
           />
         ))}
       </SimpleGrid>
       {urls.length > 0 && (
-        <div
-          style={{padding:10}}
-        >
-          <span style={{fontSize: 16, fontWeight:800}}>
-            URLs
-          </span>
+        <div style={{ padding: 10 }}>
+          <span style={{ fontSize: 16, fontWeight: 800 }}>URLs</span>
           <UnorderedList>
             {urls.map((url, i) => (
               <ListItem key={`${url.url}-${i}`}>

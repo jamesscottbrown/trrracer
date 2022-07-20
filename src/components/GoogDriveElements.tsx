@@ -21,19 +21,23 @@ const GoogInline = (googProps: any) => {
   );
 };
 
-const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmarked:any) => {
-
+const styleSection = (
+  sectionData: any,
+  commentedOn: any,
+  spanColor: any,
+  bookmarked: any
+) => {
   const styleOb = { display: 'inline', cursor: 'pointer' };
-  
+
   if (sectionData.textRun.textStyle) {
     Object.keys(sectionData.textRun.textStyle).forEach((m) => {
       if (m === 'italic') styleOb.fontStyle = 'italic';
       if (m === 'bold') styleOb.fontWeight = 'bold';
       if (m === 'backgroundColor') {
-        
-        styleOb.backgroundColor = (spanColor === true || bookmarked === true) ? '#FFB347' : colorConvert(
-          sectionData.textRun.textStyle[m].color.rgbColor
-        );
+        styleOb.backgroundColor =
+          spanColor === true || bookmarked === true
+            ? '#FFB347'
+            : colorConvert(sectionData.textRun.textStyle[m].color.rgbColor);
       }
       if (m === 'foregroundColor') {
         styleOb.color = colorConvert(
@@ -41,83 +45,120 @@ const styleSection = (sectionData: any, commentedOn: any, spanColor:any, bookmar
         );
       }
     });
-    if (commentedOn) {styleOb.backgroundColor = (spanColor === false) ? '#FFFCBB' : '#FFB347'}
-    if (spanColor) {styleOb.backgroundColor = '#FFB347'}
-     
+    if (commentedOn) {
+      styleOb.backgroundColor = spanColor === false ? '#FFFCBB' : '#FFB347';
+    }
+    if (spanColor) {
+      styleOb.backgroundColor = '#FFB347';
+    }
   }
 
-  if (bookmarked){ 
-   
+  if (bookmarked) {
     styleOb.backgroundColor = 'gray';
     styleOb.color = '#ffffff';
-  
   }
 
   return styleOb;
 };
 
 const GoogDriveSpans = (googProps: any) => {
-  const { googEl, index, comments, setFragSelected, artifactBookmarks } = googProps;
+  const {
+    googEl,
+    index,
+    comments,
+    setFragSelected,
+    artifactBookmarks,
+  } = googProps;
 
   const [spanColor, setSpanColor] = useState(false);
   const [bookmarkExist, setBookmarkExist] = useState(false);
 
-  const temp = (comments && comments.length > 0) ? comments.filter((f: any) =>
-    (googEl.textRun && googEl.textRun.content.includes(f.quotedFileContent.value))
-  ) : []; 
-  
-  var styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
+  const temp =
+    comments && comments.length > 0
+      ? comments.filter(
+          (f: any) =>
+            googEl.textRun &&
+            googEl.textRun.content.includes(f.quotedFileContent.value)
+        )
+      : [];
 
+  var styleOb = styleSection(
+    googEl,
+    temp.length > 0 ? true : false,
+    spanColor,
+    false
+  );
 
   useEffect(() => {
-   
-    const tempBookmark = (artifactBookmarks && artifactBookmarks.length > 0) ? artifactBookmarks.filter((f: any) => {
-      return googEl.textRun.content === (f.fragment)
-    }) : []; 
+    const tempBookmark =
+      artifactBookmarks && artifactBookmarks.length > 0
+        ? artifactBookmarks.filter((f: any) => {
+            return googEl.textRun.content === f.fragment;
+          })
+        : [];
 
-   if(tempBookmark.length > 0){
-    styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, true);
-   }else{
-    styleOb = styleSection(googEl, (temp.length > 0 ? true: false), spanColor, false);
-   }
+    if (tempBookmark.length > 0) {
+      styleOb = styleSection(
+        googEl,
+        temp.length > 0 ? true : false,
+        spanColor,
+        true
+      );
+    } else {
+      styleOb = styleSection(
+        googEl,
+        temp.length > 0 ? true : false,
+        spanColor,
+        false
+      );
+    }
   }, [spanColor, artifactBookmarks]);
 
   return temp.length > 0 ? (
-    <Popover trigger='hover'>
+    <Popover trigger="hover">
       <PopoverTrigger>
-          <span key={`elem-${index}`} style={styleOb}>{googEl.textRun.content}</span>
+        <span key={`elem-${index}`} style={styleOb}>
+          {googEl.textRun.content}
+        </span>
       </PopoverTrigger>
 
       <PopoverContent bg="white" color="gray">
         <PopoverArrow bg="white" />
 
         <PopoverBody>
-          <div>{temp.map((t, i)=> (
-            <div
-              key={`span-comment-${i}`}
-            >
-              <span dangerouslySetInnerHTML={{__html: t.htmlContent}}></span>
-             
-            </div>
-          ))}</div>
+          <div>
+            {temp.map((t, i) => (
+              <div key={`span-comment-${i}`}>
+                <span
+                  dangerouslySetInnerHTML={{ __html: t.htmlContent }}
+                ></span>
+              </div>
+            ))}
+          </div>
         </PopoverBody>
       </PopoverContent>
     </Popover>
   ) : (
-
-      <span
-       key={`elem-${index}`} 
-       style={styleOb}
-       onMouseOver={() => setSpanColor(true)}
-       onMouseOut={() => setSpanColor(false)}
-       onClick={()=> setFragSelected(googEl.textRun.content)}
-      >{googEl.textRun.content}</span>
-   
+    <span
+      key={`elem-${index}`}
+      style={styleOb}
+      onMouseOver={() => setSpanColor(true)}
+      onMouseOut={() => setSpanColor(false)}
+      onClick={() => setFragSelected(googEl.textRun.content)}
+    >
+      {googEl.textRun.content}
+    </span>
   );
 };
 
 const GoogDriveParagraph = (parProps: any) => {
-  const { parData, index, comments, setFragSelected, artifactBookmarks } = parProps;
+  const {
+    parData,
+    index,
+    comments,
+    setFragSelected,
+    artifactBookmarks,
+  } = parProps;
 
   const getHeading = (
     styling: GoogleParagraphStyle,
@@ -134,7 +175,9 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-          {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
+          {content.elements[0].textRun
+            ? content.elements[0].textRun.content
+            : ''}
         </span>
       );
     if (styling.namedStyleType.includes('2'))
@@ -148,7 +191,9 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-           {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
+          {content.elements[0].textRun
+            ? content.elements[0].textRun.content
+            : ''}
         </span>
       );
     if (styling.namedStyleType.includes('3'))
@@ -162,7 +207,9 @@ const GoogDriveParagraph = (parProps: any) => {
             marginTop: 6,
           }}
         >
-           {content.elements[0].textRun ? content.elements[0].textRun.content : ""}
+          {content.elements[0].textRun
+            ? content.elements[0].textRun.content
+            : ''}
         </span>
       );
   };
@@ -175,7 +222,13 @@ const GoogDriveParagraph = (parProps: any) => {
         parData.paragraph.elements.map((elem: any, j: number) => (
           <React.Fragment key={`span-${j}`}>
             {elem.textRun ? (
-              <GoogDriveSpans googEl={elem} index={j} comments={comments} setFragSelected={setFragSelected} artifactBookmarks={artifactBookmarks}/>
+              <GoogDriveSpans
+                googEl={elem}
+                index={j}
+                comments={comments}
+                setFragSelected={setFragSelected}
+                artifactBookmarks={artifactBookmarks}
+              />
             ) : (
               <GoogInline sectionData={elem} />
             )}

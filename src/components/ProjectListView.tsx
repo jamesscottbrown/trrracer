@@ -4,25 +4,30 @@ import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
-  const {
-    setViewType,
-    viewType,
-  } = ProjectPropValues;
+  const { setViewType, viewType } = ProjectPropValues;
 
   //selectedActivityURL !== null
-  const [{projectData, selectedActivityURL, filteredActivities},] = useProjectState();
+  const [
+    { projectData, selectedActivityURL, filteredActivities },
+  ] = useProjectState();
 
-  let [usedEntries, setUsedEntries] = useState(filteredActivities)
+  let [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
-
-    if(selectedActivityURL !== null){
-      setUsedEntries(projectData.entries.filter(f => f.activity_uid === selectedActivityURL))
-    }else{
-      setUsedEntries(filteredActivities)
+    if (selectedActivityURL !== null) {
+      setUsedEntries(
+        projectData.entries.filter(
+          (f) => f.activity_uid === selectedActivityURL
+        )
+      );
+    } else {
+      setUsedEntries(filteredActivities);
     }
-
-  }, [selectedActivityURL, projectData.entries.length, filteredActivities.length])
+  }, [
+    selectedActivityURL,
+    projectData.entries.length,
+    filteredActivities.length,
+  ]);
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -33,9 +38,7 @@ const ProjectListView = (ProjectPropValues: any) => {
       // one more entry was added
       setEditable([...editable, true]);
     } else if (editable.length !== projectData.entries.length) {
-      setEditable(
-        Array.from(Array(projectData.entries.length), () => false)
-      );
+      setEditable(Array.from(Array(projectData.entries.length), () => false));
     }
   }, [projectData.entries.length, filteredActivities.length]);
 
@@ -52,7 +55,6 @@ const ProjectListView = (ProjectPropValues: any) => {
 
   return (
     <div style={{ padding: '10px', marginTop: '20px' }}>
-      
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}

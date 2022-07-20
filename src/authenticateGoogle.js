@@ -8,9 +8,12 @@ const SCOPES = ['https://www.googleapis.com/auth/drive'];
 const TOKEN_PATH = 'token.json';
 
 export async function authenticate() {
-
   // eslint-disable-next-line
-    const {client_secret, client_id, redirect_uris} = CREDENTIALS_PATH.installed
+  const {
+    client_secret,
+    client_id,
+    redirect_uris,
+  } = CREDENTIALS_PATH.installed;
 
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -23,15 +26,14 @@ export async function authenticate() {
     oAuth2Client.setCredentials(JSON.parse(token));
     return oAuth2Client;
   } catch (e) {
-   
     const electronOAuth = new ElectronGoogleOAuth2(
       client_id,
       client_secret,
       SCOPES
     );
-  
+
     const token = await electronOAuth.openAuthWindowAndGetTokens();
-  
+
     await writeFile(TOKEN_PATH, JSON.stringify(token));
 
     oAuth2Client.setCredentials(token);

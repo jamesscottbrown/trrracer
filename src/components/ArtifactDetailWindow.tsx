@@ -1,7 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Button, Spacer, Textarea, Badge, Tag, TagLabel, TagCloseButton, Tooltip } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Button,
+  Spacer,
+  Textarea,
+  Badge,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  Tooltip,
+} from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash, FaMapPin } from 'react-icons/fa';
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaEye,
+  FaEyeSlash,
+  FaMapPin,
+} from 'react-icons/fa';
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
@@ -10,33 +27,29 @@ import QueryBar from './QueryBar';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 
-import type {
-  ResearchThread,
-  ResearchThreadEvidence,
-  ReactTag,
-} from './types';
+import type { ResearchThread, ResearchThreadEvidence, ReactTag } from './types';
 import DetailBubble from './DetailSvg';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface DetailProps {
   setViewType: (view: string) => void;
-  goBackView:any;
+  goBackView: any;
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
-  const { 
-    setViewType, 
-    goBackView,
-  } = props;
+  const { setViewType, goBackView } = props;
 
-  const [{
-    projectData, 
-    selectedArtifactEntry, 
-    selectedArtifactIndex, 
-    hopArray, 
-    researchThreads,
-    isReadOnly
-  }, dispatch] = useProjectState();
+  const [
+    {
+      projectData,
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+      hopArray,
+      researchThreads,
+      isReadOnly,
+    },
+    dispatch,
+  ] = useProjectState();
 
   const converter = new Showdown.Converter({
     tables: true,
@@ -50,24 +63,24 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   );
 
   const selectedArtifact = useMemo(() => {
-    return selectedArtifactEntry.files.length > 0 ? selectedArtifactEntry.files[selectedArtifactIndex] : null}, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
+    return selectedArtifactEntry.files.length > 0
+      ? selectedArtifactEntry.files[selectedArtifactIndex]
+      : null;
+  }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
   const [newHeight, setNewHeight] = useState('1000px');
 
   const viewheight = +newHeight.split('px')[0];
-  const margin = viewheight * .15;
-
+  const margin = viewheight * 0.15;
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
       setEditable([...editable, true]);
     } else if (editable.length !== projectData.entries.length) {
-      setEditable(
-        Array.from(Array(projectData.entries.length), (_) => false)
-      );
+      setEditable(Array.from(Array(projectData.entries.length), (_) => false));
     }
   }, [projectData.entries.length]);
 
@@ -109,15 +122,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             <Button
               style={{ marginRight: '10px' }}
               onClick={() => {
-                const selectActivity = selectedArtifactEntry.index > 0
-                ? projectData.entries[selectedArtifactEntry.index - 1]
-                : projectData.entries[projectData.entries.length - 1];
+                const selectActivity =
+                  selectedArtifactEntry.index > 0
+                    ? projectData.entries[selectedArtifactEntry.index - 1]
+                    : projectData.entries[projectData.entries.length - 1];
 
                 const newHop = [
                   ...hopArray,
-                  { activity: 
-                    selectActivity, 
-                    artifactUid: selectActivity && selectActivity.files[0].artifact_uid ? selectActivity.files[0].artifact_uid : null,
+                  {
+                    activity: selectActivity,
+                    artifactUid:
+                      selectActivity && selectActivity.files[0].artifact_uid
+                        ? selectActivity.files[0].artifact_uid
+                        : null,
                     hopReason: 'time hop back',
                   },
                 ];
@@ -133,26 +150,37 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             </Button>
 
             {` Activity:`}
-            {
-              !isReadOnly ? <ActivityTitlePopoverLogic activityData={selectedArtifactEntry} researchThreads={researchThreads} />
-              : <span>{selectedArtifactEntry.title}</span>
-            }
-              
+            {!isReadOnly ? (
+              <ActivityTitlePopoverLogic
+                activityData={selectedArtifactEntry}
+                researchThreads={researchThreads}
+              />
+            ) : (
+              <span>{selectedArtifactEntry.title}</span>
+            )}
+
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
-                const selectActivity = selectedArtifactEntry.index < projectData.entries.length - 1
-                ? projectData.entries[selectedArtifactEntry.index + 1]
-                : projectData.entries[0];
+                const selectActivity =
+                  selectedArtifactEntry.index < projectData.entries.length - 1
+                    ? projectData.entries[selectedArtifactEntry.index + 1]
+                    : projectData.entries[0];
 
                 const newHop = [
                   ...hopArray,
-                  { activity: selectActivity, 
-                    artifactUid: (selectActivity && selectActivity.files.length > 0 && selectActivity.files[0].artifact_uid) ? selectActivity.files[0].artifact_uid : null,
+                  {
+                    activity: selectActivity,
+                    artifactUid:
+                      selectActivity &&
+                      selectActivity.files.length > 0 &&
+                      selectActivity.files[0].artifact_uid
+                        ? selectActivity.files[0].artifact_uid
+                        : null,
                     hopReason: 'time hop forward',
                   },
                 ];
-               
+
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
                   selectedArtifactEntry: selectActivity,
@@ -172,82 +200,73 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               alignContent: 'center',
               paddingTop: 5,
             }}
-          >{`Artifact: ${selectedArtifact ? selectedArtifact.title : "No artifacts with this activity"}`}</div>
+          >{`Artifact: ${
+            selectedArtifact
+              ? selectedArtifact.title
+              : 'No artifacts with this activity'
+          }`}</div>
         </Flex>
       </Box>
-      <Flex
-        position="relative"
-        top={70}
-        bottom={0}
-        height="calc(100% - 150px)"
-      >
-  
-        <ArtifactDetailSidebar 
-        fragSelected={fragSelected}
-        setFragSelected={setFragSelected}
+      <Flex position="relative" top={70} bottom={0} height="calc(100% - 150px)">
+        <ArtifactDetailSidebar
+          fragSelected={fragSelected}
+          setFragSelected={setFragSelected}
         />
-        
-        <div style={{ width:260 }}>
-          <DetailBubble 
-            widthSvg={360}
-            filterType={null}
-          />
-        </div>
-        {
-          selectedArtifact ? (
-            <Box flex="3.5">
-              {(selectedArtifact.fileType ===
-                'txt' ||
-                selectedArtifact.fileType ===
-                  'gdoc') && (
-                <Flex p={5} width="100%" alignItems="center" alignContent="center">
-              <QueryBar
-                marginLeft={60}
-                artifactData={
-                  selectedArtifact
-                }
-              />
-              <Box>
-                {
-                  selectedArtifact.bookmarks && (
-                    selectedArtifact.bookmarks.map((f, i)=> (
-                    //
-                    <React.Fragment key={`pin-${i}`}>
-                    <Tooltip 
-                    style={{padding:5}}
-                    label={`"${f.fragment}"`}>
-                      
-                    <Tag
-                      size={'md'}
-                      borderRadius='full'
-                      variant='solid'
-                      colorScheme='gray'
-                      style={{cursor:'pointer', marginRight:5}}
 
-                    > 
-                    <TagLabel
-                      onClick={()=> {
-                        setFragSelected(f.fragment);
-                      }}
-                    ><FaMapPin/></TagLabel>
-                    <TagCloseButton
-                      onClick={()=> {
-                        dispatch({
-                          type: 'REMOVE_BOOKMARK',
-                          selectedArtifactEntry: selectedArtifactEntry,
-                          selectedArtifactIndex: selectedArtifactIndex,
-                          fragIndex: i
-                        });
-                      }}
-                    />
-                  </Tag>
-                    </Tooltip>
-                    </React.Fragment>
-                  )) )
-                }
-              </Box>
-            </Flex>
-          )}
+        <div style={{ width: 260 }}>
+          <DetailBubble widthSvg={360} filterType={null} />
+        </div>
+        {selectedArtifact ? (
+          <Box flex="3.5">
+            {(selectedArtifact.fileType === 'txt' ||
+              selectedArtifact.fileType === 'gdoc') && (
+              <Flex
+                p={5}
+                width="100%"
+                alignItems="center"
+                alignContent="center"
+              >
+                <QueryBar marginLeft={60} artifactData={selectedArtifact} />
+                <Box>
+                  {selectedArtifact.bookmarks &&
+                    selectedArtifact.bookmarks.map((f, i) => (
+                      //
+                      <React.Fragment key={`pin-${i}`}>
+                        <Tooltip
+                          style={{ padding: 5 }}
+                          label={`"${f.fragment}"`}
+                        >
+                          <Tag
+                            size={'md'}
+                            borderRadius="full"
+                            variant="solid"
+                            colorScheme="gray"
+                            style={{ cursor: 'pointer', marginRight: 5 }}
+                          >
+                            <TagLabel
+                              onClick={() => {
+                                setFragSelected(f.fragment);
+                              }}
+                            >
+                              <FaMapPin />
+                            </TagLabel>
+                            <TagCloseButton
+                              onClick={() => {
+                                dispatch({
+                                  type: 'REMOVE_BOOKMARK',
+                                  selectedArtifactEntry: selectedArtifactEntry,
+                                  selectedArtifactIndex: selectedArtifactIndex,
+                                  fragIndex: i,
+                                });
+                              }}
+                            />
+                          </Tag>
+                        </Tooltip>
+                      </React.Fragment>
+                    ))}
+                </Box>
+              </Flex>
+            )}
 
             <Flex
               style={{
@@ -258,28 +277,28 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 paddingRight: 20,
               }}
             >
-              {
-                selectedArtifact ?
+              {selectedArtifact ? (
                 <DetailPreview
                   setFragSelected={setFragSelected}
                   openFile={openFile}
-                /> : <div>{'No Artifact for this activity'}</div>
-              }
-              
+                />
+              ) : (
+                <div>{'No Artifact for this activity'}</div>
+              )}
             </Flex>
           </Box>
-          ) :
+        ) : (
           <Flex
-              style={{
-                justifyContent: 'center',
-                alignItems: 'stretch',
-                height: '90%',
-                paddingLeft: 20,
-                paddingRight: 20,
-                overflowY:'scroll'
-              }}
-            >
-              <div
+            style={{
+              justifyContent: 'center',
+              alignItems: 'stretch',
+              height: '90%',
+              paddingLeft: 20,
+              paddingRight: 20,
+              overflowY: 'scroll',
+            }}
+          >
+            <div
               onMouseUp={() => {
                 if (setFragSelected) {
                   const selObj = window.getSelection();
@@ -288,24 +307,27 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   console.log('mouseup');
                 }
               }}
-              style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
+              style={{
+                height: '100%',
+                width: '90%',
+                padding: 8,
+                overflow: 'auto',
+              }}
             >
-            <ReactMde
-              value={selectedArtifactEntry.description}
-              // onChange={setValue}
-              selectedTab={'preview'}
-              onTabChange={()=> null}
-            
-              generateMarkdownPreview={(markdown) =>
-                Promise.resolve(converter.makeHtml(markdown))
-              }
-              readOnly={true}
-              style={{height:'100%', overflowY:'scroll'}}
+              <ReactMde
+                value={selectedArtifactEntry.description}
+                // onChange={setValue}
+                selectedTab={'preview'}
+                onTabChange={() => null}
+                generateMarkdownPreview={(markdown) =>
+                  Promise.resolve(converter.makeHtml(markdown))
+                }
+                readOnly={true}
+                style={{ height: '100%', overflowY: 'scroll' }}
               />
-              </div>
+            </div>
           </Flex>
-        }
-        
+        )}
       </Flex>
     </div>
     // </div>

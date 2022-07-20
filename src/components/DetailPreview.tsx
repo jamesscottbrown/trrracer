@@ -18,12 +18,12 @@ import { getDriveFiles } from '../googleUtil';
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 
-if(isElectron){
+if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
 }
 
 const url = (folderPath: string, title: string) => {
-  if (folderPath.startsWith("http://") || folderPath.startsWith("https://")){
+  if (folderPath.startsWith('http://') || folderPath.startsWith('https://')) {
     return `${joinPath(folderPath, title)}`;
   } else {
     return `file://${folderPath}/${title}`;
@@ -36,42 +36,46 @@ interface DetailPreviewPropsType {
 }
 
 const TextRender = (textProps: any) => {
-  const {textArray} = textProps;
-  if(textArray.length > 1){
-    return textArray.map((ta:any, i:number)=> (
+  const { textArray } = textProps;
+  if (textArray.length > 1) {
+    return textArray.map((ta: any, i: number) => (
       <span
         key={`book-span-${i}`}
         style={{
-          color: ta.style === "normal" ? "black" : "#ffffff",
+          color: ta.style === 'normal' ? 'black' : '#ffffff',
           backgroundColor: ta.style === 'normal' ? '#ffffff' : '#485063',
-          padding: ta.style === "normal" ? 1 : 5,
+          padding: ta.style === 'normal' ? 1 : 5,
         }}
-      >{ta.textData}</span>
-    ))
-  }else{
-    return <span>{textArray[0].textData}</span>
+      >
+        {ta.textData}
+      </span>
+    ));
+  } else {
+    return <span>{textArray[0].textData}</span>;
   }
-}
+};
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const {
-    setFragSelected,
-    openFile,
-  } = props;
- 
-  const [{
-    googleData, 
-    projectData,
-    folderPath,
-    selectedArtifactEntry,
-    selectedArtifactIndex
-  }, dispatch] = useProjectState();
+  const { setFragSelected, openFile } = props;
 
-  const activity = useMemo(()=> {
-    return projectData.entries.filter(f => f.activity_uid === selectedArtifactEntry.activity_uid)[0];
+  const [
+    {
+      googleData,
+      projectData,
+      folderPath,
+      selectedArtifactEntry,
+      selectedArtifactIndex,
+    },
+    dispatch,
+  ] = useProjectState();
+
+  const activity = useMemo(() => {
+    return projectData.entries.filter(
+      (f) => f.activity_uid === selectedArtifactEntry.activity_uid
+    )[0];
   }, [selectedArtifactEntry.activity_uid]);
 
-  const artifact = useMemo(()=> {
+  const artifact = useMemo(() => {
     return activity.files[selectedArtifactIndex];
   }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
@@ -109,7 +113,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     // return <GrDocumentPpt onClick={() => openFile(title, folderPath)} size={size} />;
     return (
       <embed
-        style={{ height: 'auto', width:'90%' }}
+        style={{ height: 'auto', width: '90%' }}
         src={url(folderPath, title)}
         type="application/pdf"
       />
@@ -123,9 +127,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
+    console.log(
+      'is this reaching in gdoc',
+      googleData,
+      Object.keys(googleData).indexOf(artifact.fileId)
+    );
 
-    console.log('is this reaching in gdoc', googleData, Object.keys(googleData).indexOf(artifact.fileId));
-   
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
@@ -136,18 +143,20 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       let comments = artifact.comments ? artifact.comments.comments : [];
 
       return (
-        <Box style={{ 
-          overflow: 'scroll', 
-          height: 'calc(100vh - 150px)', 
-          width:'700px',
-          display: 'inline', 
-          boxShadow:"3px 3px 8px #A3AAAF",
-          border:"1px solid #A3AAAF",
-          borderRadius:6,
-          padding:10,
-          }}>
+        <Box
+          style={{
+            overflow: 'scroll',
+            height: 'calc(100vh - 150px)',
+            width: '700px',
+            display: 'inline',
+            boxShadow: '3px 3px 8px #A3AAAF',
+            border: '1px solid #A3AAAF',
+            borderRadius: 6,
+            padding: 10,
+          }}
+        >
           <div
-            style={{ height: '100%', width:'700px', overflow: 'auto' }}
+            style={{ height: '100%', width: '700px', overflow: 'auto' }}
             id={'gdoc'}
           >
             {gContent.map((m: any, i: number) => (
@@ -163,31 +172,38 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </div>
         </Box>
       );
-    }else{
+    } else {
       getDriveFiles(folderPath, googleCred).then((googOb) => {
-             console.log('GOOGLE OB',googOb)
-        dispatch({type: 'UPDATE_GOOG_DOC_DATA', googDocData: googOb.goog_doc_data});
+        console.log('GOOGLE OB', googOb);
+        dispatch({
+          type: 'UPDATE_GOOG_DOC_DATA',
+          googDocData: googOb.goog_doc_data,
+        });
         // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
 
         let chosen = googOb.goog_doc_data[artifact.fileId];
 
-        const gContent = chosen ? chosen.body.content.filter((f: any) => f.startIndex) : [];
+        const gContent = chosen
+          ? chosen.body.content.filter((f: any) => f.startIndex)
+          : [];
 
         let comments = artifact.comments ? artifact.comments.comments : [];
 
-        return (
-          chosen ? <Box style={{ 
-            overflow: 'scroll', 
-            height: 'calc(100vh - 150px)', 
-            width:'700px',
-            display: 'inline', 
-            boxShadow:"3px 3px 8px #A3AAAF",
-            border:"1px solid #A3AAAF",
-            borderRadius:6,
-            padding:10,
-            }}>
+        return chosen ? (
+          <Box
+            style={{
+              overflow: 'scroll',
+              height: 'calc(100vh - 150px)',
+              width: '700px',
+              display: 'inline',
+              boxShadow: '3px 3px 8px #A3AAAF',
+              border: '1px solid #A3AAAF',
+              borderRadius: 6,
+              padding: 10,
+            }}
+          >
             <div
-              style={{ height: '100%', width:'700px', overflow: 'auto' }}
+              style={{ height: '100%', width: '700px', overflow: 'auto' }}
               id={'gdoc'}
             >
               {gContent.map((m: any, i: number) => (
@@ -202,11 +218,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
               ))}
             </div>
           </Box>
-          : <div>Oops could not load google doc</div>
+        ) : (
+          <div>Oops could not load google doc</div>
         );
-
       });
-    } 
+    }
   }
 
   if (title.endsWith('.gsheet')) {
@@ -219,51 +235,51 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-
     const [textFile, setText] = useState<any>([]);
 
-    useEffect(()=> {
+    useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {
+        let textArray =
+          text.length > 0 ? [{ style: 'normal', textData: text }] : [];
 
-        let textArray = (text.length > 0) ? [{style:'normal', textData: text}] : [];
-        
-        if(artifact.bookmarks){
-          let start = textArray[0].textData.split(artifact.bookmarks[0].fragment);
-          
+        if (artifact.bookmarks) {
+          let start = textArray[0].textData.split(
+            artifact.bookmarks[0].fragment
+          );
+
           textArray = [
-            {style:'normal', textData: start[0]},
-            {style:'highlight', textData: artifact.bookmarks[0].fragment},
-            {style:'normal', textData: start[1]}
-          ]
-          if(artifact.bookmarks.length > 1){
-    
-            for(let j = 1; j < artifact.bookmarks.length; j++){
-          
+            { style: 'normal', textData: start[0] },
+            { style: 'highlight', textData: artifact.bookmarks[0].fragment },
+            { style: 'normal', textData: start[1] },
+          ];
+          if (artifact.bookmarks.length > 1) {
+            for (let j = 1; j < artifact.bookmarks.length; j++) {
               let oldTextArray = textArray;
               let frag = artifact.bookmarks[j].fragment;
-              let findIndex = textArray.map(ta => ta.textData.includes(frag)).indexOf(true);
-    
+              let findIndex = textArray
+                .map((ta) => ta.textData.includes(frag))
+                .indexOf(true);
+
               let newArray = oldTextArray.slice(0, findIndex);
-            
+
               let addThis = oldTextArray[findIndex].textData.split(frag);
               let makeArray = [
-                {style:'normal', textData: addThis[0] },
-                {style:'highlight', textData: frag },
-                {style:'normal', textData: addThis[1] },
-              ]
-              newArray = [...newArray, ...makeArray]
-              
-              if(oldTextArray.length > (findIndex + 1)){
-                newArray = [...newArray, ...oldTextArray.slice((findIndex + 1),)]
+                { style: 'normal', textData: addThis[0] },
+                { style: 'highlight', textData: frag },
+                { style: 'normal', textData: addThis[1] },
+              ];
+              newArray = [...newArray, ...makeArray];
+
+              if (oldTextArray.length > findIndex + 1) {
+                newArray = [...newArray, ...oldTextArray.slice(findIndex + 1)];
               }
               textArray = newArray;
             }
           }
         }
-          setText(textArray);
-        });
-    }, [folderPath, title])
-    
+        setText(textArray);
+      });
+    }, [folderPath, title]);
 
     return (
       <div
@@ -275,9 +291,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             console.log('mouseup');
           }
         }}
-        style={{ height: '100%', width:'90%', padding:8, overflow: 'auto' }}
+        style={{ height: '100%', width: '90%', padding: 8, overflow: 'auto' }}
       >
-        {textFile.length > 0 ? <TextRender textArray={textFile} /> : <span>{"COULD NOT LOAD TEXT"}</span>}
+        {textFile.length > 0 ? (
+          <TextRender textArray={textFile} />
+        ) : (
+          <span>{'COULD NOT LOAD TEXT'}</span>
+        )}
       </div>
     );
   }
@@ -294,7 +314,14 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     );
   }
   if (title.endsWith('.eml')) {
-    return <EmailRender setFragSelected={setFragSelected} title={title} artifactData={artifact} activityData={activity} />;
+    return (
+      <EmailRender
+        setFragSelected={setFragSelected}
+        title={title}
+        artifactData={artifact}
+        activityData={activity}
+      />
+    );
   }
 
   if (title.endsWith('.pdf')) {
@@ -305,9 +332,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       //   type="application/pdf"
       // />
       <iframe
-        style={{ width:'90%', zoom:60 }}
+        style={{ width: '90%', zoom: 60 }}
         src={`file://${path.join(folderPath, title)}`}
-       
+
         // type="application/pdf"
       />
     );
@@ -321,17 +348,17 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       />
     );
   }
- 
+
   return (
-    <ImageRender 
+    <ImageRender
       src={url(folderPath, title)}
-      onClick={ () => {
+      onClick={() => {
         !setFragSelected
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
       }}
       autoLoad={true}
-      />
+    />
   );
 };
 

@@ -8,7 +8,7 @@ import {
   ListItem,
   UnorderedList,
   Flex,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
@@ -31,10 +31,7 @@ import GoogFileInit from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
 }
 
 const EditDate = (props: EditDateTypes) => {
@@ -44,10 +41,7 @@ const EditDate = (props: EditDateTypes) => {
     // if in GMT, the time will be returned in UTC, so will be 11pm of the day before
     newDate.setHours(newDate.getHours() + 1);
 
-    updateEntryField(
-      'date',
-      newDate.toISOString().substring(0, 10)
-    );
+    updateEntryField('date', newDate.toISOString().substring(0, 10));
   };
 
   return (
@@ -98,10 +92,7 @@ interface EntryPropTypes {
   activityID: string;
   entryIndex: number;
   openFile: (a: any) => void;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
   makeNonEditable: () => void;
   files: File[];
   foundIn: any;
@@ -120,18 +111,20 @@ const Entry = (props: EntryPropTypes) => {
     openFile,
     updateEntryField,
     makeNonEditable,
-    foundIn
+    foundIn,
   } = props;
 
-  console.log('foundin', foundIn);
-
-  const [{projectData, filterRT}, dispatch] = useProjectState();
+  const [{ projectData, filterRT }, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
   const thisEntry = useMemo(() => {
-    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
-  }, [allTags, projectData.entries.length, projectData.entries.flatMap(fm => fm.files).length]);
+    return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
+  }, [
+    allTags,
+    projectData.entries.length,
+    projectData.entries.flatMap((fm) => fm.files).length,
+  ]);
 
   const [value, setValue] = useState(thisEntry.description);
   const [showDescription, setShowDescription] = useState(
@@ -145,14 +138,20 @@ const Entry = (props: EntryPropTypes) => {
     setValue(thisEntry.description);
   }, [thisEntry]);
 
-  const [selectedTab, setSelectedTab] =
-    React.useState<'write' | 'preview'>('write');
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
+    'write'
+  );
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-    console.log('fileListtt', fileList, 'activity uid',thisEntry.activity_uid)
-    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex, activityID: thisEntry.activity_uid });
+    console.log('fileListtt', fileList, 'activity uid', thisEntry.activity_uid);
+    dispatch({
+      type: 'ADD_FILES_TO_ENTRY',
+      fileList,
+      entryIndex,
+      activityID: thisEntry.activity_uid,
+    });
     setShowFileUpload(false);
   };
 
@@ -185,21 +184,26 @@ const Entry = (props: EntryPropTypes) => {
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
   return (
-    <div style={{ 
-      margin: 'auto',
-      padding:6,
-      border: '1px solid gray',
-      borderRadius: 5
-      }}>
+    <div
+      style={{
+        margin: 'auto',
+        padding: 6,
+        border: '1px solid gray',
+        borderRadius: 5,
+      }}
+    >
       <br />
-      <span style={{
-        fontSize:28,
-      }}>
+      <span
+        style={{
+          fontSize: 28,
+        }}
+      >
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
             console.log('entry field', val);
-            updateEntryField('title', val)}}
+            updateEntryField('title', val);
+          }}
         >
           <EditablePreview />
           <EditableInput />
@@ -217,9 +221,7 @@ const Entry = (props: EntryPropTypes) => {
           size={'xs'}
           style={{ marginLeft: 5 }}
           colorScheme="red"
-          onClick={() =>
-            updateEntryField('isPrivate', !thisEntry.isPrivate)
-          }
+          onClick={() => updateEntryField('isPrivate', !thisEntry.isPrivate)}
         >
           {thisEntry.isPrivate ? (
             <FaLock title="Entry is currently private; click to make it public." />
@@ -230,7 +232,7 @@ const Entry = (props: EntryPropTypes) => {
 
         <Button
           size={'xs'}
-          style={{ display: 'inline', marginLeft:5 }}
+          style={{ display: 'inline', marginLeft: 5 }}
           colorScheme="red"
           leftIcon={<DeleteIcon />}
           onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
@@ -240,14 +242,14 @@ const Entry = (props: EntryPropTypes) => {
       </span>
       <br />
       <div>
-        <span 
-        style={{ 
-          fontWeight: 500,
-          fontSize:14,
-          textAlign:'right',
-          paddingRight:5,
-          lineHeight:1
-         }}
+        <span
+          style={{
+            fontWeight: 500,
+            fontSize: 14,
+            textAlign: 'right',
+            paddingRight: 5,
+            lineHeight: 1,
+          }}
         >
           {'Date Activity Happened: '}
         </span>
@@ -259,10 +261,7 @@ const Entry = (props: EntryPropTypes) => {
             cursor: 'pointer',
           }}
         >
-          <EditDate
-            date={thisEntry.date}
-            updateEntryField={updateEntryField}
-          />
+          <EditDate date={thisEntry.date} updateEntryField={updateEntryField} />
         </div>
       </div>
         {
@@ -308,7 +307,12 @@ const Entry = (props: EntryPropTypes) => {
           )
         }
         handleAddition={(tag: ReactTag) => {
-          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityID: thisEntry.activity_uid });
+          dispatch({
+            type: 'ADD_TAG_TO_ENTRY',
+            newTag: tag,
+            entryIndex,
+            activityID: thisEntry.activity_uid,
+          });
         }}
       />
 
@@ -337,7 +341,8 @@ const Entry = (props: EntryPropTypes) => {
               <Button
                 onClick={() => {
                   thisEntry.description = value;
-                  updateEntryField('description', value)}}
+                  updateEntryField('description', value);
+                }}
               >
                 Save
               </Button>
@@ -352,7 +357,7 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
       <div style={{ marginTop: 10 }}>
-      <br />
+        <br />
         <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
           {filterfiles.map((file: File, j: any) => (
@@ -387,7 +392,7 @@ const Entry = (props: EntryPropTypes) => {
         </UnorderedList>
       </div>
       <br />
-   
+
       {showFileUpload ? (
         <>
           <Flex
@@ -425,7 +430,6 @@ const Entry = (props: EntryPropTypes) => {
       />
 
       <URLList urls={urls} entryIndex={entryIndex} dispatch={dispatch} />
-    
     </div>
   );
 };

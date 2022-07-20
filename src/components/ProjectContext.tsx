@@ -1,7 +1,6 @@
 const isElectron = process.env.NODE_ENV === 'development';
 
-import { getAppStateReducer } from "./ProjectContextCommon";
-
+import { getAppStateReducer } from './ProjectContextCommon';
 
 import { v4 as uuidv4 } from 'uuid';
 import React, { createContext, useContext, useReducer } from 'react';
@@ -13,14 +12,12 @@ let fs: any;
 let googleCred: any;
 let google: any;
 
-if(isElectron){
-
-  path =  require('path');
-  fs  =  require('fs');
+if (isElectron) {
+  path = require('path');
+  fs = require('fs');
   // googleCred = require('../../assets/google_cred_desktop_app.json');
- // google = require('googleapis').google;
+  // google = require('googleapis').google;
 }
-
 
 export const ProjectContext = createContext<DispatchType>();
 
@@ -48,7 +45,7 @@ export function addMetaDescrip(projectData, state) {
 
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
-  if(isElectron){
+  if (isElectron) {
     for (const file of fileList) {
       const sourceIsInProjectDir = file.path.startsWith(folderPath);
       let destination = path.join(folderPath, file.name);
@@ -121,14 +118,13 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
       }
     }
     return newFiles;
-  }else{
+  } else {
     return null;
   }
 };
 
 export async function getGoogleIds(projectData, state) {
-
-  if(isElectron){
+  if (isElectron) {
     const oAuth2Client = new google.auth.OAuth2(
       googleCred.installed.client_id,
       googleCred.installed.client_secret,
@@ -171,13 +167,13 @@ export async function getGoogleIds(projectData, state) {
         const newProj = { ...projectData, entries: newProjEntries };
         return saveJSON(newProj, state);
       });
-  }else{
+  } else {
     return null;
   }
 }
 
 async function copyGoogle(file: any, fileList: any) {
-  if(isElectron){
+  if (isElectron) {
     const oAuth2Client = new google.auth.OAuth2(
       googleCred.installed.client_id,
       googleCred.installed.client_secret,
@@ -232,7 +228,6 @@ async function copyGoogle(file: any, fileList: any) {
       });
 
     return fileList;
-
   } else {
     return null;
   }
@@ -243,29 +238,25 @@ export const readProjectFile = async (
   fileName: string,
   fileType: any
 ) => {
-  if(isElectron){
-
+  if (isElectron) {
     const filePath = path.join(folderPath, fileName);
     const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
     if (!fileType) {
       return JSON.parse(fileContents);
     }
     console.log('this is a text file', fileContents);
-  }else{
-
+  } else {
     const response = await fetch(`${folderPath}${fileName}`);
 
     if (!fileType) {
       return response.json();
     }
     return response.text();
-
   }
 };
 
 const saveJSON = (newProjectData: any, state) => {
- 
-  if(isElectron){
+  if (isElectron) {
     fs.writeFileSync(
       path.join(state.folderPath, 'trrrace.json'),
       JSON.stringify(newProjectData, null, 4),
@@ -283,7 +274,7 @@ const saveJSON = (newProjectData: any, state) => {
 };
 
 const saveJSONRT = (RTData: any, dir: string, state) => {
-  if(isElectron){
+  if (isElectron) {
     fs.writeFileSync(
       path.join(dir, 'research_threads.json'),
       JSON.stringify(RTData, null, 4),
@@ -295,13 +286,13 @@ const saveJSONRT = (RTData: any, dir: string, state) => {
         }
       }
     );
-    console.log('RT DATA',RTData)
+    console.log('RT DATA', RTData);
   }
   return { ...state, researchThreads: RTData };
 };
 
 const saveJSONGoogDoc = (GDData: any, dir: string, state) => {
-  if(isElectron){
+  if (isElectron) {
     fs.writeFileSync(
       path.join(dir, 'goog_doc_data.json'),
       JSON.stringify(GDData, null, 4),
@@ -313,13 +304,13 @@ const saveJSONGoogDoc = (GDData: any, dir: string, state) => {
         }
       }
     );
-    console.log('GD DATA', GDData)
+    console.log('GD DATA', GDData);
   }
   return { ...state, googDocData: GDData };
 };
 
 const deleteFileAction = (fileName, entryIndex, state) => {
-  if(isElectron){
+  if (isElectron) {
     const destination = path.join(state.folderPath, fileName);
 
     const unattachFile = window.confirm(`Really un-attach file ${fileName}?`);
@@ -367,7 +358,7 @@ const deleteFileAction = (fileName, entryIndex, state) => {
 };
 
 const deleteFile = (destination: string) => {
-  if(isElectron){
+  if (isElectron) {
     return fs.unlinkSync(destination);
   } else {
     return null;
@@ -381,7 +372,7 @@ const appStateReducer = getAppStateReducer(
   saveJSONRT,
   saveJSONGoogDoc,
   deleteFileAction,
-  !isElectron,
+  !isElectron
 );
 
 const initialState: ProjectState = {
@@ -389,15 +380,15 @@ const initialState: ProjectState = {
   folderPath: null,
   filterTags: [],
   filterType: null,
-  filterDates:null,
-  filterQuery:null,
-  filterRT:null,
-  threadTypeFilterArray:null,
-  selectedThread:null,
-  researchThreads:null,
-  artifactTypes:null,
-  query:null,
-  isReadOnly:false
+  filterDates: null,
+  filterQuery: null,
+  filterRT: null,
+  threadTypeFilterArray: null,
+  selectedThread: null,
+  researchThreads: null,
+  artifactTypes: null,
+  query: null,
+  isReadOnly: false,
 };
 
 export function ProjectStateProvider({ children }) {

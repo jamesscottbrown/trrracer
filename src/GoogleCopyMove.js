@@ -4,7 +4,6 @@
 // const { google } = require('googleapis');
 
 export const copyMoveGoogle = async (file, callback) => {
-
   // console.log('file in copy Move Google', file);
   // const oAuth2Client = new google.auth.OAuth2(
   //   googleCred.installed.client_id,
@@ -17,10 +16,8 @@ export const copyMoveGoogle = async (file, callback) => {
   // console.log('auth Instance', google);
   // console.log('token', oAuth2Client.credentials);
   // const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-
   // console.log(file.name);
   // const nameF = file.name.split('.');
-
   // drive.files
   //   .list({
   //     q: `name="${nameF[0]}" and trashed = false`,
@@ -30,13 +27,11 @@ export const copyMoveGoogle = async (file, callback) => {
   //   })
   //   .then((fi) => {
   //     console.log('fi', fi);
-
   //     const copyRequest = {
   //       // Modified
   //       name: nameF,
   //       parents: ['1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg'],
   //     };
-
   //     drive.files.copy(
   //       {
   //         // Modified
@@ -51,7 +46,6 @@ export const copyMoveGoogle = async (file, callback) => {
   //           // res.send("error");
   //           return;
   //         }
-
   //         console.log('response', response);
   //         dispatch({
   //           type: 'CREATE_GOOGLE_IN_ENTRY',
