@@ -14,6 +14,7 @@ import ProjectListView from './ProjectListView';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import ThreadNav from './ThreadNav';
 import { IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
+import { relative } from 'path';
 const queryString = require('query-string');
 
 const getName = (parsed: any, activities: any, researchThreads: any) => {
@@ -208,7 +209,7 @@ const DetailComponent = (props: any) => {
       )[0];
       let temp = researchThreads?.research_threads.filter((rt) => {
         let test = rt.evidence.map((m) => m.activityTitle);
-        console.log('TEST', test);
+        
         return test.includes(proj.title);
       });
       return [];
@@ -447,13 +448,53 @@ const CitationVis = (props: any) => {
   );
 };
 
+const BubbLabel = () => {
+
+  return (
+    <div
+      style={{
+          textAlign: 'center',
+          width: 200,
+          height: 90,
+          padding: 10,
+          backgroundColor: '#fff',
+          border: '2px solid #d3d3d3',
+          borderRadius: 10,
+          pointerEvents: 'none',
+          zIndex: 6000,
+          position:'absolute',
+          top: 0,
+          left: 800
+        }}>
+        <svg>
+          <text
+          y={12} x={5}
+          style={{fontSize:15, fontWeight:600}}    
+          >Encoding</text>
+          <g transform='translate(-10, 10)'>
+          <circle r={25} cx={150} cy={30} fill="#d3d3d3"/>
+          <text y={22} x={60} 
+          style={{fontSize:10, textAnchor:"end"}}
+            >Activity</text>
+          <line  x1={60} x2={126} y1={22} y2={22} strokeWidth="1px" stroke="gray"/>
+          <circle r={5} cx={140} cy={40} fill="gray"/>
+          <line  x1={60} x2={140} y1={40} y2={40} strokeWidth="1px" stroke="gray"/>
+          <text y={40} x={60} 
+          style={{fontSize:10, textAnchor:"end"}}
+            >Artifact</text>
+          </g>
+       
+        </svg>
+    </div>
+  )
+}
+
 const PaperView = (props: any) => {
   const { folderPath } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [
-    { selectedThread, linkData, isReadOnly, viewParams },
-    dispatch,
+    { selectedThread, linkData, isReadOnly, viewParams }
   ] = useProjectState();
 
   let passedLink = linkData
@@ -469,16 +510,6 @@ const PaperView = (props: any) => {
   const [beenClicked, setBeenClicked] = useState(false);
   const [position, setPosition] = useState([0, 0]);
   const [toolhtml, setToolHtml] = useState('<div>This is a start</div>');
-
-  // console.log('in paper view',viewParams);
-  // if(isReadOnly){
-  //   readFileSync('2020_trevo.html')
-  //   .then((res) => res.text())
-  //   .then((pap)=> {
-  //     console.log('html!!!', pap);
-  //     setHtmlData(pap);
-  // });
-  // }
 
   useEffect(() => {
     if (passedLink.length > 0 && !beenClicked)
@@ -538,12 +569,6 @@ const PaperView = (props: any) => {
         height: 'calc(100% - 70px)',
       }}
     >
-      {/* <div style={{float:'left', width:'800px', border:'1px solid gray'}}>
-        {htmlData != '' ? 
-        <div style={{width:'95%', overflowY:'auto'}} dangerouslySetInnerHTML={{__html: htmlData}}></div> 
-        : <div>{"NO PAPER LOADED"}</div>}
-        </div> */}
-
       <div
         style={{
           float: 'left',
@@ -568,15 +593,18 @@ const PaperView = (props: any) => {
               <DetailPreview openFile={null} />
             </div>
           ) : (
-            <BubbleVis
-              groupBy={null}
-              setGroupBy={null}
-              flexAmount={null}
-              setDefineEvent={null}
-              defineEvent={null}
-              bubbleDivWidth={bubbleDivWidth}
-              setBubbleDivWidth={setBubbleDivWidth}
-            />
+            <div>
+              <BubbLabel/>
+              <BubbleVis
+                groupBy={null}
+                setGroupBy={null}
+                flexAmount={null}
+                setDefineEvent={null}
+                defineEvent={null}
+                bubbleDivWidth={bubbleDivWidth}
+                setBubbleDivWidth={setBubbleDivWidth}
+              />
+            </div>
           )}
           <CitationVis
             anno={anno}
