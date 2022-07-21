@@ -2,16 +2,16 @@ import * as d3 from 'd3';
 import * as d3co from 'd3-color';
 
 import Bubbles from '../Bubbles';
+import ForceMagic from '../ForceMagic';
+import { EntryType, ResearchThreadData } from './types';
 
 export default function groupBubbles(
-  groupBy,
-  wrap,
-  forced,
-  selectedActivityURL,
-  filteredActivities,
-  setTool,
-  setHoverData,
-  researchThreads
+  groupBy: any,
+  wrap: any, // d3.Selection<SVGGElement, unknown, null, undefined>,
+  forced: ForceMagic,
+  setTool: (pos: [number, number]) => void,
+  setHoverData: (entry: EntryType) => void,
+  researchThreads: ResearchThreadData | undefined
 ) {
   const groupRTDATA = groupBy;
 
@@ -26,7 +26,10 @@ export default function groupBubbles(
     .join('g')
     .attr('class', 'group');
 
-  groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 210}, 0)`);
+  groupGroups.attr(
+    'transform',
+    (_: any, i: number) => `translate(${i * 210}, 0)`
+  );
 
   const label = groupGroups.append('text').text((d) => d.title);
   label.style('font-size', '9px').style('text-anchor', 'middle');
@@ -212,7 +215,7 @@ export default function groupBubbles(
       setHoverData(d);
       d3.select('#tooltip').style('opacity', 1);
     })
-    .on('mouseout', (event, d, i) => {
+    .on('mouseout', (event, d, i: number) => {
       // TOOLTIP
       // const { activityData, position, researchThreads, filterRT } = toolProp;
       console.log('ddddd', d, i);

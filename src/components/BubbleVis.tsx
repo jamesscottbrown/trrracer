@@ -53,7 +53,7 @@ const RTtooltip = (toolProp: any) => {
       style={{
         position: 'absolute',
         left: position[0],
-        top: -30, //evidence.length > 0 ? position[1] - 150 : position[1] - 50,
+        top: -30, // evidence.length > 0 ? position[1] - 150 : position[1] - 50,
         textAlign: 'center',
         minWidth: 100,
         maxWidth: 450,
@@ -661,8 +661,6 @@ const BubbleVis = (props: BubbleProps) => {
         groupBy,
         wrap,
         forced,
-        selectedActivityURL,
-        usedEntries,
         setToolPosition,
         setHoverData,
         researchThreads
@@ -682,7 +680,7 @@ const BubbleVis = (props: BubbleProps) => {
       const hiddenBubbles = new Bubbles(hiddenActivityGroups, true, 'hidden');
 
       hiddenBubbles.bubbles
-        .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 })) //.attr('fill-opacity', .3)
+        .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 })) // .attr('fill-opacity', .3)
         .attr('stroke', '#d3d3d3')
         .attr('stroke-width', 0.4);
 
@@ -716,7 +714,7 @@ const BubbleVis = (props: BubbleProps) => {
       );
 
       activityBubbles.bubbles
-        .attr('fill', onActivityColor) //.attr('fill-opacity', .3)
+        .attr('fill', onActivityColor) // .attr('fill-opacity', .3)
         .attr('stroke', '#d3d3d3')
         .attr('stroke-width', 0.4);
 
