@@ -18,6 +18,7 @@ import { FaPlus } from 'react-icons/fa';
 import ViewTypeControl from './ViewTypeControl';
 import QueryBar from './QueryBar';
 import { useProjectState } from './ProjectContext';
+import { BiLogOut } from 'react-icons/bi';
 
 interface TopbarProps {
   viewType: string;
@@ -38,6 +39,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setHideByDefault,
     hideByDefault,
     setAddEntrySplash,
+    setPath,
   } = ProjectPropValues;
 
   const [
@@ -98,7 +100,14 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       >
         <Heading as="h1">
           {isReadOnly ? (
+
             <span style={{ fontSize: 30, fontWeight: 800, margin: 10 }}>
+              <BiLogOut 
+                style={{display:'inline'}}
+                onClick={() => {
+                  document.cookie = 'folderPath= '
+                  setPath('')}}
+              />{" "}
               {projectData.title}
             </span>
           ) : (
