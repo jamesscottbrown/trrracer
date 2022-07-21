@@ -335,15 +335,6 @@ const DetailBubble = (props: BubbleDetProps) => {
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
 
-        let newHopData = [
-          ...hopArray,
-          {
-            activity: parentData,
-            artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
-            hopReason: 'revisit hopped artifact',
-          },
-        ];
-
         dispatch({
           type: 'SELECTED_ARTIFACT',
           selectedArtifactEntry: parentData,
