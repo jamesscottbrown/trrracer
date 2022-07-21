@@ -84,7 +84,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             }}
             onClick={() => {
 
-              if(viewParams && viewParams.view === 'paper'){
+              if(!viewParams){
                 setViewType('detail view');
 
                 dispatch({

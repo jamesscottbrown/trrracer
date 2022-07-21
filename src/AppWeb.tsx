@@ -3,7 +3,7 @@
 
 // This is the entrypoint for the React app displayed in the Web App. It *is not* able to use node and electron APIs.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import Project from './components/Project';
@@ -11,6 +11,7 @@ import Project from './components/Project';
 import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
+import SplashWeb from './components/SplashWeb';
 
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
@@ -38,16 +39,34 @@ const migrateTrrraceFormat = (projectData: any) => {
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
+  const isDev = process.env.NODE_ENV === 'development';
+  // const isDev = true;
+  let test = document.cookie.split(';').filter(f => f.includes('folderName'))
+ 
+  useEffect(()=> {
+    if(test.length > 0){
+      let path  = test[0].split('=')[1];
+     
+       setPath(
+        `${
+          isDev ? 'http://localhost:9999' : '.'
+        }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
+      ); // TODO: make not a constant
+    }
+  }, [folderPath]);
+  
 
   if (!folderPath) {
-    //const isDev = process.env.NODE_ENV === 'development';
-    const isDev = true;
-    setPath(
-      `${
-        isDev ? 'http://localhost:9999' : '.'
-      }/.netlify/functions/download-gdrive-file/?folderName=evobio&fileName=`
-    ); // TODO: make not a constant
+  
+    return <SplashWeb setPath={setPath} isDev={isDev}/>
+    // setPath(
+    //   `${
+    //     isDev ? 'http://localhost:9999' : '.'
+    //   }/.netlify/functions/download-gdrive-file/?folderName=evobio&fileName=`
+    // ); // TODO: make not a constant
+
   }
+
 
   if (folderPath && !projectData) {
     fetch(`${folderPath}trrrace.json`)
@@ -72,7 +91,7 @@ export default function App() {
 
   return (
     <ChakraProvider>
-      <Project folderPath={folderPath} />
+      <Project folderPath={folderPath} setPath={setPath} />
     </ChakraProvider>
   );
 }
