@@ -39,11 +39,22 @@ const migrateTrrraceFormat = (projectData: any) => {
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
-  
+  //const isDev = process.env.NODE_ENV === 'development';
+  const isDev = true;
+
+  let test = document.cookie.split(';').filter(f => f.includes('folderName'))
+  console.log('test?',test)
+  if(test.length > 0){
+    let path  = test[0].split('=')[1]
+     setPath(
+      `${
+        isDev ? 'http://localhost:9999' : '.'
+      }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
+    ); // TODO: make not a constant
+  }
 
   if (!folderPath) {
-    //const isDev = process.env.NODE_ENV === 'development';
-    const isDev = true;
+  
     return <SplashWeb setPath={setPath} isDev={isDev}/>
     // setPath(
     //   `${
@@ -51,7 +62,6 @@ export default function App() {
     //   }/.netlify/functions/download-gdrive-file/?folderName=evobio&fileName=`
     // ); // TODO: make not a constant
 
-    
   }
 
 

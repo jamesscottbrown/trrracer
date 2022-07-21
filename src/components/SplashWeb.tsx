@@ -38,11 +38,12 @@ const SplashWeb = (props: any) => {
                 aria-label="Open project"
                 onClick={() => {
                     // ipcRenderer.send('openProject', p)
-                       setPath(
-                        `${
-                            isDev ? 'http://localhost:9999' : '.'
-                        }/.netlify/functions/download-gdrive-file/?folderName=${pc.data}&fileName=`
-                        );
+                    document.cookie = `folderName=${pc.data}`//'dark_mode=true'
+                    setPath(
+                    `${
+                        isDev ? 'http://localhost:9999' : '.'
+                    }/.netlify/functions/download-gdrive-file/?folderName=${pc.data}&fileName=`
+                    );
                 }}
               />{' '}
               {pc.name}{' '}</ListItem>
