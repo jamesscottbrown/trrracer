@@ -17,7 +17,7 @@ import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import AttachmentPreview from './AttachmentPreview';
-import type { EntryType, File, ResearchThreadData } from './types';
+import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
 
@@ -27,17 +27,15 @@ interface EntryPropTypes {
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
   viewType: any;
+  foundIn: ResearchThread[];
 }
 
-
 interface ReadonlyEntryFilePropTypes {
-  activityID: string;
   openFile: (a: string, fp: string) => void;
   setViewType: (viewType: string) => void;
   file: File;
   i: number;
-  dispatch: (dis: any) => void;
-  folderPath: string;
+  thisEntry: EntryType;
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
@@ -45,38 +43,37 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
   console.log('file', file);
   return (
-    <React.Fragment>
+    <>
       <Box bg="#ececec" p={3}>
         {['png', 'jpg', 'gif'].includes(file.fileType) && (
           <AttachmentPreview
-            folderPath={folderPath}
+            folderPath={folderPath as string}
             title={file.title}
             openFile={openFile}
           />
         )}
         <div style={{ marginTop: '8px' }}>
           <span
-          style={{fontWeight:800, fontSize:16}}
+            style={{ fontWeight: 800, fontSize: 16 }}
           >{`${file.artifactType}: `}</span>
           {file.title}{' '}
           {!isReadOnly && (
             <FaExternalLinkAlt
-              onClick={() => openFile(file.title, folderPath)}
+              onClick={() => openFile(file.title, folderPath as string)}
               title="Open file externally"
               size="13px"
               style={{ display: 'inline' }}
             />
           )}
           <Button
-            size='xs'
+            size="xs"
             style={{
               marginLeft: '7px',
               color: '#ffffff',
               backgroundColor: 'gray',
             }}
             onClick={() => {
-
-              if(viewParams && viewParams.view === 'paper'){
+              if (viewParams && viewParams.view === 'paper') {
                 setViewType('detail view');
 
                 dispatch({
@@ -88,49 +85,52 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                       activity: thisEntry,
                       artifactUid: thisEntry.files[i].artifact_uid,
                       hopReason: 'first hop',
-                    }
+                    },
                   ],
                 });
-
-              }else{
+              } else {
                 d3.select('#popover-det').remove();
 
-                const pop = d3.select('body').append('div').attr('id', 'popover-det');
-                pop.style('position', 'absolute')
-                .style('left', '370px')
-                .style('top', '100px')
-                .style('width', '700px')
-                .style('padding', '10px')
-                .style('background-color', '#fff')
-                .style('border', '2px solid gray')
-                .style('border-radius', '10px')
-                .style('z-index', '6000');
+                const pop = d3
+                  .select('body')
+                  .append('div')
+                  .attr('id', 'popover-det');
+                pop
+                  .style('position', 'absolute')
+                  .style('left', '370px')
+                  .style('top', '100px')
+                  .style('width', '700px')
+                  .style('padding', '10px')
+                  .style('background-color', '#fff')
+                  .style('border', '2px solid gray')
+                  .style('border-radius', '10px')
+                  .style('z-index', '6000');
 
-                const cancel = pop.append('div')
-                .style('background-color', '#d3d3d3')
-                .style('border-radius', '6px');
+                const cancel = pop
+                  .append('div')
+                  .style('background-color', '#d3d3d3')
+                  .style('border-radius', '6px');
                 cancel.append('text').text('x').style('font-weight', '900');
-                cancel.style('float', 'right')
-                cancel.style('cursor', 'pointer')
-                cancel.on('click', () => pop.remove())
+                cancel.style('float', 'right');
+                cancel.style('cursor', 'pointer');
+                cancel.on('click', () => pop.remove());
 
-                const textDiv = pop.append('div')
-                textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
+                const textDiv = pop.append('div');
+                textDiv.html(
+                  '<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>'
+                );
 
-                pop.style('height', '800px')
-                console.log('FILE', file)
+                pop.style('height', '800px');
+                console.log('FILE', file);
               }
-        }}
-      >See in detail</Button>
-      </div>
+            }}
+          >
+            See in detail
+          </Button>
+        </div>
       </Box>
-    </React.Fragment>
+    </>
   );
-};
-
-type ActivityTitlePopoverLogicProps = {
-  activityData: EntryType;
-  researchThreads: ResearchThreadData | undefined;
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
@@ -144,7 +144,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   } = props;
 
   const [
-    { projectData, researchThreads, folderPath, isReadOnly },
+    { projectData, researchThreads, isReadOnly },
     dispatch,
   ] = useProjectState();
 
@@ -203,28 +203,28 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           )}
         </span>
 
-      <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-        {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
-      </Text>
-      <p>
-        {thisEntry.tags.length === 0 ? (
-          <b>No tags.</b>
-        ) : (
-          <>
-            {thisEntry.tags.map((t) => (
-              <Tag
-                key={t}
-                backgroundColor={`#d3d3d3`}
-                stroke={`#d3d3d3`}
-                marginRight="0.25em"
-                marginBottom="0.25em"
-              >
-                {t}
-              </Tag>
-            ))}
-          </>
-        )}
-      </p>
+        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
+          {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
+        </Text>
+        <p>
+          {thisEntry.tags.length === 0 ? (
+            <b>No tags.</b>
+          ) : (
+            <>
+              {thisEntry.tags.map((t) => (
+                <Tag
+                  key={t}
+                  backgroundColor="#d3d3d3"
+                  stroke="#d3d3d3"
+                  marginRight="0.25em"
+                  marginBottom="0.25em"
+                >
+                  {t}
+                </Tag>
+              ))}
+            </>
+          )}
+        </p>
 
         {foundIn.length > 0 &&
           foundIn.map((fo, fi) => (
@@ -242,7 +242,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                     // opacity: fo.title === selectedThread.title ? 1 : .4
                   }}
                 >
-                  <GiSewingString size='20px' />
+                  <GiSewingString size="20px" />
                 </div>
               </Tooltip>
             </React.Fragment>
@@ -279,7 +279,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               <ReactMde
                 value={thisEntry.description}
                 // onChange={setValue}
-                selectedTab='preview'
+                selectedTab="preview"
                 // onTabChange={()=> null}
                 minPreviewHeight={100}
                 generateMarkdownPreview={(markdown) =>
@@ -302,8 +302,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             setViewType={setViewType}
             file={f}
             i={i}
-            dispatch={dispatch}
-            folderPath={folderPath}
           />
         ))}
       </SimpleGrid>

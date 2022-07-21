@@ -8,6 +8,7 @@ interface File {
   fileId?: string;
   artifactType: string;
   artifact_uid: string;
+  meta: string; // ?
 }
 
 interface FileObj {
@@ -45,6 +46,7 @@ interface EntryTypeWithIndex {
   quoteTags: string[];
   isPrivate: boolean;
   artifact_uid: string;
+  activity_uid: string;
 }
 
 interface TagType {
@@ -79,6 +81,8 @@ type ResearchThreadEvidence = {
 
 type ResearchThread = {
   evidence: ResearchThreadEvidence[];
+  color: string;
+  title: string;
 };
 
 type ResearchThreadData = {
@@ -140,6 +144,12 @@ type TxtData = {
   'text-data': TextEntry[];
 };
 
+type ViewParams = {
+  view: string;
+  granularity: 'paper' | 'artifact' | 'thread';
+  cIndex: string;
+}
+
 type ProjectState = {
   projectData: ProjectType;
   isReadOnly: boolean;
@@ -172,6 +182,8 @@ type ProjectState = {
   filteredActivities: any;
 
   hopArray: any[];
+
+  viewParams: ViewParams;
 };
 
 interface ProjectViewProps {
@@ -216,6 +228,7 @@ export {
   ProjectViewProps,
   ResearchThread,
   ResearchThreadEvidence,
+  ResearchThreadData,
   ReactTagType,
   ReactTag,
 };

@@ -4,7 +4,7 @@ import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
 import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
-import { EntryTypeWithIndex } from './types';
+import { EntryTypeWithIndex, ResearchThreadEvidence } from './types';
 import { useProjectState } from './ProjectContext';
 
 type ActivityWrapPropType = {
@@ -12,12 +12,11 @@ type ActivityWrapPropType = {
   editable: boolean[];
   setEditableStatus: (index: number, isEditable: boolean) => void;
   setViewType: (v: any) => void;
-  viewtype: any;
   index: number;
-  viewType: any;
+  viewType: string;
 };
 
-const ActivityWrap = (props: any) => {
+const ActivityWrap = (props: ActivityWrapPropType) => {
   const {
     activityData,
     editable,
@@ -31,7 +30,9 @@ const ActivityWrap = (props: any) => {
   const myRef = useRef(null);
 
   const foundIn = researchThreads?.research_threads.filter((m) => {
-    const test = m.evidence.filter((f: any) => f.activityTitle === activityData.title);
+    const test = m.evidence.filter(
+      (f: ResearchThreadEvidence) => f.activityTitle === activityData.title
+    );
     return test.length > 0;
   });
 
@@ -50,14 +51,13 @@ const ActivityWrap = (props: any) => {
         <Entry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`en-${activityData.title}-${activityData.activity_uid}`}
-          foundIn={foundIn}
+          foundIn={foundIn || []}
           activityID={activityData.activity_uid}
           files={activityData.files}
           entryIndex={activityData.index}
           openFile={openFile}
           updateEntryField={updateEntryField}
           makeNonEditable={() => setEditableStatus(activityData.index, false)}
-          viewType={viewType}
         />
         <Divider marginTop="1em" marginBottom="1em" />
       </div>
@@ -91,14 +91,14 @@ const ActivityWrap = (props: any) => {
 
   return (
     <div
-      className='list-activity'
+      className="list-activity"
       id={activityData.title}
       ref={myRef}
       style={{
         border: '.5px solid #A3AAAF',
         borderRadius: 6,
         margin: 5,
-        boxShadow: '3px 3px 8px #A3AAAF'
+        boxShadow: '3px 3px 8px #A3AAAF',
       }}
     >
       <ReadonlyEntry
@@ -109,11 +109,10 @@ const ActivityWrap = (props: any) => {
         setViewType={setViewType}
         makeEditable={() => setEditableStatus(activityData.index, true)}
         viewType={viewType}
-        foundIn={foundIn}
+        foundIn={foundIn || []}
       />
     </div>
   );
-
-  };
+};
 
 export default ActivityWrap;
