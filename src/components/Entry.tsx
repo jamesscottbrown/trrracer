@@ -67,10 +67,7 @@ const FileContext = (props: FileContextProps) => {
 
   console.log(file, contextFill);
 
-  const contextStarter =
-    contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
-
-  const [context, setContext] = useState(contextStarter);
+  const context = contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
 
   const updateMeta = () => {
     dispatch({ type: 'FILE_META', entryIndex, fileIndex, context });
@@ -269,7 +266,7 @@ const Entry = (props: EntryPropTypes) => {
               <React.Fragment
               key={`tool-${fIndex}`}
               >
-            <Tooltip 
+            <Tooltip
               style={{padding:5}}
               label={`Threaded in ${fi.title}`}>
               <div

@@ -494,7 +494,7 @@ const BubbleVis = (props: BubbleProps) => {
       let text;
       const bGroup = wrapAxisGroup.append('g');
 
-      const bRect = bGroup
+      bGroup
         .append('rect')
         .attr('width', 40)
         .attr('height', height - marginTime)
@@ -726,13 +726,13 @@ const BubbleVis = (props: BubbleProps) => {
         .join('circle')
         .classed('artifact', true);
       artifactCircles
-        .attr('r', (d) => 3)
+        .attr('r', () => 3)
         .attr('cx', (d) => d.x)
         .attr('cy', (d) => d.y);
 
       highlightedActivityGroups
         .select('.all-activities')
-        .on('mouseover', (event, d) => {
+        .on('mouseover', (event) => {
           if (filterRT) {
             d3.select(event.target)
               .attr('stroke', 'gray')
@@ -948,7 +948,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill-opacity', 0.9);
           rect.attr('x', -50).attr('y', -12);
 
-          const text = labelG
+          labelG
             .append('text')
             .text(
               new Date(d.date).toLocaleDateString('en-us', {

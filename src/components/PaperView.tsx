@@ -45,7 +45,6 @@ const PageNavigation = (props: any) => {
     previousPage,
     nextPage,
     perf,
-    index,
     setToolHtml,
     setPosition,
   } = props;
@@ -192,7 +191,7 @@ const PageNavigation = (props: any) => {
   );
 };
 
-const DetailComponent = (props: any) => {
+const DetailComponent = () => {
   const [ { viewParams, researchThreads, projectData }, ] = useProjectState();
 
   const associatedThreads = useMemo(() => {

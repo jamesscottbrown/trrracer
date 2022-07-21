@@ -318,7 +318,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   };
   const headerStyle = { fontSize: '19px', fontWeight: 600, cursor: 'pointer' };
 
-  const associatedTags = filteredThreads.map((rt, i) => {
+  const associatedTags = filteredThreads.map((rt) => {
     const tags = rt.evidence.flatMap((fm) => {
       const match = projectData.entries.filter(
         (f) => f.title === fm.activityTitle

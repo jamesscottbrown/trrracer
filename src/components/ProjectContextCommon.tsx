@@ -340,7 +340,7 @@ export const getAppStateReducer = (
             (f) => f.title === filterRT.title
           )[0].evidence;
 
-          threadTypeFilterArray.forEach((ty, i) => {
+          threadTypeFilterArray.forEach((ty) => {
             if (!ty.show) {
               if (ty.type != 'tags') {
                 let exclude = evidence
@@ -475,8 +475,8 @@ export const getAppStateReducer = (
       }
       case 'UPDATE_GOOG_IDS': {
         const entries = [...state.projectData.entries].map(
-          (d: EntryType, i: number) => {
-            let files = d.files.map((f: any, j: number) => {
+          (d: EntryType) => {
+            d.files.map((f: any) => {
               if (action.googFileIds && !f.title.includes('.txt')) {
                 console.log('F', f);
                 f.goog_ids = action.googFileIds[f.title]
@@ -517,7 +517,7 @@ export const getAppStateReducer = (
         );
 
         const entries = state.projectData.entries.map(
-          (d: EntryType, i: number) =>
+          (d: EntryType) =>
             action.selectedArtifactEntry.activity_uid === d.activity_uid
               ? { ...d, files: currentFiles }
               : d
@@ -787,7 +787,7 @@ export const getAppStateReducer = (
         }
 
         const newEntries = state.projectData.entries.map(
-          (d: EntryType, i: number) =>
+          (d: EntryType) =>
             activityID === d.activity_uid
               ? { ...d, tags: [...d.tags, newTag.text] }
               : d
@@ -803,7 +803,7 @@ export const getAppStateReducer = (
       }
 
       case 'ADD_FILES_TO_ENTRY': {
-        const { fileList, entryIndex, activityID } = action;
+        const { fileList, activityID } = action;
 
         const currentFiles = state.projectData.entries.filter(
           (f) => f.activity_uid === activityID
@@ -815,7 +815,7 @@ export const getAppStateReducer = (
           ...copyFiles(fileList, state.folderPath),
         ];
         const entries = state.projectData.entries.map(
-          (d: EntryType, i: number) =>
+          (d: EntryType) =>
             d.activity_uid === activityID ? { ...d, files: newFiles } : d
         );
 
@@ -960,7 +960,7 @@ export const getAppStateReducer = (
 
       case 'UPDATE_ENTRY_FIELD': {
         const entries = [...state.projectData.entries].map(
-          (d: EntryType, i: number) => {
+          (d: EntryType) => {
             return d.activity_uid === action.activityID
               ? { ...d, [action.fieldName]: action.newValue }
               : d;

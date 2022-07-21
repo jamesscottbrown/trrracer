@@ -66,9 +66,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
   const [fragSelected, setFragSelected] = useState(null);
-  const [newHeight, setNewHeight] = useState('1000px');
-
-  const viewheight = +newHeight.split('px')[0];
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {

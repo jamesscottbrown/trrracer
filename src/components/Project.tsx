@@ -236,7 +236,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
   // const [granularity, setGranularity] = useState<null|string>(null);
   // const [cIndex, setcIndex] = useState<null|number>(null);
-  const [selectedId, setSelectedId] = useState<null | string>(null);
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop =

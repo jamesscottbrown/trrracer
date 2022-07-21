@@ -71,7 +71,6 @@ const GoogDriveSpans = (googProps: any) => {
   } = googProps;
 
   const [spanColor, setSpanColor] = useState(false);
-  const [bookmarkExist, setBookmarkExist] = useState(false);
 
   const temp =
     comments && comments.length > 0

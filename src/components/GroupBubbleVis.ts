@@ -101,7 +101,7 @@ export default function groupBubbles(
     .classed('artifact', true);
 
   artifactCircles
-    .attr('r', (d) => 3)
+    .attr('r', () => 3)
     .attr('cx', (d) => d.x)
     .attr('cy', (d) => d.y);
   artifactCircles.attr('fill', '#fff');
