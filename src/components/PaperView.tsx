@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import * as d3 from 'd3';
+import { IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
 
 import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 import { useProjectState } from './ProjectContext';
 import { joinPath, readFileSync } from '../fileUtil';
 import BubbleVis from './BubbleVis';
@@ -11,8 +13,6 @@ import DetailPreview from './DetailPreview';
 import ProjectListView from './ProjectListView';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import ThreadNav from './ThreadNav';
-import { IconChartDots3, IconCircle, IconCircles } from '@tabler/icons';
-import { relative } from 'path';
 const queryString = require('query-string');
 
 const getName = (parsed: any, activities: any, researchThreads: any) => {
@@ -20,14 +20,16 @@ const getName = (parsed: any, activities: any, researchThreads: any) => {
     return researchThreads?.research_threads.filter(
       (f) => f.rt_id === parsed.id
     )[0].title;
-  } else if (parsed.granularity === 'activity') {
+  }
+  if (parsed.granularity === 'activity') {
     return activities.filter((f) => f.activity_uid === parsed.id)[0].title;
-  } else if (parsed.granularity === 'artifact') {
-    let temp = activities.filter((act) =>
+  }
+  if (parsed.granularity === 'artifact') {
+    const temp = activities.filter((act) =>
       act.files.map((f) => f.artifact_uid).includes(parsed.id)
     );
 
-    let file = temp[0].files.filter((f) => f.artifact_uid)[0];
+    const file = temp[0].files.filter((f) => f.artifact_uid)[0];
     return file.title;
   }
 };
@@ -113,7 +115,7 @@ const PageNavigation = (props: any) => {
           >"${d.text[0]}"</span><div>`);
             d3.select('#tooltip-cite').style('opacity', 1);
           })
-          .on('mouseout', (event, d) => {
+          .on('mouseout', () => {
             d3.select('#tooltip-cite').style('opacity', 0);
             setPosition([0, 0]);
           });
@@ -193,7 +195,7 @@ const PageNavigation = (props: any) => {
 const DetailComponent = (props: any) => {
   const [ { viewParams, researchThreads, projectData }, ] = useProjectState();
 
-  let associatedThreads = useMemo(() => {
+  const associatedThreads = useMemo(() => {
     console.log(
       'IN DETAIL COMP',
       researchThreads?.research_threads,
@@ -203,14 +205,13 @@ const DetailComponent = (props: any) => {
       const proj = projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0];
-      let temp = researchThreads?.research_threads.filter((rt) => {
+      const temp = researchThreads?.research_threads.filter((rt) => {
         const test = rt.evidence.map((m) => m.activityTitle);
         return test.includes(proj.title);
       });
       return [];
-    } else {
-      return [];
     }
+    return [];
   }, [viewParams.granularity]);
 
   if (viewParams.granularity === 'artifact') {
@@ -222,7 +223,7 @@ const DetailComponent = (props: any) => {
   }
   return (
     <div style={{ height: '100vh' }}>
-      {viewParams.granularity === 'thread' && <ThreadNav viewType={'paper'} />}
+      {viewParams.granularity === 'thread' && <ThreadNav viewType='paper' />}
       <div style={{ overflow: 'auto', height: '100vh' }}>
         <ProjectListView />
       </div>
@@ -230,7 +231,7 @@ const DetailComponent = (props: any) => {
         <Box
           flex="2"
           overflowY="auto"
-          boxShadow={'3px 3px 8px #A3AAAF'}
+          boxShadow='3px 3px 8px #A3AAAF'
           border='1px solid #A3AAAF'
           borderRadius={6}
           p={5}
@@ -412,7 +413,7 @@ const CitationVis = (props: any) => {
             <rect
               height={rectHeight}
               width={prd.anno.length > 0 ? calWidth(prd.anno.length) + 10 : 23}
-              fill={'#d3d3d3'}
+              fill='#d3d3d3'
               fillOpacity={i + 1 === pageNumber ? 0.7 : 0.25}
             />
             <g
@@ -461,21 +462,21 @@ const BubbLabel = () => {
         <svg>
           <text
           y={12} x={5}
-          style={{fontSize:15, fontWeight:600}}    
+          style={{fontSize:15, fontWeight:600}}
           >Encoding</text>
           <g transform='translate(-10, 10)'>
           <circle r={25} cx={150} cy={30} fill="#d3d3d3"/>
-          <text y={22} x={60} 
+          <text y={22} x={60}
           style={{fontSize:10, textAnchor:"end"}}
             >Activity</text>
           <line  x1={60} x2={126} y1={22} y2={22} strokeWidth="1px" stroke="gray"/>
           <circle r={5} cx={140} cy={40} fill="gray"/>
           <line  x1={60} x2={140} y1={40} y2={40} strokeWidth="1px" stroke="gray"/>
-          <text y={40} x={60} 
+          <text y={40} x={60}
           style={{fontSize:10, textAnchor:"end"}}
             >Artifact</text>
           </g>
-       
+
         </svg>
     </div>
   )

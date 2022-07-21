@@ -6,6 +6,13 @@ import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
 import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
 import { BiQuestionMark } from 'react-icons/bi';
+import {
+  FaDatabase,
+  FaLink,
+  FaPaperclip,
+  FaPaperPlane,
+  FaPencilAlt,
+} from 'react-icons/fa';
 
 import ProjectListView from './ProjectListView';
 import TopBar from './TopBar';
@@ -16,13 +23,7 @@ import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
-import {
-  FaDatabase,
-  FaLink,
-  FaPaperclip,
-  FaPaperPlane,
-  FaPencilAlt,
-} from 'react-icons/fa';
+
 const queryString = require('query-string');
 
 // CHANGE THE SEARCH PARAMS
@@ -53,7 +54,7 @@ function compareObjectList<T extends any[]>(listA: T, listB: T): boolean {
   if (listA.length !== listB.length) {
     return false;
   }
-  for (let i = 0; i < listA.length; ++i) {
+  for (let i = 0; i < listA.length; i += 1) {
     if (!compareObjects(listA[i], listB[i])) {
       return false;
     }
@@ -67,17 +68,17 @@ const ResearchThreadTypeTags = () => {
     dispatch,
   ] = useProjectState();
 
-  let chosenThread = filterRT
+  const chosenThread = filterRT
     ? researchThreads.research_threads.filter(
         (f) => f.title === filterRT.title
       )[0]
     : null;
 
-  let noTagsFilterArray = threadTypeFilterArray.filter(
+  const noTagsFilterArray = threadTypeFilterArray.filter(
     (f) => f.type !== 'tags'
   );
 
-  let threadTypeGroups = noTagsFilterArray.map((ty) => {
+  const threadTypeGroups = noTagsFilterArray.map((ty) => {
     ty.matches =
       ty.type === 'tags'
         ? filterRT
@@ -220,8 +221,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView,
-      isReadOnly,
-      viewParams,
+      isReadOnly
     },
     dispatch,
   ] = useProjectState();

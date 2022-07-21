@@ -5,6 +5,8 @@ import { useProjectState } from './ProjectContext';
 import { EntryType } from './types';
 
 const CustomMarker = (props: MarkerComponentProps) => {
+  const { note } = props;
+
   return (
     <div>
       <div
@@ -24,7 +26,7 @@ const CustomMarker = (props: MarkerComponentProps) => {
           display: 'inline',
         }}
         className="custom-marker"
-      >{`${props.note}`}</div>
+      >{note}</div>
     </div>
   );
 };
@@ -78,10 +80,11 @@ const MarkableImage = (props: MarkableImageProps) => {
           />
           <Button
             onClick={() => {
-              const marker = {};
-              marker.left = markerCoor[0];
-              marker.top = markerCoor[1];
-              marker.note = note;
+              const marker = {
+                left: markerCoor[0],
+                top: markerCoor[1],
+                note,
+              };
               const newMarkers = [...markers, marker];
               setMarkers(newMarkers);
               setNote('add note');

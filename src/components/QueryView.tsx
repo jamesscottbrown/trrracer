@@ -13,11 +13,6 @@ import { MdCancel } from 'react-icons/md';
 import { useProjectState } from './ProjectContext';
 import QueryMatchComponent from './QueryMatchComponent';
 
-interface QueryViewProps {
-  setViewType: (viewType: string) => void;
-  filteredActivites: any;
-}
-
 const HoverTitle = (props: any) => {
   const { title, entry, match, setViewType } = props;
 
@@ -81,7 +76,11 @@ const HoverTitle = (props: any) => {
   );
 };
 
-const QueryView = (props: any) => {
+interface QueryViewProps {
+  setViewType: (viewType: string) => void;
+}
+
+const QueryView = (props: QueryViewProps) => {
   const { setViewType } = props;
   const [{ query }, dispatch] = useProjectState();
 

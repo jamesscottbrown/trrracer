@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { EntryTypeWithIndex, ProjectViewProps } from './types';
+import { EntryTypeWithIndex } from './types';
 import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
 

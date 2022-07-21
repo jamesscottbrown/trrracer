@@ -20,10 +20,6 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
-const KeyCodes = {
-  comma: 188,
-  enter: 13,
-};
 
 const AddEntryForm = (props: any) => {
   const { setAddEntrySplash } = props;

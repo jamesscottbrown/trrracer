@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
   Box,
@@ -56,7 +56,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
 
   // USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
-  let getName = () => {
+  const getName = () => {
     if (viewParams.granularity === 'thread') {
       console.log('thread', filterRT);
       return filterRT.title;
@@ -169,7 +169,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 </FormLabel>
                 <Switch
                   id="show-all"
-                  onChange={(event) => {
+                  onChange={() => {
                     hideByDefault
                       ? setHideByDefault(false)
                       : setHideByDefault(true);
@@ -192,7 +192,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 marginLeft="3px"
                 alignSelf="end"
                 // onClick={addEntry}
-                onClick={(event) => setAddEntrySplash(true)}
+                onClick={() => setAddEntrySplash(true)}
                 type="button"
               >
                 <FaPlus /> Add activity

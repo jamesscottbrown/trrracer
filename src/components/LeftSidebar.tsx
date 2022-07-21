@@ -34,7 +34,7 @@ const LeftSidebar = (props: any) => {
   const tags = [...projectData.tags]
     .filter((f) => filterTags?.indexOf(f.title) === -1)
     .map((t) => {
-      let matches = [...projectData.entries].filter((f) => {
+      const matches = [...projectData.entries].filter((f) => {
         return f.tags.indexOf(t.title) > -1;
       });
       t.matches = matches.map((m) => m.activity_uid);
@@ -54,7 +54,7 @@ const LeftSidebar = (props: any) => {
   const aTypes = d3
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
-      let colorTest = artifactTypes.artifact_types.filter(
+      const colorTest = artifactTypes.artifact_types.filter(
         (f) => f.type === ty[0]
       );
       return {

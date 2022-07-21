@@ -32,13 +32,13 @@ const RTtooltip = (toolProp: any) => {
       return researchThreads.research_threads.filter(
         (f) => f.title === filterRT.title
       )[0];
-    } else if (activityData.rt_id) {
+    }
+    if (activityData.rt_id) {
       return researchThreads.research_threads.filter(
         (f) => f.rt_id === activityData.rt_id
       )[0];
-    } else {
-      return researchThreads.research_threads[0];
     }
+    return researchThreads.research_threads[0];
   };
   const threadData = whatData();
 
@@ -159,7 +159,7 @@ const renderAxis = (wrap: any, yScale: any, translateY: any) => {
     .append('line')
     .attr('stroke', 'gray.900');
 
-  const axisLabel = yAxisGroup
+  yAxisGroup
     .selectAll('text')
     .join('text')
     .attr('font-size', '0.55rem')
@@ -634,7 +634,7 @@ const BubbleVis = (props: BubbleProps) => {
       eventRects.style('fill-opacity', 0.05);
 
       if (!groupBy) {
-        const eventLine = eventRectGroups
+        eventRectGroups
           .append('line')
           .attr('x1', 0)
           .attr('x2', 400)
@@ -692,7 +692,7 @@ const BubbleVis = (props: BubbleProps) => {
         .join('circle')
         .classed('artifact', true);
       hiddenCircles
-        .attr('r', (d) => 3)
+        .attr('r', () => 3)
         .attr('cx', (d) => d.x)
         .attr('cy', (d) => d.y);
       hiddenCircles.attr('fill', '#d3d3d3');
@@ -757,7 +757,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target).attr('fill', 'gray');
           }
         })
-        .on('mouseout', (event, d) => {
+        .on('mouseout', (event) => {
           if (filterRT) {
             d3.select(event.target).attr('stroke-width', 0);
           } else if (filterType || filterTags.length > 0) {
@@ -986,13 +986,13 @@ const BubbleVis = (props: BubbleProps) => {
             }
           }
         })
-        .on('mouseout', (event: any, d: any) => {
+        .on('mouseout', () => {
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#label-group').remove();
         })
         .on('click', (event: any, d: any) => {
-          let activities = d3.selectAll('.list-activity').filter((f, i, n) => {
+          const activities = d3.selectAll('.list-activity').filter((f, i, n) => {
             return d3.select(n[i]).attr('id') === d.title;
           });
           activities
@@ -1038,7 +1038,7 @@ const BubbleVis = (props: BubbleProps) => {
       <div style={{ width: '100%' }}>
         {!isReadOnly && (
           <Button
-            size={'sm'}
+            size='sm'
             style={{ fontSize: '12px' }}
             onClick={() => {
               defineEvent ? setDefineEvent(false) : setDefineEvent(true);
@@ -1052,7 +1052,7 @@ const BubbleVis = (props: BubbleProps) => {
             marginLeft="3px"
             padding="3px"
             height="40px"
-            display={'inline-block'}
+            display='inline-block'
           >
             <FormControl display="flex" alignItems="center" marginBottom={10}>
               <FormLabel

@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 
 const ImageRender = (props: any) => {
-  const { src, onClick, autoLoad } = props;
-  const [
-    { isReadOnly, selectedActivityURL, selectedArtifactEntry },
-  ] = useProjectState();
+  const { src, autoLoad } = props;
+  const [ { isReadOnly, selectedActivityURL, selectedArtifactEntry }, ] = useProjectState();
   const [imgData, setImgData] = useState<any>(null);
 
   useEffect(() => {
@@ -25,7 +23,7 @@ const ImageRender = (props: any) => {
   }, [src]);
 
   return autoLoad ? (
-    <React.Fragment>
+    <>
       {imgData && (
         <div
           style={{
@@ -35,10 +33,10 @@ const ImageRender = (props: any) => {
             height: 'auto',
           }}
         >
-          <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} />
+          <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} alt="An attached image." />
         </div>
       )}
-    </React.Fragment>
+    </>
   ) : (
     <InView
       onChange={(inView, entry) => {
@@ -60,7 +58,7 @@ const ImageRender = (props: any) => {
       {({ inView, ref, entry }) => (
         <div ref={ref}>
           {inView && imgData && (
-            <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} />
+            <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} alt="An attached image." />
           )}
         </div>
       )}

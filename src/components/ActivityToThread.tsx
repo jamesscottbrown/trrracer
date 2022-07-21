@@ -11,7 +11,6 @@ const ActivitytoThread = (props: any) => {
     activity,
     activityIndex,
     setSeeThreadAssign,
-    closePopover,
   } = props;
   const [showDesc, setShowDesc] = useState(false);
   const [threadRat, setThreadRat] = useState(null);

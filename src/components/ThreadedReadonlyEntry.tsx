@@ -124,8 +124,6 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 
 const ThreadedArtifact = (props: any) => {
   const {
-    isEntryInThread,
-    selectedThread,
     setViewType,
     openFile,
     fileData,
@@ -134,7 +132,7 @@ const ThreadedArtifact = (props: any) => {
     i,
   } = props;
 
-  const [{ researchThreads }, dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
 
   return (
     <Box bg="#ececec" p={3}>

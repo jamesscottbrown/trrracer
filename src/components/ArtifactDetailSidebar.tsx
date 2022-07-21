@@ -397,7 +397,7 @@ const ArtifactDetailSidebar = (props: any) => {
       ? selectedArtifactEntry.files[selectedArtifactIndex]
       : null;
   let isArtifactInThread = researchThreads?.research_threads.filter((f) => {
-    let test = f.evidence.filter(
+    const test = f.evidence.filter(
       (e) => e.activityTitle === selectedArtifactEntry.title
     );
     return test.length > 0;
@@ -503,10 +503,10 @@ const ArtifactDetailSidebar = (props: any) => {
         <Box>
           <Button
             onClick={() => {
-              let indexTest = projectData.citations
+              const indexTest = projectData.citations
                 .map((c) => c.id)
                 .indexOf(selectedArtifact.artifact_uid);
-              let index =
+              const index =
                 indexTest > -1
                   ? indexTest + 1
                   : projectData.citations.length + 1;
@@ -540,7 +540,7 @@ const ArtifactDetailSidebar = (props: any) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      {(!viewParams || (viewParams && viewParams.view != 'paper')) && (
+      {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
             Activity Tags
@@ -605,7 +605,7 @@ const ArtifactDetailSidebar = (props: any) => {
             </div>
           )}
           {showTagList && (
-            <React.Fragment>
+            <>
               {selectedArtifactEntry.tags.map((t: any, i: number) => (
                 <InteractiveActivityTag
                   key={`it-${i}`}
@@ -615,7 +615,7 @@ const ArtifactDetailSidebar = (props: any) => {
                   index={i}
                 />
               ))}
-            </React.Fragment>
+            </>
           )}
         </Box>
       )}
@@ -628,7 +628,7 @@ const ArtifactDetailSidebar = (props: any) => {
         </div>
       )}
       {!isReadOnly && (
-        <React.Fragment>
+        <>
           <Box
             style={{
               backgroundColor: '#ececec',
@@ -674,11 +674,7 @@ const ArtifactDetailSidebar = (props: any) => {
                 padding: 3,
                 textAlign: 'center',
               }}
-              onClick={() => {
-                showThreadAdd
-                  ? setShowThreadAdd(false)
-                  : setShowThreadAdd(true);
-              }}
+              onClick={() => setShowThreadAdd(!showThreadAdd)}
             >
               {fragSelected
                 ? 'Add this fragment to a thread +'
@@ -721,7 +717,7 @@ const ArtifactDetailSidebar = (props: any) => {
               )}{' '}
             </div>
           </Box>
-        </React.Fragment>
+        </>
       )}
       <Box>
         {isArtifactInThread && isArtifactInThread?.length > 0 ? (

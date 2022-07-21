@@ -65,12 +65,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       : null;
   }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
 
-  const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
   const [newHeight, setNewHeight] = useState('1000px');
 
   const viewheight = +newHeight.split('px')[0];
-  const margin = viewheight * 0.15;
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -319,7 +317,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))
                 }
-                readOnly={true}
+                readOnly
                 style={{ height: '100%', overflowY: 'scroll' }}
               />
             </div>

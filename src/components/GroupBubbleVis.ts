@@ -63,7 +63,7 @@ export default function groupBubbles(
     .join('circle')
     .classed('artifact', true);
   hiddenCircles
-    .attr('r', (d) => 3)
+    .attr('r', () => 3)
     .attr('cx', (d) => d.x)
     .attr('cy', (d) => d.y);
   hiddenCircles.attr('fill', '#d3d3d3');
@@ -126,7 +126,7 @@ export default function groupBubbles(
       chosenR.actions.filter((f) => f.action === 'created')[0].when
     );
 
-    chosenR.evidence.forEach((r: any, j: number) => {
+    chosenR.evidence.forEach((r: any) => {
       const actG = parentGroup
         .selectAll('.activity-g')
         .filter((ha) => ha.title === r.activityTitle);
@@ -200,9 +200,8 @@ export default function groupBubbles(
         .filter((f) => {
           if (f) {
             return f.activity_uid === d.activity_uid;
-          } else {
-            return f.title === d.title;
           }
+          return f.title === d.title;
         })
         .attr('stroke', 'red')
         .attr('stroke-width', '2px');

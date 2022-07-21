@@ -14,6 +14,7 @@ import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
+
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 
@@ -24,9 +25,8 @@ if (isElectron) {
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith('http://') || folderPath.startsWith('https://')) {
     return `${joinPath(folderPath, title)}`;
-  } else {
-    return `file://${folderPath}/${title}`;
   }
+  return `file://${folderPath}/${title}`;
 };
 
 interface DetailPreviewPropsType {
@@ -49,9 +49,8 @@ const TextRender = (textProps: any) => {
         {ta.textData}
       </span>
     ));
-  } else {
-    return <span>{textArray[0].textData}</span>;
   }
+  return <span>{textArray[0].textData}</span>;
 };
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
@@ -171,57 +170,57 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </div>
         </Box>
       );
-    } else {
-      getDriveFiles(folderPath, googleCred).then((googOb) => {
-        console.log('GOOGLE OB', googOb);
-        dispatch({
-          type: 'UPDATE_GOOG_DOC_DATA',
-          googDocData: googOb.goog_doc_data,
-        });
-        // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
-
-        const chosen = googOb.goog_doc_data[artifact.fileId];
-
-        const gContent = chosen
-          ? chosen.body.content.filter((f: any) => f.startIndex)
-          : [];
-
-        const comments = artifact.comments ? artifact.comments.comments : [];
-
-        return chosen ? (
-          <Box
-            style={{
-              overflow: 'scroll',
-              height: 'calc(100vh - 150px)',
-              width: '700px',
-              display: 'inline',
-              boxShadow: '3px 3px 8px #A3AAAF',
-              border: '1px solid #A3AAAF',
-              borderRadius: 6,
-              padding: 10,
-            }}
-          >
-            <div
-              style={{ height: '100%', width: '700px', overflow: 'auto' }}
-              id='gdoc'
-            >
-              {gContent.map((m: any, i: number) => (
-                <GoogDriveParagraph
-                  key={`par-${i}`}
-                  parData={m}
-                  index={i}
-                  comments={comments}
-                  setFragSelected={setFragSelected}
-                  artifactBookmarks={artifact.bookmarks}
-                />
-              ))}
-            </div>
-          </Box>
-        ) : (
-          <div>Oops could not load google doc</div>
-        );
-      });
     }
+
+    getDriveFiles(folderPath, googleCred).then((googOb) => {
+      console.log('GOOGLE OB', googOb);
+      dispatch({
+        type: 'UPDATE_GOOG_DOC_DATA',
+        googDocData: googOb.goog_doc_data,
+      });
+      // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+      const chosen = googOb.goog_doc_data[artifact.fileId];
+
+      const gContent = chosen
+        ? chosen.body.content.filter((f: any) => f.startIndex)
+        : [];
+
+      const comments = artifact.comments ? artifact.comments.comments : [];
+
+      return chosen ? (
+        <Box
+          style={{
+            overflow: 'scroll',
+            height: 'calc(100vh - 150px)',
+            width: '700px',
+            display: 'inline',
+            boxShadow: '3px 3px 8px #A3AAAF',
+            border: '1px solid #A3AAAF',
+            borderRadius: 6,
+            padding: 10,
+          }}
+        >
+          <div
+            style={{ height: '100%', width: '700px', overflow: 'auto' }}
+            id='gdoc'
+          >
+            {gContent.map((m: any, i: number) => (
+              <GoogDriveParagraph
+                key={`par-${i}`}
+                parData={m}
+                index={i}
+                comments={comments}
+                setFragSelected={setFragSelected}
+                artifactBookmarks={artifact.bookmarks}
+              />
+            ))}
+          </div>
+        </Box>
+      ) : (
+        <div>Oops could not load google doc</div>
+      );
+    });
   }
 
   if (title.endsWith('.gsheet')) {
@@ -356,7 +355,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
       }}
-      autoLoad={true}
+      autoLoad
     />
   );
 };

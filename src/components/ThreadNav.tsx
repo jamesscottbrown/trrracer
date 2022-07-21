@@ -279,15 +279,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     dispatch,
   ] = useProjectState();
 
-  const checkIfSelectThread = (i: any) => {
-    if (selectedThread != null) {
-      if (i != selectedThread) {
-        return false;
-      }
-      return true;
-    }
-    return true;
-  };
+  const checkIfSelectThread = (i: any) => (selectedThread == null) || (i == selectedThread);
 
   const [showCreateThread, setShowCreateThread] = useState(false);
   const [threadName, setName] = useState(null);
@@ -499,12 +491,12 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                             fontWeight: 800,
                           }}
                         >
-                          {'Frequently occuring tags:'}
+                          Frequently occuring tags:
                         </span>
                         {associatedTags[i].map((at, j) => (
                           <Badge
                             key={`tag-${j}`}
-                            size={'xs'}
+                            size='xs'
                             variant="outline"
                             style={{
                               margin: 2,
@@ -587,8 +579,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                 onChange={handleDescriptionChange}
               />
               <Button
-                isActive={threadName && description ? true : false}
-                isDisabled={threadName && description ? false : true}
+                isActive={!!(threadName && description)}
+                isDisabled={!(threadName && description)}
                 onClick={() => {
                   const actTitle = `Created thread: ${threadName}`;
                   setName(null);
@@ -614,7 +606,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                     data: {
                       title: actTitle,
                       date: new Date(),
-                      description: description,
+                      description,
                     },
                   });
                 }}

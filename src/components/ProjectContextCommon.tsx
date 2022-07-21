@@ -471,6 +471,7 @@ export const getAppStateReducer = (
         setTimeout(() => {
           return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
         }, 1000);
+        return null;
       }
       case 'UPDATE_GOOG_IDS': {
         const entries = [...state.projectData.entries].map(

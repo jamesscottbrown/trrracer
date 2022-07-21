@@ -20,8 +20,6 @@ import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
-import { drive_v3 } from 'googleapis';
-import { readFileSync } from '../fileUtil';
 
 interface EntryPropTypes {
   activityID: string;
@@ -31,12 +29,6 @@ interface EntryPropTypes {
   viewType: any;
 }
 
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true,
-});
 
 interface ReadonlyEntryFilePropTypes {
   activityID: string;
@@ -93,7 +85,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   selectedArtifactIndex: i,
                   hopArray: [
                     {
-                      activity: thisEntry, 
+                      activity: thisEntry,
                       artifactUid: thisEntry.files[i].artifact_uid,
                       hopReason: 'first hop',
                     }
@@ -102,7 +94,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
 
               }else{
                 d3.select('#popover-det').remove();
-                let pop = d3.select('body').append('div').attr('id', 'popover-det');
+
+                const pop = d3.select('body').append('div').attr('id', 'popover-det');
                 pop.style('position', 'absolute')
                 .style('left', '370px')
                 .style('top', '100px')
@@ -112,7 +105,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 .style('border', '2px solid gray')
                 .style('border-radius', '10px')
                 .style('z-index', '6000');
-                let cancel = pop.append('div')
+
+                const cancel = pop.append('div')
                 .style('background-color', '#d3d3d3')
                 .style('border-radius', '6px');
                 cancel.append('text').text('x').style('font-weight', '900');
@@ -120,7 +114,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 cancel.style('cursor', 'pointer')
                 cancel.on('click', () => pop.remove())
 
-                let textDiv = pop.append('div')
+                const textDiv = pop.append('div')
                 textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
 
                 pop.style('height', '800px')
@@ -129,7 +123,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
         }}
       >See in detail</Button>
       </div>
-      </Box> 
+      </Box>
     </React.Fragment>
   );
 };
@@ -271,14 +265,14 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                       hopArray: [
                         {
                           activity: thisEntry,
-                          artifactUid: null, //thisEntry.files[i].artifact_uid,
+                          artifactUid: null, // thisEntry.files[i].artifact_uid,
                           hopReason: 'first hop',
                         },
                       ],
                     });
                   }}
                 >
-                  {'VIEW EMAIL'}
+                  VIEW EMAIL
                 </Button>
               </div>
             ) : (
@@ -291,7 +285,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))
                 }
-                readOnly={true}
+                readOnly
                 style={{ height: '100%', overflowY: 'scroll' }}
               />
             )}

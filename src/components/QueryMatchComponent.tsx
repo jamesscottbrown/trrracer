@@ -9,7 +9,6 @@ import {
   PopoverBody,
 } from '@chakra-ui/react';
 
-import { MdCancel } from 'react-icons/md';
 import { useProjectState } from './ProjectContext';
 
 const HoverTitle = (props: any) => {
