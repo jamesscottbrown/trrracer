@@ -3,7 +3,7 @@
 
 // This is the entrypoint for the React app displayed in the Web App. It *is not* able to use node and electron APIs.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import Project from './components/Project';
@@ -43,15 +43,20 @@ export default function App() {
   const isDev = true;
 
   let test = document.cookie.split(';').filter(f => f.includes('folderName'))
-  console.log('test?',test)
-  if(test.length > 0){
-    let path  = test[0].split('=')[1]
-     setPath(
-      `${
-        isDev ? 'http://localhost:9999' : '.'
-      }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
-    ); // TODO: make not a constant
-  }
+  console.log('test?',test);
+  
+  useEffect(()=> {
+    if(test.length > 0){
+      let path  = test[0].split('=')[1];
+      console.log('path parsed', path);
+       setPath(
+        `${
+          isDev ? 'http://localhost:9999' : '.'
+        }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
+      ); // TODO: make not a constant
+    }
+  }, [folderPath]);
+  
 
   if (!folderPath) {
   
