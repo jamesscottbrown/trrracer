@@ -148,7 +148,7 @@ type ViewParams = {
   view: string;
   granularity: 'paper' | 'artifact' | 'thread';
   cIndex: string;
-}
+};
 
 type ProjectState = {
   projectData: ProjectType;

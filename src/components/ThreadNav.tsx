@@ -175,16 +175,16 @@ const EditableThread = (threadProps: any) => {
             </Editable>
           </span>
           {!mergeWindow ? (
-            <Button size='xs' onClick={() => setMergeWindow(true)}>
+            <Button size="xs" onClick={() => setMergeWindow(true)}>
               Merge into Another
             </Button>
           ) : (
             <div>
-              <Button size='xs' onClick={() => setMergeWindow(false)}>
+              <Button size="xs" onClick={() => setMergeWindow(false)}>
                 Cancel
               </Button>
               <Button
-                size='xs'
+                size="xs"
                 onClick={() => {
                   dispatch({
                     type: 'MERGE_THREADS',
@@ -216,7 +216,7 @@ const EditableThread = (threadProps: any) => {
         <div style={{ display: 'inline', float: 'right' }}>
           <span style={{ display: 'inline' }}>
             <Button
-              size='xs'
+              size="xs"
               style={{ display: 'inline' }}
               onClick={() => {
                 setEditMode(null);
@@ -225,8 +225,8 @@ const EditableThread = (threadProps: any) => {
               Go Back
             </Button>
             <Button
-              size='xs'
-              bgColor='#ff6863'
+              size="xs"
+              bgColor="#ff6863"
               style={{ display: 'inline', margin: 2 }}
               onClick={() => {
                 dispatch({
@@ -279,7 +279,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     dispatch,
   ] = useProjectState();
 
-  const checkIfSelectThread = (i: any) => (selectedThread == null) || (i == selectedThread);
+  const checkIfSelectThread = (i: any) =>
+    selectedThread == null || i == selectedThread;
 
   const [showCreateThread, setShowCreateThread] = useState(false);
   const [threadName, setName] = useState(null);
@@ -411,7 +412,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         <span>
                           <Popover>
                             <PopoverTrigger>
-                              <Button size='xs' style={{ display: 'inline' }}>
+                              <Button size="xs" style={{ display: 'inline' }}>
                                 Cite thread
                               </Button>
                             </PopoverTrigger>
@@ -457,7 +458,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       <div style={{ display: 'inline', float: 'right' }}>
                         <span style={{ display: 'inline' }}>
                           <Button
-                            size='xs'
+                            size="xs"
                             style={{ display: 'inline' }}
                             onClick={() => {
                               setEditMode(i);
@@ -496,7 +497,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                         {associatedTags[i].map((at, j) => (
                           <Badge
                             key={`tag-${j}`}
-                            size='xs'
+                            size="xs"
                             variant="outline"
                             style={{
                               margin: 2,

@@ -155,7 +155,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         >
           <div
             style={{ height: '100%', width: '700px', overflow: 'auto' }}
-            id='gdoc'
+            id="gdoc"
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph
@@ -203,7 +203,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         >
           <div
             style={{ height: '100%', width: '700px', overflow: 'auto' }}
-            id='gdoc'
+            id="gdoc"
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph

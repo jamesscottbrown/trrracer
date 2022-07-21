@@ -17,7 +17,7 @@ const ToolTip = (toolProp: any) => {
 
   return (
     <div
-      id='tooltip'
+      id="tooltip"
       style={{
         position: 'absolute',
         left: position[0] + 450,
@@ -267,7 +267,9 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     highlightedCircles
       .on('mouseover', (event, d) => {
-        const hopData = hopArray.filter((f) => f.artifactUid === d.artifact_uid);
+        const hopData = hopArray.filter(
+          (f) => f.artifactUid === d.artifact_uid
+        );
         const parentData = d3.select(event.target.parentNode).data()[0];
         setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
         const hovData = { fileData: d, hopDataArray: hopData };

@@ -10,11 +10,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaMapPin,
-} from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
 
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
@@ -229,7 +225,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                           label={`"${f.fragment}"`}
                         >
                           <Tag
-                            size='md'
+                            size="md"
                             borderRadius="full"
                             variant="solid"
                             colorScheme="gray"
@@ -309,7 +305,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               <ReactMde
                 value={selectedArtifactEntry.description}
                 // onChange={setValue}
-                selectedTab='preview'
+                selectedTab="preview"
                 onTabChange={() => null}
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))

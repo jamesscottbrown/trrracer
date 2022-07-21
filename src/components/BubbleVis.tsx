@@ -49,7 +49,7 @@ const RTtooltip = (toolProp: any) => {
 
   return (
     <div
-      id='tooltip'
+      id="tooltip"
       style={{
         position: 'absolute',
         left: position[0],
@@ -102,7 +102,7 @@ const ToolTip = (toolProp: any) => {
 
   return (
     <div
-      id='tooltip'
+      id="tooltip"
       style={{
         position: 'absolute',
         left: position[0],
@@ -931,7 +931,9 @@ const BubbleVis = (props: BubbleProps) => {
           setHoverData(d);
           d3.select('#tooltip').style('opacity', 1);
 
-          const labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+          const labelGTest = wrap
+            .select('.timeline-wrap')
+            .select('#label-group');
           const labelG = labelGTest.empty()
             ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group')
             : labelGTest;
@@ -992,9 +994,11 @@ const BubbleVis = (props: BubbleProps) => {
           d3.select('#label-group').remove();
         })
         .on('click', (event: any, d: any) => {
-          const activities = d3.selectAll('.list-activity').filter((f, i, n) => {
-            return d3.select(n[i]).attr('id') === d.title;
-          });
+          const activities = d3
+            .selectAll('.list-activity')
+            .filter((f, i, n) => {
+              return d3.select(n[i]).attr('id') === d.title;
+            });
           activities
             .nodes()[0]
             .scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1038,7 +1042,7 @@ const BubbleVis = (props: BubbleProps) => {
       <div style={{ width: '100%' }}>
         {!isReadOnly && (
           <Button
-            size='sm'
+            size="sm"
             style={{ fontSize: '12px' }}
             onClick={() => {
               defineEvent ? setDefineEvent(false) : setDefineEvent(true);
@@ -1047,12 +1051,12 @@ const BubbleVis = (props: BubbleProps) => {
             Add events to timeline
           </Button>
         )}
-        {(!selectedActivityURL && !viewParams)&& (
+        {!selectedActivityURL && !viewParams && (
           <Box
             marginLeft="3px"
             padding="3px"
             height="40px"
-            display='inline-block'
+            display="inline-block"
           >
             <FormControl display="flex" alignItems="center" marginBottom={10}>
               <FormLabel

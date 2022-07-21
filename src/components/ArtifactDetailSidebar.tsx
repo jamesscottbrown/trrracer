@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Flex,
-  Box,
-  Button,
-  Spacer,
-  Textarea,
-} from '@chakra-ui/react';
+import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaEye,
-  FaEyeSlash,
-} from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
 
 const ArtifactToThread = (props: any) => {
@@ -430,8 +419,8 @@ const ArtifactDetailSidebar = (props: any) => {
       <Box
         flex="2"
         overflowY="auto"
-        boxShadow='3px 3px 8px #A3AAAF'
-        border='1px solid #A3AAAF'
+        boxShadow="3px 3px 8px #A3AAAF"
+        border="1px solid #A3AAAF"
         borderRadius={6}
         p={5}
       >
@@ -776,8 +765,8 @@ const ArtifactDetailSidebar = (props: any) => {
           <Box
             flex="2"
             overflowY="auto"
-            boxShadow='3px 3px 8px #A3AAAF'
-            border='1px solid #A3AAAF'
+            boxShadow="3px 3px 8px #A3AAAF"
+            border="1px solid #A3AAAF"
             borderRadius={6}
             p={5}
           >

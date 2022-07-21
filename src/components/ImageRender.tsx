@@ -5,7 +5,9 @@ import { useProjectState } from './ProjectContext';
 
 const ImageRender = (props: any) => {
   const { src, autoLoad } = props;
-  const [ { isReadOnly, selectedActivityURL, selectedArtifactEntry }, ] = useProjectState();
+  const [
+    { isReadOnly, selectedActivityURL, selectedArtifactEntry },
+  ] = useProjectState();
   const [imgData, setImgData] = useState<any>(null);
 
   useEffect(() => {
@@ -33,7 +35,10 @@ const ImageRender = (props: any) => {
             height: 'auto',
           }}
         >
-          <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} alt="An attached image." />
+          <img
+            src={isReadOnly ? `data:image/png;base64,${imgData}` : src}
+            alt="An attached image."
+          />
         </div>
       )}
     </>
@@ -58,7 +63,10 @@ const ImageRender = (props: any) => {
       {({ inView, ref, entry }) => (
         <div ref={ref}>
           {inView && imgData && (
-            <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} alt="An attached image." />
+            <img
+              src={isReadOnly ? `data:image/png;base64,${imgData}` : src}
+              alt="An attached image."
+            />
           )}
         </div>
       )}

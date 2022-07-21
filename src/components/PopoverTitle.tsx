@@ -29,7 +29,7 @@ const ActivityTitlePopoverLogic = (props: any) => {
       {activityData.title}
     </div>
   ) : (
-    <Popover trigger='hover' style={{ display: 'inline' }}>
+    <Popover trigger="hover" style={{ display: 'inline' }}>
       <PopoverTrigger>
         <div
           style={{

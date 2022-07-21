@@ -20,7 +20,6 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
-
 const AddEntryForm = (props: any) => {
   const { setAddEntrySplash } = props;
   const [{ projectData }, dispatch] = useProjectState();
@@ -140,8 +139,8 @@ const AddEntryForm = (props: any) => {
         {value !== description && (
           <>
             <b style={{ color: 'red' }}>
-              You have made unsaved changes to this field. These will be lost
-              if you switch to editing a different field.
+              You have made unsaved changes to this field. These will be lost if
+              you switch to editing a different field.
             </b>
             <Button onClick={() => setDescription(value)}>
               Save Description

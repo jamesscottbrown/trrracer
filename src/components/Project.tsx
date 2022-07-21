@@ -221,7 +221,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       researchThreads,
       goBackView,
-      isReadOnly
+      isReadOnly,
     },
     dispatch,
   ] = useProjectState();

@@ -20,7 +20,7 @@ const SidebarButton = (sidebarProps: any) => {
         {`${data.title}  (${data.matches.length})`}
         <Button
           title="Filter by."
-          size='xs'
+          size="xs"
           style={{ marginLeft: 10 }}
           onClick={() => {
             console.log('tags filter check', filterTags);

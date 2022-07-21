@@ -26,7 +26,9 @@ const CustomMarker = (props: MarkerComponentProps) => {
           display: 'inline',
         }}
         className="custom-marker"
-      >{note}</div>
+      >
+        {note}
+      </div>
     </div>
   );
 };

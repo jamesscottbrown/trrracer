@@ -96,7 +96,7 @@ const QueryMatchComponent = (props: any) => {
           setViewType={setViewType}
         />
         <Button
-          size='xs'
+          size="xs"
           onClick={() => (show ? setShow(false) : setShow(true))}
         >
           show text

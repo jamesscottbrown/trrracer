@@ -48,9 +48,7 @@ const PageNavigation = (props: any) => {
     setToolHtml,
     setPosition,
   } = props;
-  const [
-    { projectData, researchThreads, isReadOnly },
-  ] = useProjectState();
+  const [{ projectData, researchThreads, isReadOnly }] = useProjectState();
 
   const bigRectHeight = 792;
   const bigRectWidth = 612;
@@ -192,7 +190,7 @@ const PageNavigation = (props: any) => {
 };
 
 const DetailComponent = () => {
-  const [ { viewParams, researchThreads, projectData }, ] = useProjectState();
+  const [{ viewParams, researchThreads, projectData }] = useProjectState();
 
   const associatedThreads = useMemo(() => {
     console.log(
@@ -222,7 +220,7 @@ const DetailComponent = () => {
   }
   return (
     <div style={{ height: '100vh' }}>
-      {viewParams.granularity === 'thread' && <ThreadNav viewType='paper' />}
+      {viewParams.granularity === 'thread' && <ThreadNav viewType="paper" />}
       <div style={{ overflow: 'auto', height: '100vh' }}>
         <ProjectListView />
       </div>
@@ -230,8 +228,8 @@ const DetailComponent = () => {
         <Box
           flex="2"
           overflowY="auto"
-          boxShadow='3px 3px 8px #A3AAAF'
-          border='1px solid #A3AAAF'
+          boxShadow="3px 3px 8px #A3AAAF"
+          border="1px solid #A3AAAF"
           borderRadius={6}
           p={5}
         >
@@ -241,8 +239,8 @@ const DetailComponent = () => {
         <Box
           flex="2"
           overflowY="auto"
-          boxShadow='3px 3px 8px #A3AAAF'
-          border='1px solid #A3AAAF'
+          boxShadow="3px 3px 8px #A3AAAF"
+          border="1px solid #A3AAAF"
           borderRadius={6}
           p={5}
         >
@@ -336,14 +334,14 @@ const WhichFA = (props: any) => {
     );
   }
   return (
-    <g transform='translate(2, 2)'>
+    <g transform="translate(2, 2)">
       <circle
         r={8}
         cx={10}
         cy={10}
         fill={+viewParams.cIndex === +param.cIndex ? '#ff2626' : '#d3d3d3'}
       />
-      <g transform='translate(4, 4)'>
+      <g transform="translate(4, 4)">
         <IconCircle
           size={13}
           color={+viewParams.cIndex === +param.cIndex ? '#ffffff' : 'gray'}
@@ -354,12 +352,7 @@ const WhichFA = (props: any) => {
 };
 
 const CitationVis = (props: any) => {
-  const {
-    pageNumber,
-    pageRectData,
-    setPosition,
-    setToolHtml,
-  } = props;
+  const { pageNumber, pageRectData, setPosition, setToolHtml } = props;
   const [{ viewParams }] = useProjectState();
   const svgRef = React.useRef(null);
   // const [position, setPosition] = useState([0,0]);
@@ -412,7 +405,7 @@ const CitationVis = (props: any) => {
             <rect
               height={rectHeight}
               width={prd.anno.length > 0 ? calWidth(prd.anno.length) + 10 : 23}
-              fill='#d3d3d3'
+              fill="#d3d3d3"
               fillOpacity={i + 1 === pageNumber ? 0.7 : 0.25}
             />
             <g
@@ -441,51 +434,65 @@ const CitationVis = (props: any) => {
 };
 
 const BubbLabel = () => {
-
   return (
     <div
       style={{
-          textAlign: 'center',
-          width: 200,
-          height: 90,
-          padding: 10,
-          backgroundColor: '#fff',
-          border: '2px solid #d3d3d3',
-          borderRadius: 10,
-          pointerEvents: 'none',
-          zIndex: 6000,
-          position:'absolute',
-          top: 0,
-          left: 800
-        }}>
-        <svg>
-          <text
-          y={12} x={5}
-          style={{fontSize:15, fontWeight:600}}
-          >Encoding</text>
-          <g transform='translate(-10, 10)'>
-          <circle r={25} cx={150} cy={30} fill="#d3d3d3"/>
-          <text y={22} x={60}
-          style={{fontSize:10, textAnchor:"end"}}
-            >Activity</text>
-          <line  x1={60} x2={126} y1={22} y2={22} strokeWidth="1px" stroke="gray"/>
-          <circle r={5} cx={140} cy={40} fill="gray"/>
-          <line  x1={60} x2={140} y1={40} y2={40} strokeWidth="1px" stroke="gray"/>
-          <text y={40} x={60}
-          style={{fontSize:10, textAnchor:"end"}}
-            >Artifact</text>
-          </g>
-
-        </svg>
+        textAlign: 'center',
+        width: 200,
+        height: 90,
+        padding: 10,
+        backgroundColor: '#fff',
+        border: '2px solid #d3d3d3',
+        borderRadius: 10,
+        pointerEvents: 'none',
+        zIndex: 6000,
+        position: 'absolute',
+        top: 0,
+        left: 800,
+      }}
+    >
+      <svg>
+        <text y={12} x={5} style={{ fontSize: 15, fontWeight: 600 }}>
+          Encoding
+        </text>
+        <g transform="translate(-10, 10)">
+          <circle r={25} cx={150} cy={30} fill="#d3d3d3" />
+          <text y={22} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
+            Activity
+          </text>
+          <line
+            x1={60}
+            x2={126}
+            y1={22}
+            y2={22}
+            strokeWidth="1px"
+            stroke="gray"
+          />
+          <circle r={5} cx={140} cy={40} fill="gray" />
+          <line
+            x1={60}
+            x2={140}
+            y1={40}
+            y2={40}
+            strokeWidth="1px"
+            stroke="gray"
+          />
+          <text y={40} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
+            Artifact
+          </text>
+        </g>
+      </svg>
     </div>
-  )
-}
+  );
+};
 
 const PaperView = (props: any) => {
   const { folderPath } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
-  const [ { selectedThread, linkData, isReadOnly, viewParams }, ] = useProjectState();
+  const [
+    { selectedThread, linkData, isReadOnly, viewParams },
+  ] = useProjectState();
 
   let passedLink = linkData
     ? linkData.filter((f) => f.cIndex === viewParams.cIndex)
@@ -583,7 +590,7 @@ const PaperView = (props: any) => {
             </div>
           ) : (
             <div>
-              <BubbLabel/>
+              <BubbLabel />
               <BubbleVis
                 groupBy={null}
                 setGroupBy={null}
@@ -624,7 +631,7 @@ const PaperView = (props: any) => {
         </Box>
       </div>
       <div
-        id='tooltip-cite'
+        id="tooltip-cite"
         style={{
           position: 'absolute',
           right: position[0],
@@ -653,7 +660,8 @@ const PaperView = (props: any) => {
         justifyContent: 'center',
       }}
     >
-      Oops! There is not a paper to explore for this project yet. Check back later!
+      Oops! There is not a paper to explore for this project yet. Check back
+      later!
     </div>
   );
 };

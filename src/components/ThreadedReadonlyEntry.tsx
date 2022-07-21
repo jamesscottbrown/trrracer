@@ -83,7 +83,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
             style={{ display: 'inline' }}
           />
           <Button
-            size='xs'
+            size="xs"
             style={{
               marginLeft: '7px',
               color: '#ffffff',
@@ -123,14 +123,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 };
 
 const ThreadedArtifact = (props: any) => {
-  const {
-    setViewType,
-    openFile,
-    fileData,
-    thisEntry,
-    folderPath,
-    i,
-  } = props;
+  const { setViewType, openFile, fileData, thisEntry, folderPath, i } = props;
 
   const [, dispatch] = useProjectState();
 
@@ -148,7 +141,7 @@ const ThreadedArtifact = (props: any) => {
           style={{ display: 'inline' }}
         />
         <Button
-          size='xs'
+          size="xs"
           style={{
             marginLeft: '7px',
             color: '#ffffff',
@@ -321,7 +314,7 @@ const ThreadedReadonlyEntry = (props: any) => {
               <div style={{ display: 'inline', float: 'right' }}>
                 {makeEditable && !isReadOnly && (
                   <Button
-                    size='sm'
+                    size="sm"
                     leftIcon={<EditIcon />}
                     onClick={makeEditable}
                   >
@@ -331,7 +324,7 @@ const ThreadedReadonlyEntry = (props: any) => {
                 {!isReadOnly && (
                   <Tooltip label="Remove from thread">
                     <Button
-                      size='sm'
+                      size="sm"
                       style={{
                         marginLeft: '5px',
                         // backgroundColor: '#ff726f',
@@ -371,7 +364,7 @@ const ThreadedReadonlyEntry = (props: any) => {
                 ))}
               </div>
               <div style={{ display: 'inline' }}>
-                <Popover trigger='hover'>
+                <Popover trigger="hover">
                   <PopoverTrigger>
                     <Badge
                       style={{
@@ -425,7 +418,7 @@ const ThreadedReadonlyEntry = (props: any) => {
                   opacity: m.title === selectedThread.title ? 1 : 0.4,
                 }}
               >
-                <GiSewingString size='20px' />
+                <GiSewingString size="20px" />
               </div>
             </Tooltip>
           </React.Fragment>

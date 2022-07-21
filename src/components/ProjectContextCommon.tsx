@@ -474,21 +474,19 @@ export const getAppStateReducer = (
         return null;
       }
       case 'UPDATE_GOOG_IDS': {
-        const entries = [...state.projectData.entries].map(
-          (d: EntryType) => {
-            d.files.map((f: any) => {
-              if (action.googFileIds && !f.title.includes('.txt')) {
-                console.log('F', f);
-                f.goog_ids = action.googFileIds[f.title]
-                  ? action.googFileIds[f.title]
-                  : null;
-              }
+        const entries = [...state.projectData.entries].map((d: EntryType) => {
+          d.files.map((f: any) => {
+            if (action.googFileIds && !f.title.includes('.txt')) {
+              console.log('F', f);
+              f.goog_ids = action.googFileIds[f.title]
+                ? action.googFileIds[f.title]
+                : null;
+            }
 
-              return f;
-            });
-            return d;
-          }
-        );
+            return f;
+          });
+          return d;
+        });
         const newProjectData = { ...state.projectData, entries };
 
         return saveJSON(newProjectData, state);
@@ -516,11 +514,10 @@ export const getAppStateReducer = (
           }
         );
 
-        const entries = state.projectData.entries.map(
-          (d: EntryType) =>
-            action.selectedArtifactEntry.activity_uid === d.activity_uid
-              ? { ...d, files: currentFiles }
-              : d
+        const entries = state.projectData.entries.map((d: EntryType) =>
+          action.selectedArtifactEntry.activity_uid === d.activity_uid
+            ? { ...d, files: currentFiles }
+            : d
         );
 
         const newProjectData = { ...state.projectData, entries };
@@ -786,11 +783,10 @@ export const getAppStateReducer = (
           // projectData
         }
 
-        const newEntries = state.projectData.entries.map(
-          (d: EntryType) =>
-            activityID === d.activity_uid
-              ? { ...d, tags: [...d.tags, newTag.text] }
-              : d
+        const newEntries = state.projectData.entries.map((d: EntryType) =>
+          activityID === d.activity_uid
+            ? { ...d, tags: [...d.tags, newTag.text] }
+            : d
         );
 
         const newProjectData = {
@@ -814,9 +810,8 @@ export const getAppStateReducer = (
           ...currentFiles,
           ...copyFiles(fileList, state.folderPath),
         ];
-        const entries = state.projectData.entries.map(
-          (d: EntryType) =>
-            d.activity_uid === activityID ? { ...d, files: newFiles } : d
+        const entries = state.projectData.entries.map((d: EntryType) =>
+          d.activity_uid === activityID ? { ...d, files: newFiles } : d
         );
 
         const newProjectData = { ...state.projectData, entries };
@@ -959,13 +954,11 @@ export const getAppStateReducer = (
       }
 
       case 'UPDATE_ENTRY_FIELD': {
-        const entries = [...state.projectData.entries].map(
-          (d: EntryType) => {
-            return d.activity_uid === action.activityID
-              ? { ...d, [action.fieldName]: action.newValue }
-              : d;
-          }
-        );
+        const entries = [...state.projectData.entries].map((d: EntryType) => {
+          return d.activity_uid === action.activityID
+            ? { ...d, [action.fieldName]: action.newValue }
+            : d;
+        });
         const newProjectData = { ...state.projectData, entries };
 
         return saveJSON(newProjectData, state);

@@ -83,14 +83,14 @@ const LeftSidebar = (props: any) => {
       flexDirection="column"
       h={`calc(100vh - ${fromTop + 5}px)`}
       overflow="auto"
-      borderRight='1px solid #A3AAAF'
-      boxShadow='0 3px 8px #A3AAAF'
+      borderRight="1px solid #A3AAAF"
+      boxShadow="0 3px 8px #A3AAAF"
       borderRadius={6}
       p={3}
     >
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType='overview'
+        viewType="overview"
         selectedThread={selectedThread}
         projectData={projectData}
         dispatch={dispatch}
@@ -154,7 +154,9 @@ const LeftSidebar = (props: any) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            const temp = tags.sort((a, b) => b.matches.length - a.matches.length);
+            const temp = tags.sort(
+              (a, b) => b.matches.length - a.matches.length
+            );
             setSortedTags(temp);
           }}
         />
