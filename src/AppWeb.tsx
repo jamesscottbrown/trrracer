@@ -11,6 +11,7 @@ import Project from './components/Project';
 import './App.global.css';
 
 import { useProjectState } from './components/ProjectContext';
+import SplashWeb from './components/SplashWeb';
 
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
@@ -38,16 +39,21 @@ const migrateTrrraceFormat = (projectData: any) => {
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
+  
 
   if (!folderPath) {
     //const isDev = process.env.NODE_ENV === 'development';
     const isDev = true;
-    setPath(
-      `${
-        isDev ? 'http://localhost:9999' : '.'
-      }/.netlify/functions/download-gdrive-file/?folderName=evobio&fileName=`
-    ); // TODO: make not a constant
+    return <SplashWeb setPath={setPath} isDev={isDev}/>
+    // setPath(
+    //   `${
+    //     isDev ? 'http://localhost:9999' : '.'
+    //   }/.netlify/functions/download-gdrive-file/?folderName=evobio&fileName=`
+    // ); // TODO: make not a constant
+
+    
   }
+
 
   if (folderPath && !projectData) {
     fetch(`${folderPath}trrrace.json`)
