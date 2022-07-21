@@ -17,6 +17,8 @@ import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
+import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -65,6 +67,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       folderPath,
       selectedArtifactEntry,
       selectedArtifactIndex,
+      isReadOnly
     },
     dispatch,
   ] = useProjectState();
@@ -135,8 +138,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
-
-      console.log(googD);
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
@@ -325,19 +326,34 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    return (
-      // <embed
-      //   style={{width: '90%' }}
-      //   src={`file://${path.join(folderPath, title)}`}
-      //   type="application/pdf"
-      // />
-      <iframe
-        style={{ width: '90%', zoom: 60 }}
-        src={`file://${path.join(folderPath, title)}`}
+    const [pageData, setPageData] = useState();
+    const perf = joinPath(folderPath, title);
 
-        // type="application/pdf"
-      />
-    );
+    if (isReadOnly) {
+      readFileSync(perf)
+        .then((res) => res.text())
+        .then((pap) => {
+          console.log('pap',pap)
+          setPageData(pap);
+        });
+    } else {
+      setPageData(perf);
+    }
+    if(pageData){
+      return (
+        pageData && (
+          <Document
+            file={
+              isReadOnly ? `data:application/pdf;base64,${pageData}` : { url: perf }
+            }
+            onLoadSuccess={()=> console.log('this works')}
+            onLoadError={() => `ERRORRR ${console.error}`}
+          >
+          </Document>)     
+      );
+    }
+    
+    return <div>Loading</div>
   }
 
   if (title.endsWith('.HEIC')) {
