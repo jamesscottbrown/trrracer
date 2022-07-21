@@ -65,12 +65,18 @@ interface DeadlineType {
   date: string;
 }
 
+interface Citation {
+  id: string;
+  cIndex: number;
+}
 interface ProjectType {
   title: string;
   description: string;
   tags: TagType[];
   entries: EntryType[];
   eventArray: any[];
+
+  citations: Citation[];
 }
 
 type ResearchThreadEvidence = {

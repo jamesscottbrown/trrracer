@@ -13,7 +13,16 @@ import {
 import ActivitytoThread from './ActivityToThread';
 import { useProjectState } from './ProjectContext';
 
-const ActivityTitlePopoverLogic = (props: any) => {
+import type { EntryTypeWithIndex, ResearchThreadData } from './types';
+
+type ActivityTitlePopoverLogicPropType = {
+  activityData: EntryTypeWithIndex;
+  researchThreads: ResearchThreadData | undefined;
+};
+
+const ActivityTitlePopoverLogic = (
+  props: ActivityTitlePopoverLogicPropType
+) => {
   const { activityData, researchThreads } = props;
   const [seeThreadAssign, setSeeThreadAssign] = useState(false);
 
@@ -63,19 +72,17 @@ const ActivityTitlePopoverLogic = (props: any) => {
             <div>
               {researchThreads &&
               researchThreads.research_threads.length > 0 ? (
-                researchThreads.research_threads.map(
-                  (rt: any, tIndex: number) => (
-                    <React.Fragment key={`rt-${tIndex}`}>
-                      <ActivitytoThread
-                        thread={rt}
-                        threadIndex={tIndex}
-                        activity={activityData}
-                        activityIndex={activityData.index}
-                        setSeeThreadAssign={setSeeThreadAssign}
-                      />
-                    </React.Fragment>
-                  )
-                )
+                researchThreads.research_threads.map((rt, tIndex: number) => (
+                  <React.Fragment key={`rt-${tIndex}`}>
+                    <ActivitytoThread
+                      thread={rt}
+                      threadIndex={tIndex}
+                      activity={activityData}
+                      activityIndex={activityData.index}
+                      setSeeThreadAssign={setSeeThreadAssign}
+                    />
+                  </React.Fragment>
+                ))
               ) : (
                 <span>no threads yet</span>
               )}
