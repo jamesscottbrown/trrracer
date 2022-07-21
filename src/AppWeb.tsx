@@ -39,16 +39,14 @@ const migrateTrrraceFormat = (projectData: any) => {
 export default function App() {
   const [folderPath, setPath] = useState<string>('');
   const [{ projectData }, dispatch] = useProjectState();
-  //const isDev = process.env.NODE_ENV === 'development';
-  const isDev = true;
-
+  const isDev = process.env.NODE_ENV === 'development';
+  // const isDev = true;
   let test = document.cookie.split(';').filter(f => f.includes('folderName'))
-  console.log('test?',test);
-
+ 
   useEffect(()=> {
     if(test.length > 0){
       let path  = test[0].split('=')[1];
-      console.log('path parsed', path);
+     
        setPath(
         `${
           isDev ? 'http://localhost:9999' : '.'
