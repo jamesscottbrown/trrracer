@@ -288,6 +288,7 @@ const Entry = (props: EntryPropTypes) => {
             </div>
           </Tooltip>
         </React.Fragment>
+        ))
       )}
 
       <br />
