@@ -51,7 +51,7 @@ interface ReadonlyEntryFilePropTypes {
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
-  console.log('file', file);
+ 
   return (
     <React.Fragment>
       <Box bg="#ececec" p={3}>
@@ -124,7 +124,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
 
                 pop.style('height', '800px')
-                console.log('FILE', file)
+               
               }
         }}
       >See in detail</Button>
