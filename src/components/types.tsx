@@ -142,6 +142,7 @@ type TxtData = {
 
 type ProjectState = {
   projectData: ProjectType;
+  isReadOnly: boolean;
   folderPath: string | null;
   filterTags: string[] | null;
   filterType: string | null;
