@@ -89,6 +89,7 @@ type ResearchThread = {
   evidence: ResearchThreadEvidence[];
   color: string;
   title: string;
+  actions: any[]; // ?
 };
 
 type ResearchThreadData = {
@@ -152,8 +153,9 @@ type TxtData = {
 
 type ViewParams = {
   view: string;
-  granularity: 'paper' | 'artifact' | 'thread';
+  granularity: 'paper' | 'artifact' | 'thread' | 'activity';
   cIndex: string;
+  id: string;
 };
 
 type ProjectState = {

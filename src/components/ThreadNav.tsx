@@ -38,10 +38,11 @@ const MiniTimline = (props: MiniTimelineProps) => {
 
   const lilSVG = React.useRef(null);
 
+  const ex = d3.extent(activities.map((m: any) => new Date(m.date)));
   React.useEffect(() => {
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(activities.map((m: any) => new Date(m.date))))
+      .domain([(ex[0] || new Date()) as Date, ex[1] || (new Date() as Date)])
       .range([0, 150])
       .nice();
 
@@ -132,7 +133,7 @@ const EditableThread = (threadProps: any) => {
   });
 
   const otherThreads = researchThreads?.research_threads.filter(
-    (f, i) => i !== index
+    (_, i) => i !== index
   );
   const [description, setDescription] = useState(threadData.description);
   const [mergeTo, setMergeTo] = useState(otherThreads[0].title);
@@ -204,7 +205,7 @@ const EditableThread = (threadProps: any) => {
                   width="max-content"
                 >
                   {filteredThreads
-                    ?.filter((f, i) => i !== index)
+                    ?.filter((_, i) => i !== index)
                     .map((m, j) => (
                       <option key={`option-${j}`}>{m.title}</option>
                     ))}
@@ -279,8 +280,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     dispatch,
   ] = useProjectState();
 
-  const checkIfSelectThread = (i: any) =>
-    selectedThread == null || i == selectedThread;
+  const checkIfSelectThread = (i: number) =>
+    selectedThread == null || i === selectedThread;
 
   const [showCreateThread, setShowCreateThread] = useState(false);
   const [threadName, setName] = useState(null);
@@ -291,14 +292,13 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
       return researchThreads?.research_threads.filter(
-        (f, i) => i === selectedThread
+        (_, i) => i === selectedThread
       );
-    } else {
-      return researchThreads?.research_threads.filter((f) => {
-        const test = f.actions.map((m) => m.action);
-        return test.indexOf('merge') === -1;
-      });
     }
+    return researchThreads?.research_threads.filter((f) => {
+      const test = f.actions.map((m) => m.action);
+      return test.indexOf('merge') === -1;
+    });
   }, [researchThreads?.research_threads, viewParams]);
 
   useEffect(() => {
@@ -462,7 +462,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                             style={{ display: 'inline' }}
                             onClick={() => {
                               setEditMode(i);
-                              //dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
+                              // dispatch({ type: 'DELETE_THREAD', deleteThread: rt.rt_id });
                             }}
                           >
                             <FaEdit />
@@ -483,7 +483,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       {rt.description}
                     </div>
 
-                    {associatedTags && editMode != i && (
+                    {associatedTags && editMode !== i && (
                       <div>
                         <span
                           style={{

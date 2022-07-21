@@ -169,11 +169,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 </FormLabel>
                 <Switch
                   id="show-all"
-                  onChange={() => {
-                    hideByDefault
-                      ? setHideByDefault(false)
-                      : setHideByDefault(true);
-                  }}
+                  onChange={() => setHideByDefault(!hideByDefault)}
                 />
               </FormControl>
             </div>

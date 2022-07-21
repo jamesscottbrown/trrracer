@@ -228,7 +228,6 @@ export const getAppStateReducer = (
         });
       } catch (e) {
         console.log('error with tags?');
-        newTags = newTags;
       }
 
       const research_threads = await checkRtFile(baseDir);
