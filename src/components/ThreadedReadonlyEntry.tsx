@@ -289,11 +289,6 @@ const ThreadedReadonlyEntry = (props: any) => {
     return '#D4D4D4';
   };
 
-  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
-  const descriptionHTML = useMemo(() => {
-    converter.makeHtml(thisEntry.description);
-  }, [thisEntry.description]);
-
   return (
     <Box>
       <div style={{ padding: 10 }}>

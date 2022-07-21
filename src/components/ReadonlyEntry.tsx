@@ -170,11 +170,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
-  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
-  const descriptionHTML = useMemo(() => {
-    converter.makeHtml(thisEntry.description);
-  }, [thisEntry.description]);
-
   return (
     <Box>
       <div style={{ padding: 10 }}>
