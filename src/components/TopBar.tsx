@@ -105,7 +105,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               <BiLogOut 
                 style={{display:'inline'}}
                 onClick={() => {
-                  document.cookie = 'folderPath= '
+                  document.cookie = 'folderPath=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+                  console.log(document.cookie)
                   setPath('')}}
               />{" "}
               {projectData.title}

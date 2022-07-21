@@ -44,7 +44,7 @@ export default function App() {
 
   let test = document.cookie.split(';').filter(f => f.includes('folderName'))
   console.log('test?',test);
-  
+
   useEffect(()=> {
     if(test.length > 0){
       let path  = test[0].split('=')[1];
@@ -93,7 +93,7 @@ export default function App() {
 
   return (
     <ChakraProvider>
-      <Project folderPath={folderPath} />
+      <Project folderPath={folderPath} setPath={setPath} />
     </ChakraProvider>
   );
 }
