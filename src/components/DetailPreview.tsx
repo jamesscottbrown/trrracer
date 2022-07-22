@@ -17,12 +17,9 @@ import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
-import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-const pdfJS = require('pdfjs-dist');
-import PdfView from './DetailPDF';
-import id from 'date-fns/esm/locale/id/index.js';
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -354,7 +351,15 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       return(
         // <iframe src="data:application/pdf;base64,YOUR_BINARY_DATA" height="100%" width="100%"></iframe>
-        <iframe src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} height="100%" width="100%"></iframe>
+        <iframe 
+        src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} 
+        height="100%" 
+        width="700px"
+     
+        onLoad={(event)=> {
+          console.log('event', event);
+        }}
+        ></iframe>
       )
 
     }
