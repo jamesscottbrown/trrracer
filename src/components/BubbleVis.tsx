@@ -643,6 +643,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('y1', 0)
           .attr('y2', 0)
           .attr('stroke', 'gray')
+          .attr('stroke-dasharray', "5,5")
           .attr('stroke-width', .4);
 
           let eventLineEnd = eventRectGroups
@@ -655,6 +656,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('y1', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
           .attr('y2', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
           .attr('stroke', 'gray')
+          .attr('stroke-dasharray', "5,5")
           .attr('stroke-width', .4);
 
           let vertLine = eventRectGroups
@@ -781,6 +783,7 @@ const BubbleVis = (props: BubbleProps) => {
             highlightedCircles.attr('fill', 'white');
           } else {
             d3.select(event.target).attr('fill', 'gray');
+            d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', '#fff');
           }
         })
         .on('mouseout', (event, d) => {
@@ -806,6 +809,8 @@ const BubbleVis = (props: BubbleProps) => {
               .attr('fill', '#d3d3d3')
               .attr('stroke', '#d3d3d3')
               .attr('stroke-width', 0.5);
+             
+              d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', 'gray');
           }
         });
 
