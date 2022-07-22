@@ -997,7 +997,7 @@ const BubbleVis = (props: BubbleProps) => {
             .append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
-            .attr('x2', 0 - 70)
+            .attr('x2', 0 - 30)
             .attr('y2', forced.yScale(new Date(d.date)))
             .attr('x1', +d.x)
             .attr('stroke', 'black')
