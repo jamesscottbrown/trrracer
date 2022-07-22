@@ -209,7 +209,8 @@ export const ToolIcon = (toolProp: any) => {
 };
 
 const Project = (ProjectPropValues: ProjectProps) => {
-  const { folderPath } = ProjectPropValues;
+  const { folderPath, setPath } = ProjectPropValues;
+  console.log('settttt pattthhhh', folderPath, setPath)
   const [
     {
       projectData,
@@ -248,7 +249,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
   useEffect(() => {
     if (isReadOnly) {
       const parsed = queryString.parse(location.search);
-      console.log('PARSED??', parsed);
 
       if (parsed.view) {
         setViewType(parsed.view);
@@ -405,6 +405,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setHideByDefault={setHideByDefault}
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
+          setPath={setPath}
         />
         <Flex position="relative" top={`${fromTop}px`}>
           {!groupBy && <LeftSidebar fromTop={fromTop} groupBy={groupBy} />}

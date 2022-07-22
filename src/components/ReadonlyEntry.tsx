@@ -41,7 +41,7 @@ interface ReadonlyEntryFilePropTypes {
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
-  console.log('file', file);
+ 
   return (
     <>
       <Box bg="#ececec" p={3}>
@@ -73,7 +73,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-              if (viewParams && viewParams.view === 'paper') {
+
+              if(!viewParams){
                 setViewType('detail view');
 
                 dispatch({
@@ -120,8 +121,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   '<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>'
                 );
 
-                pop.style('height', '800px');
-                console.log('FILE', file);
+                pop.style('height', '800px')
               }
             }}
           >

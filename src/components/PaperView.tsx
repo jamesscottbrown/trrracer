@@ -193,12 +193,8 @@ const DetailComponent = () => {
   const [{ viewParams, researchThreads, projectData }] = useProjectState();
 
   const associatedThreads = useMemo(() => {
-    console.log(
-      'IN DETAIL COMP',
-      researchThreads?.research_threads,
-      projectData.entries.filter((f) => f.activity_uid === viewParams.id)[0]
-    );
-    if (viewParams.granularity === 'activity') {
+   
+    if (viewParams && viewParams.granularity === 'activity') {
       const proj = projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0];
@@ -209,9 +205,9 @@ const DetailComponent = () => {
       return [];
     }
     return [];
-  }, [viewParams.granularity]);
+  }, [viewParams]);
 
-  if (viewParams.granularity === 'artifact') {
+  if (viewParams && viewParams.granularity === 'artifact') {
     return (
       <div>
         <ArtifactDetailSidebar />
@@ -220,11 +216,11 @@ const DetailComponent = () => {
   }
   return (
     <div style={{ height: '100vh' }}>
-      {viewParams.granularity === 'thread' && <ThreadNav viewType="paper" />}
+      {viewParams && viewParams.granularity === 'thread' && <ThreadNav viewType='paper' />}
       <div style={{ overflow: 'auto', height: '100vh' }}>
         <ProjectListView />
       </div>
-      {associatedThreads.length > 0 && viewParams.granularity === 'activity' ? (
+      {associatedThreads.length > 0 && (viewParams && viewParams.granularity === 'activity') ? (
         <Box
           flex="2"
           overflowY="auto"
@@ -308,11 +304,11 @@ const WhichFA = (props: any) => {
           r={10}
           cx={10}
           cy={10}
-          fill={+viewParams.cIndex === +param.cIndex ? '#ff2626' : '#d3d3d3'}
+          fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
         />
         <IconChartDots3
           size={20}
-          color={+viewParams.cIndex === +param.cIndex ? '#ffffff' : 'gray'}
+          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
         />
       </g>
     );
@@ -324,11 +320,11 @@ const WhichFA = (props: any) => {
           r={10}
           cx={10}
           cy={10}
-          fill={+viewParams.cIndex === +param.cIndex ? '#ff2626' : '#d3d3d3'}
+          fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
         />
         <IconCircles
           size={20}
-          color={+viewParams.cIndex === +param.cIndex ? '#ffffff' : 'gray'}
+          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
         />
       </g>
     );
@@ -339,12 +335,12 @@ const WhichFA = (props: any) => {
         r={8}
         cx={10}
         cy={10}
-        fill={+viewParams.cIndex === +param.cIndex ? '#ff2626' : '#d3d3d3'}
+        fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
       />
       <g transform="translate(4, 4)">
         <IconCircle
           size={13}
-          color={+viewParams.cIndex === +param.cIndex ? '#ffffff' : 'gray'}
+          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
         />
       </g>
     </g>
@@ -352,11 +348,16 @@ const WhichFA = (props: any) => {
 };
 
 const CitationVis = (props: any) => {
-  const { pageNumber, pageRectData, setPosition, setToolHtml } = props;
-  const [{ viewParams }] = useProjectState();
+  const {
+    anno,
+    pageNumber,
+    index,
+    pageRectData,
+    setPosition,
+    setToolHtml,
+  } = props;
+
   const svgRef = React.useRef(null);
-  // const [position, setPosition] = useState([0,0]);
-  // const [html, setHTML] = useState('<div>This is a start</div>')
   const iconSize = 20;
   const rectHeight = 792 / 10 - 10;
   const maxAnno = d3.max(pageRectData.map((m) => m.anno.length));
@@ -370,25 +371,7 @@ const CitationVis = (props: any) => {
 
   return (
     <div style={{ position: 'absolute', right: '650px', top: '90px' }}>
-      {/* <div
-        id={'tooltip-cite'}
-        style={{
-          position:'absolute',
-          left: position[0],
-          top: position[1] - 150,
-          textAlign: 'center',
-          width:450,
-          minHeight:50,
-          padding:10,
-          backgroundColor: '#fff',
-          border: '2px solid gray',
-          borderRadius: 10,
-          pointerEvents:'none',
-          zIndex: 6000,
-          opacity: 0
-        }}
-        dangerouslySetInnerHTML={{__html: html}}
-      ></div> */}
+  
       <svg
         style={{
           height: '800px',
@@ -419,7 +402,6 @@ const CitationVis = (props: any) => {
                   index={j}
                   setPosition={setPosition}
                   setHTML={setToolHtml}
-                  granularity={viewParams.granularity}
                   rectH={rectHeight}
                   total={prd.anno.length}
                   rectWidth={calWidth(prd.anno.length)}
@@ -437,51 +419,37 @@ const BubbLabel = () => {
   return (
     <div
       style={{
-        textAlign: 'center',
-        width: 200,
-        height: 90,
-        padding: 10,
-        backgroundColor: '#fff',
-        border: '2px solid #d3d3d3',
-        borderRadius: 10,
-        pointerEvents: 'none',
-        zIndex: 6000,
-        position: 'absolute',
-        top: 0,
-        left: 800,
-      }}
-    >
-      <svg>
-        <text y={12} x={5} style={{ fontSize: 15, fontWeight: 600 }}>
-          Encoding
-        </text>
-        <g transform="translate(-10, 10)">
-          <circle r={25} cx={150} cy={30} fill="#d3d3d3" />
-          <text y={22} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
-            Activity
-          </text>
-          <line
-            x1={60}
-            x2={126}
-            y1={22}
-            y2={22}
-            strokeWidth="1px"
-            stroke="gray"
-          />
-          <circle r={5} cx={140} cy={40} fill="gray" />
-          <line
-            x1={60}
-            x2={140}
-            y1={40}
-            y2={40}
-            strokeWidth="1px"
-            stroke="gray"
-          />
-          <text y={40} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
-            Artifact
-          </text>
-        </g>
-      </svg>
+          textAlign: 'center',
+          width: 200,
+          height: 90,
+          padding: 10,
+          backgroundColor: '#fff',
+          border: '2px solid #d3d3d3',
+          borderRadius: 10,
+          pointerEvents: 'none',
+          zIndex: 6000,
+          position:'absolute',
+          top: 0,
+          left: 600
+        }}>
+        <svg>
+          <text
+          y={12} x={5}
+          style={{fontSize:15, fontWeight:600}}    
+          >Encoding</text>
+          <g transform='translate(-10, 10)'>
+          <circle r={25} cx={150} cy={30} fill="#d3d3d3"/>
+          <text y={22} x={60} 
+          style={{fontSize:10, textAnchor:"end"}}
+            >Activity</text>
+          <line  x1={60} x2={126} y1={22} y2={22} strokeWidth="1px" stroke="gray"/>
+          <circle r={5} cx={140} cy={40} fill="gray"/>
+          <line  x1={60} x2={140} y1={40} y2={40} strokeWidth="1px" stroke="gray"/>
+          <text y={40} x={60} 
+          style={{fontSize:10, textAnchor:"end"}}
+            >Artifact</text>
+          </g>
+        </svg>
     </div>
   );
 };
@@ -495,7 +463,7 @@ const PaperView = (props: any) => {
   ] = useProjectState();
 
   let passedLink = linkData
-    ? linkData.filter((f) => f.cIndex === viewParams.cIndex)
+    ? linkData.filter((f) => (viewParams && f.cIndex === viewParams.cIndex))
     : [];
   const anno = linkData ? d3.groups(linkData, (d) => d.page) : null;
   const index = selectedThread || 0;
@@ -532,7 +500,6 @@ const PaperView = (props: any) => {
 
   const pageRectData = useMemo(() => {
     const pageData = [];
-
     for (let i = 1; i < numPages; i += 1) {
       const annoTemp = anno.filter((a: any) => a[0] === i);
       pageData.push({
@@ -540,7 +507,6 @@ const PaperView = (props: any) => {
         anno: annoTemp.length > 0 ? annoTemp[0][1] : [],
       });
     }
-
     return pageData;
   }, [numPages]);
 
