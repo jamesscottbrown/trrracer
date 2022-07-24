@@ -306,9 +306,15 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth.length - 1
     ].months.filter((f: any, i: number) => i < endIndex);
 
-    const filteredActivitiesExtent = d3.extent(
+    const filteredActivitiesExtentTest = d3.extent(
       usedEntries.map((m: any) => new Date(m.date))
     );
+
+    const filteredActivitiesExtent = filteredActivitiesExtentTest[0] ? filteredActivitiesExtentTest : d3.extent(
+      projectData.entries.map((m: any) => new Date(m.date))
+    );
+
+    console.log('fillll',filteredActivitiesExtent);
 
     let checkGroup = svg.select('g.timeline-wrap');
     let wrapAxisGroup = checkGroup.empty()
