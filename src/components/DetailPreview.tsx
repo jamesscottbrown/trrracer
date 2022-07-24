@@ -175,8 +175,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         </Box>
       );
     } else {
-      getDriveFiles(folderPath, googleCred).then((googOb) => {
-        console.log('GOOGLE OB', googOb);
+      getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+       
         dispatch({
           type: 'UPDATE_GOOG_DOC_DATA',
           googDocData: googOb.goog_doc_data,

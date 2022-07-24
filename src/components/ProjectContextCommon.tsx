@@ -469,15 +469,20 @@ export const getAppStateReducer = (
       }
       case 'UPDATE_GOOG_DOC_DATA': {
         setTimeout(() => {
-          return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+          if(Object.keys(action.googDocData).length > 1){
+            return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
+          }
+          return state;
         }, 1000);
+        // console.log('in update', action.googDocData)
+        return state;
       }
       case 'UPDATE_GOOG_IDS': {
         const entries = [...state.projectData.entries].map(
           (d: EntryType, i: number) => {
             let files = d.files.map((f: any, j: number) => {
               if (action.googFileIds && !f.title.includes('.txt')) {
-                console.log('F', f);
+               
                 f.goog_ids = action.googFileIds[f.title]
                   ? action.googFileIds[f.title]
                   : null;

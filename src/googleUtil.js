@@ -6,6 +6,8 @@ const { google } = isElectron ? require('googleapis') : {};
 
 const { OAuth2Client } = google ? require('google-auth-library') : {};
 
+// const {googleCred} = isElectron ? require('../assets/google_cred_desktop_app.json') : {};
+
 export function googleFolderDict(folder) {
   if (folder?.includes('EvoBio')) {
     return '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC';
@@ -18,7 +20,7 @@ export function googleFolderDict(folder) {
   }
 }
 
-export async function getDriveFiles(folderName, googleCred) {
+export async function getDriveFiles(folderName, googleCred, loadedData) {
   // const oAuth2Client = new google.auth.OAuth2(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
   // const oAuth2Client = new OAuth2Client(googleCred.installed.client_id, googleCred.installed.client_secret, googleCred.installed.redirect_uris[0])
   //ABOVE IS THE OLD _ THIS IS THROWING ERROR SO TRYING NEW
@@ -44,24 +46,40 @@ export async function getDriveFiles(folderName, googleCred) {
         Accept: application/json
      */
 
-  let googData = { revisionDate: new Date() };
+  console.log('LOADED DATA', loadedData);      
+
+  let googData = Object.keys(loadedData).length > 1 ? loadedData : {};
+  googData['revisionDate'] = new Date();
   let googFileIds = {};
 
   let fileList = await drive.files.list({
     q: `'${parentId}' in parents and trashed = false`,
+    fields:"*",
     supportsAllDrives: true,
     includeItemsFromAllDrives: true,
     supportsTeamDrives: true,
     pageSize: 1000,
+    
   });
 
-  let filZ = await fileList.data.files.map(async (m) => {
-    if (m.mimeType === 'application/vnd.google-apps.document') {
-      console.log('M', m);
+  let filterList = fileList.data.files.filter((file, i)=> {
+    let isNewer = new Date(file.modifiedTime) > new Date(loadedData.revisionDate);
+    let isthere = Object.keys(loadedData).indexOf(file.id) === -1;
+    return isNewer || isthere;
+  });
 
+  console.log('FILTERERRR',filterList)
+
+  let filZ = await filterList.map(async (m) => {
+
+    // console.log('M reaching', m);
+
+    if (m.mimeType === 'application/vnd.google-apps.document') {
       let docStuff = await docs.documents.get({
         documentId: m.id,
       });
+
+      // console.log(docStuff, m);
 
       googData[m.id] = docStuff.data;
     }
@@ -104,7 +122,6 @@ export async function createGoogleFile(
   switch (response.status) {
     case 200:
       var file = response.result;
-
       //   dispatch({ type: 'CREATE_GOOGLE_IN_ENTRY', fileType: fileType, name: name, fileId: response.data.id, entryIndex })
       return {
         fileType: fileType,
