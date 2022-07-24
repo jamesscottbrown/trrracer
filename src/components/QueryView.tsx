@@ -109,6 +109,9 @@ const QueryView = (props: any) => {
       >
         <MdCancel size={30} />
       </div>
+      {
+        query.matches.length > 0 ?
+      
       <div style={{ padding: 5, overflowY: 'auto' }}>
         {query.matches.map((m: any, i: number) => (
           <div key={`match-${i}`}>
@@ -137,7 +140,18 @@ const QueryView = (props: any) => {
               ))}
           </div>
         ))}
-      </div>
+      </div>:<div
+      style={{
+        borderRadius:6,
+        padding:30,
+        width:250,
+        backgroundColor:'#d3d3d3',
+        position:'absolute',
+        right:50,
+        textAlign:'center'
+      }}
+      >No matches found</div>
+}
     </div>
   );
 };

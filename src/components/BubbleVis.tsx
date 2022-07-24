@@ -250,13 +250,9 @@ const BubbleVis = (props: BubbleProps) => {
         (f) => f.title === filterRT.title
       )[0].color;
       let hslColor = d3co.hsl(newColor);
-
-      console.log('HSL color', hslColor);
-
       setOnActivityColor(hslColor.copy({ s: 0.4, l: 0.9 }));
       setOnArtifactColor(hslColor);
 
-      console.log(onArtifactColor);
     } else {
       setOnActivityColor(d3co.hsl('#d3d3d3'));
       setOnArtifactColor(d3co.hsl('gray'));
@@ -306,8 +302,12 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth.length - 1
     ].months.filter((f: any, i: number) => i < endIndex);
 
-    const filteredActivitiesExtent = d3.extent(
+    const filteredActivitiesExtentTest = d3.extent(
       usedEntries.map((m: any) => new Date(m.date))
+    );
+
+    const filteredActivitiesExtent = filteredActivitiesExtentTest[0] ? filteredActivitiesExtentTest : d3.extent(
+      projectData.entries.map((m: any) => new Date(m.date))
     );
 
     let checkGroup = svg.select('g.timeline-wrap');
