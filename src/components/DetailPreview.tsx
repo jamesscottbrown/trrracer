@@ -17,8 +17,9 @@ import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
-import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -326,33 +327,42 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    const [pageData, setPageData] = useState();
+    console.log('PDF', title)
     const perf = joinPath(folderPath, title);
+    const [pageData, setPageData] = useState();
+   
+    useEffect(()=> {
+      console.log('inUseEffect', isReadOnly)
+      if (isReadOnly) {
+        readFileSync(perf)
+          .then((res) => res.text())
+          .then((pap) => {
+            setPageData(pap);
+          });
+          
+      } else {
+        setPageData(perf);
+        console.log('in useEffect after state set', pageData);
+      }
 
-    if (isReadOnly) {
-      readFileSync(perf)
-        .then((res) => res.text())
-        .then((pap) => {
-          console.log('pap',pap)
-          setPageData(pap);
-        });
-    } else {
-      setPageData(perf);
-    }
+  }, [folderPath, perf]);
+
     if(pageData){
-      return (
-        pageData && (
-          <Document
-            file={
-              isReadOnly ? `data:application/pdf;base64,${pageData}` : { url: perf }
-            }
-            onLoadSuccess={()=> console.log('this works')}
-            onLoadError={() => `ERRORRR ${console.error}`}
-          >
-          </Document>)     
-      );
+
+      return(
+        // <iframe src="data:application/pdf;base64,YOUR_BINARY_DATA" height="100%" width="100%"></iframe>
+        <iframe 
+        src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} 
+        height="100%" 
+        width="700px"
+     
+        onLoad={(event)=> {
+          console.log('event', event);
+        }}
+        ></iframe>
+      )
+
     }
-    
     return <div>Loading</div>
   }
 
