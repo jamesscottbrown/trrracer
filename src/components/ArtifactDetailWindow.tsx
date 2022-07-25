@@ -75,6 +75,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * 0.15;
 
+  console.log('SELECTED ARTIFACT', selectedArtifact);
+
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
@@ -309,7 +311,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               }}
               style={{
                 height: '100%',
-                width: '90%',
+                width: '700px',
                 padding: 8,
                 overflow: 'auto',
               }}
@@ -323,7 +325,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   Promise.resolve(converter.makeHtml(markdown))
                 }
                 readOnly={true}
-                style={{ height: '100%', overflowY: 'scroll' }}
+                style={{ height: '100%', overflowY: 'scroll'}}
               />
             </div>
           </Flex>
