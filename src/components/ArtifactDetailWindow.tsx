@@ -309,7 +309,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               }}
               style={{
                 height: '100%',
-                width: '90%',
+                width: '700px',
                 padding: 8,
                 overflow: 'auto',
               }}
@@ -323,7 +323,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   Promise.resolve(converter.makeHtml(markdown))
                 }
                 readOnly={true}
-                style={{ height: '100%', overflowY: 'scroll' }}
+                style={{ height: '100%', overflowY: 'scroll'}}
               />
             </div>
           </Flex>
