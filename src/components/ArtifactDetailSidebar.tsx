@@ -402,6 +402,7 @@ const ArtifactDetailSidebar = (props: any) => {
     selectedArtifactEntry.files.length > 0
       ? selectedArtifactEntry.files[selectedArtifactIndex]
       : null;
+
   let isArtifactInThread = researchThreads?.research_threads.filter((f) => {
     let test = f.evidence.filter(
       (e) => e.activityTitle === selectedArtifactEntry.title
@@ -409,7 +410,7 @@ const ArtifactDetailSidebar = (props: any) => {
     return test.length > 0;
   });
 
-  console.log('in in??', isArtifactInThread);
+  console.log('SELECTED ART',selectedArtifact, researchThreads)
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -468,7 +469,8 @@ const ArtifactDetailSidebar = (props: any) => {
               borderLeftWidth="1px"
               padding="3px"
             >
-              {selectedArtifactEntry.files.map((f: any, i: number) => (
+              {selectedArtifactEntry.files.length > 0 ?
+              selectedArtifactEntry.files.map((f: any, i: number) => (
                 <React.Fragment key={`fi-${f.title}-${i}`}>
                   {i === selectedArtifactIndex ? (
                     <div
@@ -500,7 +502,9 @@ const ArtifactDetailSidebar = (props: any) => {
                     </div>
                   )}
                 </React.Fragment>
-              ))}
+              )):
+              <div>No files</div>
+            }
             </Box>
           )}
         </Box>
@@ -761,10 +765,14 @@ const ArtifactDetailSidebar = (props: any) => {
                 </div>
                 {a.evidence
                   .filter(
-                    (e) =>
-                      e.artifactTitle ===
-                      selectedArtifactEntry.files[selectedArtifactIndex].title
-                  )
+                    (e) =>{
+                      if(selectedArtifactIndex != null){
+                        return e.artifactTitle ===
+                        selectedArtifactEntry.files[selectedArtifactIndex].title
+                      }else{
+                        return e.activityTitle === selectedArtifactEntry.title;
+                      }
+                    })
                   .map((m, j) => (
                     <div key={`evi-${j}`} style={{ padding: 4 }}>
                       {m.type === 'fragment' && (
