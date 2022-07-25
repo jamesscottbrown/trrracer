@@ -68,18 +68,12 @@ export async function getDriveFiles(folderName, googleCred, loadedData) {
     return isNewer || isthere;
   });
 
-  console.log('FILTERERRR',filterList)
-
   let filZ = await filterList.map(async (m) => {
-
-    // console.log('M reaching', m);
 
     if (m.mimeType === 'application/vnd.google-apps.document') {
       let docStuff = await docs.documents.get({
         documentId: m.id,
       });
-
-      // console.log(docStuff, m);
 
       googData[m.id] = docStuff.data;
     }
