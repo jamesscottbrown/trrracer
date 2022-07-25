@@ -63,7 +63,7 @@ export const writeFile = (fileName: string, content: any) => {
       });
     });
   } else {
-    console.log('Error: tried to call writeFile from read-only view');
+    console.error('Error: tried to call writeFile from read-only view');
   }
 };
 
