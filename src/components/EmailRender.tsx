@@ -28,8 +28,18 @@ const EmailRender = (props: any) => {
     // }
     console.log(`${folderPath} ${title}`)
     readFileSync(`${folderPath}/${title}`).then((eml)=> {
-      console.log('EML',eml)
-      setEmailData(eml);
+      
+      let test = eml.split('Date:').filter((f, i)=> i != 0);
+
+      let parsed = test.map((m, i)=> {
+        let stringTemp = `Date: ${m}`
+        // console.log('ST',stringTemp);
+        let temp = stringTemp.split('/[\n\r]+[\-a-zA-Z]+:/')
+        console.log('tempppp',temp)
+        return stringTemp;
+    })
+      console.log('split email',test)
+      setEmailData(parsed);
     })
   }, [title]);
 
@@ -39,8 +49,11 @@ const EmailRender = (props: any) => {
     // dangerouslySetInnerHTML={{__html: emailData}}
     // />
     emailData && (
-      <div style={{width:700, overflow:'auto', margin:'10px'}}>
-        <div dangerouslySetInnerHTML={{__html: emailData}} />
+      <div style={{width:'700px', overflow:'auto', marginRight:'60px', margin:'10px'}}>
+        {/* <div dangerouslySetInnerHTML={{__html: emailData}} /> */}
+        {emailData.map(em => (
+          <div>{em}</div>
+        ))}
       </div>
       
     )
