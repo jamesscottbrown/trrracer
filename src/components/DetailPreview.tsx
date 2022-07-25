@@ -17,8 +17,9 @@ import { getDriveFiles } from '../googleUtil';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
-import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+// import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
+// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -171,6 +172,56 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </div>
         </Box>
       );
+    } else {
+      getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+       
+        dispatch({
+          type: 'UPDATE_GOOG_DOC_DATA',
+          googDocData: googOb.goog_doc_data,
+        });
+        // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+        let chosen = googOb.goog_doc_data[artifact.fileId];
+
+        const gContent = chosen
+          ? chosen.body.content.filter((f: any) => f.startIndex)
+          : [];
+
+        let comments = artifact.comments ? artifact.comments.comments : [];
+
+        return chosen ? (
+          <Box
+            style={{
+              overflow: 'scroll',
+              height: 'calc(100vh - 150px)',
+              width: '700px',
+              display: 'inline',
+              boxShadow: '3px 3px 8px #A3AAAF',
+              border: '1px solid #A3AAAF',
+              borderRadius: 6,
+              padding: 10,
+            }}
+          >
+            <div
+              style={{ height: '100%', width: '700px', overflow: 'auto' }}
+              id={'gdoc'}
+            >
+              {gContent.map((m: any, i: number) => (
+                <GoogDriveParagraph
+                  key={`par-${i}`}
+                  parData={m}
+                  index={i}
+                  comments={comments}
+                  setFragSelected={setFragSelected}
+                  artifactBookmarks={artifact.bookmarks}
+                />
+              ))}
+            </div>
+          </Box>
+        ) : (
+          <div>Oops could not load google doc</div>
+        );
+      });
     }
 
     getDriveFiles(folderPath, googleCred).then((googOb) => {
@@ -324,33 +375,42 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    const [pageData, setPageData] = useState();
+    console.log('PDF', title)
     const perf = joinPath(folderPath, title);
+    const [pageData, setPageData] = useState();
+   
+    useEffect(()=> {
+      console.log('inUseEffect', isReadOnly)
+      if (isReadOnly) {
+        readFileSync(perf)
+          .then((res) => res.text())
+          .then((pap) => {
+            setPageData(pap);
+          });
+          
+      } else {
+        setPageData(perf);
+        console.log('in useEffect after state set', pageData);
+      }
 
-    if (isReadOnly) {
-      readFileSync(perf)
-        .then((res) => res.text())
-        .then((pap) => {
-          console.log('pap',pap)
-          setPageData(pap);
-        });
-    } else {
-      setPageData(perf);
-    }
+  }, [folderPath, perf]);
+
     if(pageData){
-      return (
-        pageData && (
-          <Document
-            file={
-              isReadOnly ? `data:application/pdf;base64,${pageData}` : { url: perf }
-            }
-            onLoadSuccess={()=> console.log('this works')}
-            onLoadError={() => `ERRORRR ${console.error}`}
-          >
-          </Document>)     
-      );
+
+      return(
+        // <iframe src="data:application/pdf;base64,YOUR_BINARY_DATA" height="100%" width="100%"></iframe>
+        <iframe 
+        src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} 
+        height="100%" 
+        width="700px"
+     
+        onLoad={(event)=> {
+          console.log('event', event);
+        }}
+        ></iframe>
+      )
+
     }
-    
     return <div>Loading</div>
   }
 

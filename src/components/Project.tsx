@@ -210,7 +210,7 @@ export const ToolIcon = (toolProp: any) => {
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath, setPath } = ProjectPropValues;
-  console.log('settttt pattthhhh', folderPath, setPath)
+ 
   const [
     {
       projectData,
@@ -289,7 +289,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       } else if (parsed.granularity === 'activity') {
         // sample for activity
         // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-        console.log('activityURL', parsed.id);
+  
         dispatch({
           type: 'URL_SELECTED_ACTIVITY',
           selectedActivityURL: parsed.id,
@@ -372,7 +372,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            flexAmount={2}
+            // flexAmount={2}
+            bubbleDivWidth={bubbleDivWidth}
+            setBubbleDivWidth={setBubbleDivWidth}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView setViewType={setViewType} />

@@ -251,13 +251,9 @@ const BubbleVis = (props: BubbleProps) => {
         (f) => f.title === filterRT.title
       )[0].color;
       const hslColor = d3co.hsl(newColor);
-
-      console.log('HSL color', hslColor);
-
       setOnActivityColor(hslColor.copy({ s: 0.4, l: 0.9 }));
       setOnArtifactColor(hslColor);
 
-      console.log(onArtifactColor);
     } else {
       setOnActivityColor(d3co.hsl('#d3d3d3'));
       setOnArtifactColor(d3co.hsl('gray'));
@@ -307,8 +303,12 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth.length - 1
     ].months.filter((f: any, i: number) => i < endIndex);
 
-    const filteredActivitiesExtent = d3.extent(
+    const filteredActivitiesExtentTest = d3.extent(
       usedEntries.map((m: any) => new Date(m.date))
+    );
+
+    const filteredActivitiesExtent = filteredActivitiesExtentTest[0] ? filteredActivitiesExtentTest : d3.extent(
+      projectData.entries.map((m: any) => new Date(m.date))
     );
 
     const checkGroup = svg.select('g.timeline-wrap');
@@ -631,15 +631,41 @@ const BubbleVis = (props: BubbleProps) => {
       );
 
       eventRects.attr('width', 1000);
-      eventRects.style('fill-opacity', 0.05);
+      eventRects.style('fill-opacity', 0.01);
 
       if (!groupBy) {
         eventRectGroups
-          .append('line')
+          .selectAll('line.start')
+          .data(d => [d])
+          .join('line')
+          .classed('start', true)
           .attr('x1', 0)
           .attr('x2', 400)
           .attr('y1', 0)
           .attr('y2', 0)
+          .attr('stroke', 'gray')
+          .attr('stroke-dasharray', "5,5")
+          .attr('stroke-width', .4);
+
+          let eventLineEnd = eventRectGroups
+          .selectAll('line.end')
+          .data(d => [d])
+          .join('line')
+          .classed('end', true)
+          .attr('x1', 0)
+          .attr('x2', 400)
+          .attr('y1', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
+          .attr('y2', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
+          .attr('stroke', 'gray')
+          .attr('stroke-dasharray', "5,5")
+          .attr('stroke-width', .4);
+
+          let vertLine = eventRectGroups
+          .append('line')
+          .attr('x1', 400)
+          .attr('x2', 400)
+          .attr('y1', 0)
+          .attr('y2', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
           .attr('stroke', 'gray')
           .attr('stroke-width', 1);
 
@@ -650,7 +676,10 @@ const BubbleVis = (props: BubbleProps) => {
           .text((d) => d.event);
 
         eventText.attr('x', 405);
-        eventText.attr('y', 4);
+        eventText.attr('y', (d)=> {
+          let height = yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+          return height / 2;
+        });
         eventText.style('font-size', 10);
         eventText.style('fill', 'gray');
       }
@@ -753,6 +782,7 @@ const BubbleVis = (props: BubbleProps) => {
             highlightedCircles.attr('fill', 'white');
           } else {
             d3.select(event.target).attr('fill', 'gray');
+            d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', '#fff');
           }
         })
         .on('mouseout', (event) => {
@@ -778,6 +808,8 @@ const BubbleVis = (props: BubbleProps) => {
               .attr('fill', '#d3d3d3')
               .attr('stroke', '#d3d3d3')
               .attr('stroke-width', 0.5);
+             
+              d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', 'gray');
           }
         });
 
@@ -966,7 +998,7 @@ const BubbleVis = (props: BubbleProps) => {
             .append('line')
             .attr('id', 'date_line')
             .attr('y1', d.y)
-            .attr('x2', 0 - 70)
+            .attr('x2', 0 - 30)
             .attr('y2', forced.yScale(new Date(d.date)))
             .attr('x1', +d.x)
             .attr('stroke', 'black')

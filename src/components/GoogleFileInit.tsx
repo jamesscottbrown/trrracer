@@ -24,7 +24,7 @@ const GoogFileInit = (props: {
 }) => {
   const { fileType, text, entryIndex } = props;
 
-  const [{ folderPath }, dispatch] = useProjectState();
+  const [{ folderPath, googData }, dispatch] = useProjectState();
   const [showFileCreate, setShowFileCreate] = useState(false);
   const [googleFileName, setGoogleFileName] = useState(' "I need a name" ');
 
@@ -83,7 +83,7 @@ const GoogFileInit = (props: {
               <Button
                 color="red.400"
                 onClick={() => {
-                  getDriveFiles(folderPath, googleCred).then((googOb) => {
+                  getDriveFiles(folderPath, googleCred, googData).then((googOb) => {
                     dispatch({
                       type: 'UPDATE_GOOG_DOC_DATA',
                       googDocData: googOb.goog_doc_data,

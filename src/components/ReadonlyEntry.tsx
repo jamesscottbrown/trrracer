@@ -244,7 +244,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           ))}
         <br />
 
-        {thisEntry.description && thisEntry.description !== '' && (
+        {(thisEntry.description && thisEntry.description != '' && thisEntry.description != 'Add description') && (
           <div>
             {thisEntry.tags.includes('email') ? (
               <div>
