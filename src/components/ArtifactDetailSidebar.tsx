@@ -392,12 +392,6 @@ const ArtifactDetailSidebar = (props: any) => {
     enter: 13,
   };
 
-  console.log(
-    'selected in sidebar detail',
-    selectedArtifactEntry,
-    researchThreads
-  );
-
   const selectedArtifact =
     selectedArtifactEntry.files.length > 0
       ? selectedArtifactEntry.files[selectedArtifactIndex]
@@ -410,7 +404,7 @@ const ArtifactDetailSidebar = (props: any) => {
     return test.length > 0;
   });
 
-  console.log('SELECTED ART',selectedArtifact, researchThreads)
+
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);

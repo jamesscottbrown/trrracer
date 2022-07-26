@@ -203,9 +203,6 @@ const BubbleVis = (props: BubbleProps) => {
     filteredActivities.length,
   ]);
 
-  console.log('IN BUBBLE VIEW', filterRT);
-  // console.log('filtered activities', filteredActivities);
-
   const { eventArray } = projectData;
   const [newHeight, setNewHeight] = useState(1000);
   const [svgWidth, setSvgWidth] = useState(500);
@@ -864,7 +861,7 @@ const BubbleVis = (props: BubbleProps) => {
         );
         highlightedCircles.attr('fill', 'gray');
       }
-      console.log('filterrrrr',filterRT)
+   
       if (
         filterRT &&
         researchThreads?.research_threads[filterRT?.rtIndex].evidence.length > 0

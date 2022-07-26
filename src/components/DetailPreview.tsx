@@ -131,12 +131,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    console.log(
-      'is this reaching in gdoc',
-      googleData,
-      Object.keys(googleData).indexOf(artifact.fileId)
-    );
-
+  
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
@@ -327,12 +322,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    console.log('PDF', title)
+    
     const perf = joinPath(folderPath, title);
     const [pageData, setPageData] = useState();
    
     useEffect(()=> {
-      console.log('inUseEffect', isReadOnly)
+
       if (isReadOnly) {
         readFileSync(perf)
           .then((res) => res.text())
@@ -342,7 +337,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           
       } else {
         setPageData(perf);
-        console.log('in useEffect after state set', pageData);
+      
       }
 
   }, [folderPath, perf]);

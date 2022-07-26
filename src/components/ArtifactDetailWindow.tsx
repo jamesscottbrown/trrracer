@@ -75,8 +75,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const viewheight = +newHeight.split('px')[0];
   const margin = viewheight * 0.15;
 
-  console.log('SELECTED ARTIFACT', selectedArtifact);
-
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
