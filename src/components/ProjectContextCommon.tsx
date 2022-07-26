@@ -71,6 +71,7 @@ export const getAppStateReducer = (
       let link_data: any;
       let views: any;
       let threadFil: any;
+      let selectedActivity: any;
       let newEntries = [...action.projectData.entries];
       let citationData = action.projectData.citations
         ? action.projectData.citations
@@ -100,7 +101,7 @@ export const getAppStateReducer = (
         // console.log('yes to goog comments');
       } catch (e) {
         google_comms = null;
-        console.log('could not load goog comments');
+        console.error('could not load goog comments');
       }
 
       try {
@@ -234,11 +235,7 @@ export const getAppStateReducer = (
         newTags = newTags;
       }
 
-   
-
       const research_threads = await checkRtFile(baseDir);
-
-      console.log('RT',research_threads);
 
       if(isReadOnly){
         views = queryString.parse(location.search);
@@ -247,12 +244,16 @@ export const getAppStateReducer = (
           threadFil = {
             title: thisThread.title,
             rtId: views.id,
-            rtIndex: research_threads.research_threads.map(rt => rt.rt_id).indexOf(views.id),
-            key: thisThread.evidence.map(m => m.activityTitle),
+            rtIndex: research_threads.research_threads.map((rt:any) => rt.rt_id).indexOf(views.id),
+            key: thisThread.evidence.map((m:any) => m.activityTitle),
            
           }
+        }else if(views.granularity === 'activity'){
+          selectedActivity = views.id;
+
+          console.log('SELECTED ACTIVITY IN PROJECT CONTEXT COMMON', selectedActivity);
         }
-        console.log('THREAD FIL', threadFil);
+        
       }
       const newProjectData = {
         entries: newEntries,
@@ -289,7 +290,7 @@ export const getAppStateReducer = (
         goBackView: 'overview',
         viewParams: views,
         artifactTypes: artifact_types,
-        selectedActivityURL: null,
+        selectedActivityURL: selectedActivity,
         threadTypeFilterArray: [
           { type: 'activity', show: true },
           { type: 'artifact', show: true },
