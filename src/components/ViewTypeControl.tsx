@@ -17,6 +17,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
         <Select
           onChange={(ev) => {
             if (isReadOnly) {
+              console.log('is this firing in view change');
               window.history.pushState('object or string', 'Title', '/');
               dispatch({
                 type: 'VIEW_PARAMS',
@@ -27,7 +28,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
               dispatch({
                 type: 'THREAD_FILTER',
                 filterRT: null,
-                selectedThread: null,
+                rtIndex:null
               });
             }
             setViewType(ev.target.value);
