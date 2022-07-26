@@ -248,7 +248,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   useEffect(() => {
     if (isReadOnly) {
+    
       const parsed = queryString.parse(location.search);
+      console.log('VIEW PARAMS AND PARSE IN READONLY',viewParams, parsed);
 
       if (parsed.view) {
         setViewType(parsed.view);
@@ -262,6 +264,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           },
         });
       } else {
+        console.log('IS THIS FIRIN IN PAPER VIEW??')
         dispatch({
           type: 'VIEW_PARAMS',
           viewParams: null,
@@ -284,7 +287,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         dispatch({
           type: 'THREAD_FILTER',
           filterRT: chosenRT,
-          selectedThread: threadindex,
+          rtIndex: threadindex,
         });
       } else if (parsed.granularity === 'activity') {
         //sample for activity

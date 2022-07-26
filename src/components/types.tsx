@@ -158,7 +158,6 @@ type ProjectState = {
   googleData?: GoogleData;
   txtData?: TxtData[];
   researchThreads?: ResearchThreadData;
-  selectedThread?: number;
 
   selectedActivityURL: null | string;
 

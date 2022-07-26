@@ -182,7 +182,6 @@ const BubbleVis = (props: BubbleProps) => {
       filterType,
       filterRT,
       filterTags,
-      selectedThread,
       researchThreads,
       isReadOnly,
       selectedActivityURL,
@@ -203,6 +202,9 @@ const BubbleVis = (props: BubbleProps) => {
     projectData.entries.length,
     filteredActivities.length,
   ]);
+
+  console.log('IN BUBBLE VIEW', filterRT);
+  // console.log('filtered activities', filteredActivities);
 
   const { eventArray } = projectData;
   const [newHeight, setNewHeight] = useState(1000);
@@ -862,15 +864,15 @@ const BubbleVis = (props: BubbleProps) => {
         );
         highlightedCircles.attr('fill', 'gray');
       }
-
+      console.log('filterrrrr',filterRT)
       if (
         filterRT &&
-        researchThreads?.research_threads[selectedThread].evidence.length > 0
+        researchThreads?.research_threads[filterRT?.rtIndex].evidence.length > 0
       ) {
         let linkDataBefore = [];
         let linkDataAfter = [];
 
-        researchThreads?.research_threads[selectedThread].evidence.forEach(
+        researchThreads?.research_threads[filterRT?.rtIndex].evidence.forEach(
           (f) => {
             let temp = highlightedActivityGroups.filter(
               (ha) => ha.title === f.activityTitle
@@ -893,7 +895,7 @@ const BubbleVis = (props: BubbleProps) => {
             }
 
             let divideDate = new Date(
-              researchThreads?.research_threads[selectedThread].actions.filter(
+              researchThreads?.research_threads[filterRT?.rtIndex].actions.filter(
                 (f) => f.action === 'created'
               )[0].when
             );
@@ -929,7 +931,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', 'none')
             .attr(
               'stroke',
-              researchThreads?.research_threads[selectedThread].color
+              researchThreads?.research_threads[filterRT?.rtIndex].color
             )
             .attr('stroke-width', 2);
         }
@@ -949,7 +951,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', 'none')
             .attr(
               'stroke',
-              researchThreads?.research_threads[selectedThread].color
+              researchThreads?.research_threads[filterRT?.rtIndex].color
             )
             .attr('stroke-width', 2)
             .style('stroke-dasharray', '5,5');

@@ -275,13 +275,13 @@ const EditableThread = (threadProps: any) => {
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
   const [
-    { projectData, researchThreads, selectedThread, isReadOnly, viewParams },
+    { projectData, researchThreads, filterRT, isReadOnly, viewParams },
     dispatch,
   ] = useProjectState();
 
   const checkIfSelectThread = (i: any) => {
-    if (selectedThread != null) {
-      if (i != selectedThread) {
+    if (filterRT?.rtId != null) {
+      if (i != filterRT?.rtId) {
         return false;
       }
       return true;
@@ -298,7 +298,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
       return researchThreads?.research_threads.filter(
-        (f, i) => i === selectedThread
+        (f, i) => i === filterRT?.rtId
       );
     } else {
       return researchThreads?.research_threads.filter((f) => {
@@ -366,13 +366,13 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       marginTop: 10,
                       marginBottom: 10,
                       background:
-                        checkIfSelectThread(i) && selectedThread !== null
+                        checkIfSelectThread(i) && filterRT?.rtId !== null
                           ? `${rt.color}30`
                           : '#fff',
                       borderRadius: 6,
                     }}
                   >
-                    {((checkIfSelectThread(i) && selectedThread !== null) ||
+                    {((checkIfSelectThread(i) && filterRT?.rtId !== null) ||
                       (viewParams && viewParams.view != 'paper')) && (
                       <div
                         title="Unselect Thread"
@@ -386,7 +386,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                           dispatch({
                             type: 'THREAD_FILTER',
                             filterRT: null,
-                            selectedThread: null,
+                            rtIndex: null
                           })
                         }
                       >
@@ -409,7 +409,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                           dispatch({
                             type: 'THREAD_FILTER',
                             filterRT: rt,
-                            selectedThread: i,
+                            rtIndex:i,
                           });
                         }}
                       >

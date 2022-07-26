@@ -125,7 +125,6 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 const ThreadedArtifact = (props: any) => {
   const {
     isEntryInThread,
-    selectedThread,
     setViewType,
     openFile,
     fileData,
@@ -134,7 +133,11 @@ const ThreadedArtifact = (props: any) => {
     i,
   } = props;
 
-  const [{ researchThreads }, dispatch] = useProjectState();
+  const [{ researchThreads, filterRT }, dispatch] = useProjectState();
+
+  const selectedThread = researchThreads.research_threads.filter(
+    (f) => f.title === filterRT.title
+  )[0];
 
   return (
     <Box bg="#ececec" p={3}>

@@ -22,7 +22,7 @@ import ActivityTitlePopoverLogic from './PopoverTitle';
 const LeftSidebar = (props: any) => {
   const { fromTop } = props;
   const [
-    { projectData, researchThreads, artifactTypes, selectedThread, filterTags },
+    { projectData, researchThreads, artifactTypes, filterRT, filterTags },
     dispatch,
   ] = useProjectState();
   const artifacts = projectData.entries.flatMap((f) => f.files);
@@ -91,7 +91,6 @@ const LeftSidebar = (props: any) => {
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
         viewType={'overview'}
-        selectedThread={selectedThread}
         projectData={projectData}
         dispatch={dispatch}
       />

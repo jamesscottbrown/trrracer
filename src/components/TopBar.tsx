@@ -52,6 +52,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       filterRT,
       isReadOnly,
       viewParams,
+      researchThreads
     },
     dispatch,
   ] = useProjectState();
@@ -60,8 +61,10 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
   let getName = () => {
     if (viewParams.granularity === 'thread') {
-      console.log('thread', filterRT);
-      return filterRT.title;
+     
+      return researchThreads?.research_threads.filter(
+        (f) => f.rt_id === viewParams.id
+      )[0].title;
     } else if (viewParams.granularity === 'artifact') {
       console.log(
         'ARTIFACT',

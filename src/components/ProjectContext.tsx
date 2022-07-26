@@ -384,7 +384,6 @@ const initialState: ProjectState = {
   filterQuery: null,
   filterRT: null,
   threadTypeFilterArray: null,
-  selectedThread: null,
   researchThreads: null,
   artifactTypes: null,
   query: null,
