@@ -93,8 +93,8 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
               setViewType('detail view');
               dispatch({
                 type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: thisEntry,
-                selectedArtifactIndex: i,
+                activity: thisEntry,
+                artifactIndex: i,
                 hopArray: [
                   {
                     activity: thisEntry,
@@ -163,8 +163,8 @@ const ThreadedArtifact = (props: any) => {
             setViewType('detail view');
             dispatch({
               type: 'SELECTED_ARTIFACT',
-              selectedArtifactEntry: thisEntry,
-              selectedArtifactIndex: i,
+              activity: thisEntry,
+              artifactIndex: i,
               hopArray: [
                 {
                   activity: thisEntry,

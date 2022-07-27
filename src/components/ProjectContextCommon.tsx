@@ -1,3 +1,4 @@
+import { AnyNsRecord } from 'dns';
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
 const queryString = require('query-string');
@@ -72,6 +73,7 @@ export const getAppStateReducer = (
       let views: any;
       let threadFil: any;
       let selectedActivity: any;
+      let selectedArtifact: any;
       let newEntries = [...action.projectData.entries];
       let citationData = action.projectData.citations
         ? action.projectData.citations
@@ -251,7 +253,19 @@ export const getAppStateReducer = (
         }else if(views.granularity === 'activity'){
           selectedActivity = views.id;
 
-          console.log('SELECTED ACTIVITY IN PROJECT CONTEXT COMMON', selectedActivity);
+        }else if(views.granularity === 'artifact'){
+          let activityTest = newEntries.filter((e, i) => {
+            let test = e.files.filter(f => f.artifact_uid === views.id);
+            return test.length > 0;
+          })[0];
+          let artIn = activityTest.files.map(m => m.artifact_uid).indexOf(views.id);
+
+          selectedArtifact = {
+            activity: activityTest,
+            artifactIndex: artIn
+          }
+
+          console.log('SELLLLLECTED',selectedArtifact)
         }
         
       }
@@ -291,6 +305,7 @@ export const getAppStateReducer = (
         viewParams: views,
         artifactTypes: artifact_types,
         selectedActivityURL: selectedActivity,
+        selectedArtifact: selectedArtifact,
         threadTypeFilterArray: [
           { type: 'activity', show: true },
           { type: 'artifact', show: true },
@@ -557,7 +572,7 @@ export const getAppStateReducer = (
       case 'REMOVE_BOOKMARK': {
         let bookmarks =
           action.selectedArtifactEntry.files[action.selectedArtifactIndex]
-            .bookmarks; // ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
+            .bookmarks; 
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks = bookmarks.filter((f, i) => i != action.fragIndex); //.push({ 'fragment': action.bookmarkFragment })
 
@@ -867,8 +882,7 @@ export const getAppStateReducer = (
       case 'SELECTED_ARTIFACT': {
         return {
           ...state,
-          selectedArtifactEntry: action.selectedArtifactEntry,
-          selectedArtifactIndex: action.selectedArtifactIndex,
+          selectedArtifact: {activity: action.activity, artifactIndex: action.artifactIndex},
           hopArray: action.hopArray,
         };
       }

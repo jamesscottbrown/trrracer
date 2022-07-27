@@ -97,8 +97,8 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                 setViewType('detail view');
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: thisEntry,
-                  selectedArtifactIndex: i,
+                  activity: thisEntry,
+                  artifactIndex: i,
                   hopArray: [
                     {
                       activity: thisEntry, 
@@ -273,8 +273,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: thisEntry,
-                      selectedArtifactIndex: null,
+                      activity: thisEntry,
+                      artifactIndex: null,
                       hopArray: [
                         {
                           activity: thisEntry,

@@ -164,9 +164,7 @@ type ProjectState = {
   highlightedTag?: string;
   highlightedType?: string;
 
-  selectedArtifactEntry: EntryTypeWithIndex; // ?
-  selectedArtifactIndex: number;
-
+  selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number}; // ?
   filteredActivities: any;
 
   hopArray: any[];
@@ -177,8 +175,7 @@ interface ProjectViewProps {
   filteredActivites: EntryType[];
   folderPath: string;
   setViewType: (v: any) => void;
-  setSelectedArtifactIndex: (i: number) => void;
-  setSelectedArtifactEntry: (e: any) => void;
+  setSelectedArtifact: (e: any) => void;
 }
 
 interface EntryPropTypes {

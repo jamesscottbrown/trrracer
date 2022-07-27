@@ -319,8 +319,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
         dispatch({
           type: 'SELECTED_ARTIFACT',
-          selectedArtifactEntry: selected.length > 0 ? selected[0] : null,
-          selectedArtifactIndex: selected.length > 0 ? artifact : null,
+          activity: selected.length > 0 ? selected[0] : null,
+          artifactIndex: selected.length > 0 ? artifact : null,
           hopArray: newHop,
         });
       }

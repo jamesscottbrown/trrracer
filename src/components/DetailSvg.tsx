@@ -74,8 +74,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     {
       projectData,
       filteredActivities,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
+      selectedArtifact,
       hopArray,
     },
     dispatch,
@@ -228,7 +227,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     highlightedCircles.attr('fill', 'gray');
 
     let theChosenOne = highlightedActivities.filter(
-      (f) => f.title === selectedArtifactEntry.title
+      (f) => f.title === selectedArtifact.activity.title
     );
     theChosenOne
       .selectAll('circle.artifact')
@@ -345,8 +344,8 @@ const DetailBubble = (props: BubbleDetProps) => {
 
         dispatch({
           type: 'SELECTED_ARTIFACT',
-          selectedArtifactEntry: parentData,
-          selectedArtifactIndex: selectedArtIndex,
+          activity: parentData,
+          artifactIndex: selectedArtIndex,
           hopArray: [
             ...hopArray,
             {
@@ -362,8 +361,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   }, [
     filteredActivities,
     filterType,
-    selectedArtifactEntry,
-    selectedArtifactIndex,
+    selectedArtifact
   ]);
 
   return (

@@ -66,8 +66,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       googleData,
       projectData,
       folderPath,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
+      selectedArtifact,
       isReadOnly
     },
     dispatch,
@@ -75,13 +74,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
   const activity = useMemo(() => {
     return projectData.entries.filter(
-      (f) => f.activity_uid === selectedArtifactEntry.activity_uid
+      (f) => f.activity_uid === selectedArtifact.activity.activity_uid
     )[0];
-  }, [selectedArtifactEntry.activity_uid]);
+  }, [selectedArtifact.activity.activity_uid]);
 
   const artifact = useMemo(() => {
-    return activity.files[selectedArtifactIndex];
-  }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
+    return activity.files[selectedArtifact.artifactIndex];
+  }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
   const { title } = artifact;
 
