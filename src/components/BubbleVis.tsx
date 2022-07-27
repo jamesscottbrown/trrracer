@@ -768,7 +768,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 1);
-          } else if (selectedActivityURL !== null) {
+          } else if (selectedActivityURL && selectedActivityURL !== null) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 1);
@@ -795,7 +795,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 0);
-          } else if (selectedActivityURL !== null) {
+          } else if (selectedActivityURL && selectedActivityURL !== null) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 0.5);
@@ -842,7 +842,7 @@ const BubbleVis = (props: BubbleProps) => {
           'circle.artifact'
         );
         highlightedCircles.attr('fill', 'gray');
-      } else if (selectedActivityURL !== null) {
+      } else if (selectedActivityURL && selectedActivityURL !== null) {
         highlightedActivityGroups
           .select('.all-activities')
           .attr('fill', 'red')

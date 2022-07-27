@@ -11,12 +11,12 @@ const ProjectListView = (ProjectPropValues: any) => {
     { projectData, selectedActivityURL, filteredActivities },
   ] = useProjectState();
 
-  console.log('SELECTEDACTIVITYURL',selectedActivityURL)
-
   let [usedEntries, setUsedEntries] = useState(filteredActivities);
 
+  console.log('filtered in list view', filteredActivities);
+
   useEffect(() => {
-    if (selectedActivityURL !== null) {
+    if (selectedActivityURL && selectedActivityURL !== null) {
       setUsedEntries(
         projectData.entries.filter(
           (f) => f.activity_uid === selectedActivityURL
@@ -43,11 +43,6 @@ const ProjectListView = (ProjectPropValues: any) => {
       setEditable(Array.from(Array(projectData.entries.length), () => false));
     }
   }, [projectData.entries.length, filteredActivities.length]);
-
-  // useEffect(() => {
-  //   setEditable(Array.from(Array(projectData.entries.length), () => false));
-  //   setEditableStatus(selectedEntryIndex, true);
-  // }, [selectedEntryIndex]);
 
   const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>

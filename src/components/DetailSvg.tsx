@@ -231,7 +231,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     );
     theChosenOne
       .selectAll('circle.artifact')
-      .filter((af, i) => selectedArtifactIndex === i)
+      .filter((af, i) => selectedArtifact.artifactIndex === i)
       .attr('fill', 'red');
 
     let hiddenCircles = allActivityGroups
@@ -337,7 +337,7 @@ const DetailBubble = (props: BubbleDetProps) => {
           ...hopArray,
           {
             activity: parentData,
-            artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
+            artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
             hopReason: 'revisit hopped artifact',
           },
         ];
@@ -350,7 +350,7 @@ const DetailBubble = (props: BubbleDetProps) => {
             ...hopArray,
             {
               activity: parentData,
-              artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
+              artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
               hopReason: 'revisit hopped artifact',
             },
           ],

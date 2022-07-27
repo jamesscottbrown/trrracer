@@ -280,8 +280,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   ] = useProjectState();
 
   const checkIfSelectThread = (i: any) => {
-    if (filterRT?.rtId != null) {
-      if (i != filterRT?.rtId) {
+    if (filterRT && filterRT?.rtIndex != null) {
+      if (i != filterRT?.rtIndex) {
         return false;
       }
       return true;
@@ -366,13 +366,13 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
                       marginTop: 10,
                       marginBottom: 10,
                       background:
-                        checkIfSelectThread(i) && filterRT?.rtId !== null
+                        filterRT && checkIfSelectThread(i) && filterRT?.rtId !== null
                           ? `${rt.color}30`
                           : '#fff',
                       borderRadius: 6,
                     }}
                   >
-                    {((checkIfSelectThread(i) && filterRT?.rtId !== null) ||
+                    {((filterRT && checkIfSelectThread(i) && filterRT?.rtId !== null) ||
                       (viewParams && viewParams.view != 'paper')) && (
                       <div
                         title="Unselect Thread"

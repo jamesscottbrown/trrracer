@@ -241,31 +241,34 @@ export const getAppStateReducer = (
 
       if(isReadOnly){
         views = queryString.parse(location.search);
-        if(views.granularity === 'thread'){
-          let thisThread = research_threads.research_threads.filter(f => f.rt_id === views.id)[0];
-          threadFil = {
-            title: thisThread.title,
-            rtId: views.id,
-            rtIndex: research_threads.research_threads.map((rt:any) => rt.rt_id).indexOf(views.id),
-            key: thisThread.evidence.map((m:any) => m.activityTitle),
-           
+
+        if(Object.keys(views).length > 0){
+
+          if(views.granularity === 'thread'){
+            let thisThread = research_threads.research_threads.filter(f => f.rt_id === views.id)[0];
+            threadFil = {
+              title: thisThread.title,
+              rtId: views.id,
+              rtIndex: research_threads.research_threads.map((rt:any) => rt.rt_id).indexOf(views.id),
+              key: thisThread.evidence.map((m:any) => m.activityTitle),
+            
+            }
+          }else if(views.granularity === 'activity'){
+            selectedActivity = views.id;
+
+          }else if(views.granularity === 'artifact'){
+            let activityTest = newEntries.filter((e, i) => {
+              let test = e.files.filter(f => f.artifact_uid === views.id);
+              return test.length > 0;
+            })[0];
+            let artIn = activityTest.files.map(m => m.artifact_uid).indexOf(views.id);
+
+            selectedArtifact = {
+              activity: activityTest,
+              artifactIndex: artIn
+            }
+
           }
-        }else if(views.granularity === 'activity'){
-          selectedActivity = views.id;
-
-        }else if(views.granularity === 'artifact'){
-          let activityTest = newEntries.filter((e, i) => {
-            let test = e.files.filter(f => f.artifact_uid === views.id);
-            return test.length > 0;
-          })[0];
-          let artIn = activityTest.files.map(m => m.artifact_uid).indexOf(views.id);
-
-          selectedArtifact = {
-            activity: activityTest,
-            artifactIndex: artIn
-          }
-
-          console.log('SELLLLLECTED',selectedArtifact)
         }
         
       }

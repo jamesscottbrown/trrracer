@@ -10,6 +10,7 @@ const ImageRender = (props: any) => {
   const [
     { isReadOnly, selectedActivityURL, selectedArtifact },
   ] = useProjectState();
+
   const [imgData, setImgData] = useState<any>(null);
 
   useEffect(() => {
