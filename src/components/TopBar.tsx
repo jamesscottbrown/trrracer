@@ -28,6 +28,7 @@ interface TopbarProps {
   setHideByDefault: (boo: any) => void;
   hideByDefault: Boolean;
   setAddEntrySplash: (boo: any) => void;
+  setPath:any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -46,9 +47,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     {
       projectData,
       filteredActivities,
-      selectedActivityURL,
       selectedArtifact,
-      filterRT,
       isReadOnly,
       viewParams,
       researchThreads

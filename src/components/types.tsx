@@ -146,7 +146,6 @@ type ProjectState = {
   filterTags: string[] | null;
   filterType: string | null;
   filterTypes: string[] | null;
-
   //NEED TO MAKE THESE MORE SPECIFIC
   filterDates: any;
   filterQuery: any;
@@ -154,20 +153,17 @@ type ProjectState = {
   threadTypeFilterArray: any;
   query: any;
   artifactTypes: any;
-
   googleData?: GoogleData;
   txtData?: TxtData[];
   researchThreads?: ResearchThreadData;
-
   selectedActivityURL: null | string;
-
   highlightedTag?: string;
   highlightedType?: string;
-
-  selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number}; // ?
+  selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number};
   filteredActivities: any;
-
   hopArray: any[];
+  viewParams: any;
+  isReadOnly: boolean;
 };
 
 interface ProjectViewProps {
