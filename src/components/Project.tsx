@@ -248,8 +248,9 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
   useEffect(() => {
     if (isReadOnly) {
+    
       const parsed = queryString.parse(location.search);
-
+   
       if (parsed.view) {
         setViewType(parsed.view);
         dispatch({
@@ -262,6 +263,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           },
         });
       } else {
+    
         dispatch({
           type: 'VIEW_PARAMS',
           viewParams: null,
@@ -284,7 +286,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         dispatch({
           type: 'THREAD_FILTER',
           filterRT: chosenRT,
-          selectedThread: threadindex,
+          rtIndex: threadindex,
         });
       } else if (parsed.granularity === 'activity') {
         //sample for activity
@@ -317,8 +319,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
 
         dispatch({
           type: 'SELECTED_ARTIFACT',
-          selectedArtifactEntry: selected.length > 0 ? selected[0] : null,
-          selectedArtifactIndex: selected.length > 0 ? artifact : null,
+          activity: selected.length > 0 ? selected[0] : null,
+          artifactIndex: selected.length > 0 ? artifact : null,
           hopArray: newHop,
         });
       }

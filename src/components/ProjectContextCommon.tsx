@@ -1,5 +1,7 @@
+import { AnyNsRecord } from 'dns';
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
+const queryString = require('query-string');
 
 const pickTagColor = (tags: TagType[]) => {
   const allColors = [
@@ -68,6 +70,10 @@ export const getAppStateReducer = (
       let google_em: any;
       let google_comms: any;
       let link_data: any;
+      let views: any;
+      let threadFil: any;
+      let selectedActivity: any;
+      let selectedArtifact: any;
       let newEntries = [...action.projectData.entries];
       let citationData = action.projectData.citations
         ? action.projectData.citations
@@ -97,7 +103,7 @@ export const getAppStateReducer = (
         // console.log('yes to goog comments');
       } catch (e) {
         google_comms = null;
-        console.log('could not load goog comments');
+        console.error('could not load goog comments');
       }
 
       try {
@@ -233,6 +239,39 @@ export const getAppStateReducer = (
 
       const research_threads = await checkRtFile(baseDir);
 
+      if(isReadOnly){
+        views = queryString.parse(location.search);
+
+        if(Object.keys(views).length > 0){
+
+          if(views.granularity === 'thread'){
+            let thisThread = research_threads.research_threads.filter(f => f.rt_id === views.id)[0];
+            threadFil = {
+              title: thisThread.title,
+              rtId: views.id,
+              rtIndex: research_threads.research_threads.map((rt:any) => rt.rt_id).indexOf(views.id),
+              key: thisThread.evidence.map((m:any) => m.activityTitle),
+            
+            }
+          }else if(views.granularity === 'activity'){
+            selectedActivity = views.id;
+
+          }else if(views.granularity === 'artifact'){
+            let activityTest = newEntries.filter((e, i) => {
+              let test = e.files.filter(f => f.artifact_uid === views.id);
+              return test.length > 0;
+            })[0];
+            let artIn = activityTest.files.map(m => m.artifact_uid).indexOf(views.id);
+
+            selectedArtifact = {
+              activity: activityTest,
+              artifactIndex: artIn
+            }
+
+          }
+        }
+        
+      }
       const newProjectData = {
         entries: newEntries,
         roles: roleData,
@@ -247,6 +286,8 @@ export const getAppStateReducer = (
           : [],
       };
 
+      console.log('view in set data', views);
+
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
@@ -255,19 +296,19 @@ export const getAppStateReducer = (
         googleData: google_data,
         txtData: txt_data,
         researchThreads: research_threads,
-        selectedThread: null,
         filterTags: [],
         filterType: null,
         filterDates: [null, null],
-        filterRT: null,
+        filterRT: threadFil,
         filterQuery: null,
         query: null,
         linkData: link_data,
         hopArray: [],
         goBackView: 'overview',
-        viewParams: null,
+        viewParams: views,
         artifactTypes: artifact_types,
-        selectedActivityURL: null,
+        selectedActivityURL: selectedActivity,
+        selectedArtifact: selectedArtifact,
         threadTypeFilterArray: [
           { type: 'activity', show: true },
           { type: 'artifact', show: true },
@@ -411,7 +452,7 @@ export const getAppStateReducer = (
       }
 
       case 'VIEW_PARAMS': {
-        console.log(action.viewParams);
+        console.log('project context common',action.viewParams);
         if (action.viewParams === null) {
           return {
             ...state,
@@ -441,7 +482,6 @@ export const getAppStateReducer = (
 
         return saveJSON(newProjectData, state);
       }
-
       case 'CREATE_GOOGLE_IN_ENTRY': {
         const { name, fileType, fileId, entryIndex } = action;
         let extension = fileType === 'document' ? 'gdoc' : 'gsheet';
@@ -535,7 +575,7 @@ export const getAppStateReducer = (
       case 'REMOVE_BOOKMARK': {
         let bookmarks =
           action.selectedArtifactEntry.files[action.selectedArtifactIndex]
-            .bookmarks; // ? action.selectedArtifactEntry.files[action.selectedArtifactIndex].bookmarks : [];
+            .bookmarks; 
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks = bookmarks.filter((f, i) => i != action.fragIndex); //.push({ 'fragment': action.bookmarkFragment })
 
@@ -736,12 +776,13 @@ export const getAppStateReducer = (
             filterRT: {
               title: action.filterRT.title,
               key: action.filterRT.evidence.map((m) => m.activityTitle),
+              rtIndex: action.rtIndex, 
+              rtId: action.filterRT.rt_id,
               associatedKey: associatedTest,
             },
-            selectedThread: action.selectedThread,
           };
         }
-        return { ...state, filterRT: null, selectedThread: null };
+        return { ...state, filterRT: null };
       }
 
       case 'ADD_FRAGMENT_TO_THREAD': {
@@ -844,14 +885,9 @@ export const getAppStateReducer = (
       case 'SELECTED_ARTIFACT': {
         return {
           ...state,
-          selectedArtifactEntry: action.selectedArtifactEntry,
-          selectedArtifactIndex: action.selectedArtifactIndex,
+          selectedArtifact: {activity: action.activity, artifactIndex: action.artifactIndex},
           hopArray: action.hopArray,
         };
-      }
-
-      case 'SELECTED_THREAD': {
-        return { ...state, selectedThread: action.selectedThread };
       }
 
       case 'DELETE_EVIDENCE_FROM_THREAD': {

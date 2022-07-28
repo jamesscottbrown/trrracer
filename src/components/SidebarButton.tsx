@@ -14,8 +14,7 @@ import { FaFilter } from 'react-icons/fa';
 import { GrAddCircle } from 'react-icons/gr';
 
 const SidebarButton = (sidebarProps: any) => {
-  const { index, data, researchThreads, filterTags, dispatch } = sidebarProps;
-  // const [{ researchThreads, filterTags }, dispatch] = useProjectState();
+  const { index, data, filterTags, dispatch } = sidebarProps;
   const [barColor, setBarColor] = useState('#FFFFFF');
   const [showThreadPop, setShowThreadPop] = useState(false);
 

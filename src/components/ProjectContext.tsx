@@ -97,7 +97,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
             if (!sourceIsInProjectDir) {
               fs.copyFileSync(file.path, destination);
             }
-            console.log(`${file.path} was copied to ${destination}`);
+         
             newFiles = [
               ...newFiles,
               {
@@ -244,7 +244,7 @@ export const readProjectFile = async (
     if (!fileType) {
       return JSON.parse(fileContents);
     }
-    console.log('this is a text file', fileContents);
+
   } else {
     const response = await fetch(`${folderPath}${fileName}`);
 
@@ -286,7 +286,7 @@ const saveJSONRT = (RTData: any, dir: string, state) => {
         }
       }
     );
-    console.log('RT DATA', RTData);
+  
   }
   return { ...state, researchThreads: RTData };
 };
@@ -304,7 +304,7 @@ const saveJSONGoogDoc = (GDData: any, dir: string, state) => {
         }
       }
     );
-    console.log('GD DATA', GDData);
+   
   }
   return { ...state, googDocData: GDData };
 };
@@ -384,7 +384,6 @@ const initialState: ProjectState = {
   filterQuery: null,
   filterRT: null,
   threadTypeFilterArray: null,
-  selectedThread: null,
   researchThreads: null,
   artifactTypes: null,
   query: null,

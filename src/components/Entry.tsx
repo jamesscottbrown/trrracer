@@ -66,8 +66,6 @@ const FileContext = (props: FileContextProps) => {
   const { file, entryIndex, fileIndex, dispatch } = props;
   const contextFill = file.meta ? file.meta : file.context;
 
-  console.log(file, contextFill);
-
   const contextStarter =
     contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
 
@@ -145,7 +143,7 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-    console.log('fileListtt', fileList, 'activity uid', thisEntry.activity_uid);
+   
     dispatch({
       type: 'ADD_FILES_TO_ENTRY',
       fileList,
@@ -201,7 +199,7 @@ const Entry = (props: EntryPropTypes) => {
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
-            console.log('entry field', val);
+           
             updateEntryField('title', val);
           }}
         >

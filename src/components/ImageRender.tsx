@@ -8,8 +8,9 @@ import { readProjectFile, useProjectState } from './ProjectContext';
 const ImageRender = (props: any) => {
   const { src, onClick, autoLoad } = props;
   const [
-    { isReadOnly, selectedActivityURL, selectedArtifactEntry },
+    { isReadOnly, selectedActivityURL, selectedArtifact },
   ] = useProjectState();
+
   const [imgData, setImgData] = useState<any>(null);
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const ImageRender = (props: any) => {
         if (
           (isReadOnly && inView) ||
           (isReadOnly && selectedActivityURL) ||
-          (isReadOnly && selectedArtifactEntry)
+          (isReadOnly && selectedArtifact.activity)
         ) {
           readFileSync(src)
             .then((res) => res.text())

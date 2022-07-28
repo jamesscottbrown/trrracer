@@ -191,7 +191,7 @@ export default function groupBubbles(
 
   activityGroups
     .on('mouseover', (event, d) => {
-      console.log(event, d);
+   
       d3.selectAll('.activity')
         .filter((f) => f.activity_uid === d.activity_uid)
         .attr('stroke', 'red')
@@ -215,8 +215,6 @@ export default function groupBubbles(
     })
     .on('mouseout', (event, d, i) => {
       //TOOLTIP
-      // const { activityData, position, researchThreads, filterRT } = toolProp;
-      console.log('ddddd', d, i);
 
       setTool([0, 0]);
       let ob = { ...d };
