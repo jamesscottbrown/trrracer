@@ -366,6 +366,8 @@ const ThreadComponent = (props:any) => {
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
 
+  console.log()
+
   return(
     <React.Fragment key={`frag-${index}`}>
     {editMode !== index ? (
@@ -384,8 +386,7 @@ const ThreadComponent = (props:any) => {
           borderRadius: 6,
         }}
       >
-        {((filterRT && checkIfSelectThread(index) && filterRT?.rtId !== null) ||
-          (viewParams && viewParams.view != 'paper')) && (
+        {(filterRT && filterRT?.rtId === rt.rt_id) && (
           <div
             title="Unselect Thread"
             style={{
@@ -395,12 +396,13 @@ const ThreadComponent = (props:any) => {
               height: 30,
             }}
             onClick={() => { 
+              setExpanded(false)
               dispatch({
                 type: 'THREAD_FILTER',
                 filterRT: null,
                 rtIndex: null
               })
-              setExpanded(false)
+              
             }}
           >
             <MdCancel size={30} />
