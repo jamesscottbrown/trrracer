@@ -226,17 +226,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
     dispatch,
   ] = useProjectState();
 
-  // const [viewParam, setViewParam] = useState('overview');
+  console.log('VIEW PARAMS', viewParams);
+
   const [viewType, setViewType] = useState<string>('overview');
-  // const [reversedOrder, setReversedOrder] = useState<boolean>(true);
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
-  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
-  // const [granularity, setGranularity] = useState<null|string>(null);
-  // const [cIndex, setcIndex] = useState<null|number>(null);
-  const [selectedId, setSelectedId] = useState<null | string>(null);
+  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false)
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
 
   const fromTop =
@@ -246,86 +243,11 @@ const Project = (ProjectPropValues: ProjectProps) => {
       ? 110
       : 70;
 
-  useEffect(() => {
-    if (isReadOnly) {
-    
-      const parsed = queryString.parse(location.search);
-   
-      if (parsed.view) {
-        setViewType(parsed.view);
-        dispatch({
-          type: 'VIEW_PARAMS',
-          viewParams: {
-            view: parsed.view,
-            granularity: parsed.granularity,
-            id: parsed.id,
-            cIndex: parsed.cIndex,
-          },
-        });
-      } else {
-    
-        dispatch({
-          type: 'VIEW_PARAMS',
-          viewParams: null,
-        });
-      }
-
-      // setGranularity(parsed.granularity);
-      // setcIndex(parsed.cIndex);
-
-      if (parsed.granularity === 'thread') {
-        //sample for thread url
-        //http://127.0.0.1:8080/?view=overview&granularity=thread&id=202c5ede-1637-47a0-8bc6-c75700f34036
-
-        let chosenRT = researchThreads?.research_threads.filter(
-          (f) => f.rt_id === parsed.id
-        )[0];
-        let threadindex = researchThreads?.research_threads
-          .map((m) => m.rt_id)
-          .indexOf(parsed.id);
-        dispatch({
-          type: 'THREAD_FILTER',
-          filterRT: chosenRT,
-          rtIndex: threadindex,
-        });
-      } else if (parsed.granularity === 'activity') {
-        //sample for activity
-        // http://127.0.0.1:8080/?view=overview&granularity=activity&id=455e9315-ad20-48ba-be6b-5430f1198096
-  
-        dispatch({
-          type: 'URL_SELECTED_ACTIVITY',
-          selectedActivityURL: parsed.id,
-        });
-      } else if (parsed.granularity === 'artifact') {
-        //http://127.0.0.1:8080/?view=detail%20view&granularity=artifact&id=6361f1cc-a79e-4205-9513-12036c9417a6
-
-        let selected = projectData.entries.filter((en) => {
-          let fileTest = en.files.filter((f) => f.artifact_uid === parsed.id);
-          return fileTest.length > 0;
-        });
-
-        let artifact = selected[0].files
-          .map((m) => m.artifact_uid)
-          .indexOf(parsed.id);
-
-        const newHop = [
-          {
-            activity: selected[0],
-            artifactUid: parsed.id,
-            hopReason: 'first hop',
-            tag: null,
-          },
-        ];
-
-        dispatch({
-          type: 'SELECTED_ARTIFACT',
-          activity: selected.length > 0 ? selected[0] : null,
-          artifactIndex: selected.length > 0 ? artifact : null,
-          hopArray: newHop,
-        });
-      }
+  useEffect(()=> {
+    if(isReadOnly && viewParams && viewParams.view){
+      setViewType(viewParams.view);
     }
-  }, [queryString, viewType, groupBy, window.history]);
+  }, [isReadOnly, viewParams]);
 
   const barWidth = useMemo(() => {
     let handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
