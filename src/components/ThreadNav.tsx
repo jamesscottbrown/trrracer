@@ -276,16 +276,21 @@ const EditableThread = (threadProps: any) => {
 const ThreadBanner = (props:any) => {
 
   const {index, rt, expanded, setExpanded} = props;
-  const [{isReadOnly, projectData}, dispatch] = useProjectState();
-  const [bannerColor, setBannerColor] = useState('#fff');
+  const [{isReadOnly, filterRT}, dispatch] = useProjectState();
+  const [bannerColor, setBannerColor] = useState(index != filterRT?.rtIndex ? '#fff' : rt.color);
 
   return (
     <div
       style={{
         display: isReadOnly ? 'block' : 'inline',
       }}
-      onMouseEnter={()=> setBannerColor(`${rt.color}20`)}
-      onMouseLeave={()=> setBannerColor('#fff')}
+      onMouseEnter={()=> {
+        if(index != filterRT?.rtIndex) setBannerColor(`${rt.color}20`);
+      }}
+      onMouseLeave={()=> {
+        if(index != filterRT?.rtIndex) setBannerColor('#fff');
+      }}
+      key={`banner-${index}`}
     >
       <div style={{
         border:`1.5px solid ${rt.color}`, 
@@ -306,20 +311,27 @@ const ThreadBanner = (props:any) => {
               filterRT: rt,
               rtIndex: index,
             });
+            setExpanded(true);
           }}
         >
           {`${rt.title} `}
         </span>
-        <span
-        style={{
-          padding: 5, 
-          float:'right', 
-          display:'inline', 
-          cursor:'pointer'}}
-        onClick={()=> {setExpanded(expanded ? false : true)}}
-        > 
-          {expanded ? <IconEyeOff /> : <IconEye />}
-        </span>
+        {
+          index != filterRT?.rtIndex && (
+          <span
+            style={{
+              padding: 5, 
+              float:'right', 
+              display:'inline', 
+              cursor:'pointer'}}
+            onClick={()=> {
+              setExpanded(expanded ? false : true)
+            }}
+          > 
+            {expanded ? <IconEyeOff /> : <IconEye />}
+          </span>
+        )}
+        
       </div> 
   </div>
   )
@@ -382,21 +394,27 @@ const ThreadComponent = (props:any) => {
               width: 30,
               height: 30,
             }}
-            onClick={() =>
+            onClick={() => { 
               dispatch({
                 type: 'THREAD_FILTER',
                 filterRT: null,
                 rtIndex: null
               })
-            }
+              setExpanded(false)
+            }}
           >
             <MdCancel size={30} />
           </div>
         )}
 
-       <ThreadBanner index={index} rt={rt} expanded={expanded} setExpanded={setExpanded} />
-       { expanded && (
-        <div style={{paddingTop:5}}>
+      <ThreadBanner 
+        index={index} 
+        rt={rt} 
+        expanded={expanded} 
+        setExpanded={setExpanded} />
+
+      { expanded && (
+      <div style={{paddingTop:5}}>
           {!isReadOnly && (
             <div style={{ display: 'inline', float: 'right' }}>
               <span style={{ display: 'inline' }}>
@@ -407,24 +425,24 @@ const ThreadComponent = (props:any) => {
                     setEditMode(index);
                   }}
                 >
-                    <FaEdit />
-                  </Button>
-                </span>
-              </div>
-            )}
+                  <FaEdit />
+                </Button>
+              </span>
+            </div>
+          )}
           
-                <span
-                  style={{ fontSize: 10, fontWeight: 800 }}
-                >{`${rt.evidence.length} pieces of evidence`}</span>
+            <span
+              style={{ fontSize: 10, fontWeight: 800 }}
+            >{`${rt.evidence.length} pieces of evidence`}</span>
         
-                <MiniTimline
-                  researchT={rt}
-                  activities={projectData.entries}
-                />
-        
-                <div style={{ paddingBottom: 10, fontSize: 11 }}>
-                  {rt.description}
-                </div>
+            <MiniTimline
+              researchT={rt}
+              activities={projectData.entries}
+            />
+    
+            <div style={{ paddingBottom: 10, fontSize: 11 }}>
+              {rt.description}
+            </div>
         
           {associatedTags && editMode != index && (
             <div>
@@ -493,7 +511,6 @@ const ThreadComponent = (props:any) => {
                         Copy this ref
                       </Button>
                     </span>
-                    {/* {String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`} */}
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
@@ -506,6 +523,7 @@ const ThreadComponent = (props:any) => {
       </div>
     ) : (
       <EditableThread
+        key={`edit-thread-${index}`}
         index={index}
         threadData={rt}
         setEditMode={setEditMode}
