@@ -558,8 +558,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     top:'0px',
     margin:'auto',
     height:'50px',
-    backGroundColor:'#fffff',
-    width:'100%',
+    backgroundColor:'#ffffff',
     padding:5,
     zIndex: 1000,
   };
