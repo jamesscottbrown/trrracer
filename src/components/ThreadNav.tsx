@@ -17,7 +17,7 @@ import {
   Tag,
   Textarea,
 } from '@chakra-ui/react';
-import { FaEdit, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
 import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
@@ -304,6 +304,7 @@ const ThreadBanner = (props:any) => {
             display: 'inline',
             fontSize: 18,
             fontWeight: 600,
+            color:'#3a3b3c'
           }}
           onClick={() => {
             dispatch({
@@ -328,7 +329,7 @@ const ThreadBanner = (props:any) => {
               setExpanded(expanded ? false : true)
             }}
           > 
-            {expanded ? <IconEyeOff /> : <IconEye />}
+            {expanded ? <IconEyeOff color='#3a3b3c'/> : <IconEye color='#3a3b3c'/>}
           </span>
         )}
         
@@ -366,7 +367,7 @@ const ThreadComponent = (props:any) => {
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
 
-  console.log()
+  
 
   return(
     <React.Fragment key={`frag-${index}`}>
@@ -589,7 +590,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     backgroundColor:'#FAFAFA',
     padding:5,
     zIndex: 1000,
-
+    color:'#3a3b3c'
   };
 
   return (
