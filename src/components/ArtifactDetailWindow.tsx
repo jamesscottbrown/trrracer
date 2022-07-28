@@ -63,6 +63,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
   const [fragSelected, setFragSelected] = useState(null);
 
+  console.log('SELECTED ARTIFACT', selectedArtifact);
+
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
       // one more entry was added
@@ -297,7 +299,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               }}
               style={{
                 height: '100%',
-                width: '90%',
+                width: '700px',
                 padding: 8,
                 overflow: 'auto',
               }}
