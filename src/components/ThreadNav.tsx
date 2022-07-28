@@ -277,14 +277,22 @@ const ThreadBanner = (props:any) => {
 
   const {index, rt, expanded, setExpanded} = props;
   const [{isReadOnly, projectData}, dispatch] = useProjectState();
+  const [bannerColor, setBannerColor] = useState('#fff');
 
   return (
     <div
       style={{
         display: isReadOnly ? 'block' : 'inline',
       }}
+      onMouseEnter={()=> setBannerColor(`${rt.color}20`)}
+      onMouseLeave={()=> setBannerColor('#fff')}
     >
-      <div style={{borderBottom:'.5px solid gray', padding:4, backgroundColor: `${rt.color}30`, borderRadius:5}}>
+      <div style={{
+        border:`1.5px solid ${rt.color}`, 
+        padding:4, 
+        borderRadius:5,
+        backgroundColor: bannerColor
+        }}>
         <span
           style={{
             cursor: 'pointer',
@@ -558,9 +566,10 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     top:'0px',
     margin:'auto',
     height:'50px',
-    backgroundColor:'#ffffff',
+    backgroundColor:'#FAFAFA',
     padding:5,
     zIndex: 1000,
+
   };
 
   return (
@@ -601,8 +610,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
               style={{
                 fontSize: '11px',
                 borderRadius: 5,
-                padding: 5,
-                border: '1px solid gray',
+                padding: 7,
               }}
               onClick={() =>
                 showCreateThread

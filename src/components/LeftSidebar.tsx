@@ -73,7 +73,7 @@ const LeftSidebar = (props: any) => {
   const headerStyle = { 
     fontSize: '19px', 
     fontWeight: 600, 
-    backgroundColor:'#ffffff',
+    backgroundColor:'#FAFAFA',
     zIndex:1000,
     position:'sticky',
     height:'40px',
