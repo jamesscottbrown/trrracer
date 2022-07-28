@@ -114,8 +114,8 @@ const ResearchThreadTypeTags = () => {
               style={{
                 marginRight: '15px',
                 cursor: 'pointer',
-                backgroundColor: chosenThread.color,
-                color: chosenThread.color === '#3932a3' ? '#fff' : 'black',
+                backgroundColor:`${chosenThread?.color}50`,
+                color: chosenThread?.color === '#3932a3' ? '#fff' : 'black',
                 opacity: tg.show && tg.matches.length > 0 ? 1 : 0.4,
               }}
               onClick={() => {
@@ -218,15 +218,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
       filterQuery,
       filterRT,
       threadTypeFilterArray,
-      researchThreads,
       goBackView,
       isReadOnly,
       viewParams,
     },
     dispatch,
   ] = useProjectState();
-
-  console.log('VIEW PARAMS', viewParams);
 
   const [viewType, setViewType] = useState<string>('overview');
   const [newTitle, setNewTitle] = useState<string>(projectData.title);
