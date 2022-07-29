@@ -22,7 +22,7 @@ import type { EntryType, File, ResearchThreadData } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
 import { drive_v3 } from 'googleapis';
-import { readFileSync } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
 import { BiLinkExternal } from 'react-icons/bi';
 import { IconChartDots3 } from '@tabler/icons';
 
@@ -80,7 +80,9 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                     window.open(`https://docs.google.com/document/d/${file.fileId}/edit?usp=sharing`, "_blank")
                   }else if(file.fileType === 'pdf'){
                     
-                      readFileSync(`${folderPath}${file.title}`)
+                    let perf = joinPath(folderPath, file.title);
+                    
+                      readFileSync(perf)
                         .then((res) => res.text())
                         .then((pap) => {
                           console.log('PAP', pap);
