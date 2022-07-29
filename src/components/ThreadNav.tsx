@@ -609,12 +609,16 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
             }}
           >
             {filteredThreads.map((rt: any, i: number) => (
+              <React.Fragment
+              key={`rt-${rt.rt_id}`}
+              >
               <ThreadComponent 
                 rt={rt} 
                 index={i} 
                 editMode={editMode} 
                 setEditMode={setEditMode} 
                 filteredThreads={filteredThreads} />
+              </React.Fragment>
             ))}
           </Box>
         ) : (
