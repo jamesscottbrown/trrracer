@@ -226,7 +226,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   ] = useProjectState();
 
   const [viewType, setViewType] = useState<string>('overview');
-  const [newTitle, setNewTitle] = useState<string>(projectData.title);
+  const [newTitle, setNewTitle] = useState<string>(projectData.title === "Jen" ? "tRRRacer Meta" : projectData.title);
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
