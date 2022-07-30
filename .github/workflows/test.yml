@@ -23,9 +23,12 @@ jobs:
         run: |
           yarn install --frozen-lockfile --network-timeout 300000
 
-      - name: lint
-        run: |
-          yarn lint
+      - name: build
+        run: npm run build
+        
+      #- name: lint
+      #  run: |
+      #    yarn lint
       #- name: yarn test
       #  env:
       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
