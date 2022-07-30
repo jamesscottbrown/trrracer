@@ -183,7 +183,6 @@ const BubbleVis = (props: BubbleProps) => {
       filterType,
       filterRT,
       filterTags,
-      selectedThread,
       researchThreads,
       isReadOnly,
       selectedActivityURL,
@@ -768,7 +767,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 1);
-          } else if (selectedActivityURL !== null) {
+          } else if (selectedActivityURL && selectedActivityURL !== null) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 1);
@@ -795,7 +794,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 0);
-          } else if (selectedActivityURL !== null) {
+          } else if (selectedActivityURL && selectedActivityURL !== null) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 0.5);
@@ -842,7 +841,7 @@ const BubbleVis = (props: BubbleProps) => {
           'circle.artifact'
         );
         highlightedCircles.attr('fill', 'gray');
-      } else if (selectedActivityURL !== null) {
+      } else if (selectedActivityURL && selectedActivityURL !== null) {
         highlightedActivityGroups
           .select('.all-activities')
           .attr('fill', 'red')
@@ -861,15 +860,15 @@ const BubbleVis = (props: BubbleProps) => {
         );
         highlightedCircles.attr('fill', 'gray');
       }
-
+   
       if (
         filterRT &&
-        researchThreads?.research_threads[selectedThread].evidence.length > 0
+        researchThreads?.research_threads[filterRT?.rtIndex].evidence.length > 0
       ) {
         let linkDataBefore = [];
         let linkDataAfter = [];
 
-        researchThreads?.research_threads[selectedThread].evidence.forEach(
+        researchThreads?.research_threads[filterRT?.rtIndex].evidence.forEach(
           (f) => {
             let temp = highlightedActivityGroups.filter(
               (ha) => ha.title === f.activityTitle
@@ -892,7 +891,7 @@ const BubbleVis = (props: BubbleProps) => {
             }
 
             const divideDate = new Date(
-              researchThreads?.research_threads[selectedThread].actions.filter(
+              researchThreads?.research_threads[filterRT?.rtIndex].actions.filter(
                 (f) => f.action === 'created'
               )[0].when
             );
@@ -928,7 +927,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', 'none')
             .attr(
               'stroke',
-              researchThreads?.research_threads[selectedThread].color
+              researchThreads?.research_threads[filterRT?.rtIndex].color
             )
             .attr('stroke-width', 2);
         }
@@ -948,7 +947,7 @@ const BubbleVis = (props: BubbleProps) => {
             .attr('fill', 'none')
             .attr(
               'stroke',
-              researchThreads?.research_threads[selectedThread].color
+              researchThreads?.research_threads[filterRT?.rtIndex].color
             )
             .attr('stroke-width', 2)
             .style('stroke-dasharray', '5,5');

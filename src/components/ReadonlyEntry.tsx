@@ -12,6 +12,7 @@ import {
   Box,
   SimpleGrid,
   Tooltip,
+  IconButton,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
@@ -20,6 +21,9 @@ import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
+import { drive_v3 } from 'googleapis';
+import { readFileSync } from '../fileUtil';
+import { BiLinkExternal } from 'react-icons/bi';
 
 interface EntryPropTypes {
   activityID: string;
@@ -65,6 +69,14 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               style={{ display: 'inline' }}
             />
           )}
+          {viewParams && viewParams.view === 'paper' && (
+            <IconButton 
+            icon={<BiLinkExternal />}
+            aria-label="Open file"
+            onClick={() => {
+              console.log('test');
+            }}/>
+          )}
           <Button
             size="xs"
             style={{
@@ -73,14 +85,12 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-
               if(!viewParams){
                 setViewType('detail view');
-
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: thisEntry,
-                  selectedArtifactIndex: i,
+                  activity: thisEntry,
+                  artifactIndex: i,
                   hopArray: [
                     {
                       activity: thisEntry,
@@ -234,7 +244,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                     display: 'inline-block',
                     padding: 3,
                     margin: 3,
-                    // opacity: fo.title === selectedThread.title ? 1 : .4
                   }}
                 >
                   <GiSewingString size="20px" />
@@ -255,8 +264,8 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
 
                     dispatch({
                       type: 'SELECTED_ARTIFACT',
-                      selectedArtifactEntry: thisEntry,
-                      selectedArtifactIndex: null,
+                      activity: thisEntry,
+                      artifactIndex: null,
                       hopArray: [
                         {
                           activity: thisEntry,
@@ -306,7 +315,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           <UnorderedList>
             {urls.map((url, i) => (
               <ListItem key={`${url.url}-${i}`}>
-                <a href={url.url}>{url.title} </a>
+                <a href={url.url}>{url.title}</a>
                 <FaExternalLinkAlt
                   title="Open URL in default web browser"
                   size="12px"

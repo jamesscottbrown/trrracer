@@ -22,7 +22,7 @@ import { useProjectState } from './ProjectContext';
 const LeftSidebar = (props: any) => {
   const { fromTop } = props;
   const [
-    { projectData, researchThreads, artifactTypes, selectedThread, filterTags },
+    { projectData, researchThreads, artifactTypes, filterRT, filterTags },
     dispatch,
   ] = useProjectState();
   const artifacts = projectData.entries.flatMap((f) => f.files);
@@ -69,7 +69,17 @@ const LeftSidebar = (props: any) => {
 
   const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
   sortedArtTypes.push({ title: 'all', matches: artifacts.length });
-  const headerStyle = { fontSize: '19px', fontWeight: 600 };
+
+  const headerStyle = { 
+    fontSize: '19px', 
+    fontWeight: 600, 
+    backgroundColor:'#FAFAFA',
+    zIndex:1000,
+    position:'sticky',
+    height:'40px',
+    top:'0px', 
+    padding:6
+  };
 
   return (
     <Box
@@ -90,8 +100,7 @@ const LeftSidebar = (props: any) => {
     >
       <ThreadNav
         researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType="overview"
-        selectedThread={selectedThread}
+        viewType={'overview'}
         projectData={projectData}
         dispatch={dispatch}
       />
@@ -134,7 +143,7 @@ const LeftSidebar = (props: any) => {
       </Box>
       <br />
 
-      <span style={headerStyle}>
+      <div style={headerStyle}>
         {`${tags.length} Tags`}
         <FaSortAlphaUp
           style={{
@@ -160,7 +169,7 @@ const LeftSidebar = (props: any) => {
             setSortedTags(temp);
           }}
         />
-      </span>
+      </div>
       <br />
       <Box
         marginLeft="3px"

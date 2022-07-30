@@ -459,14 +459,17 @@ const PaperView = (props: any) => {
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [
-    { selectedThread, linkData, isReadOnly, viewParams },
+    { filterRT, linkData, isReadOnly, viewParams }
   ] = useProjectState();
+
+  console.log('VIEW PARAMS INPAPER VIEW', viewParams);
 
   let passedLink = linkData
     ? linkData.filter((f) => (viewParams && f.cIndex === viewParams.cIndex))
     : [];
+
   const anno = linkData ? d3.groups(linkData, (d) => d.page) : null;
-  const index = selectedThread || 0;
+  const index = filterRT?.rtId || 0;
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);

@@ -73,8 +73,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     {
       projectData,
       filteredActivities,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
+      selectedArtifact,
       hopArray,
     },
     dispatch,
@@ -227,11 +226,11 @@ const DetailBubble = (props: BubbleDetProps) => {
     highlightedCircles.attr('fill', 'gray');
 
     const theChosenOne = highlightedActivities.filter(
-      (f) => f.title === selectedArtifactEntry.title
+      (f) => f.title === selectedArtifact.activity.title
     );
     theChosenOne
       .selectAll('circle.artifact')
-      .filter((af, i) => selectedArtifactIndex === i)
+      .filter((af, i) => selectedArtifact.artifactIndex === i)
       .attr('fill', 'red');
 
     const hiddenCircles = allActivityGroups
@@ -335,15 +334,24 @@ const DetailBubble = (props: BubbleDetProps) => {
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
 
+        let newHopData = [
+          ...hopArray,
+          {
+            activity: parentData,
+            artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
+            hopReason: 'revisit hopped artifact',
+          },
+        ];
+
         dispatch({
           type: 'SELECTED_ARTIFACT',
-          selectedArtifactEntry: parentData,
-          selectedArtifactIndex: selectedArtIndex,
+          activity: parentData,
+          artifactIndex: selectedArtIndex,
           hopArray: [
             ...hopArray,
             {
               activity: parentData,
-              artifactUid: parentData.files[selectedArtifactIndex].artifact_uid,
+              artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
               hopReason: 'revisit hopped artifact',
             },
           ],
@@ -354,8 +362,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   }, [
     filteredActivities,
     filterType,
-    selectedArtifactEntry,
-    selectedArtifactIndex,
+    selectedArtifact
   ]);
 
   return (

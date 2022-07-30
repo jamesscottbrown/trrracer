@@ -93,8 +93,8 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
               setViewType('detail view');
               dispatch({
                 type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: thisEntry,
-                selectedArtifactIndex: i,
+                activity: thisEntry,
+                artifactIndex: i,
                 hopArray: [
                   {
                     activity: thisEntry,
@@ -123,9 +123,21 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 };
 
 const ThreadedArtifact = (props: any) => {
-  const { setViewType, openFile, fileData, thisEntry, folderPath, i } = props;
+  const {
+    isEntryInThread,
+    setViewType,
+    openFile,
+    fileData,
+    thisEntry,
+    folderPath,
+    i,
+  } = props;
 
-  const [, dispatch] = useProjectState();
+  const [{ researchThreads, filterRT }, dispatch] = useProjectState();
+
+  const selectedThread = researchThreads.research_threads.filter(
+    (f) => f.title === filterRT.title
+  )[0];
 
   return (
     <Box bg="#ececec" p={3}>
@@ -151,8 +163,8 @@ const ThreadedArtifact = (props: any) => {
             setViewType('detail view');
             dispatch({
               type: 'SELECTED_ARTIFACT',
-              selectedArtifactEntry: thisEntry,
-              selectedArtifactIndex: i,
+              activity: thisEntry,
+              artifactIndex: i,
               hopArray: [
                 {
                   activity: thisEntry,

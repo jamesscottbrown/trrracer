@@ -123,7 +123,7 @@ const PopComment = (props) => {
     if (anon) {
       return anon[type];
     }
-    console.log('NAME NOT FOUND', name);
+  
   };
 
   if (!showPopover) {

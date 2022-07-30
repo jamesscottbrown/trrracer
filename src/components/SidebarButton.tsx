@@ -5,7 +5,6 @@ import { FaFilter } from 'react-icons/fa';
 
 const SidebarButton = (sidebarProps: any) => {
   const { index, data, filterTags, dispatch } = sidebarProps;
-  // const [{ researchThreads, filterTags }, dispatch] = useProjectState();
   const [barColor, setBarColor] = useState('#FFFFFF');
 
   return (

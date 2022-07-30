@@ -43,8 +43,8 @@ const HoverTitle = (props: any) => {
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
-                    selectedArtifactEntry: entry,
-                    selectedArtifactIndex: fileIndex,
+                    activity: entry,
+                    artifactIndex: fileIndex,
                     hopArray: [
                       {
                         activity: entry,

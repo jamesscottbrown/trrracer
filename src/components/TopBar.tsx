@@ -28,6 +28,7 @@ interface TopbarProps {
   setHideByDefault: (boo: any) => void;
   hideByDefault: boolean;
   setAddEntrySplash: (boo: any) => void;
+  setPath:any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -46,12 +47,10 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     {
       projectData,
       filteredActivities,
-      selectedActivityURL,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
-      filterRT,
+      selectedArtifact,
       isReadOnly,
       viewParams,
+      researchThreads
     },
     dispatch,
   ] = useProjectState();
@@ -60,18 +59,12 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
   const getName = () => {
     if (viewParams.granularity === 'thread') {
-      console.log('thread', filterRT);
-      return filterRT.title;
-    }
-    if (viewParams.granularity === 'artifact') {
-      console.log(
-        'ARTIFACT',
-        selectedArtifactEntry.files[selectedArtifactIndex]
-      );
-      return selectedArtifactEntry.files[selectedArtifactIndex].title;
-    }
-    if (viewParams.granularity === 'activity') {
-      console.log('activity', selectedActivityURL);
+      return researchThreads?.research_threads.filter(
+        (f) => f.rt_id === viewParams.id
+      )[0].title;
+    } else if (viewParams.granularity === 'artifact') {
+      return selectedArtifact.activity.files[selectedArtifact.artifactIndex].title;
+    } else if (viewParams.granularity === 'activity') {
       return projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0].title;

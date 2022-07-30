@@ -35,8 +35,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const [
     {
       projectData,
-      selectedArtifactEntry,
-      selectedArtifactIndex,
+      selectedArtifact,
       hopArray,
       researchThreads,
       isReadOnly,
@@ -55,15 +54,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const selectedArtifact = useMemo(() => {
-    return selectedArtifactEntry.files.length > 0
-      ? selectedArtifactEntry.files[selectedArtifactIndex]
+  const selectedArtifactOb = useMemo(() => {
+    return selectedArtifact.activity.files.length > 0
+      ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
       : null;
-  }, [selectedArtifactEntry.activity_uid, selectedArtifactIndex]);
+  }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
   const [fragSelected, setFragSelected] = useState(null);
-
-  console.log('SELECTED ARTIFACT', selectedArtifact);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -98,8 +95,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             onClick={() => {
               dispatch({
                 type: 'SELECTED_ARTIFACT',
-                selectedArtifactEntry: null,
-                selectedArtifactIndex: null,
+                activity: null,
+                artifactIndex: null,
                 hopArray: [],
               });
               setViewType(goBackView);
@@ -113,8 +110,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               style={{ marginRight: '10px' }}
               onClick={() => {
                 const selectActivity =
-                  selectedArtifactEntry.index > 0
-                    ? projectData.entries[selectedArtifactEntry.index - 1]
+                  selectedArtifact.activity.index > 0
+                    ? projectData.entries[selectedArtifact.artifactIndex - 1]
                     : projectData.entries[projectData.entries.length - 1];
 
                 const newHop = [
@@ -130,8 +127,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                 ];
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: selectActivity,
-                  selectedArtifactIndex: 0,
+                  activity: selectActivity,
+                  artifactIndex: 0,
                   hopArray: newHop,
                 });
               }}
@@ -142,19 +139,19 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             {` Activity:`}
             {!isReadOnly ? (
               <ActivityTitlePopoverLogic
-                activityData={selectedArtifactEntry}
+                activityData={selectedArtifact.activity}
                 researchThreads={researchThreads}
               />
             ) : (
-              <span>{selectedArtifactEntry.title}</span>
+              <span>{selectedArtifact.activity.title}</span>
             )}
 
             <Button
               style={{ marginLeft: '10px' }}
               onClick={() => {
                 const selectActivity =
-                  selectedArtifactEntry.index < projectData.entries.length - 1
-                    ? projectData.entries[selectedArtifactEntry.index + 1]
+                  selectedArtifact.index < projectData.entries.length - 1
+                    ? projectData.entries[selectedArtifact.index + 1]
                     : projectData.entries[0];
 
                 const newHop = [
@@ -173,8 +170,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
 
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
-                  selectedArtifactEntry: selectActivity,
-                  selectedArtifactIndex: 0,
+                  activity: selectActivity,
+                  artifactIndex: 0,
                   hopArray: newHop,
                 });
               }}
@@ -244,8 +241,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                               onClick={() => {
                                 dispatch({
                                   type: 'REMOVE_BOOKMARK',
-                                  selectedArtifactEntry,
-                                  selectedArtifactIndex,
+                                  selectedArtifactEntry: selectedArtifact.activity,
+                                  selectedArtifactIndex: selectedArtifact.artifactIndex,
                                   fragIndex: i,
                                 });
                               }}
@@ -305,7 +302,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               }}
             >
               <ReactMde
-                value={selectedArtifactEntry.description}
+                value={selectedArtifact.activity.description}
                 // onChange={setValue}
                 selectedTab="preview"
                 onTabChange={() => null}
