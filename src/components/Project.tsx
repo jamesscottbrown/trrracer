@@ -206,6 +206,17 @@ export const ToolIcon = (toolProp: any) => {
   );
 };
 
+function debounce(fn, ms) {
+  let timer: any;
+  return _ => {
+    clearTimeout(timer)
+    timer = setTimeout(_ => {
+      timer = null
+      fn.apply(this, arguments)
+    }, ms)
+  };
+}
+
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath, setPath } = ProjectPropValues;
  
@@ -232,6 +243,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false)
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
+  const [windowDimension, setWindowDimension] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  })
 
   const fromTop =
     (filterTags && filterTags?.length > 0) ||
@@ -246,12 +261,26 @@ const Project = (ProjectPropValues: ProjectProps) => {
     }
   }, [isReadOnly, viewParams]);
 
+  useEffect(() => {
+    const debouncedHandleResize = debounce(function handleResize() {
+      setWindowDimension({
+        height: window.innerHeight,
+        width: window.innerWidth
+      })
+    }, 1000)
+    window.addEventListener('resize', debouncedHandleResize)
+    return _ => {
+      window.removeEventListener('resize', debouncedHandleResize)
+  }   
+  })
+
   const barWidth = useMemo(() => {
+    console.log('IS THIS CHANGING with new function', window.innerHeight);
     let handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
       ? window.innerWidth - 700
       : window.innerWidth - (bubbleDivWidth - handicap);
-  }, [bubbleDivWidth, window.innerWidth]);
+  }, [windowDimension.width]);
 
   useEffect(() => {
     dispatch({ type: 'FILTER_DATA' });
@@ -293,7 +322,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            // flexAmount={2}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
           />
@@ -337,7 +365,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            // flexAmount={2}
+            windowDimension={windowDimension}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
           />
