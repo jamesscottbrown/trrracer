@@ -591,10 +591,11 @@ const ArtifactDetailSidebar = (props: any) => {
                   )
                 }
                 handleAddition={(tag: ReactTag) => {
+                  console.log('SELECTED',selectedArtifact.activity.activity_uid)
                   dispatch({
                     type: 'ADD_TAG_TO_ENTRY',
                     newTag: tag,
-                    entryIndex: selectedArtifact.activity.index,
+                    activityID: selectedArtifact.activity.activity_uid,
                   });
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
@@ -610,11 +611,14 @@ const ArtifactDetailSidebar = (props: any) => {
           {showTagList && (
             <React.Fragment>
               {selectedArtifact.activity.tags.map((t: any, i: number) => (
+                <React.Fragment
+                key={`it-${i}`}
+                >
                 <InteractiveActivityTag
-                  key={`it-${i}`}
                   tag={t}
                   index={i}
                 />
+                </React.Fragment>
               ))}
             </React.Fragment>
           )}
