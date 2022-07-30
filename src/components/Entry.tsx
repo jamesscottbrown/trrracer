@@ -308,7 +308,6 @@ const Entry = (props: EntryPropTypes) => {
           dispatch({
             type: 'ADD_TAG_TO_ENTRY',
             newTag: tag,
-            entryIndex,
             activityID: thisEntry.activity_uid,
           });
         }}
