@@ -21,6 +21,7 @@ interface BubbleProps {
   defineEvent: boolean;
   bubbleDivWidth: number;
   setBubbleDivWidth: (gb: any) => any;
+  windowDimension: any;
 }
 
 const RTtooltip = (toolProp: any) => {
@@ -176,7 +177,7 @@ const BubbleVis = (props: BubbleProps) => {
     windowDimension,
     defineEvent,
     bubbleDivWidth,
-    setBubbleDivWidth,
+    setBubbleDivWidth
   } = props;
 
   const [
