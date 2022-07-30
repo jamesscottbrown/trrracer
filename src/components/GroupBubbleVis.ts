@@ -1,17 +1,17 @@
 import * as d3 from 'd3';
-import { useMemo } from 'react';
-import Bubbles from '../Bubbles';
 import * as d3co from 'd3-color';
 
+import Bubbles from '../Bubbles';
+import ForceMagic from '../ForceMagic';
+import { EntryType, ResearchThreadData } from './types';
+
 export default function groupBubbles(
-  groupBy,
-  wrap,
-  forced,
-  selectedActivityURL,
-  filteredActivities,
-  setTool,
-  setHoverData,
-  researchThreads
+  groupBy: any,
+  wrap: any, // d3.Selection<SVGGElement, unknown, null, undefined>,
+  forced: ForceMagic,
+  setTool: (pos: [number, number]) => void,
+  setHoverData: (entry: EntryType) => void,
+  researchThreads: ResearchThreadData | undefined
 ) {
   const groupRTDATA = groupBy;
 
@@ -26,13 +26,16 @@ export default function groupBubbles(
     .join('g')
     .attr('class', 'group');
 
-  groupGroups.attr('transform', (d: any, i: any) => `translate(${i * 210}, 0)`);
+  groupGroups.attr(
+    'transform',
+    (_: any, i: number) => `translate(${i * 210}, 0)`
+  );
 
-  let label = groupGroups.append('text').text((d) => d.title);
+  const label = groupGroups.append('text').text((d) => d.title);
   label.style('font-size', '9px').style('text-anchor', 'middle');
   label.attr('x', 150).attr('y', -20);
 
-  let underGroup = groupGroups
+  const underGroup = groupGroups
     .selectAll('g.underWrap')
     .data((d) => {
       return [forced.nodes.filter((f) => d.activities.indexOf(f.title) === -1)];
@@ -40,9 +43,9 @@ export default function groupBubbles(
     .join('g')
     .classed('underWrap', true);
 
-  let midG = groupGroups.append('g').classed('midGroup', true);
+  const midG = groupGroups.append('g').classed('midGroup', true);
 
-  let hiddenActivityGroups = underGroup
+  const hiddenActivityGroups = underGroup
     .selectAll('g.hidden-activity')
     .data((d) => d)
     .join('g')
@@ -50,31 +53,31 @@ export default function groupBubbles(
 
   hiddenActivityGroups.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
 
-  let hiddenBubbles = new Bubbles(hiddenActivityGroups, true, 'hidden');
+  const hiddenBubbles = new Bubbles(hiddenActivityGroups, true, 'hidden');
 
   hiddenBubbles.bubbles
     .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 }))
     .attr('stroke', '#d3d3d3')
     .attr('stroke-width', 0.4);
 
-  let hiddenCircles = hiddenActivityGroups
+  const hiddenCircles = hiddenActivityGroups
     .selectAll('circle.artifact')
     .data((d) => d.files)
     .join('circle')
     .classed('artifact', true);
   hiddenCircles
-    .attr('r', (d) => 3)
+    .attr('r', () => 3)
     .attr('cx', (d) => d.x)
     .attr('cy', (d) => d.y);
   hiddenCircles.attr('fill', '#d3d3d3');
 
-  let topWrap = groupGroups
+  const topWrap = groupGroups
     .selectAll('g.topWrap')
     .data((d) => {
-      let temp = forced.nodes
+      const temp = forced.nodes
         .filter((f) => d.activities.indexOf(f.title) > -1)
         .map((m) => {
-          let ob = { ...m };
+          const ob = { ...m };
           ob.color = d.color;
           ob.rt_id = d.id;
           return ob;
@@ -84,7 +87,7 @@ export default function groupBubbles(
     .join('g')
     .classed('topWrap', true);
 
-  let activityGroups = topWrap
+  const activityGroups = topWrap
     .selectAll('g.activity-g')
     .data((d) => d)
     .join('g')
@@ -92,42 +95,42 @@ export default function groupBubbles(
 
   activityGroups.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
 
-  let actBubbles = new Bubbles(activityGroups, true, 'activity');
+  const actBubbles = new Bubbles(activityGroups, true, 'activity');
 
-  let artifactCircles = activityGroups
+  const artifactCircles = activityGroups
     .selectAll('circle.artifact')
     .data((d) => d.files)
     .join('circle')
     .classed('artifact', true);
 
   artifactCircles
-    .attr('r', (d) => 3)
+    .attr('r', () => 3)
     .attr('cx', (d) => d.x)
     .attr('cy', (d) => d.y);
   artifactCircles.attr('fill', '#fff');
 
-  //COLOR AND STYLING
+  // COLOR AND STYLING
   actBubbles.bubbles
     .attr('fill', (d) => d3co.hsl(d.color).copy({ l: 0.9 }))
     .attr('stroke', '#d3d3d3')
     .attr('stroke-width', 0.4);
 
   groupGroups.each((gData, i: number, nodes: any) => {
-    let chosenR = researchThreads.research_threads.filter(
+    const chosenR = researchThreads.research_threads.filter(
       (rt) => rt.rt_id === gData.id
     )[0];
 
     let linkDataBefore: any = [];
     let linkDataAfter: any = [];
 
-    let parentGroup = d3.select(nodes[i]);
+    const parentGroup = d3.select(nodes[i]);
 
-    let divideDate = new Date(
+    const divideDate = new Date(
       chosenR.actions.filter((f) => f.action === 'created')[0].when
     );
 
-    chosenR.evidence.forEach((r: any, j: number) => {
-      let actG = parentGroup
+    chosenR.evidence.forEach((r: any) => {
+      const actG = parentGroup
         .selectAll('.activity-g')
         .filter((ha) => ha.title === r.activityTitle);
 
@@ -153,14 +156,14 @@ export default function groupBubbles(
       }
     });
 
-    var lineGenerator = d3.line();
+    const lineGenerator = d3.line();
 
     if (linkDataAfter.length > 0) {
       linkDataAfter = linkDataAfter.sort(
         (a, b) => new Date(a.date) - new Date(b.date)
       );
 
-      var pathStringSolid = lineGenerator(linkDataAfter.map((m) => m.coord));
+      const pathStringSolid = lineGenerator(linkDataAfter.map((m) => m.coord));
 
       midG
         .filter((f) => f.id === gData.id)
@@ -176,7 +179,7 @@ export default function groupBubbles(
       );
       if (linkDataAfter.length > 0) linkDataBefore.push(linkDataAfter[0]);
 
-      var pathStringDash = lineGenerator(linkDataBefore.map((m) => m.coord));
+      const pathStringDash = lineGenerator(linkDataBefore.map((m) => m.coord));
 
       midG
         .filter((f) => f.id === gData.id)
@@ -200,14 +203,13 @@ export default function groupBubbles(
         .filter((f) => {
           if (f) {
             return f.activity_uid === d.activity_uid;
-          } else {
-            return f.title === d.title;
           }
+          return f.title === d.title;
         })
         .attr('stroke', 'red')
         .attr('stroke-width', '2px');
 
-      //TOOLTIP
+      // TOOLTIP
       // const { activityData, position, researchThreads, filterRT } = toolProp;
       setTool([d.x, d.y]);
       setHoverData(d);
@@ -217,7 +219,7 @@ export default function groupBubbles(
       //TOOLTIP
 
       setTool([0, 0]);
-      let ob = { ...d };
+      const ob = { ...d };
       ob.i = i;
       setHoverData(ob);
       d3.select('#tooltip').style('opacity', 0);

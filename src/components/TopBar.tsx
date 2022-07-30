@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
   Box,
@@ -26,7 +26,7 @@ interface TopbarProps {
   newTitle: string;
   setNewTitle: any;
   setHideByDefault: (boo: any) => void;
-  hideByDefault: Boolean;
+  hideByDefault: boolean;
   setAddEntrySplash: (boo: any) => void;
   setPath:any;
 }
@@ -55,9 +55,9 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     dispatch,
   ] = useProjectState();
 
-  //USE callback when you pass anonymous functions to big components!!
+  // USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
-  let getName = () => {
+  const getName = () => {
     if (viewParams.granularity === 'thread') {
       return researchThreads?.research_threads.filter(
         (f) => f.rt_id === viewParams.id
@@ -68,9 +68,8 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       return projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0].title;
-    } else {
-      return 'Unknown';
     }
+    return 'Unknown';
   };
 
   return (
@@ -104,7 +103,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   console.log(document.cookie)
                   setPath('')}}
               />{" "}
-              {projectData.title}
+              {projectData.title === 'Jen' ? 'tRRRace Meta': projectData.title}
             </span>
           ) : (
             <Editable
@@ -122,7 +121,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         <div style={{ marginLeft: '20px', marginRight: '20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
-        {(!viewParams || (viewParams && viewParams.view != 'paper')) && (
+        {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
           <QueryBar
             artifactData={null}
             setViewType={setViewType}
@@ -173,15 +172,11 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 </FormLabel>
                 <Switch
                   id="show-all"
-                  onChange={(event) => {
-                    hideByDefault
-                      ? setHideByDefault(false)
-                      : setHideByDefault(true);
-                  }}
+                  onChange={() => setHideByDefault(!hideByDefault)}
                 />
               </FormControl>
             </div>
-            {(filteredActivities.length != projectData.entries.length ||
+            {(filteredActivities.length !== projectData.entries.length ||
               !hideByDefault) && (
               <div
                 style={{
@@ -196,7 +191,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                 marginLeft="3px"
                 alignSelf="end"
                 // onClick={addEntry}
-                onClick={(event) => setAddEntrySplash(true)}
+                onClick={() => setAddEntrySplash(true)}
                 type="button"
               >
                 <FaPlus /> Add activity
@@ -205,41 +200,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           </div>
         )}
       </Flex>
-      {/* <Flex style={{ 
-        height: filterTags.length > 0 ? 70 : 0 }}>
-        <Flex flex={4} flexDirection="column">
-          <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
-            {filterTags.length > 0 &&
-              filterTags.map((t, i) => (
-                <div
-                  key={`tags-${i}`}
-                  style={{
-                    display: 'inline-block',
-                    margin: 5,
-                    backgroundColor: 'gray',
-                    color: '#ffffff',
-                    borderRadius: 5,
-                    padding: 5,
-                  }}
-                >
-                  <span>{`${t}`}</span>
-                  <span
-                    onClick={() => {
-                      dispatch({
-                        type: 'UPDATE_FILTER_TAGS',
-                        filterTags: filterTags.filter((f) => f != t),
-                      });
-                    }}
-                    style={{ padding: 5, cursor: 'pointer' }}
-                  >
-                    x
-                  </span>
-                </div>
-              ))}
-           
-          </Box>
-        </Flex>
-      </Flex> */}
     </Box>
   );
 };

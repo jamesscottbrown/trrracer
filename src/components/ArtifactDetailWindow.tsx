@@ -4,30 +4,23 @@ import {
   Box,
   Button,
   Spacer,
-  Textarea,
-  Badge,
   Tag,
   TagLabel,
   TagCloseButton,
   Tooltip,
 } from '@chakra-ui/react';
-import { WithContext as ReactTags } from 'react-tag-input';
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaEye,
-  FaEyeSlash,
-  FaMapPin,
-} from 'react-icons/fa';
+
+import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
+
+import ReactMde from 'react-mde';
+import * as Showdown from 'showdown';
+
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
 import ArtifactDetailSidebar from './ArtifactDetailSidebar';
 import { useProjectState } from './ProjectContext';
 import QueryBar from './QueryBar';
-import ReactMde from 'react-mde';
-import * as Showdown from 'showdown';
 
-import type { ResearchThread, ResearchThreadEvidence, ReactTag } from './types';
 import DetailBubble from './DetailSvg';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 
@@ -67,12 +60,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       : null;
   }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
-  const height = 900;
   const [fragSelected, setFragSelected] = useState(null);
-  const [newHeight, setNewHeight] = useState('1000px');
-
-  const viewheight = +newHeight.split('px')[0];
-  const margin = viewheight * 0.15;
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -236,7 +224,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                           label={`"${f.fragment}"`}
                         >
                           <Tag
-                            size={'md'}
+                            size="md"
                             borderRadius="full"
                             variant="solid"
                             colorScheme="gray"
@@ -282,7 +270,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                   openFile={openFile}
                 />
               ) : (
-                <div>{'No Artifact for this activity'}</div>
+                <div>No Artifact for this activity</div>
               )}
             </Flex>
           </Box>
@@ -316,13 +304,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               <ReactMde
                 value={selectedArtifact.activity.description}
                 // onChange={setValue}
-                selectedTab={'preview'}
+                selectedTab="preview"
                 onTabChange={() => null}
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))
                 }
-                readOnly={true}
-                style={{ height: '100%', overflowY: 'scroll'}}
+                readOnly
+                style={{ height: '100%', overflowY: 'scroll' }}
               />
             </div>
           </Flex>

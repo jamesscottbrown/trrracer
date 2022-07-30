@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiSewingString } from 'react-icons/gi';
 import * as d3 from 'd3';
 import {
   Button,
@@ -18,12 +18,13 @@ import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import AttachmentPreview from './AttachmentPreview';
-import type { EntryType, File, ResearchThreadData } from './types';
+import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
 import { drive_v3 } from 'googleapis';
-import { readFileSync } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
 import { BiLinkExternal } from 'react-icons/bi';
+import { IconChartDots3 } from '@tabler/icons';
 
 interface EntryPropTypes {
   activityID: string;
@@ -31,23 +32,15 @@ interface EntryPropTypes {
   makeEditable: () => void;
   setViewType: (viewType: string) => void;
   viewType: any;
+  foundIn: ResearchThread[];
 }
 
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true,
-});
-
 interface ReadonlyEntryFilePropTypes {
-  activityID: string;
   openFile: (a: string, fp: string) => void;
   setViewType: (viewType: string) => void;
   file: File;
   i: number;
-  dispatch: (dis: any) => void;
-  folderPath: string;
+  thisEntry: EntryType;
 }
 
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
@@ -55,38 +48,51 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
  
   return (
-    <React.Fragment>
+    <>
       <Box bg="#ececec" p={3}>
         {['png', 'jpg', 'gif'].includes(file.fileType) && (
           <AttachmentPreview
-            folderPath={folderPath}
+            folderPath={folderPath as string}
             title={file.title}
             openFile={openFile}
           />
         )}
         <div style={{ marginTop: '8px' }}>
           <span
-          style={{fontWeight:800, fontSize:16}}
+            style={{ fontWeight: 800, fontSize: 16 }}
           >{`${file.artifactType}: `}</span>
           {file.title}{' '}
-          {!isReadOnly && (
+       
             <FaExternalLinkAlt
-              onClick={() => openFile(file.title, folderPath)}
+              onClick={() => {
+                if(!isReadOnly){
+                  openFile(file.title, folderPath)
+                }else{
+                  if(file.fileType === 'gdoc'){
+                    window.open(`https://docs.google.com/document/d/${file.fileId}/edit?usp=sharing`, "_blank")
+                  }else if(file.fileType === 'pdf'){
+                    
+                    let perf = joinPath(folderPath, file.title);
+                    
+                      readFileSync(perf)
+                        .then((res) => res.text())
+                        .then((pap) => {
+                          console.log('PAP', pap);
+                          window.open(`data:application/pdf;base64,${pap}`, "_blank")
+                        });
+                        
+                  }else{
+                    window.open(`${folderPath}${file.title}`, "_blank")
+                  }
+                }
+                }}
               title="Open file externally"
               size="13px"
-              style={{ display: 'inline' }}
+              style={{ display: 'inline', cursor:'pointer'}}
             />
-          )}
-          {viewParams && viewParams.view === 'paper' && (
-            <IconButton 
-            icon={<BiLinkExternal />}
-            aria-label="Open file"
-            onClick={() => {
-              console.log('test');
-            }}/>
-          )}
+       
           <Button
-            size={'xs'}
+            size="xs"
             style={{
               marginLeft: '7px',
               color: '#ffffff',
@@ -101,50 +107,54 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   artifactIndex: i,
                   hopArray: [
                     {
-                      activity: thisEntry, 
+                      activity: thisEntry,
                       artifactUid: thisEntry.files[i].artifact_uid,
                       hopReason: 'first hop',
-                    }
+                    },
                   ],
                 });
-
-              }else{
+              } else {
                 d3.select('#popover-det').remove();
-                let pop = d3.select('body').append('div').attr('id', 'popover-det');
-                pop.style('position', 'absolute')
-                .style('left', '370px')
-                .style('top', '100px')
-                .style('width', '700px')
-                .style('padding', '10px')
-                .style('background-color', '#fff')
-                .style('border', '2px solid gray')
-                .style('border-radius', '10px')
-                .style('z-index', '6000');
-                let cancel = pop.append('div')
-                .style('background-color', '#d3d3d3')
-                .style('border-radius', '6px');
-                cancel.append('text').text('x').style('font-weight', '900');
-                cancel.style('float', 'right')
-                cancel.style('cursor', 'pointer')
-                cancel.on('click', () => pop.remove())
 
-                let textDiv = pop.append('div')
-                textDiv.html('<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>');
+                const pop = d3
+                  .select('body')
+                  .append('div')
+                  .attr('id', 'popover-det');
+                pop
+                  .style('position', 'absolute')
+                  .style('left', '370px')
+                  .style('top', '100px')
+                  .style('width', '700px')
+                  .style('padding', '10px')
+                  .style('background-color', '#fff')
+                  .style('border', '2px solid gray')
+                  .style('border-radius', '10px')
+                  .style('z-index', '6000');
+
+                const cancel = pop
+                  .append('div')
+                  .style('background-color', '#d3d3d3')
+                  .style('border-radius', '6px');
+                cancel.append('text').text('x').style('font-weight', '900');
+                cancel.style('float', 'right');
+                cancel.style('cursor', 'pointer');
+                cancel.on('click', () => pop.remove());
+
+                const textDiv = pop.append('div');
+                textDiv.html(
+                  '<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>'
+                );
 
                 pop.style('height', '800px')
-               
               }
-        }}
-      >See in detail</Button>
-      </div>
-      </Box> 
-    </React.Fragment>
+            }}
+          >
+            See in detail
+          </Button>
+        </div>
+      </Box>
+    </>
   );
-};
-
-type ActivityTitlePopoverLogicProps = {
-  activityData: EntryType;
-  researchThreads: ResearchThreadData | undefined;
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
@@ -158,7 +168,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   } = props;
 
   const [
-    { projectData, researchThreads, folderPath, isReadOnly },
+    { projectData, researchThreads, isReadOnly },
     dispatch,
   ] = useProjectState();
 
@@ -184,11 +194,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
-  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
-  const descriptionHTML = useMemo(() => {
-    converter.makeHtml(thisEntry.description);
-  }, [thisEntry.description]);
-
   return (
     <Box>
       <div style={{ padding: 10 }}>
@@ -200,7 +205,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               style={{ display: 'inline', fill: 'lightgrey' }}
             />
           )}
-          {viewType != 'detail' && (
+          {viewType !== 'detail' && (
             <ActivityTitlePopoverLogic
               activityData={thisEntry}
               researchThreads={researchThreads}
@@ -217,28 +222,28 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
           )}
         </span>
 
-      <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-        {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
-      </Text>
-      <p>
-        {thisEntry.tags.length === 0 ? (
-          <b>No tags.</b>
-        ) : (
-          <>
-            {thisEntry.tags.map((t) => (
-              <Tag
-                key={t}
-                backgroundColor={`#d3d3d3`}
-                stroke={`#d3d3d3`}
-                marginRight="0.25em"
-                marginBottom="0.25em"
-              >
-                {t}
-              </Tag>
-            ))}
-          </>
-        )}
-      </p>
+        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
+          {format(new Date(thisEntry.date), 'dd MMMM yyyy')}
+        </Text>
+        <p>
+          {thisEntry.tags.length === 0 ? (
+            <b>No tags.</b>
+          ) : (
+            <>
+              {thisEntry.tags.map((t) => (
+                <Tag
+                  key={t}
+                  backgroundColor="#d3d3d3"
+                  stroke="#d3d3d3"
+                  marginRight="0.25em"
+                  marginBottom="0.25em"
+                >
+                  {t}
+                </Tag>
+              ))}
+            </>
+          )}
+        </p>
 
         {foundIn.length > 0 &&
           foundIn.map((fo, fi) => (
@@ -247,15 +252,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 <div
                   style={{
                     fontSize: 20,
-                    backgroundColor: fo.color,
+                    backgroundColor: `${fo.color}60`,
                     borderRadius: 50,
                     width: 26,
                     display: 'inline-block',
                     padding: 3,
                     margin: 3,
                   }}
-                >
-                  <GiSewingString size={'20px'} />
+                >  
+                <IconChartDots3 size={'20px'} />
                 </div>
               </Tooltip>
             </React.Fragment>
@@ -278,27 +283,27 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                       hopArray: [
                         {
                           activity: thisEntry,
-                          artifactUid: null, //thisEntry.files[i].artifact_uid,
+                          artifactUid: null, // thisEntry.files[i].artifact_uid,
                           hopReason: 'first hop',
                         },
                       ],
                     });
                   }}
                 >
-                  {'VIEW EMAIL'}
+                  VIEW EMAIL
                 </Button>
               </div>
             ) : (
               <ReactMde
                 value={thisEntry.description}
                 // onChange={setValue}
-                selectedTab={'preview'}
+                selectedTab="preview"
                 // onTabChange={()=> null}
                 minPreviewHeight={100}
                 generateMarkdownPreview={(markdown) =>
                   Promise.resolve(converter.makeHtml(markdown))
                 }
-                readOnly={true}
+                readOnly
                 style={{ height: '100%', overflowY: 'scroll' }}
               />
             )}
@@ -315,8 +320,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
             setViewType={setViewType}
             file={f}
             i={i}
-            dispatch={dispatch}
-            folderPath={folderPath}
           />
         ))}
       </SimpleGrid>

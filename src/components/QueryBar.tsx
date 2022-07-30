@@ -161,7 +161,7 @@ const QueryBar = (queryProps: QueryProps) => {
     //       )[0].text
     //     : googleData[artifactData.fileId];
     if (artifactData.fileType === 'txt' && txtData) {
-      let dataCheck = txtData['text-data'].filter(
+      const dataCheck = txtData['text-data'].filter(
         (f) => f['file-title'] === artifactData.title
       );
       data = dataCheck.length > 0 ? dataCheck[0].text : [];

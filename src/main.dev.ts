@@ -18,7 +18,6 @@ import log from 'electron-log';
 
 import ProjectLoader from './ProjectLoader';
 import { authenticate } from './authenticateGoogle';
-import { useState } from 'react';
 
 export default class AppUpdater {
   constructor() {
@@ -120,7 +119,7 @@ const openProjectWindow = async (projectPath: string) => {
   });
 
   // Open urls in the user's browser
-  const handleRedirect = (e, url) => {
+  const handleRedirect = (e: any, url: string) => {
     if (url !== e.sender.getURL()) {
       e.preventDefault();
       shell.openExternal(url);

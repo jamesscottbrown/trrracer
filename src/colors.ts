@@ -1,5 +1,5 @@
 // This function is based on https://stackoverflow.com/a/41491220
-const textColor = (bgColor: any) => {
+const textColor = (bgColor: string) => {
   const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
   const r = parseInt(color.substring(0, 2), 16); // hexToR
   const g = parseInt(color.substring(2, 4), 16); // hexToG

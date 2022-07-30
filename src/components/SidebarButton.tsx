@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Popover,
-  PopoverTrigger,
-  PopoverArrow,
-  PopoverContent,
-  PopoverBody,
-  Tooltip,
-  Button,
-} from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 
 import { FaFilter } from 'react-icons/fa';
 import { AiFillFilter, AiOutlineFilter } from 'react-icons/ai';
@@ -17,7 +8,6 @@ import { GrAddCircle } from 'react-icons/gr';
 const SidebarButton = (sidebarProps: any) => {
   const { index, data, filterTags, dispatch } = sidebarProps;
   const [barColor, setBarColor] = useState('#FFFFFF');
-  const [showThreadPop, setShowThreadPop] = useState(false);
 
   return (
     <Box
@@ -31,7 +21,7 @@ const SidebarButton = (sidebarProps: any) => {
         {`${data.title}  (${data.matches.length})`}
         <Button
           title="Filter by."
-          size={'xs'}
+          size="xs"
           style={{ marginLeft: 10 }}
           onClick={() => {
             console.log('tags filter check', filterTags);

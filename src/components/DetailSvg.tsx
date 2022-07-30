@@ -4,7 +4,6 @@ import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
-import type { EntryType } from './types';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
 
@@ -18,7 +17,7 @@ const ToolTip = (toolProp: any) => {
 
   return (
     <div
-      id={'tooltip'}
+      id="tooltip"
       style={{
         position: 'absolute',
         left: position[0] + 450,
@@ -44,7 +43,7 @@ const ToolTip = (toolProp: any) => {
           {hoverData.fileData.title}
         </span>
       ) : (
-        <div>{'uknown'}</div>
+        <div>uknown</div>
       )}
 
       <div>
@@ -90,10 +89,10 @@ const DetailBubble = (props: BubbleDetProps) => {
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 80;
-  const height = +newHeight; //.split('px')[0];
+  const height = +newHeight; // .split('px')[0];
   const svgRef = React.useRef(null);
 
-  let packedCircData = calcCircles(projectData.entries);
+  const packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
 
@@ -135,7 +134,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       yearMonth.length - 1
     ].months.filter((f: any, i: number) => i < endIndex);
 
-    let allActivityGroups = wrap
+    const allActivityGroups = wrap
       .selectAll('g.activity')
       .data(forced.nodes)
       .join('g')
@@ -143,16 +142,16 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     allActivityGroups.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
 
-    let activityBubbles = new Bubbles(
+    const activityBubbles = new Bubbles(
       allActivityGroups,
       true,
       'all-activities'
     );
 
-    ////START AXIS
+    //// START AXIS
 
-    let checkGroup = svg.select('g.timeline-wrap');
-    let wrapAxisGroup = checkGroup.empty()
+    const checkGroup = svg.select('g.timeline-wrap');
+    const wrapAxisGroup = checkGroup.empty()
       ? svg.append('g').attr('class', 'timeline-wrap')
       : checkGroup;
 
@@ -173,12 +172,12 @@ const DetailBubble = (props: BubbleDetProps) => {
       .append('line')
       .attr('stroke', 'gray.900');
 
-    const axisLabel = yAxisGroup
+    yAxisGroup
       .selectAll('text')
       .join('text')
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
-    ///AXIS
+    /// AXIS
 
     activityBubbles.bubbles
       .attr('fill', '#d3d3d3')
@@ -186,17 +185,17 @@ const DetailBubble = (props: BubbleDetProps) => {
       .attr('stroke', '#d3d3d3')
       .attr('stroke-width', 0.4);
 
-    let artifactCircles = allActivityGroups
+    const artifactCircles = allActivityGroups
       .selectAll('circle.artifact')
       .data((d) => d.files)
       .join('circle')
       .classed('artifact', true);
     artifactCircles
-      .attr('r', (d) => 3)
+      .attr('r', () => 3)
       .attr('cx', (d) => d.x)
       .attr('cy', (d) => d.y);
 
-    let highlightedActivities = allActivityGroups.filter((ac) => {
+    const highlightedActivities = allActivityGroups.filter((ac) => {
       return hopArray
         ? hopArray.map((m) => m.activity.title).includes(ac.title)
         : [];
@@ -208,7 +207,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       .attr('fill-opacity', 1)
       .attr('stroke-width', 1);
 
-    let highlightedCircles = highlightedActivities
+    const highlightedCircles = highlightedActivities
       .selectAll('circle.artifact')
       .filter((f) => {
         return hopArray.map((h) => h.artifactUid).includes(f.artifact_uid);
@@ -226,7 +225,7 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     highlightedCircles.attr('fill', 'gray');
 
-    let theChosenOne = highlightedActivities.filter(
+    const theChosenOne = highlightedActivities.filter(
       (f) => f.title === selectedArtifact.activity.title
     );
     theChosenOne
@@ -234,7 +233,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       .filter((af, i) => selectedArtifact.artifactIndex === i)
       .attr('fill', 'red');
 
-    let hiddenCircles = allActivityGroups
+    const hiddenCircles = allActivityGroups
       .filter((ac) => {
         return hopArray.map((m) => m.activity.title).indexOf(ac.title) === -1;
       })
@@ -242,21 +241,21 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     hiddenCircles.attr('fill', 'gray').attr('fill-opacity', 0.2);
 
-    let linkData = [];
+    const linkData = [];
 
-    hopArray.forEach((h, i) => {
-      let temp = highlightedActivities.filter(
+    hopArray.forEach((h) => {
+      const temp = highlightedActivities.filter(
         (f) => h.activity.title === f.title
       );
-      let td = temp.data()[0];
+      const td = temp.data()[0];
       if (td && td.x && td.y) {
         linkData.push({ coord: [td.x - 8, td.y], date: td.date });
       }
     });
 
-    var lineGenerator = d3.line();
+    const lineGenerator = d3.line();
 
-    var pathStringSolid = lineGenerator(linkData.map((m) => m.coord));
+    const pathStringSolid = lineGenerator(linkData.map((m) => m.coord));
 
     underWrap
       .append('path')
@@ -267,20 +266,22 @@ const DetailBubble = (props: BubbleDetProps) => {
 
     highlightedCircles
       .on('mouseover', (event, d) => {
-        let hopData = hopArray.filter((f) => f.artifactUid === d.artifact_uid);
-        let parentData = d3.select(event.target.parentNode).data()[0];
+        const hopData = hopArray.filter(
+          (f) => f.artifactUid === d.artifact_uid
+        );
+        const parentData = d3.select(event.target.parentNode).data()[0];
         setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
-        let hovData = { fileData: d, hopDataArray: hopData };
+        const hovData = { fileData: d, hopDataArray: hopData };
         setHoverData(hovData);
         d3.select('#tooltip').style('opacity', 1);
 
-        let entry = projectData.entries.filter((en) => {
-          let temp = en.files.filter((e) => e.title === d.title);
+        const entry = projectData.entries.filter((en) => {
+          const temp = en.files.filter((e) => e.title === d.title);
           return temp.length > 0;
         })[0];
 
-        let labelGTest = wrap.select('.timeline-wrap').select('#label-group');
-        let labelG = labelGTest.empty()
+        const labelGTest = wrap.select('.timeline-wrap').select('#label-group');
+        const labelG = labelGTest.empty()
           ? svg.select('.timeline-wrap').append('g').attr('id', 'label-group')
           : labelGTest;
         labelG.attr(
@@ -288,9 +289,9 @@ const DetailBubble = (props: BubbleDetProps) => {
           `translate(0, ${yScale(new Date(entry.date))})`
         );
 
-        let parent = d3.select(event.target.parentNode);
+        const parent = d3.select(event.target.parentNode);
 
-        let rect = labelG.append('rect');
+        const rect = labelG.append('rect');
         rect
           .attr('width', 50)
           .attr('height', 15)
@@ -298,7 +299,7 @@ const DetailBubble = (props: BubbleDetProps) => {
           .attr('fill-opacity', 0.9);
         rect.attr('x', -50).attr('y', -12);
 
-        let text = labelG
+        labelG
           .append('text')
           .text(
             new Date(entry.date).toLocaleDateString('en-us', {
@@ -322,14 +323,14 @@ const DetailBubble = (props: BubbleDetProps) => {
           .attr('stroke', 'black')
           .attr('stroke-width', 1);
       })
-      .on('mouseout', (event: any, d: any) => {
+      .on('mouseout', () => {
         d3.select('#tooltip').style('opacity', 0);
         d3.select('#date_line').remove();
         d3.select('#label-group').remove();
       })
       .on('click', (event: any, d: any) => {
-        let parentData = d3.select(event.target.parentNode).data()[0];
-        let selectedArtIndex = parentData.files
+        const parentData = d3.select(event.target.parentNode).data()[0];
+        const selectedArtIndex = parentData.files
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
 

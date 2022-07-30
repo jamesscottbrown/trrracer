@@ -1,6 +1,8 @@
 class Bubbles {
   parent: any;
+
   bubbles: any;
+
   artifactTypes: any;
 
   constructor(parentGroup: any, artifactTypes: any, className: any) {

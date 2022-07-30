@@ -14,18 +14,18 @@ import {
   PopoverContent,
   PopoverTrigger,
   Select,
-  Tag,
   Textarea,
 } from '@chakra-ui/react';
-import { FaEdit, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
-import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
 import { IconEye, IconEyeOff } from '@tabler/icons';
+
+import { useProjectState } from './ProjectContext';
+import type { EntryType } from './types';
 
 export const jitter = (val: any) => Math.random() * val;
 
@@ -34,15 +34,88 @@ type MiniTimelineProps = {
   activities: EntryType[];
 };
 
+export const CreateThreadComponent = (props:any) => {
+
+  const {
+    setShowCreateThread
+  } = props
+  const [{projectData},dispatch] = useProjectState();
+
+  const [threadName, setName] = useState(null);
+  const [description, setDescription] = useState(null);
+
+  const handleNameChange = (e: any) => {
+    const inputValue = e.target.value;
+    setName(inputValue);
+  };
+  const handleDescriptionChange = (e: any) => {
+    const inputValue = e.target.value;
+    setDescription(inputValue);
+  };
+
+  return(
+    <Box style={{ marginTop: 10 }}>
+      <span style={{ fontSize: 14, fontWeight: 600 }}>
+        <Input
+          placeholder="Name your thread."
+          onChange={handleNameChange}
+        />
+      </span>
+
+      <Textarea
+        placeholder="Describe what this thread is."
+        onChange={handleDescriptionChange}
+      />
+      <Button
+        isActive={threadName && description ? true : false}
+        isDisabled={threadName && description ? false : true}
+        onClick={() => {
+          let actTitle = `Created thread: ${threadName}`;
+          setName(null);
+          setDescription(null);
+          setShowCreateThread(false);
+          dispatch({
+            type: 'CREATE_THREAD',
+            threadName,
+            threadDescription: description,
+            evidence: [
+              {
+                activityTitle: actTitle,
+                activity_index: projectData.entries.length,
+                dob: new Date(),
+                rationale: 'Thread created',
+                type: 'activity',
+              },
+            ],
+          });
+
+          dispatch({
+            type: 'ADD_ENTRY',
+            data: {
+              title: actTitle,
+              date: new Date(),
+              description: description,
+            },
+          });
+        }}
+      >
+        CREATE
+      </Button>
+    </Box>
+  // )}
+  )
+}
+
 const MiniTimline = (props: MiniTimelineProps) => {
   const { researchT, activities } = props;
 
   const lilSVG = React.useRef(null);
 
+  const ex = d3.extent(activities.map((m: any) => new Date(m.date)));
   React.useEffect(() => {
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(activities.map((m: any) => new Date(m.date))))
+      .domain([(ex[0] || new Date()) as Date, ex[1] || (new Date() as Date)])
       .range([0, 150])
       .nice();
 
@@ -112,7 +185,7 @@ const EditableThread = (threadProps: any) => {
   const [{ researchThreads }, dispatch] = useProjectState();
 
   const filteredThreads = researchThreads?.research_threads.filter((f) => {
-    let test = f.actions.map((m) => m.action);
+    const test = f.actions.map((m) => m.action);
     return test.indexOf('merge') === -1;
   });
 
@@ -133,7 +206,7 @@ const EditableThread = (threadProps: any) => {
   });
 
   const otherThreads = researchThreads?.research_threads.filter(
-    (f, i) => i !== index
+    (_, i) => i !== index
   );
   const [description, setDescription] = useState(threadData.description);
   const [mergeTo, setMergeTo] = useState(otherThreads[0].title);
@@ -176,16 +249,16 @@ const EditableThread = (threadProps: any) => {
             </Editable>
           </span>
           {!mergeWindow ? (
-            <Button size={'xs'} onClick={() => setMergeWindow(true)}>
-              {'Merge into Another'}
+            <Button size="xs" onClick={() => setMergeWindow(true)}>
+              Merge into Another
             </Button>
           ) : (
             <div>
-              <Button size={'xs'} onClick={() => setMergeWindow(false)}>
+              <Button size="xs" onClick={() => setMergeWindow(false)}>
                 Cancel
               </Button>
               <Button
-                size={'xs'}
+                size="xs"
                 onClick={() => {
                   dispatch({
                     type: 'MERGE_THREADS',
@@ -205,7 +278,7 @@ const EditableThread = (threadProps: any) => {
                   width="max-content"
                 >
                   {filteredThreads
-                    ?.filter((f, i) => i !== index)
+                    ?.filter((_, i) => i !== index)
                     .map((m, j) => (
                       <option key={`option-${j}`}>{m.title}</option>
                     ))}
@@ -217,7 +290,7 @@ const EditableThread = (threadProps: any) => {
         <div style={{ display: 'inline', float: 'right' }}>
           <span style={{ display: 'inline' }}>
             <Button
-              size={'xs'}
+              size="xs"
               style={{ display: 'inline' }}
               onClick={() => {
                 setEditMode(null);
@@ -226,8 +299,8 @@ const EditableThread = (threadProps: any) => {
               Go Back
             </Button>
             <Button
-              size={'xs'}
-              bgColor={'#ff6863'}
+              size="xs"
+              bgColor="#ff6863"
               style={{ display: 'inline', margin: 2 }}
               onClick={() => {
                 dispatch({
@@ -237,7 +310,7 @@ const EditableThread = (threadProps: any) => {
               }}
             >
               <BiTrash style={{ display: 'inline' }} />
-              {'DELETE'}
+              DELETE
             </Button>
           </span>
         </div>
@@ -304,6 +377,7 @@ const ThreadBanner = (props:any) => {
             display: 'inline',
             fontSize: 18,
             fontWeight: 600,
+            color:'#3a3b3c'
           }}
           onClick={() => {
             dispatch({
@@ -328,7 +402,7 @@ const ThreadBanner = (props:any) => {
               setExpanded(expanded ? false : true)
             }}
           > 
-            {expanded ? <IconEyeOff /> : <IconEye />}
+            {expanded ? <IconEyeOff color='#3a3b3c'/> : <IconEye color='#3a3b3c'/>}
           </span>
         )}
         
@@ -366,7 +440,7 @@ const ThreadComponent = (props:any) => {
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
 
-  console.log()
+  
 
   return(
     <React.Fragment key={`frag-${index}`}>
@@ -543,22 +617,21 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   ] = useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-  const [threadName, setName] = useState(null);
-  const [description, setDescription] = useState(null);
+  // const [threadName, setName] = useState(null);
+  // const [description, setDescription] = useState(null);
   const [editMode, setEditMode] = useState<null | number>(null);
   const [hasCancel, sethasCancel] = useState(true);
 
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
       return researchThreads?.research_threads.filter(
-        (f, i) => i === filterRT?.rtId
+        (_, i) => i === filterRT?.rtId
       );
-    } else {
-      return researchThreads?.research_threads.filter((f) => {
-        let test = f.actions.map((m) => m.action);
-        return test.indexOf('merge') === -1;
-      });
     }
+    return researchThreads?.research_threads.filter((f) => {
+      const test = f.actions.map((m) => m.action);
+      return test.indexOf('merge') === -1;
+    });
   }, [researchThreads?.research_threads, viewParams]);
 
   useEffect(() => {
@@ -569,14 +642,14 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     }
   }, [viewParams]);
 
-  const handleNameChange = (e: any) => {
-    const inputValue = e.target.value;
-    setName(inputValue);
-  };
-  const handleDescriptionChange = (e: any) => {
-    const inputValue = e.target.value;
-    setDescription(inputValue);
-  };
+  // const handleNameChange = (e: any) => {
+  //   const inputValue = e.target.value;
+  //   setName(inputValue);
+  // };
+  // const handleDescriptionChange = (e: any) => {
+  //   const inputValue = e.target.value;
+  //   setDescription(inputValue);
+  // };
 
   const headerStyle = { 
     fontSize: '19px', 
@@ -589,7 +662,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     backgroundColor:'#FAFAFA',
     padding:5,
     zIndex: 1000,
-
+    color:'#3a3b3c'
   };
 
   return (
@@ -608,12 +681,16 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
             }}
           >
             {filteredThreads.map((rt: any, i: number) => (
+              <React.Fragment
+              key={`rt-${rt.rt_id}`}
+              >
               <ThreadComponent 
                 rt={rt} 
                 index={i} 
                 editMode={editMode} 
                 setEditMode={setEditMode} 
                 filteredThreads={filteredThreads} />
+              </React.Fragment>
             ))}
           </Box>
         ) : (
@@ -623,7 +700,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
         )}
       </Box>
 
-      {viewType != 'detail' && (
+      {viewType !== 'detail' && (
         <>
           {!isReadOnly && (
             <Button
@@ -644,54 +721,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
           )}
 
           {showCreateThread && (
-            <Box style={{ marginTop: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 600 }}>
-                <Input
-                  placeholder="Name your thread."
-                  onChange={handleNameChange}
-                />
-              </span>
-
-              <Textarea
-                placeholder="Describe what this thread is."
-                onChange={handleDescriptionChange}
-              />
-              <Button
-                isActive={threadName && description ? true : false}
-                isDisabled={threadName && description ? false : true}
-                onClick={() => {
-                  let actTitle = `Created thread: ${threadName}`;
-                  setName(null);
-                  setDescription(null);
-                  setShowCreateThread(false);
-                  dispatch({
-                    type: 'CREATE_THREAD',
-                    threadName,
-                    threadDescription: description,
-                    evidence: [
-                      {
-                        activityTitle: actTitle,
-                        activity_index: projectData.entries.length,
-                        dob: new Date(),
-                        rationale: 'Thread created',
-                        type: 'activity',
-                      },
-                    ],
-                  });
-
-                  dispatch({
-                    type: 'ADD_ENTRY',
-                    data: {
-                      title: actTitle,
-                      date: new Date(),
-                      description: description,
-                    },
-                  });
-                }}
-              >
-                CREATE
-              </Button>
-            </Box>
+            <CreateThreadComponent 
+              setShowCreateThread={setShowCreateThread}
+            />
           )}
         </>
       )}

@@ -71,7 +71,6 @@ const GoogDriveSpans = (googProps: any) => {
   } = googProps;
 
   const [spanColor, setSpanColor] = useState(false);
-  const [bookmarkExist, setBookmarkExist] = useState(false);
 
   const temp =
     comments && comments.length > 0
@@ -82,12 +81,7 @@ const GoogDriveSpans = (googProps: any) => {
         )
       : [];
 
-  var styleOb = styleSection(
-    googEl,
-    temp.length > 0 ? true : false,
-    spanColor,
-    false
-  );
+  var styleOb = styleSection(googEl, temp.length > 0, spanColor, false);
 
   useEffect(() => {
     const tempBookmark =
@@ -98,19 +92,9 @@ const GoogDriveSpans = (googProps: any) => {
         : [];
 
     if (tempBookmark.length > 0) {
-      styleOb = styleSection(
-        googEl,
-        temp.length > 0 ? true : false,
-        spanColor,
-        true
-      );
+      styleOb = styleSection(googEl, temp.length > 0, spanColor, true);
     } else {
-      styleOb = styleSection(
-        googEl,
-        temp.length > 0 ? true : false,
-        spanColor,
-        false
-      );
+      styleOb = styleSection(googEl, temp.length > 0, spanColor, false);
     }
   }, [spanColor, artifactBookmarks]);
 

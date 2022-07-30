@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { EntryTypeWithIndex, ProjectViewProps } from './types';
+import { EntryTypeWithIndex } from './types';
 import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
   const { setViewType, viewType } = ProjectPropValues;
-
-
   const [
     { projectData, selectedActivityURL, filteredActivities },
   ] = useProjectState();
 
-  let [usedEntries, setUsedEntries] = useState(filteredActivities);
-
-  console.log('filtered in list view', filteredActivities);
+  const [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
     if (selectedActivityURL && selectedActivityURL !== null) {

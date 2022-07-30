@@ -78,7 +78,10 @@ export default function App() {
           folderName: folderPath,
           projectData: migrateTrrraceFormat(data),
         })
-      );
+      )
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   if (!projectData) {
