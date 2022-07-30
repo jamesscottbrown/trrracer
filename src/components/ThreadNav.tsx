@@ -17,7 +17,7 @@ import {
   Tag,
   Textarea,
 } from '@chakra-ui/react';
-import { FaEdit, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
 import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
@@ -33,6 +33,78 @@ type MiniTimelineProps = {
   researchT: any;
   activities: EntryType[];
 };
+
+export const CreateThreadComponent = (props:any) => {
+
+  const {
+    setShowCreateThread
+  } = props
+  const [{projectData},dispatch] = useProjectState();
+
+  const [threadName, setName] = useState(null);
+  const [description, setDescription] = useState(null);
+
+  const handleNameChange = (e: any) => {
+    const inputValue = e.target.value;
+    setName(inputValue);
+  };
+  const handleDescriptionChange = (e: any) => {
+    const inputValue = e.target.value;
+    setDescription(inputValue);
+  };
+
+  return(
+    <Box style={{ marginTop: 10 }}>
+      <span style={{ fontSize: 14, fontWeight: 600 }}>
+        <Input
+          placeholder="Name your thread."
+          onChange={handleNameChange}
+        />
+      </span>
+
+      <Textarea
+        placeholder="Describe what this thread is."
+        onChange={handleDescriptionChange}
+      />
+      <Button
+        isActive={threadName && description ? true : false}
+        isDisabled={threadName && description ? false : true}
+        onClick={() => {
+          let actTitle = `Created thread: ${threadName}`;
+          setName(null);
+          setDescription(null);
+          setShowCreateThread(false);
+          dispatch({
+            type: 'CREATE_THREAD',
+            threadName,
+            threadDescription: description,
+            evidence: [
+              {
+                activityTitle: actTitle,
+                activity_index: projectData.entries.length,
+                dob: new Date(),
+                rationale: 'Thread created',
+                type: 'activity',
+              },
+            ],
+          });
+
+          dispatch({
+            type: 'ADD_ENTRY',
+            data: {
+              title: actTitle,
+              date: new Date(),
+              description: description,
+            },
+          });
+        }}
+      >
+        CREATE
+      </Button>
+    </Box>
+  // )}
+  )
+}
 
 const MiniTimline = (props: MiniTimelineProps) => {
   const { researchT, activities } = props;
@@ -304,6 +376,7 @@ const ThreadBanner = (props:any) => {
             display: 'inline',
             fontSize: 18,
             fontWeight: 600,
+            color:'#3a3b3c'
           }}
           onClick={() => {
             dispatch({
@@ -328,7 +401,7 @@ const ThreadBanner = (props:any) => {
               setExpanded(expanded ? false : true)
             }}
           > 
-            {expanded ? <IconEyeOff /> : <IconEye />}
+            {expanded ? <IconEyeOff color='#3a3b3c'/> : <IconEye color='#3a3b3c'/>}
           </span>
         )}
         
@@ -366,7 +439,7 @@ const ThreadComponent = (props:any) => {
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
 
-  console.log()
+  
 
   return(
     <React.Fragment key={`frag-${index}`}>
@@ -543,8 +616,8 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   ] = useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-  const [threadName, setName] = useState(null);
-  const [description, setDescription] = useState(null);
+  // const [threadName, setName] = useState(null);
+  // const [description, setDescription] = useState(null);
   const [editMode, setEditMode] = useState<null | number>(null);
   const [hasCancel, sethasCancel] = useState(true);
 
@@ -569,14 +642,14 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     }
   }, [viewParams]);
 
-  const handleNameChange = (e: any) => {
-    const inputValue = e.target.value;
-    setName(inputValue);
-  };
-  const handleDescriptionChange = (e: any) => {
-    const inputValue = e.target.value;
-    setDescription(inputValue);
-  };
+  // const handleNameChange = (e: any) => {
+  //   const inputValue = e.target.value;
+  //   setName(inputValue);
+  // };
+  // const handleDescriptionChange = (e: any) => {
+  //   const inputValue = e.target.value;
+  //   setDescription(inputValue);
+  // };
 
   const headerStyle = { 
     fontSize: '19px', 
@@ -589,7 +662,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     backgroundColor:'#FAFAFA',
     padding:5,
     zIndex: 1000,
-
+    color:'#3a3b3c'
   };
 
   return (
@@ -608,12 +681,16 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
             }}
           >
             {filteredThreads.map((rt: any, i: number) => (
+              <React.Fragment
+              key={`rt-${rt.rt_id}`}
+              >
               <ThreadComponent 
                 rt={rt} 
                 index={i} 
                 editMode={editMode} 
                 setEditMode={setEditMode} 
                 filteredThreads={filteredThreads} />
+              </React.Fragment>
             ))}
           </Box>
         ) : (
@@ -644,54 +721,9 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
           )}
 
           {showCreateThread && (
-            <Box style={{ marginTop: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 600 }}>
-                <Input
-                  placeholder="Name your thread."
-                  onChange={handleNameChange}
-                />
-              </span>
-
-              <Textarea
-                placeholder="Describe what this thread is."
-                onChange={handleDescriptionChange}
-              />
-              <Button
-                isActive={threadName && description ? true : false}
-                isDisabled={threadName && description ? false : true}
-                onClick={() => {
-                  let actTitle = `Created thread: ${threadName}`;
-                  setName(null);
-                  setDescription(null);
-                  setShowCreateThread(false);
-                  dispatch({
-                    type: 'CREATE_THREAD',
-                    threadName,
-                    threadDescription: description,
-                    evidence: [
-                      {
-                        activityTitle: actTitle,
-                        activity_index: projectData.entries.length,
-                        dob: new Date(),
-                        rationale: 'Thread created',
-                        type: 'activity',
-                      },
-                    ],
-                  });
-
-                  dispatch({
-                    type: 'ADD_ENTRY',
-                    data: {
-                      title: actTitle,
-                      date: new Date(),
-                      description: description,
-                    },
-                  });
-                }}
-              >
-                CREATE
-              </Button>
-            </Box>
+            <CreateThreadComponent 
+              setShowCreateThread={setShowCreateThread}
+            />
           )}
         </>
       )}

@@ -104,7 +104,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
                   console.log(document.cookie)
                   setPath('')}}
               />{" "}
-              {projectData.title}
+              {projectData.title === 'Jen' ? 'tRRRace Meta': projectData.title}
             </span>
           ) : (
             <Editable
@@ -205,41 +205,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           </div>
         )}
       </Flex>
-      {/* <Flex style={{ 
-        height: filterTags.length > 0 ? 70 : 0 }}>
-        <Flex flex={4} flexDirection="column">
-          <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
-            {filterTags.length > 0 &&
-              filterTags.map((t, i) => (
-                <div
-                  key={`tags-${i}`}
-                  style={{
-                    display: 'inline-block',
-                    margin: 5,
-                    backgroundColor: 'gray',
-                    color: '#ffffff',
-                    borderRadius: 5,
-                    padding: 5,
-                  }}
-                >
-                  <span>{`${t}`}</span>
-                  <span
-                    onClick={() => {
-                      dispatch({
-                        type: 'UPDATE_FILTER_TAGS',
-                        filterTags: filterTags.filter((f) => f != t),
-                      });
-                    }}
-                    style={{ padding: 5, cursor: 'pointer' }}
-                  >
-                    x
-                  </span>
-                </div>
-              ))}
-           
-          </Box>
-        </Flex>
-      </Flex> */}
+     
     </Box>
   );
 };

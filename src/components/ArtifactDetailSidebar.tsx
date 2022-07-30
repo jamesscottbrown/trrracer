@@ -20,6 +20,7 @@ import {
   FaMapPin,
 } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
+import { CreateThreadComponent } from './ThreadNav';
 
 const ArtifactToThread = (props: any) => {
   const [, dispatch] = useProjectState();
@@ -391,6 +392,8 @@ const ArtifactDetailSidebar = (props: any) => {
     enter: 13,
   };
 
+  const [showCreateThread, setShowCreateThread] = useState(false);
+
   const selectedArtifactTest =
     selectedArtifact.activity.files.length > 0
       ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
@@ -591,10 +594,11 @@ const ArtifactDetailSidebar = (props: any) => {
                   )
                 }
                 handleAddition={(tag: ReactTag) => {
+                  console.log('SELECTED',selectedArtifact.activity.activity_uid)
                   dispatch({
                     type: 'ADD_TAG_TO_ENTRY',
                     newTag: tag,
-                    entryIndex: selectedArtifact.activity.index,
+                    activityID: selectedArtifact.activity.activity_uid,
                   });
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
@@ -610,11 +614,14 @@ const ArtifactDetailSidebar = (props: any) => {
           {showTagList && (
             <React.Fragment>
               {selectedArtifact.activity.tags.map((t: any, i: number) => (
+                <React.Fragment
+                key={`it-${i}`}
+                >
                 <InteractiveActivityTag
-                  key={`it-${i}`}
                   tag={t}
                   index={i}
                 />
+                </React.Fragment>
               ))}
             </React.Fragment>
           )}
@@ -718,6 +725,18 @@ const ArtifactDetailSidebar = (props: any) => {
                   ) : (
                     <div>No research threads yet.</div>
                   )}
+                  <div
+                  style={{margin:'auto', padding:5}}
+                  ><Button
+                    onClick={()=> showCreateThread ? setShowCreateThread(false) : setShowCreateThread(true)}
+                  >Create new thread thread</Button>
+
+                {showCreateThread && (
+                  <CreateThreadComponent 
+                    setShowCreateThread={setShowCreateThread}
+                  />
+                )}
+                </div>
                 </>
               )}{' '}
             </div>

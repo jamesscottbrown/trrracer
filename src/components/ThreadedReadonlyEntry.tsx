@@ -25,6 +25,7 @@ import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
+import { IconChartDots3 } from '@tabler/icons';
 
 interface EntryPropTypes {
   thisEntry: EntryType;
@@ -421,7 +422,7 @@ const ThreadedReadonlyEntry = (props: any) => {
               <div
                 style={{
                   fontSize: 20,
-                  backgroundColor: m.color,
+                  backgroundColor: `${m.color}60`,
                   borderRadius: 50,
                   width: 26,
                   display: 'inline-block',
@@ -429,8 +430,8 @@ const ThreadedReadonlyEntry = (props: any) => {
                   margin: 3,
                   opacity: m.title === selectedThread.title ? 1 : 0.4,
                 }}
-              >
-                <GiSewingString size={'20px'} />
+              > 
+              <IconChartDots3 size={'20px'} />
               </div>
             </Tooltip>
           </React.Fragment>
