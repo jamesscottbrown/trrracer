@@ -20,6 +20,7 @@ import {
   FaMapPin,
 } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
+import { CreateThreadComponent } from './ThreadNav';
 
 const ArtifactToThread = (props: any) => {
   const [, dispatch] = useProjectState();
@@ -391,6 +392,8 @@ const ArtifactDetailSidebar = (props: any) => {
     enter: 13,
   };
 
+  const [showCreateThread, setShowCreateThread] = useState(false);
+
   const selectedArtifactTest =
     selectedArtifact.activity.files.length > 0
       ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
@@ -722,6 +725,18 @@ const ArtifactDetailSidebar = (props: any) => {
                   ) : (
                     <div>No research threads yet.</div>
                   )}
+                  <div
+                  style={{margin:'auto', padding:5}}
+                  ><Button
+                    onClick={()=> showCreateThread ? setShowCreateThread(false) : setShowCreateThread(true)}
+                  >Create new thread thread</Button>
+
+                {showCreateThread && (
+                  <CreateThreadComponent 
+                    setShowCreateThread={setShowCreateThread}
+                  />
+                )}
+                </div>
                 </>
               )}{' '}
             </div>
