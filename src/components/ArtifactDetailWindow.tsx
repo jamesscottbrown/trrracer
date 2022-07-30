@@ -151,7 +151,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               onClick={() => {
                 const selectActivity =
                   selectedArtifact.index < projectData.entries.length - 1
-                    ? projectData.entries[selectedArtifact.index + 1]
+                    ? projectData.entries[selectedArtifact.artifactIndex + 1]
                     : projectData.entries[0];
 
                 const newHop = [
@@ -189,7 +189,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             }}
           >{`Artifact: ${
             selectedArtifact
-              ? selectedArtifact.title
+              ? selectedArtifact.activity.files[selectedArtifact.artifactIndex].title
               : 'No artifacts with this activity'
           }`}</div>
         </Flex>

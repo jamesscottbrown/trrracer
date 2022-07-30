@@ -325,6 +325,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setDefineEvent={setDefineEvent}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
+            windowDimension={windowDimension}
           />
           <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
             <QueryView setViewType={setViewType} />
