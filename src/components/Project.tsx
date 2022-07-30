@@ -1,16 +1,11 @@
 /* eslint no-console: off */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Tag, TagLabel, calc } from '@chakra-ui/react';
-import ProjectListView from './ProjectListView';
-import TopBar from './TopBar';
-import { useProjectState } from './ProjectContext';
-import LeftSidebar from './LeftSidebar';
-import ArtifactDetailWindow from './ArtifactDetailWindow';
-import { EntryType } from './types';
-import QueryView from './QueryView';
-import BubbleVis from './BubbleVis';
-import PaperView from './PaperView';
-import AddEntryForm from './AddEntryForm';
+import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+
+import { MdComment, MdPresentToAll } from 'react-icons/md';
+import { GrNotes } from 'react-icons/gr';
+import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
+import { BiQuestionMark } from 'react-icons/bi';
 import {
   FaDatabase,
   FaLink,
@@ -18,13 +13,20 @@ import {
   FaPaperPlane,
   FaPencilAlt,
 } from 'react-icons/fa';
-import { MdComment, MdPresentToAll } from 'react-icons/md';
-import { GrNotes } from 'react-icons/gr';
-import { RiComputerLine, RiNewspaperLine } from 'react-icons/ri';
-import { BiQuestionMark } from 'react-icons/bi';
+
+import ProjectListView from './ProjectListView';
+import TopBar from './TopBar';
+import { useProjectState } from './ProjectContext';
+import LeftSidebar from './LeftSidebar';
+import ArtifactDetailWindow from './ArtifactDetailWindow';
+import QueryView from './QueryView';
+import BubbleVis from './BubbleVis';
+import PaperView from './PaperView';
+import AddEntryForm from './AddEntryForm';
+
 const queryString = require('query-string');
 
-//CHANGE THE SEARCH PARAMS
+// CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 // const params = new URLSearchParams(location.search);
 // const viewType = params.get("view");
@@ -32,27 +34,27 @@ const queryString = require('query-string');
 interface ProjectProps {
   folderPath: string;
 }
-//two arrays are the same length,
-//you dont have a  - in object, each key is string or number.
+// two arrays are the same length,
+// you dont have a  - in object, each key is string or number.
 
 function compareObjects<T extends any>(objA: T, objB: T): boolean {
   if (Object.keys(objA).length !== Object.keys(objB).length) {
     return false;
-  } else {
-    for (let key in Object.keys(objA)) {
-      if (objA[key] !== objB[key]) {
-        return false;
-      }
-    }
-    return true;
   }
+
+  for (const key in Object.keys(objA)) {
+    if (objA[key] !== objB[key]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function compareObjectList<T extends any[]>(listA: T, listB: T): boolean {
   if (listA.length !== listB.length) {
     return false;
   }
-  for (let i = 0; i < listA.length; ++i) {
+  for (let i = 0; i < listA.length; i += 1) {
     if (!compareObjects(listA[i], listB[i])) {
       return false;
     }
@@ -66,17 +68,17 @@ const ResearchThreadTypeTags = () => {
     dispatch,
   ] = useProjectState();
 
-  let chosenThread = filterRT
+  const chosenThread = filterRT
     ? researchThreads.research_threads.filter(
         (f) => f.title === filterRT.title
       )[0]
     : null;
 
-  let noTagsFilterArray = threadTypeFilterArray.filter(
+  const noTagsFilterArray = threadTypeFilterArray.filter(
     (f) => f.type !== 'tags'
   );
 
-  let threadTypeGroups = noTagsFilterArray.map((ty) => {
+  const threadTypeGroups = noTagsFilterArray.map((ty) => {
     ty.matches =
       ty.type === 'tags'
         ? filterRT
@@ -119,7 +121,7 @@ const ResearchThreadTypeTags = () => {
                 opacity: tg.show && tg.matches.length > 0 ? 1 : 0.4,
               }}
               onClick={() => {
-                let temp = threadTypeFilterArray.map((m) => {
+                const temp = threadTypeFilterArray.map((m) => {
                   if (m.type === tg.type) {
                     m.show ? (m.show = false) : (m.show = true);
                   }
@@ -206,6 +208,17 @@ export const ToolIcon = (toolProp: any) => {
   );
 };
 
+function debounce(fn, ms) {
+  let timer: any;
+  return _ => {
+    clearTimeout(timer)
+    timer = setTimeout(_ => {
+      timer = null
+      fn.apply(this, arguments)
+    }, ms)
+  };
+}
+
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath, setPath } = ProjectPropValues;
  
@@ -220,7 +233,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       goBackView,
       isReadOnly,
-      viewParams,
+      viewParams
     },
     dispatch,
   ] = useProjectState();
@@ -232,6 +245,10 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false)
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
+  const [windowDimension, setWindowDimension] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  })
 
   const fromTop =
     (filterTags && filterTags?.length > 0) ||
@@ -246,12 +263,25 @@ const Project = (ProjectPropValues: ProjectProps) => {
     }
   }, [isReadOnly, viewParams]);
 
+  useEffect(() => {
+    const debouncedHandleResize = debounce(function handleResize() {
+      setWindowDimension({
+        height: window.innerHeight,
+        width: window.innerWidth
+      })
+    }, 1000)
+    window.addEventListener('resize', debouncedHandleResize)
+    return _ => {
+      window.removeEventListener('resize', debouncedHandleResize)
+  }   
+  })
+
   const barWidth = useMemo(() => {
-    let handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
+    const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
       ? window.innerWidth - 700
       : window.innerWidth - (bubbleDivWidth - handicap);
-  }, [bubbleDivWidth, window.innerWidth]);
+  }, [windowDimension.width]);
 
   useEffect(() => {
     dispatch({ type: 'FILTER_DATA' });
@@ -293,7 +323,6 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            // flexAmount={2}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
           />
@@ -337,7 +366,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
-            // flexAmount={2}
+            windowDimension={windowDimension}
             bubbleDivWidth={bubbleDivWidth}
             setBubbleDivWidth={setBubbleDivWidth}
           />

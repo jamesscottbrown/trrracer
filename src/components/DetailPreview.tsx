@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Image, Box, background } from '@chakra-ui/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Box } from '@chakra-ui/react';
 import {
   GrDocumentCsv,
   GrDocumentWord,
@@ -8,13 +8,13 @@ import {
   GrDocumentImage,
   GrCluster,
 } from 'react-icons/gr';
-import type { TextEntry } from './types';
 import GoogDriveParagraph from './GoogDriveElements';
 import EmailRender from './EmailRender';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
+
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 // import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
@@ -28,9 +28,8 @@ if (isElectron) {
 const url = (folderPath: string, title: string) => {
   if (folderPath.startsWith('http://') || folderPath.startsWith('https://')) {
     return `${joinPath(folderPath, title)}`;
-  } else {
-    return `file://${folderPath}/${title}`;
   }
+  return `file://${folderPath}/${title}`;
 };
 
 interface DetailPreviewPropsType {
@@ -53,9 +52,8 @@ const TextRender = (textProps: any) => {
         {ta.textData}
       </span>
     ));
-  } else {
-    return <span>{textArray[0].textData}</span>;
   }
+  return <span>{textArray[0].textData}</span>;
 };
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
@@ -136,7 +134,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
       const gContent = googD.body.content.filter((f: any) => f.startIndex);
 
-      let comments = artifact.comments ? artifact.comments.comments : [];
+      const comments = artifact.comments ? artifact.comments.comments : [];
 
       return (
         <Box
@@ -153,7 +151,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         >
           <div
             style={{ height: '100%', width: '700px', overflow: 'auto' }}
-            id={'gdoc'}
+            id="gdoc"
           >
             {gContent.map((m: any, i: number) => (
               <GoogDriveParagraph
@@ -219,6 +217,56 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         );
       });
     }
+
+    getDriveFiles(folderPath, googleCred).then((googOb) => {
+      console.log('GOOGLE OB', googOb);
+      dispatch({
+        type: 'UPDATE_GOOG_DOC_DATA',
+        googDocData: googOb.goog_doc_data,
+      });
+      // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+      const chosen = googOb.goog_doc_data[artifact.fileId];
+
+      const gContent = chosen
+        ? chosen.body.content.filter((f: any) => f.startIndex)
+        : [];
+
+      const comments = artifact.comments ? artifact.comments.comments : [];
+
+      return chosen ? (
+        <Box
+          style={{
+            overflow: 'scroll',
+            height: 'calc(100vh - 150px)',
+            width: '700px',
+            display: 'inline',
+            boxShadow: '3px 3px 8px #A3AAAF',
+            border: '1px solid #A3AAAF',
+            borderRadius: 6,
+            padding: 10,
+          }}
+        >
+          <div
+            style={{ height: '100%', width: '700px', overflow: 'auto' }}
+            id="gdoc"
+          >
+            {gContent.map((m: any, i: number) => (
+              <GoogDriveParagraph
+                key={`par-${i}`}
+                parData={m}
+                index={i}
+                comments={comments}
+                setFragSelected={setFragSelected}
+                artifactBookmarks={artifact.bookmarks}
+              />
+            ))}
+          </div>
+        </Box>
+      ) : (
+        <div>Oops could not load google doc</div>
+      );
+    });
   }
 
   if (title.endsWith('.gsheet')) {
@@ -239,7 +287,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
 
         if (artifact.bookmarks) {
-          let start = textArray[0].textData.split(
+          const start = textArray[0].textData.split(
             artifact.bookmarks[0].fragment
           );
 
@@ -250,16 +298,16 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           ];
           if (artifact.bookmarks.length > 1) {
             for (let j = 1; j < artifact.bookmarks.length; j++) {
-              let oldTextArray = textArray;
-              let frag = artifact.bookmarks[j].fragment;
-              let findIndex = textArray
+              const oldTextArray = textArray;
+              const frag = artifact.bookmarks[j].fragment;
+              const findIndex = textArray
                 .map((ta) => ta.textData.includes(frag))
                 .indexOf(true);
 
               let newArray = oldTextArray.slice(0, findIndex);
 
-              let addThis = oldTextArray[findIndex].textData.split(frag);
-              let makeArray = [
+              const addThis = oldTextArray[findIndex].textData.split(frag);
+              const makeArray = [
                 { style: 'normal', textData: addThis[0] },
                 { style: 'highlight', textData: frag },
                 { style: 'normal', textData: addThis[1] },
@@ -292,7 +340,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         {textFile.length > 0 ? (
           <TextRender textArray={textFile} />
         ) : (
-          <span>{'COULD NOT LOAD TEXT'}</span>
+          <span>COULD NOT LOAD TEXT</span>
         )}
       </div>
     );
@@ -377,7 +425,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           ? openFile(title, folderPath)
           : console.log(MouseEvent);
       }}
-      autoLoad={true}
+      autoLoad
     />
   );
 };

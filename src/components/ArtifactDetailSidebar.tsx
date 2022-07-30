@@ -1,24 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Flex,
-  Box,
-  Button,
-  Spacer,
-  Textarea,
-  Badge,
-  Tag,
-  TagLabel,
-  TagCloseButton,
-  Tooltip,
-} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Flex, Box, Button, Spacer, Textarea } from '@chakra-ui/react';
 import { WithContext as ReactTags } from 'react-tag-input';
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaEye,
-  FaEyeSlash,
-  FaMapPin,
-} from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
 import { CreateThreadComponent } from './ThreadNav';
 
@@ -233,7 +216,7 @@ const InteractiveActivityTag = (props: any) => {
                   artifactUid:
                     tagMatches[tagMatches.length - 1].files[0].artifact_uid,
                   hopReason: 'tag',
-                  tag: tag,
+                  tag,
                 },
               ];
               dispatch({
@@ -249,7 +232,7 @@ const InteractiveActivityTag = (props: any) => {
                   activity: tagMatches[indexOfE - 1],
                   artifactUid: tagMatches[indexOfE - 1].files[0].artifact_uid,
                   hopReason: 'tag',
-                  tag: tag,
+                  tag,
                 },
               ];
               dispatch({
@@ -287,7 +270,7 @@ const InteractiveActivityTag = (props: any) => {
                   activity: tagMatches[0],
                   artifactUid: tagMatches[0].files[0].artifact_uid,
                   hopReason: 'tag',
-                  tag: tag,
+                  tag,
                 },
               ];
               dispatch({
@@ -303,7 +286,7 @@ const InteractiveActivityTag = (props: any) => {
                   activity: tagMatches[indexOfE + 1],
                   artifactUid: tagMatches[indexOfE + 1].files[0].artifact_uid,
                   hopReason: 'tag',
-                  tag: tag,
+                  tag,
                 },
               ];
               dispatch({
@@ -433,8 +416,8 @@ const ArtifactDetailSidebar = (props: any) => {
       <Box
         flex="2"
         overflowY="auto"
-        boxShadow={'3px 3px 8px #A3AAAF'}
-        border={'1px solid #A3AAAF'}
+        boxShadow="3px 3px 8px #A3AAAF"
+        border="1px solid #A3AAAF"
         borderRadius={6}
         p={5}
       >
@@ -509,10 +492,10 @@ const ArtifactDetailSidebar = (props: any) => {
         <Box>
           <Button
             onClick={() => {
-              let indexTest = projectData.citations
+              const indexTest = projectData.citations
                 .map((c) => c.id)
                 .indexOf(selectedArtifactTest.artifact_uid);
-              let index =
+              const index =
                 indexTest > -1
                   ? indexTest + 1
                   : projectData.citations.length + 1;
@@ -546,7 +529,7 @@ const ArtifactDetailSidebar = (props: any) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      {(!viewParams || (viewParams && viewParams.view != 'paper')) && (
+      {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
             Activity Tags
@@ -612,7 +595,7 @@ const ArtifactDetailSidebar = (props: any) => {
             </div>
           )}
           {showTagList && (
-            <React.Fragment>
+            <>
               {selectedArtifact.activity.tags.map((t: any, i: number) => (
                 <React.Fragment
                 key={`it-${i}`}
@@ -623,7 +606,7 @@ const ArtifactDetailSidebar = (props: any) => {
                 />
                 </React.Fragment>
               ))}
-            </React.Fragment>
+            </>
           )}
         </Box>
       )}
@@ -636,7 +619,7 @@ const ArtifactDetailSidebar = (props: any) => {
         </div>
       )}
       {!isReadOnly && (
-        <React.Fragment>
+        <>
           <Box
             style={{
               backgroundColor: '#ececec',
@@ -682,11 +665,7 @@ const ArtifactDetailSidebar = (props: any) => {
                 padding: 3,
                 textAlign: 'center',
               }}
-              onClick={() => {
-                showThreadAdd
-                  ? setShowThreadAdd(false)
-                  : setShowThreadAdd(true);
-              }}
+              onClick={() => setShowThreadAdd(!showThreadAdd)}
             >
               {fragSelected
                 ? 'Add this fragment to a thread +'
@@ -741,7 +720,7 @@ const ArtifactDetailSidebar = (props: any) => {
               )}{' '}
             </div>
           </Box>
-        </React.Fragment>
+        </>
       )}
       <Box>
         {isArtifactInThread && isArtifactInThread?.length > 0 ? (
@@ -790,11 +769,10 @@ const ArtifactDetailSidebar = (props: any) => {
                           style={{ fontSize: 11, fontStyle: 'italic' }}
                         >{`"${m.anchors[0].frag_type}"`}</div>
                       )}
-                      {
-                        <div style={{ fontSize: 12, fontWeight: 700 }}>
-                          {m.rationale}
-                        </div>
-                      }
+
+                      <div style={{ fontSize: 12, fontWeight: 700 }}>
+                        {m.rationale}
+                      </div>
                     </div>
                   ))}
               </div>
@@ -805,12 +783,12 @@ const ArtifactDetailSidebar = (props: any) => {
           <Box
             flex="2"
             overflowY="auto"
-            boxShadow={'3px 3px 8px #A3AAAF'}
-            border={'1px solid #A3AAAF'}
+            boxShadow="3px 3px 8px #A3AAAF"
+            border="1px solid #A3AAAF"
             borderRadius={6}
             p={5}
           >
-            <span>{'Activity not yet associated with a research thread.'}</span>
+            <span>Activity not yet associated with a research thread.</span>
           </Box>
         )}
       </Box>

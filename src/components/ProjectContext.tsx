@@ -1,11 +1,11 @@
-const isElectron = process.env.NODE_ENV === 'development';
-
-import { getAppStateReducer } from './ProjectContextCommon';
-
 import { v4 as uuidv4 } from 'uuid';
 import React, { createContext, useContext, useReducer } from 'react';
 import { EntryType, File, FileObj, ProjectState } from './types';
+
 // import useGoogle from '../AuthenticateGoogleWeb';
+import { getAppStateReducer } from './ProjectContextCommon';
+
+const isElectron = process.env.NODE_ENV === 'development';
 
 let path: any;
 let fs: any;

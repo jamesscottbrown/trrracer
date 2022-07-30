@@ -14,18 +14,18 @@ import {
   PopoverContent,
   PopoverTrigger,
   Select,
-  Tag,
   Textarea,
 } from '@chakra-ui/react';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import * as d3 from 'd3';
-import type { EntryType, ResearchThread } from './types';
 import { BiTrash } from 'react-icons/bi';
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
 import { IconEye, IconEyeOff } from '@tabler/icons';
+
+import { useProjectState } from './ProjectContext';
+import type { EntryType } from './types';
 
 export const jitter = (val: any) => Math.random() * val;
 
@@ -111,10 +111,11 @@ const MiniTimline = (props: MiniTimelineProps) => {
 
   const lilSVG = React.useRef(null);
 
+  const ex = d3.extent(activities.map((m: any) => new Date(m.date)));
   React.useEffect(() => {
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(activities.map((m: any) => new Date(m.date))))
+      .domain([(ex[0] || new Date()) as Date, ex[1] || (new Date() as Date)])
       .range([0, 150])
       .nice();
 
@@ -184,7 +185,7 @@ const EditableThread = (threadProps: any) => {
   const [{ researchThreads }, dispatch] = useProjectState();
 
   const filteredThreads = researchThreads?.research_threads.filter((f) => {
-    let test = f.actions.map((m) => m.action);
+    const test = f.actions.map((m) => m.action);
     return test.indexOf('merge') === -1;
   });
 
@@ -205,7 +206,7 @@ const EditableThread = (threadProps: any) => {
   });
 
   const otherThreads = researchThreads?.research_threads.filter(
-    (f, i) => i !== index
+    (_, i) => i !== index
   );
   const [description, setDescription] = useState(threadData.description);
   const [mergeTo, setMergeTo] = useState(otherThreads[0].title);
@@ -248,16 +249,16 @@ const EditableThread = (threadProps: any) => {
             </Editable>
           </span>
           {!mergeWindow ? (
-            <Button size={'xs'} onClick={() => setMergeWindow(true)}>
-              {'Merge into Another'}
+            <Button size="xs" onClick={() => setMergeWindow(true)}>
+              Merge into Another
             </Button>
           ) : (
             <div>
-              <Button size={'xs'} onClick={() => setMergeWindow(false)}>
+              <Button size="xs" onClick={() => setMergeWindow(false)}>
                 Cancel
               </Button>
               <Button
-                size={'xs'}
+                size="xs"
                 onClick={() => {
                   dispatch({
                     type: 'MERGE_THREADS',
@@ -277,7 +278,7 @@ const EditableThread = (threadProps: any) => {
                   width="max-content"
                 >
                   {filteredThreads
-                    ?.filter((f, i) => i !== index)
+                    ?.filter((_, i) => i !== index)
                     .map((m, j) => (
                       <option key={`option-${j}`}>{m.title}</option>
                     ))}
@@ -289,7 +290,7 @@ const EditableThread = (threadProps: any) => {
         <div style={{ display: 'inline', float: 'right' }}>
           <span style={{ display: 'inline' }}>
             <Button
-              size={'xs'}
+              size="xs"
               style={{ display: 'inline' }}
               onClick={() => {
                 setEditMode(null);
@@ -298,8 +299,8 @@ const EditableThread = (threadProps: any) => {
               Go Back
             </Button>
             <Button
-              size={'xs'}
-              bgColor={'#ff6863'}
+              size="xs"
+              bgColor="#ff6863"
               style={{ display: 'inline', margin: 2 }}
               onClick={() => {
                 dispatch({
@@ -309,7 +310,7 @@ const EditableThread = (threadProps: any) => {
               }}
             >
               <BiTrash style={{ display: 'inline' }} />
-              {'DELETE'}
+              DELETE
             </Button>
           </span>
         </div>
@@ -624,14 +625,13 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
       return researchThreads?.research_threads.filter(
-        (f, i) => i === filterRT?.rtId
+        (_, i) => i === filterRT?.rtId
       );
-    } else {
-      return researchThreads?.research_threads.filter((f) => {
-        let test = f.actions.map((m) => m.action);
-        return test.indexOf('merge') === -1;
-      });
     }
+    return researchThreads?.research_threads.filter((f) => {
+      const test = f.actions.map((m) => m.action);
+      return test.indexOf('merge') === -1;
+    });
   }, [researchThreads?.research_threads, viewParams]);
 
   useEffect(() => {
@@ -700,7 +700,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
         )}
       </Box>
 
-      {viewType != 'detail' && (
+      {viewType !== 'detail' && (
         <>
           {!isReadOnly && (
             <Button

@@ -8,6 +8,7 @@ interface File {
   fileId?: string;
   artifactType: string;
   artifact_uid: string;
+  meta: string; // ?
 }
 
 interface FileObj {
@@ -45,6 +46,7 @@ interface EntryTypeWithIndex {
   quoteTags: string[];
   isPrivate: boolean;
   artifact_uid: string;
+  activity_uid: string;
 }
 
 interface TagType {
@@ -63,12 +65,18 @@ interface DeadlineType {
   date: string;
 }
 
+interface Citation {
+  id: string;
+  cIndex: number;
+}
 interface ProjectType {
   title: string;
   description: string;
   tags: TagType[];
   entries: EntryType[];
   eventArray: any[];
+
+  citations: Citation[];
 }
 
 type ResearchThreadEvidence = {
@@ -79,6 +87,9 @@ type ResearchThreadEvidence = {
 
 type ResearchThread = {
   evidence: ResearchThreadEvidence[];
+  color: string;
+  title: string;
+  actions: any[]; // ?
 };
 
 type ResearchThreadData = {
@@ -140,8 +151,16 @@ type TxtData = {
   'text-data': TextEntry[];
 };
 
+type ViewParams = {
+  view: string;
+  granularity: 'paper' | 'artifact' | 'thread' | 'activity';
+  cIndex: string;
+  id: string;
+};
+
 type ProjectState = {
   projectData: ProjectType;
+  isReadOnly: boolean;
   folderPath: string | null;
   filterTags: string[] | null;
   filterType: string | null;
@@ -162,7 +181,7 @@ type ProjectState = {
   selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number};
   filteredActivities: any;
   hopArray: any[];
-  viewParams: any;
+  viewParams: ViewParams;
   isReadOnly: boolean;
 };
 
@@ -207,6 +226,7 @@ export {
   ProjectViewProps,
   ResearchThread,
   ResearchThreadEvidence,
+  ResearchThreadData,
   ReactTagType,
   ReactTag,
 };

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { getDriveFiles, createGoogleFile } from '../googleUtil';
-import { useProjectState } from './ProjectContext';
 import {
   Button,
   ButtonGroup,
@@ -8,6 +6,9 @@ import {
   EditableInput,
   EditablePreview,
 } from '@chakra-ui/react';
+
+import { getDriveFiles, createGoogleFile } from '../googleUtil';
+import { useProjectState } from './ProjectContext';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';

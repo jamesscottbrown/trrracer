@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
 import Entry from './Entry';
 import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../fileUtil';
 import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
-import { EntryTypeWithIndex } from './types';
+import { EntryTypeWithIndex, ResearchThreadEvidence } from './types';
 import { useProjectState } from './ProjectContext';
 
 type ActivityWrapPropType = {
@@ -12,12 +12,11 @@ type ActivityWrapPropType = {
   editable: boolean[];
   setEditableStatus: (index: number, isEditable: boolean) => void;
   setViewType: (v: any) => void;
-  viewtype: any;
   index: number;
-  viewType: any;
+  viewType: string;
 };
 
-const ActivityWrap = (props: any) => {
+const ActivityWrap = (props: ActivityWrapPropType) => {
   const {
     activityData,
     editable,
@@ -30,8 +29,10 @@ const ActivityWrap = (props: any) => {
   const [{ filterRT, researchThreads }, dispatch] = useProjectState();
   const myRef = useRef(null);
 
-  let foundIn = researchThreads?.research_threads.filter((m) => {
-    let test = m.evidence.filter((f) => f.activityTitle === activityData.title);
+  const foundIn = researchThreads?.research_threads.filter((m) => {
+    const test = m.evidence.filter(
+      (f: ResearchThreadEvidence) => f.activityTitle === activityData.title
+    );
     return test.length > 0;
   });
 
@@ -50,19 +51,20 @@ const ActivityWrap = (props: any) => {
         <Entry
           /* eslint-disable-next-line react/no-array-index-key */
           key={`en-${activityData.title}-${activityData.activity_uid}`}
-          foundIn={foundIn}
+          foundIn={foundIn || []}
           activityID={activityData.activity_uid}
           files={activityData.files}
           entryIndex={activityData.index}
           openFile={openFile}
           updateEntryField={updateEntryField}
           makeNonEditable={() => setEditableStatus(activityData.index, false)}
-          viewType={viewType}
         />
         <Divider marginTop="1em" marginBottom="1em" />
       </div>
     );
-  } else if (filterRT) {
+  }
+
+  if (filterRT) {
     return (
       <div
         className="list-activity"
@@ -85,32 +87,32 @@ const ActivityWrap = (props: any) => {
         />
       </div>
     );
-  } else {
-    return (
-      <div
-        className="list-activity"
-        id={activityData.title}
-        ref={myRef}
-        style={{
-          border: '.5px solid #A3AAAF',
-          borderRadius: 6,
-          margin: 5,
-          boxShadow: '3px 3px 8px #A3AAAF',
-        }}
-      >
-        <ReadonlyEntry
-          /* eslint-disable-next-line react/no-array-index-key */
-          key={`ro-${activityData.title}-${activityData.index}-${index}`}
-          activityID={activityData.activity_uid}
-          openFile={openFile}
-          setViewType={setViewType}
-          makeEditable={() => setEditableStatus(activityData.index, true)}
-          viewType={viewType}
-          foundIn={foundIn}
-        />
-      </div>
-    );
   }
+
+  return (
+    <div
+      className="list-activity"
+      id={activityData.title}
+      ref={myRef}
+      style={{
+        border: '.5px solid #A3AAAF',
+        borderRadius: 6,
+        margin: 5,
+        boxShadow: '3px 3px 8px #A3AAAF',
+      }}
+    >
+      <ReadonlyEntry
+        /* eslint-disable-next-line react/no-array-index-key */
+        key={`ro-${activityData.title}-${activityData.index}-${index}`}
+        activityID={activityData.activity_uid}
+        openFile={openFile}
+        setViewType={setViewType}
+        makeEditable={() => setEditableStatus(activityData.index, true)}
+        viewType={viewType}
+        foundIn={foundIn || []}
+      />
+    </div>
+  );
 };
 
 export default ActivityWrap;

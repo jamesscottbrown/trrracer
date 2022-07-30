@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useProjectState } from './ProjectContext';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import { readFileSync } from '../fileUtil';

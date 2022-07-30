@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { FaExternalLinkAlt, FaLock, FaTrash } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { GiCancel, GiSewingString } from 'react-icons/gi';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
@@ -84,7 +84,7 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
             style={{ display: 'inline' }}
           />
           <Button
-            size={'xs'}
+            size="xs"
             style={{
               marginLeft: '7px',
               color: '#ffffff',
@@ -154,7 +154,7 @@ const ThreadedArtifact = (props: any) => {
           style={{ display: 'inline' }}
         />
         <Button
-          size={'xs'}
+          size="xs"
           style={{
             marginLeft: '7px',
             color: '#ffffff',
@@ -191,7 +191,7 @@ const ThreadedArtifact = (props: any) => {
                     {m.frag_type}
                   </span>
                 ) : (
-                  <span>{'Image anchors'}</span>
+                  <span>Image anchors</span>
                 )}
               </React.Fragment>
             ))}
@@ -223,11 +223,11 @@ const ActivityTitleLogic = (props: any) => {
         display: 'inline',
       }}
       onMouseOver={() => {
-        let circles = d3.selectAll('circle.all-activities');
+        const circles = d3.selectAll('circle.all-activities');
         circles.filter((f) => f.title === thisEntry.title).attr('fill', 'red');
       }}
       onMouseLeave={() => {
-        let circles = d3.selectAll('circle.all-activities');
+        const circles = d3.selectAll('circle.all-activities');
         circles
           .filter((f) => f.title === thisEntry.title)
           .attr('fill', d3co.hsl(color).copy({ l: 0.9 }));
@@ -249,15 +249,15 @@ const ThreadedReadonlyEntry = (props: any) => {
     return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
   }, [projectData.entries]);
 
-  let selectedThread = researchThreads.research_threads.filter(
+  const selectedThread = researchThreads.research_threads.filter(
     (f) => f.title === filterRT.title
   )[0];
-  let isEntryInThread = selectedThread.evidence.filter(
+  const isEntryInThread = selectedThread.evidence.filter(
     (f) => f.activityTitle === thisEntry.title
   );
 
-  let isEntryInAnyThreads = researchThreads.research_threads.filter((f) => {
-    let temp = f.evidence
+  const isEntryInAnyThreads = researchThreads.research_threads.filter((f) => {
+    const temp = f.evidence
       .map((m) => m.activityTitle)
       .filter((ev) => thisEntry.title === ev);
     return temp.length > 0;
@@ -266,11 +266,11 @@ const ThreadedReadonlyEntry = (props: any) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
-  let activitiesAsEvidence = isEntryInThread.filter(
+  const activitiesAsEvidence = isEntryInThread.filter(
     (f) => f.type === 'fragment' || f.type === 'artifact'
   );
 
-  let threadedFiles = files
+  const threadedFiles = files
     .filter((f) =>
       activitiesAsEvidence.map((m) => m.artifactTitle).includes(f.title)
     )
@@ -281,16 +281,16 @@ const ThreadedReadonlyEntry = (props: any) => {
       return m;
     });
 
-  let otherFiles = files.filter(
+  const otherFiles = files.filter(
     (f) =>
       activitiesAsEvidence.map((m) => m.artifactTitle).indexOf(f.title) === -1
   );
-  let threadedActivity = isEntryInThread.filter((f) => f.type === 'activity');
+  const threadedActivity = isEntryInThread.filter((f) => f.type === 'activity');
 
-  let threadedTags = thisEntry.tags.filter((f) =>
+  const threadedTags = thisEntry.tags.filter((f) =>
     selectedThread.associated_tags.includes(f)
   );
-  let nonThreadedTags = thisEntry.tags.filter(
+  const nonThreadedTags = thisEntry.tags.filter(
     (f) => selectedThread.associated_tags.indexOf(f) === -1
   );
 
@@ -301,11 +301,6 @@ const ThreadedReadonlyEntry = (props: any) => {
     if (tagFil.length > 0) return tagFil[tagFil.length - 1].color;
     return '#D4D4D4';
   };
-
-  // Cache the results of converting markdown to HTML, to avoid re-converting on every render
-  const descriptionHTML = useMemo(() => {
-    converter.makeHtml(thisEntry.description);
-  }, [thisEntry.description]);
 
   return (
     <Box>
@@ -327,7 +322,7 @@ const ThreadedReadonlyEntry = (props: any) => {
               <div style={{ display: 'inline', float: 'right' }}>
                 {makeEditable && !isReadOnly && (
                   <Button
-                    size={'sm'}
+                    size="sm"
                     leftIcon={<EditIcon />}
                     onClick={makeEditable}
                   >
@@ -337,7 +332,7 @@ const ThreadedReadonlyEntry = (props: any) => {
                 {!isReadOnly && (
                   <Tooltip label="Remove from thread">
                     <Button
-                      size={'sm'}
+                      size="sm"
                       style={{
                         marginLeft: '5px',
                         // backgroundColor: '#ff726f',
@@ -377,7 +372,7 @@ const ThreadedReadonlyEntry = (props: any) => {
                 ))}
               </div>
               <div style={{ display: 'inline' }}>
-                <Popover trigger={'hover'}>
+                <Popover trigger="hover">
                   <PopoverTrigger>
                     <Badge
                       style={{
@@ -442,7 +437,7 @@ const ThreadedReadonlyEntry = (props: any) => {
         <div>{threadedActivity[0].rationale}</div>
       )}
 
-      {thisEntry.description != '' && (
+      {thisEntry.description !== '' && (
         <div
           style={{
             fontSize: '12px',

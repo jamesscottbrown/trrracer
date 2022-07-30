@@ -11,13 +11,13 @@ import {
 import { FaSortAlphaUp, FaSortAmountDown } from 'react-icons/fa';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import * as d3 from 'd3';
+import { MdCancel } from 'react-icons/md';
+
 import SidebarButton from './SidebarButton';
 import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
 import { stateUpdateWrapperUseJSON } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
-import { MdCancel } from 'react-icons/md';
-import ActivityTitlePopoverLogic from './PopoverTitle';
 
 const LeftSidebar = (props: any) => {
   const { fromTop } = props;
@@ -34,7 +34,7 @@ const LeftSidebar = (props: any) => {
   const tags = [...projectData.tags]
     .filter((f) => filterTags?.indexOf(f.title) === -1)
     .map((t) => {
-      let matches = [...projectData.entries].filter((f) => {
+      const matches = [...projectData.entries].filter((f) => {
         return f.tags.indexOf(t.title) > -1;
       });
       t.matches = matches.map((m) => m.activity_uid);
@@ -54,7 +54,7 @@ const LeftSidebar = (props: any) => {
   const aTypes = d3
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
-      let colorTest = artifactTypes.artifact_types.filter(
+      const colorTest = artifactTypes.artifact_types.filter(
         (f) => f.type === ty[0]
       );
       return {
@@ -93,8 +93,8 @@ const LeftSidebar = (props: any) => {
       flexDirection="column"
       h={`calc(100vh - ${fromTop + 5}px)`}
       overflow="auto"
-      borderRight={'1px solid #A3AAAF'}
-      boxShadow={'0 3px 8px #A3AAAF'}
+      borderRight="1px solid #A3AAAF"
+      boxShadow="0 3px 8px #A3AAAF"
       borderRadius={6}
       p={3}
     >
@@ -152,7 +152,7 @@ const LeftSidebar = (props: any) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            let temp = tags.sort((a, b) => a.title.localeCompare(b.title));
+            const temp = tags.sort((a, b) => a.title.localeCompare(b.title));
             setSortedTags(temp);
           }}
         />
@@ -163,7 +163,9 @@ const LeftSidebar = (props: any) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            let temp = tags.sort((a, b) => b.matches.length - a.matches.length);
+            const temp = tags.sort(
+              (a, b) => b.matches.length - a.matches.length
+            );
             setSortedTags(temp);
           }}
         />

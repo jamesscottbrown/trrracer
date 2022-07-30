@@ -4,7 +4,6 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  Heading,
   ListItem,
   UnorderedList,
   Flex,
@@ -13,7 +12,7 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiSewingString } from 'react-icons/gi';
 import {
   FaExternalLinkAlt,
   FaLock,
@@ -24,7 +23,7 @@ import {
 import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
 import FileUpload from './FileUpload';
-import { EntryType, File, FileObj, TagType } from './types';
+import { File, FileObj, ResearchThread } from './types';
 import URLList from './URLList';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
@@ -89,11 +88,11 @@ const FileContext = (props: FileContextProps) => {
 interface EntryPropTypes {
   activityID: string;
   entryIndex: number;
-  openFile: (a: any) => void;
+  openFile: (fileName: string, filePath: string) => void;
   updateEntryField: (fieldName: string, newData: any) => void;
   makeNonEditable: () => void;
   files: File[];
-  foundIn: any;
+  foundIn: ResearchThread[];
 }
 
 interface ReactTag {
@@ -112,7 +111,7 @@ const Entry = (props: EntryPropTypes) => {
     foundIn,
   } = props;
 
-  const [{ projectData, filterRT }, dispatch] = useProjectState();
+  const [{ projectData, filterRT, folderPath }, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
@@ -207,7 +206,7 @@ const Entry = (props: EntryPropTypes) => {
           <EditableInput />
         </Editable>
         <Button
-          size={'xs'}
+          size="xs"
           style={{ display: 'inline' }}
           onClick={makeNonEditable}
           type="button"
@@ -216,7 +215,7 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
+          size="xs"
           style={{ marginLeft: 5 }}
           colorScheme="red"
           onClick={() => updateEntryField('isPrivate', !thisEntry.isPrivate)}
@@ -229,7 +228,7 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
+          size="xs"
           style={{ display: 'inline', marginLeft: 5 }}
           colorScheme="red"
           leftIcon={<DeleteIcon />}
@@ -262,34 +261,28 @@ const Entry = (props: EntryPropTypes) => {
           <EditDate date={thisEntry.date} updateEntryField={updateEntryField} />
         </div>
       </div>
-        {
-          foundIn.length > 0 && (
-            foundIn.map((fi, fIndex)=> (
-              <React.Fragment
-              key={`tool-${fIndex}`}
-              >
-            <Tooltip 
-              style={{padding:5}}
-              label={`Threaded in ${fi.title}`}>
+      {foundIn.length > 0 &&
+        foundIn.map((fi, fIndex) => (
+          <React.Fragment key={`tool-${fIndex}`}>
+            <Tooltip style={{ padding: 5 }} label={`Threaded in ${fi.title}`}>
               <div
-              style={{
-                fontSize:20, 
-                backgroundColor: fi.color, 
-                borderRadius:50, 
-                width:26, 
-                display:'inline-block', 
-                padding:3,
-                margin:3,
-                opacity: (filterRT && fi.title === filterRT.title) ? 1 : .4
-              }} 
-              ><GiSewingString size={'20px'}/>
+                style={{
+                  fontSize: 20,
+                  backgroundColor: fi.color,
+                  borderRadius: 50,
+                  width: 26,
+                  display: 'inline-block',
+                  padding: 3,
+                  margin: 3,
+                  opacity: filterRT && fi.title === filterRT.title ? 1 : 0.4,
+                }}
+              >
+                <GiSewingString size="20px" />
               </div>
-              </Tooltip>
-              </React.Fragment>
-            ))
-           
-          )
-        }
+            </Tooltip>
+          </React.Fragment>
+        ))}
+
       <br />
       <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Tags: '}
@@ -308,7 +301,6 @@ const Entry = (props: EntryPropTypes) => {
           dispatch({
             type: 'ADD_TAG_TO_ENTRY',
             newTag: tag,
-            entryIndex,
             activityID: thisEntry.activity_uid,
           });
         }}
@@ -363,7 +355,7 @@ const Entry = (props: EntryPropTypes) => {
               {file.title}{' '}
               <FaExternalLinkAlt
                 onClick={() => {
-                  openFile(file.title);
+                  openFile(file.title, folderPath as string);
                 }}
                 title="Open file externally"
                 size="12px"
