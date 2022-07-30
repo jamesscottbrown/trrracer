@@ -176,32 +176,36 @@ const LeftSidebar = (props: any) => {
         padding="3px"
       >
         {filterTags.length > 0 &&
-          filterTags.map((ft) => (
-            <div
-              style={{
-                background: `#dadada90`,
-                padding: 5,
-                borderRadius: 5,
-              }}
-            >
-              <span>{`Tag filter: ${ft}`}</span>
-              <span
+          <div style={{ border: '0.5px solid rgb(163, 170, 175)', borderRadius: '6px' }}>
+            <span>Filtering to only show events tagged</span>
+            {filterTags.map((ft, i) => (
+              <div
                 style={{
-                  float: 'right',
+                  background: `#dadada90`,
                   padding: 5,
-                  cursor: 'pointer',
+                  borderRadius: 5
                 }}
-                onClick={() =>
-                  dispatch({
-                    type: 'UPDATE_FILTER_TAGS',
-                    filterTags: filterTags.filter((f) => f != ft),
-                  })
-                }
               >
+                <span>{(i > 0) && <b>and </b>}{ft}</span>
+                <span
+                  style={{
+                    float: 'right',
+                    padding: 5,
+                    cursor: 'pointer'
+                  }}
+                  onClick={() =>
+                    dispatch({
+                      type: 'UPDATE_FILTER_TAGS',
+                      filterTags: filterTags.filter((f) => f != ft)
+                    })
+                  }
+                >
                 <MdCancel />
               </span>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
+        }
         {sortedTags.map((st: any, s: any) => (
           <React.Fragment key={`tag-${s}-frag`}>
             <SidebarButton
