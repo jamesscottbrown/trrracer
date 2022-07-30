@@ -74,7 +74,6 @@ const LeftSidebar = (props: any) => {
     fontSize: '19px', 
     fontWeight: 600, 
     backgroundColor:'#FAFAFA',
-    zIndex:1000,
     position:'sticky',
     height:'40px',
     top:'0px', 
