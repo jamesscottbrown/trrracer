@@ -808,7 +808,9 @@ export const getAppStateReducer = (
       }
 
       case 'ADD_TAG_TO_ENTRY': {
-        const { newTag, entryIndex, activityID } = action;
+        const { newTag, activityID } = action;
+
+        console.log(newTag, activityID)
 
         const existingTags = state.projectData.tags.map((k) => k.title);
         const newColor = pickTagColor(state.projectData.tags);

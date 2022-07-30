@@ -1,8 +1,6 @@
 import * as d3 from 'd3';
 import * as d3co from 'd3-color';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
-
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
@@ -11,6 +9,7 @@ import { getIndexOfMonth } from '../timeHelperFunctions';
 import { ToolIcon } from './Project';
 import { useProjectState } from './ProjectContext';
 import groupBubbles from './GroupBubbleVis';
+import { Box, Button, FormControl, FormLabel, Switch } from '@chakra-ui/react';
 
 const smalltalk = require('smalltalk');
 
@@ -145,6 +144,8 @@ const renderAxis = (wrap: any, yScale: any, translateY: any) => {
   wrap.selectAll('*').remove();
   wrap.attr('transform', `translate(110, ${translateY})`);
 
+  console.log('render axis', yScale.range());
+
   const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
   const yAxisGroup = wrap
@@ -172,6 +173,7 @@ const BubbleVis = (props: BubbleProps) => {
     setGroupBy,
     flexAmount,
     setDefineEvent,
+    windowDimension,
     defineEvent,
     bubbleDivWidth,
     setBubbleDivWidth,
@@ -205,7 +207,6 @@ const BubbleVis = (props: BubbleProps) => {
   ]);
 
   const { eventArray } = projectData;
-  const [newHeight, setNewHeight] = useState(1000);
   const [svgWidth, setSvgWidth] = useState(500);
   const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
@@ -219,19 +220,32 @@ const BubbleVis = (props: BubbleProps) => {
 
   const width = 300;
   const translateXforWraps = 90;
-  const height = newHeight; // +newHeight.split('px')[0];
-  const svgRef = React.useRef(null);
+  const [height, setHeight] = useState(windowDimension.height - 200);
+  const svgRef = useRef(null);
 
   d3.select('#tooltip').style('opacity', 0);
 
-  const packedCircData = useMemo(() => calcCircles([...projectData.entries]), [
+  useEffect(()=> {
+
+    setHeight(windowDimension.height - 200)
+
+    if (groupBy) {
+      setBubbleDivWidth(windowDimension.width);
+      setSvgWidth(researchThreads?.research_threads.length * 200);
+    }
+    
+  }, [windowDimension])
+
+  let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [
     projectData.entries.length,
     projectData.entries.flatMap((f) => f.files).length,
   ]);
-  const forced = useMemo(() => new ForceMagic(packedCircData, width, height), [
+
+  const forced = useMemo(() => {
+    console.log('dimensuion',windowDimension);
+    return new ForceMagic(packedCircData, width, (windowDimension.height - 200))}, [
     packedCircData,
-    width,
-    height,
+    windowDimension
   ]);
 
   const highlightedNodes = useMemo(() => {
@@ -243,6 +257,12 @@ const BubbleVis = (props: BubbleProps) => {
     const ids = usedEntries.map((m) => m.activity_uid);
     return forced.nodes.filter((f) => ids.indexOf(f.activity_uid) === -1);
   }, [usedEntries.length]);
+
+  const { yScale, margin } = forced;
+
+  useEffect(()=> {
+    console.log('YSCALE',yScale.range())
+  }, [yScale])
 
   useEffect(() => {
     if (filterRT) {
@@ -279,14 +299,13 @@ const BubbleVis = (props: BubbleProps) => {
       .append('g')
       .attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
-    const { yScale, margin } = forced;
+  
     if (selectedActivityURL) {
       setTranslateY(margin / 2);
     } else {
       setTranslateY(40);
     }
 
-    const marginTime = height * 0.25;
     const yearMonth = dataStructureForTimeline(projectData.entries);
 
     const startIndex = getIndexOfMonth(yearMonth[0].months, 'first');
@@ -294,6 +313,7 @@ const BubbleVis = (props: BubbleProps) => {
       yearMonth[yearMonth.length - 1].months,
       'last'
     );
+
     yearMonth[0].months = yearMonth[0].months.filter(
       (f: any, i: number) => i > startIndex - 1
     );
@@ -314,180 +334,6 @@ const BubbleVis = (props: BubbleProps) => {
     const wrapAxisGroup = checkGroup.empty()
       ? svg.append('g').attr('class', 'timeline-wrap')
       : checkGroup;
-    renderAxis(wrapAxisGroup, yScale, translateY);
-
-    if (!defineEvent) {
-      const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
-
-      const brushed = function (event: any) {
-        if (!event.selection && !event.sourceEvent) return;
-        const s0 = event.selection
-          ? event.selection
-          : [1, 2].fill(event.sourceEvent.offsetX);
-
-        let s1 = s0;
-
-        if (event.sourceEvent && event.type === 'end') {
-          s1 = event.selection;
-          d3.select(this).transition().call(event.target.move, s1);
-
-          dispatch({
-            type: 'UPDATE_FILTER_DATES',
-            filterDates: [
-              yScale.invert(event.selection[0]),
-              yScale.invert(event.selection[1]),
-            ],
-          });
-        }
-
-        // move handlers
-        d3.selectAll('g.handles').attr('transform', (d: any) => {
-          const y = d === 'handle--o' ? s1[0] : s1[1];
-          return `translate(0, ${y})`;
-        });
-
-        d3.selectAll('g.handles').selectAll('rect.handle-rect');
-
-        // update labels
-        d3.selectAll('g.handles')
-          .selectAll('text')
-          .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
-          .text((d: any) => {
-            const year =
-              d === 'handle--o'
-                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })
-                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
-
-            return year;
-          });
-      };
-
-      const bY = d3
-        .brushY()
-        .handleSize(8)
-        .extent([
-          [0, 0],
-          [20, height - marginTime],
-        ])
-        .on('start brush end', brushed);
-
-      const gBrush = wrapAxisGroup
-        .append('g')
-        .call(bY)
-        .call(bY.move, [
-          yScale(filteredActivitiesExtent[0]),
-          yScale(filteredActivitiesExtent[1]),
-        ]);
-
-      gBrush.select('.selection').attr('opacity', 0.2);
-
-      // Custom handlers
-      // Handle group
-      const gHandles = gBrush
-        .selectAll('g.handles')
-        .data(['handle--o', 'handle--e'])
-        .join('g')
-        .attr('class', (d) => `handles ${d}`)
-        .attr('fill', 'black')
-        .attr('opacity', 1)
-        .attr('transform', (d) => {
-          const y =
-            d === 'handle--o'
-              ? yScale(filteredActivitiesExtent[0])
-              : yScale(filteredActivitiesExtent[1]);
-          return `translate(0, ${y})`;
-        });
-
-      gHandles
-        .selectAll('rect.handle-rect')
-        .data((d) => [d])
-        .join('rect')
-        .classed('handle-rect', true)
-        .attr('fill', '#fff')
-        .attr('width', 70)
-        .attr('height', 13)
-        .attr('y', (d) => (d === 'handle--o' ? -13 : 0))
-        .attr('x', -50);
-
-      // Label
-      gHandles
-        .selectAll('text')
-        .data((d) => [d])
-        .join('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
-        .text((d) => {
-          if (d === 'handle--o') {
-            return filteredActivitiesExtent[0].toLocaleDateString('en-us', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            });
-          }
-          return filteredActivitiesExtent[1].toLocaleDateString('en-us', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
-        })
-        .style('font-size', '11px')
-        .style('pointer-events', 'none');
-
-      gHandles
-        .selectAll('.triangle')
-        .data((d) => [d])
-        .join('path')
-        .attr('class', (d) => `triangle ${d}`)
-        .attr('d', triangle)
-        .attr('transform', (d) => {
-          const y = d === 'handle--o' ? -17 : 17;
-          const rot = d === 'handle--o' ? 0 : 180;
-          return `translate(20, ${y}) rotate(${rot})`;
-        });
-
-      gHandles
-        .selectAll('.line')
-        .data((d: any) => [d])
-        .join('line')
-        .attr('class', (d: any) => `line ${d}`)
-        .attr('x1', 0)
-        .attr('y1', 0)
-        .attr('x2', 20)
-        .attr('y2', 0)
-        .attr('stroke', 'black');
-
-      if (!selectedActivityURL) {
-        const resetTest = svg.select('text.reset');
-
-        const reset = resetTest.empty()
-          ? wrapAxisGroup.append('text').classed('reset', true)
-          : resetTest;
-
-        reset
-          .text('Reset Time')
-          .attr('transform', 'translate(-25, -30)')
-          .style('font-size', '12px')
-          .style('cursor', 'pointer')
-          .on('click', () => {
-            dispatch({
-              type: 'UPDATE_FILTER_DATES',
-              filterDates: [null, null],
-            });
-          });
-      }
-    }
 
     if (defineEvent) {
       let text;
@@ -496,7 +342,7 @@ const BubbleVis = (props: BubbleProps) => {
       bGroup
         .append('rect')
         .attr('width', 40)
-        .attr('height', height - marginTime)
+        .attr('height', (windowDimension.height - 200) - margin)
         .attr('fill-opacity', 0);
 
       const brushedEvent = function (event: any) {
@@ -583,7 +429,7 @@ const BubbleVis = (props: BubbleProps) => {
         .handleSize(8)
         .extent([
           [0, 0],
-          [40, height - marginTime],
+          [40, (windowDimension.height - 200) - margin],
         ])
         .on('start brush end', brushedEvent);
 
@@ -1037,7 +883,184 @@ const BubbleVis = (props: BubbleProps) => {
     setSvgWidth(
       wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width
     );
+
     setBubbleDivWidth(wrap.node().getBBox().width - 250);
+
+    renderAxis(wrapAxisGroup, yScale, translateY);
+
+    if (!defineEvent) {
+      const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
+
+      const brushed = function (event: any) {
+        if (!event.selection && !event.sourceEvent) return;
+        const s0 = event.selection
+          ? event.selection
+          : [1, 2].fill(event.sourceEvent.offsetX);
+
+        let s1 = s0;
+
+        if (event.sourceEvent && event.type === 'end') {
+          s1 = event.selection;
+          d3.select(this).transition().call(event.target.move, s1);
+
+          dispatch({
+            type: 'UPDATE_FILTER_DATES',
+            filterDates: [
+              yScale.invert(event.selection[0]),
+              yScale.invert(event.selection[1]),
+            ],
+          });
+        }
+
+        // move handlers
+        d3.selectAll('g.handles').attr('transform', (d: any) => {
+          const y = d === 'handle--o' ? s1[0] : s1[1];
+          return `translate(0, ${y})`;
+        });
+
+        d3.selectAll('g.handles').selectAll('rect.handle-rect');
+
+        // update labels
+        d3.selectAll('g.handles')
+          .selectAll('text')
+          .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
+          .text((d: any) => {
+            const year =
+              d === 'handle--o'
+                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })
+                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  });
+
+            return year;
+          });
+      };
+
+      const bY = d3
+        .brushY()
+        .handleSize(8)
+        .extent([
+          [0, 0],
+          [20, (windowDimension.height - 200) - margin],
+        ])
+        .on('start brush end', brushed);
+
+      const gBrush = wrapAxisGroup
+        .append('g')
+        .call(bY)
+        .call(bY.move, [
+          yScale(filteredActivitiesExtent[0]),
+          yScale(filteredActivitiesExtent[1]),
+        ]);
+
+      gBrush.select('.selection').attr('opacity', 0.2);
+
+      // Custom handlers
+      // Handle group
+      const gHandles = gBrush
+        .selectAll('g.handles')
+        .data(['handle--o', 'handle--e'])
+        .join('g')
+        .attr('class', (d) => `handles ${d}`)
+        .attr('fill', 'black')
+        .attr('opacity', 1)
+        .attr('transform', (d) => {
+          const y =
+            d === 'handle--o'
+              ? yScale(filteredActivitiesExtent[0])
+              : yScale(filteredActivitiesExtent[1]);
+          return `translate(0, ${y})`;
+        });
+
+      gHandles
+        .selectAll('rect.handle-rect')
+        .data((d) => [d])
+        .join('rect')
+        .classed('handle-rect', true)
+        .attr('fill', '#fff')
+        .attr('width', 70)
+        .attr('height', 13)
+        .attr('y', (d) => (d === 'handle--o' ? -13 : 0))
+        .attr('x', -50);
+
+      // Label
+      gHandles
+        .selectAll('text')
+        .data((d) => [d])
+        .join('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
+        .text((d) => {
+          if (d === 'handle--o') {
+            return filteredActivitiesExtent[0].toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+          }
+          return filteredActivitiesExtent[1].toLocaleDateString('en-us', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+        })
+        .style('font-size', '11px')
+        .style('pointer-events', 'none');
+
+      gHandles
+        .selectAll('.triangle')
+        .data((d) => [d])
+        .join('path')
+        .attr('class', (d) => `triangle ${d}`)
+        .attr('d', triangle)
+        .attr('transform', (d) => {
+          const y = d === 'handle--o' ? -17 : 17;
+          const rot = d === 'handle--o' ? 0 : 180;
+          return `translate(20, ${y}) rotate(${rot})`;
+        });
+
+      gHandles
+        .selectAll('.line')
+        .data((d: any) => [d])
+        .join('line')
+        .attr('class', (d: any) => `line ${d}`)
+        .attr('x1', 0)
+        .attr('y1', 0)
+        .attr('x2', 20)
+        .attr('y2', 0)
+        .attr('stroke', 'black');
+
+      if (!selectedActivityURL) {
+        const resetTest = svg.select('text.reset');
+
+        const reset = resetTest.empty()
+          ? wrapAxisGroup.append('text').classed('reset', true)
+          : resetTest;
+
+        reset
+          .text('Reset Time')
+          .attr('transform', 'translate(-25, -30)')
+          .style('font-size', '12px')
+          .style('cursor', 'pointer')
+          .on('click', () => {
+            dispatch({
+              type: 'UPDATE_FILTER_DATES',
+              filterDates: [null, null],
+            });
+          });
+      }
+    }
+
   }, [
     selectedActivityURL,
     usedEntries,
@@ -1046,17 +1069,12 @@ const BubbleVis = (props: BubbleProps) => {
     filterType,
     defineEvent,
     viewParams,
+    windowDimension
   ]);
 
-  useEffect(() => {
-    if (svgRef.current) {
-      setNewHeight(window.innerHeight - 150);
-    }
-    if (groupBy) {
-      setBubbleDivWidth(window.innerWidth);
-      setSvgWidth(researchThreads?.research_threads.length * 200);
-    }
-  }, [window.innerHeight, window.innerWidth, groupBy]);
+  // useEffect(()=> {
+  //   renderAxis(wrapAxisGroup, yScale, translateY);
+  // }, [windowDimension, yScale])
 
   return (
     <div

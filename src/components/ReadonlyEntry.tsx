@@ -22,8 +22,9 @@ import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
 import { drive_v3 } from 'googleapis';
-import { readFileSync } from '../fileUtil';
+import { joinPath, readFileSync } from '../fileUtil';
 import { BiLinkExternal } from 'react-icons/bi';
+import { IconChartDots3 } from '@tabler/icons';
 
 interface EntryPropTypes {
   activityID: string;
@@ -61,22 +62,35 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             style={{ fontWeight: 800, fontSize: 16 }}
           >{`${file.artifactType}: `}</span>
           {file.title}{' '}
-          {!isReadOnly && (
+       
             <FaExternalLinkAlt
-              onClick={() => openFile(file.title, folderPath as string)}
+              onClick={() => {
+                if(!isReadOnly){
+                  openFile(file.title, folderPath)
+                }else{
+                  if(file.fileType === 'gdoc'){
+                    window.open(`https://docs.google.com/document/d/${file.fileId}/edit?usp=sharing`, "_blank")
+                  }else if(file.fileType === 'pdf'){
+                    
+                    let perf = joinPath(folderPath, file.title);
+                    
+                      readFileSync(perf)
+                        .then((res) => res.text())
+                        .then((pap) => {
+                          console.log('PAP', pap);
+                          window.open(`data:application/pdf;base64,${pap}`, "_blank")
+                        });
+                        
+                  }else{
+                    window.open(`${folderPath}${file.title}`, "_blank")
+                  }
+                }
+                }}
               title="Open file externally"
               size="13px"
-              style={{ display: 'inline' }}
+              style={{ display: 'inline', cursor:'pointer'}}
             />
-          )}
-          {viewParams && viewParams.view === 'paper' && (
-            <IconButton 
-            icon={<BiLinkExternal />}
-            aria-label="Open file"
-            onClick={() => {
-              console.log('test');
-            }}/>
-          )}
+       
           <Button
             size="xs"
             style={{
@@ -238,15 +252,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                 <div
                   style={{
                     fontSize: 20,
-                    backgroundColor: fo.color,
+                    backgroundColor: `${fo.color}60`,
                     borderRadius: 50,
                     width: 26,
                     display: 'inline-block',
                     padding: 3,
                     margin: 3,
                   }}
-                >
-                  <GiSewingString size="20px" />
+                >  
+                <IconChartDots3 size={'20px'} />
                 </div>
               </Tooltip>
             </React.Fragment>
