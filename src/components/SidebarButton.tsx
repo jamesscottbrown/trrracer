@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 
 import { FaFilter } from 'react-icons/fa';
+import { AiFillFilter, AiOutlineFilter } from 'react-icons/ai';
+import { GrAddCircle } from 'react-icons/gr';
 
 const SidebarButton = (sidebarProps: any) => {
   const { index, data, filterTags, dispatch } = sidebarProps;
@@ -25,7 +27,10 @@ const SidebarButton = (sidebarProps: any) => {
             console.log('tags filter check', filterTags);
             // nee to make a tag filter function
             if (filterTags.includes(data.title)) {
-              alert('tag filter already exists');
+              dispatch({
+                type: 'UPDATE_FILTER_TAGS',
+                filterTags: filterTags.filter((t: string) => t !== data.title),
+              });
             } else {
               dispatch({
                 type: 'UPDATE_FILTER_TAGS',
@@ -34,7 +39,7 @@ const SidebarButton = (sidebarProps: any) => {
             }
           }}
         >
-          <FaFilter />
+          {filterTags.includes(data.title) ? <AiFillFilter /> : <AiOutlineFilter />}
         </Button>
         {/* <Button title='Add to thread.' size={"xs"}>{<GrAddCircle />}</Button> */}
       </span>
