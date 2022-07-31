@@ -15,6 +15,7 @@ import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 
+
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 // import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
@@ -65,7 +66,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       projectData,
       folderPath,
       selectedArtifact,
-      isReadOnly
+      isReadOnly,
+      query
     },
     dispatch,
   ] = useProjectState();
@@ -283,10 +285,26 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {
+      
+
+        console.log('filllll', query)
+       
+
         let textArray =
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
+        if (query){
+          let textA = text.split(query.term);
+          let keeper = [ { style: 'normal', textData: textA[0] } ];
+          for(let j = 1; j < textA.length - 1; j++){
+            keeper.push({ style: 'highlight', textData: query.term })
+            keeper.push({ style: 'normal', textData: textA[j] })
+          }
+          console.log(textA)
 
-        if (artifact.bookmarks) {
+          textArray = keeper;
+          
+
+        }else if (artifact.bookmarks) {
           const start = textArray[0].textData.split(
             artifact.bookmarks[0].fragment
           );
