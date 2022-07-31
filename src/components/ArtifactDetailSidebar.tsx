@@ -594,7 +594,7 @@ const ArtifactDetailSidebar = (props: any) => {
               />
             </div>
           )}
-          {showTagList && (
+          {(showTagList && !showTagAdd) && (
             <>
               {selectedArtifact.activity.tags.map((t: any, i: number) => (
                 <React.Fragment
