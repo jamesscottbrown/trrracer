@@ -345,7 +345,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         }
         setText(textArray);
       });
-    }, [folderPath, title]);
+    }, [folderPath, title, searchTermArtifact]);
 
     return (
       <div
