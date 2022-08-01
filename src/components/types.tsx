@@ -83,14 +83,18 @@ interface ProjectType {
 type ResearchThreadEvidence = {
   type: string;
   activityTitle?: string;
+  activity_index: number;
+  ResearchThreadEvidence: string;
   artifactIndex?: string; // or number?
+  dob: string;
+  rationale: string;
 };
 
 type ResearchThread = {
   evidence: ResearchThreadEvidence[];
   color: string;
   title: string;
-  actions: any[]; // ?
+  actions: { action: string; when: string }[];
   rt_id: string;
 };
 
@@ -173,12 +177,27 @@ type ArtifactTypesType2 = {
   color: string;
 };
 
-
 type FileTypesType = {
   title: string;
   matches: number;
 };
 
+type QueryType = {
+  term: string;
+  matches: {
+    entry: any;
+    textMatch: any[];
+    googMatch: any[];
+    titleMatch: boolean;
+  }[];
+};
+
+type HopEntryType = {
+  activity: any;
+  artifactUid: string;
+  hopReason: string;
+  tag: any;
+};
 
 type ProjectState = {
   projectData: ProjectType;
@@ -188,11 +207,21 @@ type ProjectState = {
   filterType: string | null;
   filterTypes: string[] | null;
   // NEED TO MAKE THESE MORE SPECIFIC
-  filterDates: any;
-  filterQuery: any;
-  filterRT: any;
-  threadTypeFilterArray: any;
-  query: any;
+  filterDates: [null | Date, null | Date];
+  filterQuery: string[]; // list of titles of matching activities?
+  filterRT: null | {
+    title: string;
+    key: string[];
+    rtIndex: number;
+    rtId: string;
+    associatedKey: string[];
+  };
+  threadTypeFilterArray: {
+    type: 'string';
+    show: boolean;
+    matches: ResearchThreadEvidence[];
+  }[];
+  query: null | QueryType;
   artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
   txtData?: TxtData[];
@@ -201,8 +230,8 @@ type ProjectState = {
   highlightedTag?: string;
   highlightedType?: string;
   selectedArtifact: { activity: EntryTypeWithIndex; artifactIndex: number };
-  filteredActivities: any;
-  hopArray: any[];
+  filteredActivities: EntryType[];
+  hopArray: HopEntryType[];
   viewParams: ViewParams;
 };
 
@@ -210,7 +239,7 @@ interface ProjectViewProps {
   projectData: ProjectType;
   filteredActivites: EntryType[];
   folderPath: string;
-  setViewType: (v: any) => void;
+  setViewType: (v: string) => void;
   setSelectedArtifact: (e: any) => void;
 }
 
