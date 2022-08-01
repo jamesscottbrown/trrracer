@@ -24,8 +24,6 @@ import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
 
-const queryString = require('query-string');
-
 // CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 // const params = new URLSearchParams(location.search);
