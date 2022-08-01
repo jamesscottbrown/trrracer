@@ -27,21 +27,6 @@ export function useProjectState() {
   return useContext<DispatchType>(ProjectContext);
 }
 
-export function addMetaDescrip(projectData, state) {
-  const newProjEntries = projectData.entries.map((e: EntryType) => {
-    e.files = e.files.map((f) => {
-      if (!f.context) {
-        f.context = 'null';
-      }
-      return f;
-    });
-    return e;
-  });
-
-  const newProj = { ...projectData, entries: newProjEntries };
-
-  return null; // saveJSON(newProj);
-}
 
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
@@ -122,55 +107,6 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
     return null;
   }
 };
-
-export async function getGoogleIds(projectData, state) {
-  if (isElectron) {
-    const oAuth2Client = new google.auth.OAuth2(
-      googleCred.installed.client_id,
-      googleCred.installed.client_secret,
-      googleCred.installed.redirect_uris[0]
-    );
-    const token = fs.readFileSync('token.json', { encoding: 'utf-8' });
-    oAuth2Client.setCredentials(JSON.parse(token));
-
-    const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-
-    drive.files
-      .list({
-        q: `"1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg" in parents and trashed = false`,
-        fields: 'nextPageToken, files(id, name)',
-        supportsAllDrives: true,
-        includeItemsFromAllDrives: true,
-      })
-      .then((fi) => {
-        const newProjEntries = projectData.entries.map((e: EntryType) => {
-          e.files = e.files.map((f) => {
-            const nameCheck = f.title.split('.');
-
-            if (nameCheck[nameCheck.length - 1] === 'gdoc') {
-              const id = fi.data.files.filter((m) => {
-                return `${m.name}.gdoc` === f.title;
-              });
-
-              if (id.length != 0) {
-                f.fileType = 'gdoc';
-                f.fileId = id[0].id;
-              }
-            }
-
-            return f;
-          });
-
-          return e;
-        });
-
-        const newProj = { ...projectData, entries: newProjEntries };
-        return saveJSON(newProj, state);
-      });
-  } else {
-    return null;
-  }
-}
 
 async function copyGoogle(file: any, fileList: any) {
   if (isElectron) {
