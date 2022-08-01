@@ -90,6 +90,7 @@ type ResearchThread = {
   color: string;
   title: string;
   actions: any[]; // ?
+  rt_id: string;
 };
 
 type ResearchThreadData = {
