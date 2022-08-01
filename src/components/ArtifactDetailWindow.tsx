@@ -48,12 +48,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const selectedArtifactOb = useMemo(() => {
-    return selectedArtifact.activity.files.length > 0
-      ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
-      : null;
-  }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
-
   const [fragSelected, setFragSelected] = useState(null);
 
   useEffect(() => {
@@ -272,6 +266,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             </Flex>
           </Box>
         ) : (
+
           <Flex
             style={{
               justifyContent: 'center',
@@ -282,35 +277,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               overflowY: 'scroll',
             }}
           >
-            <div
-              onMouseUp={() => {
-                if (setFragSelected) {
-                  const selObj = window.getSelection();
-                  setFragSelected(selObj?.toString());
-                } else {
-                  console.log('mouseup');
-                }
-              }}
-              style={{
-                height: '100%',
-                width: '700px',
-                padding: 8,
-                overflow: 'auto',
-              }}
-            >
-              <ReactMde
-                value={selectedArtifact.activity.description}
-                // onChange={setValue}
-                selectedTab="preview"
-                onTabChange={() => null}
-                generateMarkdownPreview={(markdown) =>
-                  Promise.resolve(converter.makeHtml(markdown))
-                }
-                readOnly
-                style={{ height: '100%', overflowY: 'scroll' }}
-              />
-            </div>
-          </Flex>
+            <div>No artifact selected.</div>
+           </Flex>
         )}
       </Flex>
     </div>
