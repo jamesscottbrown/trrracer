@@ -123,9 +123,16 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
   );
 };
 
-const ThreadedArtifact = (props: any) => {
+type ThreadedArtifactProps = {
+  setViewType: (viewType: string) => void;
+  openFile: (a: string, fp: string) => void;
+  fileData: File;
+  thisEntry: EntryType;
+  folderPath: string;
+  i: number;
+};
+const ThreadedArtifact = (props: ThreadedArtifactProps) => {
   const {
-    isEntryInThread,
     setViewType,
     openFile,
     fileData,
@@ -214,7 +221,11 @@ const ThreadedArtifact = (props: any) => {
   );
 };
 
-const ActivityTitleLogic = (props: any) => {
+type ActivityTitleLogicProps = {
+  thisEntry: EntryType;
+  color: string;
+};
+const ActivityTitleLogic = (props: ActivityTitleLogicProps) => {
   const { thisEntry, color } = props;
   return (
     <div

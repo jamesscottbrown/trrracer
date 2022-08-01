@@ -57,12 +57,10 @@ const EditDate = (props: EditDateTypes) => {
 type FileContextProps = {
   file: File;
   entryIndex: number;
-  fileIndex: number;
-  dispatch: any;
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex } = props;
+  const { file, entryIndex } = props;
   const contextFill = file.meta ? file.meta : file.context;
   const [{projectData}, dispatch] = useProjectState();
 
@@ -72,10 +70,10 @@ const FileContext = (props: FileContextProps) => {
       : contextFill;
 
   const updateMeta = () => {
-    dispatch({ type: 'FILE_META', 
-    activityID: projectData.entries[entryIndex].activity_uid, 
-    artifactTitle: projectData.entries[entryIndex].title, 
-    artifactID: Object.keys(file).includes('artifact_uid') ? file.artifact_uid : null, 
+    dispatch({ type: 'FILE_META',
+    activityID: projectData.entries[entryIndex].activity_uid,
+    artifactTitle: projectData.entries[entryIndex].title,
+    artifactID: Object.keys(file).includes('artifact_uid') ? file.artifact_uid : null,
     context: context });
   };
 

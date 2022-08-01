@@ -54,7 +54,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       : null;
   }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
-  const [fragSelected, setFragSelected] = useState(null);
+  const [fragSelected, setFragSelected] = useState<boolean>(false);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {

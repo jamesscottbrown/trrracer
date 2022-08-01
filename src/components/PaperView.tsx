@@ -250,7 +250,14 @@ const DetailComponent = () => {
   );
 };
 
-const CitationIcon = (props: any) => {
+type CitationIconProps = {
+  link: any;
+  setPosition: (value: (((prevState: number[]) => number[]) | number[])) => void;
+  setHTML: React.Dispatch<React.SetStateAction<string>>;
+  index: number;
+  rectWidth: number;
+};
+const CitationIcon = (props: CitationIconProps) => {
   const { link, setPosition, setHTML, index, rectWidth } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
@@ -288,13 +295,13 @@ const CitationIcon = (props: any) => {
       transform={calcPos(index)}
     >
       <a href={link.url}>
-        <WhichFA link={link} index={index} />
+        <WhichFA link={link} />
       </a>
     </g>
   );
 };
 
-const WhichFA = (props: any) => {
+const WhichFA = (props: { link: any }) => {
   const { link } = props;
   const [{ viewParams }] = useProjectState();
 
@@ -374,8 +381,14 @@ const WhichFA = (props: any) => {
   );
 };
 
-const CitationVis = (props: any) => {
-  const { anno, pageNumber, index, pageRectData, setPosition, setToolHtml } =
+type CitationVisProps = {
+  pageNumber: number;
+  pageRectData: { pageIndex: number; anno: unknown[] }[];
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+  setToolHtml: React.Dispatch<React.SetStateAction<string>>;
+};
+const CitationVis = (props: CitationVisProps) => {
+  const { pageNumber, pageRectData, setPosition, setToolHtml } =
     props;
 
   const svgRef = React.useRef(null);
@@ -422,8 +435,6 @@ const CitationVis = (props: any) => {
                   index={j}
                   setPosition={setPosition}
                   setHTML={setToolHtml}
-                  rectH={rectHeight}
-                  total={prd.anno.length}
                   rectWidth={calWidth(prd.anno.length)}
                 />
               ))}
@@ -488,7 +499,7 @@ const BubbLabel = () => {
   );
 };
 
-const PaperView = (props: any) => {
+const PaperView = (props: { folderPath: string }) => {
   const { folderPath } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
@@ -604,10 +615,8 @@ const PaperView = (props: any) => {
             </div>
           )}
           <CitationVis
-            anno={anno}
             pageNumber={pageNumber}
             pageRectData={pageRectData}
-            index={index}
             setToolHtml={setToolHtml}
             setPosition={setPosition}
           />

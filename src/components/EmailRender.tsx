@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as Showdown from 'showdown';
 import { readFileSync } from '../fileUtil';
+import { useProjectState } from './ProjectContext';
 // import * as fs from 'fs';
 // import path from 'path';
 
