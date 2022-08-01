@@ -61,8 +61,8 @@ export const CreateThreadComponent = (props: any) => {
         onChange={handleDescriptionChange}
       />
       <Button
-        isActive={threadName && description ? true : false}
-        isDisabled={threadName && description ? false : true}
+        isActive={!!(threadName && description)}
+        isDisabled={!(threadName && description)}
         onClick={() => {
           let actTitle = `Created thread: ${threadName}`;
           setName(null);
@@ -403,7 +403,7 @@ const ThreadBanner = (props: any) => {
               cursor: 'pointer',
             }}
             onClick={() => {
-              setExpanded(expanded ? false : true);
+              setExpanded(!expanded);
             }}
           >
             {expanded ? (
@@ -436,10 +436,7 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
 
   const checkIfSelectThread = (i: any) => {
     if (filterRT && filterRT?.rtIndex != null) {
-      if (i != filterRT?.rtIndex) {
-        return false;
-      }
-      return true;
+      return i === filterRT?.rtIndex;
     }
     return true;
   };
