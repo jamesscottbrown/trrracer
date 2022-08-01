@@ -174,13 +174,13 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         });
         // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
 
-        let chosen = googOb.goog_doc_data[artifact.fileId];
+        const chosen = googOb.goog_doc_data[artifact.fileId];
 
         const gContent = chosen
           ? chosen.body.content.filter((f: any) => f.startIndex)
           : [];
 
-        let comments = artifact.comments ? artifact.comments.comments : [];
+        const comments = artifact.comments ? artifact.comments.comments : [];
 
         return chosen ? (
           <Box
@@ -197,7 +197,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           >
             <div
               style={{ height: '100%', width: '700px', overflow: 'auto' }}
-              id={'gdoc'}
+              id='gdoc'
             >
               {gContent.map((m: any, i: number) => (
                 <GoogDriveParagraph
@@ -287,9 +287,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         let textArray =
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
         if (query) {
-          let textA = text.split(query.term);
-          let keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j++) {
+          const textA = text.split(query.term);
+          const keeper = [{ style: 'normal', textData: textA[0] }];
+          for (let j = 1; j < textA.length - 1; j+=1) {
             keeper.push({ style: 'highlight', textData: query.term });
             keeper.push({ style: 'normal', textData: textA[j] });
           }
@@ -307,7 +307,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             { style: 'normal', textData: start[1] },
           ];
           if (artifact.bookmarks.length > 1) {
-            for (let j = 1; j < artifact.bookmarks.length; j++) {
+            for (let j = 1; j < artifact.bookmarks.length; j+=1) {
               const oldTextArray = textArray;
               const frag = artifact.bookmarks[j].fragment;
               const findIndex = textArray
@@ -404,7 +404,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           onLoad={(event) => {
             console.log('event', event);
           }}
-        ></iframe>
+        />
       );
     }
     return <div>Loading</div>;
