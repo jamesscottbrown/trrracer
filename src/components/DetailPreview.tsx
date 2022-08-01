@@ -14,13 +14,12 @@ import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
-
+import { TextArray } from './types';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 // import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -38,7 +37,7 @@ interface DetailPreviewPropsType {
   setFragSelected: any;
 }
 
-const TextRender = (textProps: any) => {
+const TextRender = (textProps: { textArray: TextArray }) => {
   const { textArray } = textProps;
   if (textArray.length > 1) {
     return textArray.map((ta: any, i: number) => (
@@ -67,7 +66,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       folderPath,
       selectedArtifact,
       isReadOnly,
-      query
+      query,
     },
     dispatch,
   ] = useProjectState();
@@ -130,7 +129,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-  
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
@@ -170,20 +168,19 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       );
     } else {
       getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-       
         dispatch({
           type: 'UPDATE_GOOG_DOC_DATA',
           googDocData: googOb.goog_doc_data,
         });
         // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
 
-        let chosen = googOb.goog_doc_data[artifact.fileId];
+        const chosen = googOb.goog_doc_data[artifact.fileId];
 
         const gContent = chosen
           ? chosen.body.content.filter((f: any) => f.startIndex)
           : [];
 
-        let comments = artifact.comments ? artifact.comments.comments : [];
+        const comments = artifact.comments ? artifact.comments.comments : [];
 
         return chosen ? (
           <Box
@@ -200,7 +197,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           >
             <div
               style={{ height: '100%', width: '700px', overflow: 'auto' }}
-              id={'gdoc'}
+              id="gdoc"
             >
               {gContent.map((m: any, i: number) => (
                 <GoogDriveParagraph
@@ -281,30 +278,25 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    const [textFile, setText] = useState<any>([]);
+    const [textFile, setText] = useState<TextArray>([]);
 
     useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {
-      
-
-        console.log('filllll', query)
-       
+        console.log('filllll', query);
 
         let textArray =
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
-        if (query){
-          let textA = text.split(query.term);
-          let keeper = [ { style: 'normal', textData: textA[0] } ];
-          for(let j = 1; j < textA.length - 1; j++){
-            keeper.push({ style: 'highlight', textData: query.term })
-            keeper.push({ style: 'normal', textData: textA[j] })
+        if (query) {
+          const textA = text.split(query.term);
+          const keeper = [{ style: 'normal', textData: textA[0] }];
+          for (let j = 1; j < textA.length - 1; j += 1) {
+            keeper.push({ style: 'highlight', textData: query.term });
+            keeper.push({ style: 'normal', textData: textA[j] });
           }
-          console.log(textA)
+          console.log(textA);
 
           textArray = keeper;
-          
-
-        }else if (artifact.bookmarks) {
+        } else if (artifact.bookmarks) {
           const start = textArray[0].textData.split(
             artifact.bookmarks[0].fragment
           );
@@ -315,7 +307,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             { style: 'normal', textData: start[1] },
           ];
           if (artifact.bookmarks.length > 1) {
-            for (let j = 1; j < artifact.bookmarks.length; j++) {
+            for (let j = 1; j < artifact.bookmarks.length; j += 1) {
               const oldTextArray = textArray;
               const frag = artifact.bookmarks[j].fragment;
               const findIndex = textArray
@@ -387,43 +379,35 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    
     const perf = joinPath(folderPath, title);
     const [pageData, setPageData] = useState();
-   
-    useEffect(()=> {
 
+    useEffect(() => {
       if (isReadOnly) {
         readFileSync(perf)
           .then((res) => res.text())
           .then((pap) => {
             setPageData(pap);
           });
-          
       } else {
         setPageData(perf);
-      
       }
+    }, [folderPath, perf]);
 
-  }, [folderPath, perf]);
-
-    if(pageData){
-
-      return(
+    if (pageData) {
+      return (
         // <iframe src="data:application/pdf;base64,YOUR_BINARY_DATA" height="100%" width="100%"></iframe>
-        <iframe 
-        src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} 
-        height="100%" 
-        width="700px"
-     
-        onLoad={(event)=> {
-          console.log('event', event);
-        }}
-        ></iframe>
-      )
-
+        <iframe
+          src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf}
+          height="100%"
+          width="700px"
+          onLoad={(event) => {
+            console.log('event', event);
+          }}
+        />
+      );
     }
-    return <div>Loading</div>
+    return <div>Loading</div>;
   }
 
   if (title.endsWith('.HEIC')) {

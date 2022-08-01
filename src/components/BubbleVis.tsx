@@ -177,7 +177,7 @@ const BubbleVis = (props: BubbleProps) => {
     windowDimension,
     defineEvent,
     bubbleDivWidth,
-    setBubbleDivWidth
+    setBubbleDivWidth,
   } = props;
 
   const [
@@ -226,28 +226,27 @@ const BubbleVis = (props: BubbleProps) => {
 
   d3.select('#tooltip').style('opacity', 0);
 
-  useEffect(()=> {
-
-    setHeight(windowDimension.height - 200)
+  useEffect(() => {
+    setHeight(windowDimension.height - 200);
 
     if (groupBy) {
       setBubbleDivWidth(windowDimension.width);
       setSvgWidth(researchThreads?.research_threads.length * 200);
     }
-    
-  }, [windowDimension])
+  }, [windowDimension]);
 
-  let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [
-    projectData.entries.length,
-    projectData.entries.flatMap((f) => f.files).length,
-  ]);
+  let packedCircData = useMemo(
+    () => calcCircles([...projectData.entries]),
+    [
+      projectData.entries.length,
+      projectData.entries.flatMap((f) => f.files).length,
+    ]
+  );
 
   const forced = useMemo(() => {
-    console.log('dimensuion',windowDimension);
-    return new ForceMagic(packedCircData, width, (windowDimension.height - 200))}, [
-    packedCircData,
-    windowDimension
-  ]);
+    console.log('dimensuion', windowDimension);
+    return new ForceMagic(packedCircData, width, windowDimension.height - 200);
+  }, [packedCircData, windowDimension]);
 
   const highlightedNodes = useMemo(() => {
     const ids = usedEntries.map((m) => m.activity_uid);
@@ -261,9 +260,9 @@ const BubbleVis = (props: BubbleProps) => {
 
   const { yScale, margin } = forced;
 
-  useEffect(()=> {
-    console.log('YSCALE',yScale.range())
-  }, [yScale])
+  useEffect(() => {
+    console.log('YSCALE', yScale.range());
+  }, [yScale]);
 
   useEffect(() => {
     if (filterRT) {
@@ -273,7 +272,6 @@ const BubbleVis = (props: BubbleProps) => {
       const hslColor = d3co.hsl(newColor);
       setOnActivityColor(hslColor.copy({ s: 0.4, l: 0.9 }));
       setOnArtifactColor(hslColor);
-
     } else {
       setOnActivityColor(d3co.hsl('#d3d3d3'));
       setOnArtifactColor(d3co.hsl('gray'));
@@ -300,7 +298,6 @@ const BubbleVis = (props: BubbleProps) => {
       .append('g')
       .attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
-  
     if (selectedActivityURL) {
       setTranslateY(margin / 2);
     } else {
@@ -327,9 +324,9 @@ const BubbleVis = (props: BubbleProps) => {
       usedEntries.map((m: any) => new Date(m.date))
     );
 
-    const filteredActivitiesExtent = filteredActivitiesExtentTest[0] ? filteredActivitiesExtentTest : d3.extent(
-      projectData.entries.map((m: any) => new Date(m.date))
-    );
+    const filteredActivitiesExtent = filteredActivitiesExtentTest[0]
+      ? filteredActivitiesExtentTest
+      : d3.extent(projectData.entries.map((m: any) => new Date(m.date)));
 
     const checkGroup = svg.select('g.timeline-wrap');
     const wrapAxisGroup = checkGroup.empty()
@@ -343,7 +340,7 @@ const BubbleVis = (props: BubbleProps) => {
       bGroup
         .append('rect')
         .attr('width', 40)
-        .attr('height', (windowDimension.height - 200) - margin)
+        .attr('height', windowDimension.height - 200 - margin)
         .attr('fill-opacity', 0);
 
       const brushedEvent = function (event: any) {
@@ -430,7 +427,7 @@ const BubbleVis = (props: BubbleProps) => {
         .handleSize(8)
         .extent([
           [0, 0],
-          [40, (windowDimension.height - 200) - margin],
+          [40, windowDimension.height - 200 - margin],
         ])
         .on('start brush end', brushedEvent);
 
@@ -482,7 +479,7 @@ const BubbleVis = (props: BubbleProps) => {
       if (!groupBy) {
         eventRectGroups
           .selectAll('line.start')
-          .data(d => [d])
+          .data((d) => [d])
           .join('line')
           .classed('start', true)
           .attr('x1', 0)
@@ -490,28 +487,40 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('y1', 0)
           .attr('y2', 0)
           .attr('stroke', 'gray')
-          .attr('stroke-dasharray', "5,5")
-          .attr('stroke-width', .4);
+          .attr('stroke-dasharray', '5,5')
+          .attr('stroke-width', 0.4);
 
-          let eventLineEnd = eventRectGroups
+        let eventLineEnd = eventRectGroups
           .selectAll('line.end')
-          .data(d => [d])
+          .data((d) => [d])
           .join('line')
           .classed('end', true)
           .attr('x1', 0)
           .attr('x2', 400)
-          .attr('y1', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
-          .attr('y2', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
+          .attr(
+            'y1',
+            (d: any) =>
+              yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+          )
+          .attr(
+            'y2',
+            (d: any) =>
+              yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+          )
           .attr('stroke', 'gray')
-          .attr('stroke-dasharray', "5,5")
-          .attr('stroke-width', .4);
+          .attr('stroke-dasharray', '5,5')
+          .attr('stroke-width', 0.4);
 
-          let vertLine = eventRectGroups
+        let vertLine = eventRectGroups
           .append('line')
           .attr('x1', 400)
           .attr('x2', 400)
           .attr('y1', 0)
-          .attr('y2', (d:any) => yScale(new Date(d.time[1])) - yScale(new Date(d.time[0])))
+          .attr(
+            'y2',
+            (d: any) =>
+              yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+          )
           .attr('stroke', 'gray')
           .attr('stroke-width', 1);
 
@@ -522,8 +531,9 @@ const BubbleVis = (props: BubbleProps) => {
           .text((d) => d.event);
 
         eventText.attr('x', 405);
-        eventText.attr('y', (d)=> {
-          let height = yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]))
+        eventText.attr('y', (d) => {
+          let height =
+            yScale(new Date(d.time[1])) - yScale(new Date(d.time[0]));
           return height / 2;
         });
         eventText.style('font-size', 10);
@@ -622,13 +632,14 @@ const BubbleVis = (props: BubbleProps) => {
               .select('.all-activities')
               .attr('stroke-width', 1)
               .attr('stroke', 'red');
-            const highlightedCircles = highlightedActivityGroups.selectAll(
-              'circle.artifact'
-            );
+            const highlightedCircles =
+              highlightedActivityGroups.selectAll('circle.artifact');
             highlightedCircles.attr('fill', 'white');
           } else {
             d3.select(event.target).attr('fill', 'gray');
-            d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', '#fff');
+            d3.select(event.target.parentNode)
+              .selectAll('.artifact')
+              .attr('fill', '#fff');
           }
         })
         .on('mouseout', (event) => {
@@ -645,17 +656,18 @@ const BubbleVis = (props: BubbleProps) => {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 0.5);
-            const highlightedCircles = highlightedActivityGroups.selectAll(
-              'circle.artifact'
-            );
+            const highlightedCircles =
+              highlightedActivityGroups.selectAll('circle.artifact');
             highlightedCircles.attr('fill', 'gray');
           } else {
             d3.select(event.target)
               .attr('fill', '#d3d3d3')
               .attr('stroke', '#d3d3d3')
               .attr('stroke-width', 0.5);
-             
-              d3.select(event.target.parentNode).selectAll('.artifact').attr('fill', 'gray');
+
+            d3.select(event.target.parentNode)
+              .selectAll('.artifact')
+              .attr('fill', 'gray');
           }
         });
 
@@ -684,9 +696,8 @@ const BubbleVis = (props: BubbleProps) => {
         highlightedActivityGroups
           .select('.all-activities')
           .attr('stroke-width', 0);
-        const highlightedCircles = highlightedActivityGroups.selectAll(
-          'circle.artifact'
-        );
+        const highlightedCircles =
+          highlightedActivityGroups.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
       } else if (selectedActivityURL && selectedActivityURL !== null) {
         highlightedActivityGroups
@@ -697,17 +708,15 @@ const BubbleVis = (props: BubbleProps) => {
           .select('.all-activities')
           .attr('stroke-width', 1)
           .attr('stroke', 'red');
-        const highlightedCircles = highlightedActivityGroups.selectAll(
-          'circle.artifact'
-        );
+        const highlightedCircles =
+          highlightedActivityGroups.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
       } else {
-        const highlightedCircles = highlightedActivityGroups.selectAll(
-          'circle.artifact'
-        );
+        const highlightedCircles =
+          highlightedActivityGroups.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
       }
-   
+
       if (
         filterRT &&
         researchThreads?.research_threads[filterRT?.rtIndex].evidence.length > 0
@@ -738,9 +747,9 @@ const BubbleVis = (props: BubbleProps) => {
             }
 
             const divideDate = new Date(
-              researchThreads?.research_threads[filterRT?.rtIndex].actions.filter(
-                (f) => f.action === 'created'
-              )[0].when
+              researchThreads?.research_threads[
+                filterRT?.rtIndex
+              ].actions.filter((f) => f.action === 'created')[0].when
             );
 
             if (new Date(chosenActivityData.date) < divideDate) {
@@ -950,7 +959,7 @@ const BubbleVis = (props: BubbleProps) => {
         .handleSize(8)
         .extent([
           [0, 0],
-          [20, (windowDimension.height - 200) - margin],
+          [20, windowDimension.height - 200 - margin],
         ])
         .on('start brush end', brushed);
 
@@ -1061,7 +1070,6 @@ const BubbleVis = (props: BubbleProps) => {
           });
       }
     }
-
   }, [
     selectedActivityURL,
     usedEntries,
@@ -1070,7 +1078,7 @@ const BubbleVis = (props: BubbleProps) => {
     filterType,
     defineEvent,
     viewParams,
-    windowDimension
+    windowDimension,
   ]);
 
   // useEffect(()=> {

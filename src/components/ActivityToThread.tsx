@@ -14,13 +14,8 @@ type ActivitytoThreadPropType = {
 const ActivitytoThread = (props: ActivitytoThreadPropType) => {
   const [, dispatch] = useProjectState();
 
-  const {
-    thread,
-    threadIndex,
-    activity,
-    activityIndex,
-    setSeeThreadAssign,
-  } = props;
+  const { thread, threadIndex, activity, activityIndex, setSeeThreadAssign } =
+    props;
   const [showDesc, setShowDesc] = useState(false);
   const [threadRat, setThreadRat] = useState('');
 

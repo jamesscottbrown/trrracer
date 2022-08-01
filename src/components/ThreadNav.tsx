@@ -25,7 +25,7 @@ import Showdown from 'showdown';
 import { IconEye, IconEyeOff } from '@tabler/icons';
 
 import { useProjectState } from './ProjectContext';
-import type { EntryType } from './types';
+import type { EntryType, ResearchThread } from './types';
 
 export const jitter = (val: any) => Math.random() * val;
 
@@ -34,12 +34,9 @@ type MiniTimelineProps = {
   activities: EntryType[];
 };
 
-export const CreateThreadComponent = (props:any) => {
-
-  const {
-    setShowCreateThread
-  } = props
-  const [{projectData},dispatch] = useProjectState();
+export const CreateThreadComponent = (props: any) => {
+  const { setShowCreateThread } = props;
+  const [{ projectData }, dispatch] = useProjectState();
 
   const [threadName, setName] = useState(null);
   const [description, setDescription] = useState(null);
@@ -53,13 +50,10 @@ export const CreateThreadComponent = (props:any) => {
     setDescription(inputValue);
   };
 
-  return(
+  return (
     <Box style={{ marginTop: 10 }}>
       <span style={{ fontSize: 14, fontWeight: 600 }}>
-        <Input
-          placeholder="Name your thread."
-          onChange={handleNameChange}
-        />
+        <Input placeholder="Name your thread." onChange={handleNameChange} />
       </span>
 
       <Textarea
@@ -102,9 +96,9 @@ export const CreateThreadComponent = (props:any) => {
         CREATE
       </Button>
     </Box>
-  // )}
-  )
-}
+    // )}
+  );
+};
 
 const MiniTimline = (props: MiniTimelineProps) => {
   const { researchT, activities } = props;
@@ -180,7 +174,15 @@ type ThreadNavProps = {
   viewType: string; // TODO: tighten to specific values
 };
 
-const EditableThread = (threadProps: any) => {
+type EditableThreadPropType = {
+  index: number;
+  threadData: ResearchThread;
+  setEditMode: (
+    value: number | ((prevState: number | null) => number | null) | null
+  ) => void;
+};
+
+const EditableThread = (threadProps: EditableThreadPropType) => {
   const { index, threadData, setEditMode } = threadProps;
   const [{ researchThreads }, dispatch] = useProjectState();
 
@@ -189,9 +191,8 @@ const EditableThread = (threadProps: any) => {
     return test.indexOf('merge') === -1;
   });
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'preview'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('preview');
   const [mergeWindow, setMergeWindow] = useState(false);
 
   const handleChangeTab = (newTab: 'write' | 'preview') => {
@@ -346,38 +347,41 @@ const EditableThread = (threadProps: any) => {
   );
 };
 
-const ThreadBanner = (props:any) => {
-
-  const {index, rt, expanded, setExpanded} = props;
-  const [{isReadOnly, filterRT}, dispatch] = useProjectState();
-  const [bannerColor, setBannerColor] = useState(index != filterRT?.rtIndex ? '#fff' : rt.color);
+const ThreadBanner = (props: any) => {
+  const { index, rt, expanded, setExpanded } = props;
+  const [{ isReadOnly, filterRT }, dispatch] = useProjectState();
+  const [bannerColor, setBannerColor] = useState(
+    index != filterRT?.rtIndex ? '#fff' : rt.color
+  );
 
   return (
     <div
       style={{
         display: isReadOnly ? 'block' : 'inline',
       }}
-      onMouseEnter={()=> {
-        if(index != filterRT?.rtIndex) setBannerColor(`${rt.color}20`);
+      onMouseEnter={() => {
+        if (index != filterRT?.rtIndex) setBannerColor(`${rt.color}20`);
       }}
-      onMouseLeave={()=> {
-        if(index != filterRT?.rtIndex) setBannerColor('#fff');
+      onMouseLeave={() => {
+        if (index != filterRT?.rtIndex) setBannerColor('#fff');
       }}
       key={`banner-${index}`}
     >
-      <div style={{
-        border:`1.5px solid ${rt.color}`, 
-        padding:4, 
-        borderRadius:5,
-        backgroundColor: bannerColor
-        }}>
+      <div
+        style={{
+          border: `1.5px solid ${rt.color}`,
+          padding: 4,
+          borderRadius: 5,
+          backgroundColor: bannerColor,
+        }}
+      >
         <span
           style={{
             cursor: 'pointer',
             display: 'inline',
             fontSize: 18,
             fontWeight: 600,
-            color:'#3a3b3c'
+            color: '#3a3b3c',
           }}
           onClick={() => {
             dispatch({
@@ -390,31 +394,44 @@ const ThreadBanner = (props:any) => {
         >
           {`${rt.title} `}
         </span>
-        {
-          index != filterRT?.rtIndex && (
+        {index != filterRT?.rtIndex && (
           <span
             style={{
-              padding: 5, 
-              float:'right', 
-              display:'inline', 
-              cursor:'pointer'}}
-            onClick={()=> {
-              setExpanded(expanded ? false : true)
+              padding: 5,
+              float: 'right',
+              display: 'inline',
+              cursor: 'pointer',
             }}
-          > 
-            {expanded ? <IconEyeOff color='#3a3b3c'/> : <IconEye color='#3a3b3c'/>}
+            onClick={() => {
+              setExpanded(expanded ? false : true);
+            }}
+          >
+            {expanded ? (
+              <IconEyeOff color="#3a3b3c" />
+            ) : (
+              <IconEye color="#3a3b3c" />
+            )}
           </span>
         )}
-        
-      </div> 
-  </div>
-  )
-}
+      </div>
+    </div>
+  );
+};
 
-const ThreadComponent = (props:any) => {
+type ThreadComponentPropType = {
+  rt: ResearchThread;
+  index: number;
+  editMode: number | null;
+  setEditMode: (
+    value: ((prevState: number | null) => number | null) | number | null
+  ) => void;
+  filteredThreads: any;
+};
 
-  const {rt, index, editMode, setEditMode, filteredThreads} = props;
-  const [{projectData, isReadOnly, filterRT, viewParams}, dispatch] = useProjectState();
+const ThreadComponent = (props: ThreadComponentPropType) => {
+  const { rt, index, editMode, setEditMode, filteredThreads } = props;
+  const [{ projectData, isReadOnly, filterRT, viewParams }, dispatch] =
+    useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
@@ -440,181 +457,172 @@ const ThreadComponent = (props:any) => {
     return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
   });
 
-  
-
-  return(
+  return (
     <React.Fragment key={`frag-${index}`}>
-    {editMode !== index ? (
-      <div
-        key={`rt-${index}`}
-        style={{
-          borderLeft: '2px solid gray',
-          paddingLeft: 3,
-          opacity: checkIfSelectThread(index) ? 1 : 0.5,
-          marginTop: 10,
-          marginBottom: 10,
-          background:
-            filterRT && checkIfSelectThread(index) && filterRT?.rtId !== null
-              ? `${rt.color}30`
-              : '#fff',
-          borderRadius: 6,
-        }}
-      >
-        {(filterRT && filterRT?.rtId === rt.rt_id) && (
-          <div
-            title="Unselect Thread"
-            style={{
-              float: 'right',
-              cursor: 'pointer',
-              width: 30,
-              height: 30,
-            }}
-            onClick={() => { 
-              setExpanded(false)
-              dispatch({
-                type: 'THREAD_FILTER',
-                filterRT: null,
-                rtIndex: null
-              })
-              
-            }}
-          >
-            <MdCancel size={30} />
-          </div>
-        )}
-
-      <ThreadBanner 
-        index={index} 
-        rt={rt} 
-        expanded={expanded} 
-        setExpanded={setExpanded} />
-
-      { expanded && (
-      <div style={{paddingTop:5}}>
-          {!isReadOnly && (
-            <div style={{ display: 'inline', float: 'right' }}>
-              <span style={{ display: 'inline' }}>
-                <Button
-                  size={'sm'}
-                  style={{ display: 'inline' }}
-                  onClick={() => {
-                    setEditMode(index);
-                  }}
-                >
-                  <FaEdit />
-                </Button>
-              </span>
-            </div>
-          )}
-          
-            <span
-              style={{ fontSize: 10, fontWeight: 800 }}
-            >{`${rt.evidence.length} pieces of evidence`}</span>
-        
-            <MiniTimline
-              researchT={rt}
-              activities={projectData.entries}
-            />
-    
-            <div style={{ paddingBottom: 10, fontSize: 11 }}>
-              {rt.description}
-            </div>
-        
-          {associatedTags && editMode != index && (
-            <div>
-              <span
-                style={{
-                  fontSize: 9,
-                  display: 'block',
-                  fontWeight: 800,
-                }}
-              >
-                {'Frequently occuring tags:'}
-              </span>
-              {associatedTags[index].map((at, j) => (
-                <Badge
-                  key={`tag-${j}`}
-                  size={'xs'}
-                  variant="outline"
-                  style={{
-                    margin: 2,
-                    fontSize: 10,
-                  }}
-                >
-                  {at[0]}
-                </Badge>
-              ))}
-            </div>
-          )}
-          {!isReadOnly && (
+      {editMode !== index ? (
+        <div
+          key={`rt-${index}`}
+          style={{
+            borderLeft: '2px solid gray',
+            paddingLeft: 3,
+            opacity: checkIfSelectThread(index) ? 1 : 0.5,
+            marginTop: 10,
+            marginBottom: 10,
+            background:
+              filterRT && checkIfSelectThread(index) && filterRT?.rtId !== null
+                ? `${rt.color}30`
+                : '#fff',
+            borderRadius: 6,
+          }}
+        >
+          {filterRT && filterRT?.rtId === rt.rt_id && (
             <div
-            style={{paddingBottom:'10px'}}
+              title="Unselect Thread"
+              style={{
+                float: 'right',
+                cursor: 'pointer',
+                width: 30,
+                height: 30,
+              }}
+              onClick={() => {
+                setExpanded(false);
+                dispatch({
+                  type: 'THREAD_FILTER',
+                  filterRT: null,
+                  rtIndex: null,
+                });
+              }}
             >
-              <Popover>
-                <PopoverTrigger>
-                  <Button size={'xs'} style={{ display: 'inline' }}>
-                    Cite thread
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverBody>
-                    <span style={{ display: 'block' }}>
-                      <Button
-                        onClick={() => {
-                          let indexTest = projectData.citations
-                            .map((c) => c.id)
-                            .indexOf(rt.rt_id);
-                          let index =
-                            indexTest > -1
-                              ? indexTest + 1
-                              : projectData.citations.length + 1;
-                          navigator.clipboard.writeText(
-                            String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`
-                          );
-
-                          if (indexTest === -1) {
-                            let newCitations = [
-                              ...projectData.citations,
-                              { id: rt.rt_id, cIndex: index },
-                            ];
-                            dispatch({
-                              type: 'ADD_CITATION',
-                              citations: newCitations,
-                            });
-                          }
-                        }}
-                      >
-                        Copy this ref
-                      </Button>
-                    </span>
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
+              <MdCancel size={30} />
             </div>
           )}
-        </div>
-       )}
 
-        <Divider />
-      </div>
-    ) : (
-      <EditableThread
-        key={`edit-thread-${index}`}
-        index={index}
-        threadData={rt}
-        setEditMode={setEditMode}
-      />
-    )}
+          <ThreadBanner
+            index={index}
+            rt={rt}
+            expanded={expanded}
+            setExpanded={setExpanded}
+          />
+
+          {expanded && (
+            <div style={{ paddingTop: 5 }}>
+              {!isReadOnly && (
+                <div style={{ display: 'inline', float: 'right' }}>
+                  <span style={{ display: 'inline' }}>
+                    <Button
+                      size={'sm'}
+                      style={{ display: 'inline' }}
+                      onClick={() => {
+                        setEditMode(index);
+                      }}
+                    >
+                      <FaEdit />
+                    </Button>
+                  </span>
+                </div>
+              )}
+
+              <span
+                style={{ fontSize: 10, fontWeight: 800 }}
+              >{`${rt.evidence.length} pieces of evidence`}</span>
+
+              <MiniTimline researchT={rt} activities={projectData.entries} />
+
+              <div style={{ paddingBottom: 10, fontSize: 11 }}>
+                {rt.description}
+              </div>
+
+              {associatedTags && editMode != index && (
+                <div>
+                  <span
+                    style={{
+                      fontSize: 9,
+                      display: 'block',
+                      fontWeight: 800,
+                    }}
+                  >
+                    {'Frequently occuring tags:'}
+                  </span>
+                  {associatedTags[index].map((at, j) => (
+                    <Badge
+                      key={`tag-${j}`}
+                      size={'xs'}
+                      variant="outline"
+                      style={{
+                        margin: 2,
+                        fontSize: 10,
+                      }}
+                    >
+                      {at[0]}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {!isReadOnly && (
+                <div style={{ paddingBottom: '10px' }}>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button size={'xs'} style={{ display: 'inline' }}>
+                        Cite thread
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverBody>
+                        <span style={{ display: 'block' }}>
+                          <Button
+                            onClick={() => {
+                              let indexTest = projectData.citations
+                                .map((c) => c.id)
+                                .indexOf(rt.rt_id);
+                              let index =
+                                indexTest > -1
+                                  ? indexTest + 1
+                                  : projectData.citations.length + 1;
+                              navigator.clipboard.writeText(
+                                String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`
+                              );
+
+                              if (indexTest === -1) {
+                                let newCitations = [
+                                  ...projectData.citations,
+                                  { id: rt.rt_id, cIndex: index },
+                                ];
+                                dispatch({
+                                  type: 'ADD_CITATION',
+                                  citations: newCitations,
+                                });
+                              }
+                            }}
+                          >
+                            Copy this ref
+                          </Button>
+                        </span>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+            </div>
+          )}
+
+          <Divider />
+        </div>
+      ) : (
+        <EditableThread
+          key={`edit-thread-${index}`}
+          index={index}
+          threadData={rt}
+          setEditMode={setEditMode}
+        />
+      )}
     </React.Fragment>
-  )
-}
+  );
+};
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
-  const [
-    { projectData, researchThreads, filterRT, isReadOnly, viewParams },
-    dispatch,
-  ] = useProjectState();
+  const [{ researchThreads, filterRT, isReadOnly, viewParams }] =
+    useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
   // const [threadName, setName] = useState(null);
@@ -651,25 +659,27 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
   //   setDescription(inputValue);
   // };
 
-  const headerStyle = { 
-    fontSize: '19px', 
-    fontWeight: 600, 
+  const headerStyle = {
+    fontSize: '19px',
+    fontWeight: 600,
     cursor: 'pointer',
-    position:'sticky',
-    top:'0px',
-    margin:'auto',
-    height:'50px',
-    backgroundColor:'#FAFAFA',
-    padding:5,
+    position: 'sticky',
+    top: '0px',
+    margin: 'auto',
+    height: '50px',
+    backgroundColor: '#FAFAFA',
+    padding: 5,
     zIndex: 1000,
-    color:'#3a3b3c'
+    color: '#3a3b3c',
   };
 
   return (
     <Box>
       {(viewType === 'activity view' || viewType === 'overview') && (
         <div style={headerStyle}>
-          <span style={{ display: 'inline' }}>{`${researchThreads.research_threads.length} Research Threads`}</span>
+          <span
+            style={{ display: 'inline' }}
+          >{`${researchThreads.research_threads.length} Research Threads`}</span>
         </div>
       )}
       <Box>
@@ -680,16 +690,15 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
               marginBottom: 10,
             }}
           >
-            {filteredThreads.map((rt: any, i: number) => (
-              <React.Fragment
-              key={`rt-${rt.rt_id}`}
-              >
-              <ThreadComponent 
-                rt={rt} 
-                index={i} 
-                editMode={editMode} 
-                setEditMode={setEditMode} 
-                filteredThreads={filteredThreads} />
+            {filteredThreads.map((rt, i) => (
+              <React.Fragment key={`rt-${rt.rt_id}`}>
+                <ThreadComponent
+                  rt={rt}
+                  index={i}
+                  editMode={editMode}
+                  setEditMode={setEditMode}
+                  filteredThreads={filteredThreads}
+                />
               </React.Fragment>
             ))}
           </Box>
@@ -721,9 +730,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
           )}
 
           {showCreateThread && (
-            <CreateThreadComponent 
-              setShowCreateThread={setShowCreateThread}
-            />
+            <CreateThreadComponent setShowCreateThread={setShowCreateThread} />
           )}
         </>
       )}

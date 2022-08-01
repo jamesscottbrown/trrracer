@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiCancel } from 'react-icons/gi';
 import { format } from 'date-fns';
 import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
@@ -241,9 +241,8 @@ const ActivityTitleLogic = (props: any) => {
 const ThreadedReadonlyEntry = (props: any) => {
   const { activityID, makeEditable, openFile, setViewType, viewType } = props;
 
-  const [
-    { projectData, researchThreads, filterRT, folderPath, isReadOnly },
-  ] = useProjectState();
+  const [{ projectData, researchThreads, filterRT, folderPath, isReadOnly }] =
+    useProjectState();
 
   const thisEntry = useMemo(() => {
     return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
@@ -425,8 +424,8 @@ const ThreadedReadonlyEntry = (props: any) => {
                   margin: 3,
                   opacity: m.title === selectedThread.title ? 1 : 0.4,
                 }}
-              > 
-              <IconChartDots3 size={'20px'} />
+              >
+                <IconChartDots3 size={'20px'} />
               </div>
             </Tooltip>
           </React.Fragment>

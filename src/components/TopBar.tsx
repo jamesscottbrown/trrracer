@@ -15,10 +15,11 @@ import {
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
+import { BiLogOut } from 'react-icons/bi';
+
 import ViewTypeControl from './ViewTypeControl';
 import QueryBar from './QueryBar';
 import { useProjectState } from './ProjectContext';
-import { BiLogOut } from 'react-icons/bi';
 
 interface TopbarProps {
   viewType: string;
@@ -28,7 +29,7 @@ interface TopbarProps {
   setHideByDefault: (boo: any) => void;
   hideByDefault: boolean;
   setAddEntrySplash: (boo: any) => void;
-  setPath:any;
+  setPath: any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
@@ -50,7 +51,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       selectedArtifact,
       isReadOnly,
       viewParams,
-      researchThreads
+      researchThreads,
     },
     dispatch,
   ] = useProjectState();
@@ -62,9 +63,12 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       return researchThreads?.research_threads.filter(
         (f) => f.rt_id === viewParams.id
       )[0].title;
-    } else if (viewParams.granularity === 'artifact') {
-      return selectedArtifact.activity.files[selectedArtifact.artifactIndex].title;
-    } else if (viewParams.granularity === 'activity') {
+    }
+    if (viewParams.granularity === 'artifact') {
+      return selectedArtifact.activity.files[selectedArtifact.artifactIndex]
+        .title;
+    }
+    if (viewParams.granularity === 'activity') {
       return projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
       )[0].title;
@@ -94,16 +98,17 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
       >
         <Heading as="h1">
           {isReadOnly ? (
-
             <span style={{ fontSize: 30, fontWeight: 800, margin: 10 }}>
-              <BiLogOut 
-                style={{display:'inline'}}
+              <BiLogOut
+                style={{ display: 'inline' }}
                 onClick={() => {
-                  document.cookie = 'folderName=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-                  console.log(document.cookie)
-                  setPath('')}}
-              />{" "}
-              {projectData.title === 'Jen' ? 'tRRRace Meta': projectData.title}
+                  document.cookie =
+                    'folderName=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                  console.log(document.cookie);
+                  setPath('');
+                }}
+              />{' '}
+              {projectData.title === 'Jen' ? 'tRRRace Meta' : projectData.title}
             </span>
           ) : (
             <Editable

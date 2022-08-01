@@ -53,6 +53,7 @@ interface TagType {
   title: string;
   color: string;
   dob: string;
+  matches?: string[];
 }
 
 interface ReactTagType {
@@ -82,14 +83,20 @@ interface ProjectType {
 type ResearchThreadEvidence = {
   type: string;
   activityTitle?: string;
+  activity_index: number;
+  ResearchThreadEvidence: string;
+  artifactTitle: string;
   artifactIndex?: string; // or number?
+  dob: string;
+  rationale: string;
 };
 
 type ResearchThread = {
   evidence: ResearchThreadEvidence[];
   color: string;
   title: string;
-  actions: any[]; // ?
+  actions: { action: string; when: string }[];
+  rt_id: string;
 };
 
 type ResearchThreadData = {
@@ -158,6 +165,41 @@ type ViewParams = {
   id: string;
 };
 
+// used in some components like LeftSidebar
+type ArtifactTypesType = {
+  title: string;
+  matches: number;
+  color: string;
+};
+
+// used in project state
+type ArtifactTypesType2 = {
+  type: string;
+  color: string;
+};
+
+type FileTypesType = {
+  title: string;
+  matches: number;
+};
+
+type QueryType = {
+  term: string;
+  matches: {
+    entry: any;
+    textMatch: any[];
+    googMatch: any[];
+    titleMatch: boolean;
+  }[];
+};
+
+type HopEntryType = {
+  activity: any;
+  artifactUid: string;
+  hopReason: string;
+  tag: any;
+};
+
 type ProjectState = {
   projectData: ProjectType;
   isReadOnly: boolean;
@@ -165,31 +207,40 @@ type ProjectState = {
   filterTags: string[] | null;
   filterType: string | null;
   filterTypes: string[] | null;
-  //NEED TO MAKE THESE MORE SPECIFIC
-  filterDates: any;
-  filterQuery: any;
-  filterRT: any;
-  threadTypeFilterArray: any;
-  query: any;
-  artifactTypes: any;
+  // NEED TO MAKE THESE MORE SPECIFIC
+  filterDates: [null | Date, null | Date];
+  filterQuery: string[]; // list of titles of matching activities?
+  filterRT: null | {
+    title: string;
+    key: string[];
+    rtIndex: number;
+    rtId: string;
+    associatedKey: string[];
+  };
+  threadTypeFilterArray: {
+    type: 'string';
+    show: boolean;
+    matches: ResearchThreadEvidence[];
+  }[];
+  query: null | QueryType;
+  artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
   txtData?: TxtData[];
   researchThreads?: ResearchThreadData;
   selectedActivityURL: null | string;
   highlightedTag?: string;
   highlightedType?: string;
-  selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number};
-  filteredActivities: any;
-  hopArray: any[];
+  selectedArtifact: { activity: EntryTypeWithIndex; artifactIndex: number };
+  filteredActivities: EntryType[];
+  hopArray: HopEntryType[];
   viewParams: ViewParams;
-  isReadOnly: boolean;
 };
 
 interface ProjectViewProps {
   projectData: ProjectType;
   filteredActivites: EntryType[];
   folderPath: string;
-  setViewType: (v: any) => void;
+  setViewType: (v: string) => void;
   setSelectedArtifact: (e: any) => void;
 }
 
@@ -207,13 +258,17 @@ interface ReactTag {
   text: string;
 }
 
+type TextArray = { style: string; textData: string }[];
+
 export {
+  ArtifactTypesType,
   DeadlineType,
   EntryType,
   EntryPropTypes,
   EntryTypeWithIndex,
   File,
   FileObj,
+  FileTypesType,
   GoogleDocContent,
   GoogleDocParagraph,
   GoogleParagraphStyle,
@@ -221,6 +276,7 @@ export {
   TagType,
   TxtData,
   TextEntry,
+  TextArray,
   ProjectState,
   ProjectType,
   ProjectViewProps,

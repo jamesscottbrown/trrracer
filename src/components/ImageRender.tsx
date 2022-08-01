@@ -3,11 +3,14 @@ import { InView } from 'react-intersection-observer';
 import { readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 
-const ImageRender = (props: any) => {
+type ImageRenderPropType = {
+  src: string;
+  autoLoad?: boolean;
+};
+const ImageRender = (props: ImageRenderPropType) => {
   const { src, autoLoad } = props;
-  const [
-    { isReadOnly, selectedActivityURL, selectedArtifact },
-  ] = useProjectState();
+  const [{ isReadOnly, selectedActivityURL, selectedArtifact }] =
+    useProjectState();
 
   const [imgData, setImgData] = useState<any>(null);
 
@@ -45,7 +48,7 @@ const ImageRender = (props: any) => {
     </>
   ) : (
     <InView
-      onChange={(inView, entry) => {
+      onChange={(inView) => {
         if (
           (isReadOnly && inView) ||
           (isReadOnly && selectedActivityURL) ||
@@ -61,7 +64,7 @@ const ImageRender = (props: any) => {
         }
       }}
     >
-      {({ inView, ref, entry }) => (
+      {({ inView, ref }) => (
         <div ref={ref}>
           {inView && imgData && (
             <img
@@ -73,6 +76,10 @@ const ImageRender = (props: any) => {
       )}
     </InView>
   );
+};
+
+ImageRender.defaultProps = {
+  autoLoad: false,
 };
 
 export default ImageRender;

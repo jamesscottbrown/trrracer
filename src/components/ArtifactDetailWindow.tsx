@@ -33,13 +33,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const { setViewType, goBackView } = props;
 
   const [
-    {
-      projectData,
-      selectedArtifact,
-      hopArray,
-      researchThreads,
-      isReadOnly,
-    },
+    { projectData, selectedArtifact, hopArray, researchThreads, isReadOnly },
     dispatch,
   ] = useProjectState();
 
@@ -189,7 +183,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             }}
           >{`Artifact: ${
             selectedArtifact
-              ? selectedArtifact.activity.files[selectedArtifact.artifactIndex].title
+              ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
+                  .title
               : 'No artifacts with this activity'
           }`}</div>
         </Flex>
@@ -241,8 +236,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
                               onClick={() => {
                                 dispatch({
                                   type: 'REMOVE_BOOKMARK',
-                                  selectedArtifactEntry: selectedArtifact.activity,
-                                  selectedArtifactIndex: selectedArtifact.artifactIndex,
+                                  selectedArtifactEntry:
+                                    selectedArtifact.activity,
+                                  selectedArtifactIndex:
+                                    selectedArtifact.artifactIndex,
                                   fragIndex: i,
                                 });
                               }}

@@ -193,7 +193,6 @@ const DetailComponent = () => {
   const [{ viewParams, researchThreads, projectData }] = useProjectState();
 
   const associatedThreads = useMemo(() => {
-   
     if (viewParams && viewParams.granularity === 'activity') {
       const proj = projectData.entries.filter(
         (f) => f.activity_uid === viewParams.id
@@ -216,11 +215,15 @@ const DetailComponent = () => {
   }
   return (
     <div style={{ height: '100vh' }}>
-      {viewParams && viewParams.granularity === 'thread' && <ThreadNav viewType='paper' />}
+      {viewParams && viewParams.granularity === 'thread' && (
+        <ThreadNav viewType="paper" />
+      )}
       <div style={{ overflow: 'auto', height: '100vh' }}>
         <ProjectListView />
       </div>
-      {associatedThreads.length > 0 && (viewParams && viewParams.granularity === 'activity') ? (
+      {associatedThreads.length > 0 &&
+      viewParams &&
+      viewParams.granularity === 'activity' ? (
         <Box
           flex="2"
           overflowY="auto"
@@ -304,11 +307,19 @@ const WhichFA = (props: any) => {
           r={10}
           cx={10}
           cy={10}
-          fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
+          fill={
+            viewParams && +viewParams.cIndex === +param.cIndex
+              ? '#ff2626'
+              : '#d3d3d3'
+          }
         />
         <IconChartDots3
           size={20}
-          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
+          color={
+            viewParams && +viewParams.cIndex === +param.cIndex
+              ? '#ffffff'
+              : 'gray'
+          }
         />
       </g>
     );
@@ -320,11 +331,19 @@ const WhichFA = (props: any) => {
           r={10}
           cx={10}
           cy={10}
-          fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
+          fill={
+            viewParams && +viewParams.cIndex === +param.cIndex
+              ? '#ff2626'
+              : '#d3d3d3'
+          }
         />
         <IconCircles
           size={20}
-          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
+          color={
+            viewParams && +viewParams.cIndex === +param.cIndex
+              ? '#ffffff'
+              : 'gray'
+          }
         />
       </g>
     );
@@ -335,12 +354,20 @@ const WhichFA = (props: any) => {
         r={8}
         cx={10}
         cy={10}
-        fill={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ff2626' : '#d3d3d3'}
+        fill={
+          viewParams && +viewParams.cIndex === +param.cIndex
+            ? '#ff2626'
+            : '#d3d3d3'
+        }
       />
       <g transform="translate(4, 4)">
         <IconCircle
           size={13}
-          color={(viewParams && +viewParams.cIndex === +param.cIndex) ? '#ffffff' : 'gray'}
+          color={
+            viewParams && +viewParams.cIndex === +param.cIndex
+              ? '#ffffff'
+              : 'gray'
+          }
         />
       </g>
     </g>
@@ -348,14 +375,8 @@ const WhichFA = (props: any) => {
 };
 
 const CitationVis = (props: any) => {
-  const {
-    anno,
-    pageNumber,
-    index,
-    pageRectData,
-    setPosition,
-    setToolHtml,
-  } = props;
+  const { anno, pageNumber, index, pageRectData, setPosition, setToolHtml } =
+    props;
 
   const svgRef = React.useRef(null);
   const iconSize = 20;
@@ -371,7 +392,6 @@ const CitationVis = (props: any) => {
 
   return (
     <div style={{ position: 'absolute', right: '650px', top: '90px' }}>
-  
       <svg
         style={{
           height: '800px',
@@ -419,37 +439,51 @@ const BubbLabel = () => {
   return (
     <div
       style={{
-          textAlign: 'center',
-          width: 200,
-          height: 90,
-          padding: 10,
-          backgroundColor: '#fff',
-          border: '2px solid #d3d3d3',
-          borderRadius: 10,
-          pointerEvents: 'none',
-          zIndex: 6000,
-          position:'absolute',
-          top: 0,
-          left: 600
-        }}>
-        <svg>
-          <text
-          y={12} x={5}
-          style={{fontSize:15, fontWeight:600}}    
-          >Encoding</text>
-          <g transform='translate(-10, 10)'>
-          <circle r={25} cx={150} cy={30} fill="#d3d3d3"/>
-          <text y={22} x={60} 
-          style={{fontSize:10, textAnchor:"end"}}
-            >Activity</text>
-          <line  x1={60} x2={126} y1={22} y2={22} strokeWidth="1px" stroke="gray"/>
-          <circle r={5} cx={140} cy={40} fill="gray"/>
-          <line  x1={60} x2={140} y1={40} y2={40} strokeWidth="1px" stroke="gray"/>
-          <text y={40} x={60} 
-          style={{fontSize:10, textAnchor:"end"}}
-            >Artifact</text>
-          </g>
-        </svg>
+        textAlign: 'center',
+        width: 200,
+        height: 90,
+        padding: 10,
+        backgroundColor: '#fff',
+        border: '2px solid #d3d3d3',
+        borderRadius: 10,
+        pointerEvents: 'none',
+        zIndex: 6000,
+        position: 'absolute',
+        top: 0,
+        left: 600,
+      }}
+    >
+      <svg>
+        <text y={12} x={5} style={{ fontSize: 15, fontWeight: 600 }}>
+          Encoding
+        </text>
+        <g transform="translate(-10, 10)">
+          <circle r={25} cx={150} cy={30} fill="#d3d3d3" />
+          <text y={22} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
+            Activity
+          </text>
+          <line
+            x1={60}
+            x2={126}
+            y1={22}
+            y2={22}
+            strokeWidth="1px"
+            stroke="gray"
+          />
+          <circle r={5} cx={140} cy={40} fill="gray" />
+          <line
+            x1={60}
+            x2={140}
+            y1={40}
+            y2={40}
+            strokeWidth="1px"
+            stroke="gray"
+          />
+          <text y={40} x={60} style={{ fontSize: 10, textAnchor: 'end' }}>
+            Artifact
+          </text>
+        </g>
+      </svg>
     </div>
   );
 };
@@ -458,14 +492,12 @@ const PaperView = (props: any) => {
   const { folderPath } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
-  const [
-    { filterRT, linkData, isReadOnly, viewParams }
-  ] = useProjectState();
+  const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
   console.log('VIEW PARAMS INPAPER VIEW', viewParams);
 
   let passedLink = linkData
-    ? linkData.filter((f) => (viewParams && f.cIndex === viewParams.cIndex))
+    ? linkData.filter((f) => viewParams && f.cIndex === viewParams.cIndex)
     : [];
 
   const anno = linkData ? d3.groups(linkData, (d) => d.page) : null;

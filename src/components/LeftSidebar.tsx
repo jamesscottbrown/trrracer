@@ -18,11 +18,12 @@ import ThreadNav from './ThreadNav';
 import { ToolIcon } from './Project';
 import { stateUpdateWrapperUseJSON } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
+import type { ArtifactTypesType, FileTypesType } from './types';
 
-const LeftSidebar = (props: any) => {
+const LeftSidebar = (props: { fromTop: number }) => {
   const { fromTop } = props;
   const [
-    { projectData, researchThreads, artifactTypes, filterRT, filterTags },
+    { projectData, researchThreads, artifactTypes, filterTags },
     dispatch,
   ] = useProjectState();
   const artifacts = projectData.entries.flatMap((f) => f.files);
@@ -42,16 +43,16 @@ const LeftSidebar = (props: any) => {
     });
 
   const [sortedTags, setSortedTags] = useState(
-    tags.sort((a, b) => b.matches.length - a.matches.length)
+    tags.sort((a, b) => (b.matches || []).length - (a.matches || []).length)
   );
 
-  const types = d3
+  const types: FileTypesType[] = d3
     .groups(artifacts, (a) => a.fileType)
     .map((ty) => {
       return { title: ty[0], matches: ty[1].length };
     });
 
-  const aTypes = d3
+  const aTypes: ArtifactTypesType[] = d3
     .groups(artifacts, (a) => a.artifactType)
     .map((ty) => {
       const colorTest = artifactTypes.artifact_types.filter(
@@ -68,16 +69,16 @@ const LeftSidebar = (props: any) => {
   sortedTypes.push({ title: 'all', matches: artifacts.length });
 
   const sortedArtTypes = aTypes.sort((a, b) => b.matches - a.matches);
-  sortedArtTypes.push({ title: 'all', matches: artifacts.length });
+  sortedArtTypes.push({ title: 'all', matches: artifacts.length, color: '' });
 
-  const headerStyle = { 
-    fontSize: '19px', 
-    fontWeight: 600, 
-    backgroundColor:'#FAFAFA',
-    position:'sticky',
-    height:'40px',
-    top:'0px', 
-    padding:6
+  const headerStyle = {
+    fontSize: '19px',
+    fontWeight: 600,
+    backgroundColor: '#FAFAFA',
+    position: 'sticky' as const, // N.B. the "as const" is required to avoid a TypeScript error
+    height: '40px',
+    top: '0px',
+    padding: 6,
   };
 
   return (
@@ -97,12 +98,7 @@ const LeftSidebar = (props: any) => {
       borderRadius={6}
       p={3}
     >
-      <ThreadNav
-        researchTs={researchThreads ? researchThreads.research_threads : null}
-        viewType={'overview'}
-        projectData={projectData}
-        dispatch={dispatch}
-      />
+      <ThreadNav viewType="overview" />
       <br />
       <Box marginTop="10px" marginBottom="10px" padding="3px">
         <Menu>
@@ -111,7 +107,7 @@ const LeftSidebar = (props: any) => {
           </MenuButton>
           <MenuList>
             <MenuItem>all</MenuItem>
-            {sortedArtTypes.map((m: any, i: any) => (
+            {sortedArtTypes.map((m, i) => (
               <MenuItem
                 key={`type-${i}`}
                 data={m}
@@ -163,7 +159,7 @@ const LeftSidebar = (props: any) => {
           }}
           onClick={() => {
             const temp = tags.sort(
-              (a, b) => b.matches.length - a.matches.length
+              (a, b) => (b.matches || []).length - (a.matches || []).length
             );
             setSortedTags(temp);
           }}
@@ -176,38 +172,47 @@ const LeftSidebar = (props: any) => {
         borderLeftWidth="1px"
         padding="3px"
       >
-        {filterTags.length > 0 &&
-          <div style={{ border: '0.5px solid rgb(163, 170, 175)', borderRadius: '6px' }}>
+        {(filterTags || []).length > 0 && (
+          <div
+            style={{
+              border: '0.5px solid rgb(163, 170, 175)',
+              borderRadius: '6px',
+            }}
+          >
             <span>Filtering to only show events tagged</span>
-            {filterTags.map((ft, i) => (
+            {(filterTags || []).map((ft, i) => (
               <div
                 style={{
                   background: `#dadada90`,
                   padding: 5,
-                  borderRadius: 5
+                  borderRadius: 5,
                 }}
+                key={ft}
               >
-                <span>{(i > 0) && <b>and </b>}{ft}</span>
+                <span>
+                  {i > 0 && <b>and </b>}
+                  {ft}
+                </span>
                 <span
                   style={{
                     float: 'right',
                     padding: 5,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                   onClick={() =>
                     dispatch({
                       type: 'UPDATE_FILTER_TAGS',
-                      filterTags: filterTags.filter((f) => f != ft)
+                      filterTags: (filterTags || []).filter((f) => f !== ft),
                     })
                   }
                 >
-                <MdCancel />
-              </span>
+                  <MdCancel />
+                </span>
               </div>
             ))}
           </div>
-        }
-        {sortedTags.map((st: any, s: any) => (
+        )}
+        {sortedTags.map((st, s) => (
           <React.Fragment key={`tag-${s}-frag`}>
             <SidebarButton
               isTag

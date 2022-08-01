@@ -20,7 +20,13 @@ const converter = new Showdown.Converter({
   tasklists: true,
 });
 
-const AddEntryForm = (props: any) => {
+type AddEntryFormPropsType = {
+  setAddEntrySplash: (
+    value: ((prevState: boolean) => boolean) | boolean
+  ) => void;
+};
+
+const AddEntryForm = (props: AddEntryFormPropsType) => {
   const { setAddEntrySplash } = props;
   const [{ projectData }, dispatch] = useProjectState();
 
@@ -46,8 +52,8 @@ const AddEntryForm = (props: any) => {
     setDate(new Date());
   };
 
-  const EditDate = (props: any) => {
-    const { date } = props;
+  const EditDate = (editDateProps: { date: Date }) => {
+    const { date: currentDateVal } = editDateProps;
 
     const updateDate = (newDate: Date) => {
       console.log('newdate', newDate);
@@ -58,7 +64,7 @@ const AddEntryForm = (props: any) => {
     return (
       <DatePicker
         style={{ cursor: 'pointer' }}
-        selected={new Date(date)}
+        selected={new Date(currentDateVal)}
         onChange={updateDate}
         dateFormat="dd MMMM yyyy"
         maxDate={new Date()}
@@ -66,9 +72,8 @@ const AddEntryForm = (props: any) => {
     );
   };
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'preview'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('preview');
 
   const handleChangeTab = (newTab: 'write' | 'preview') => {
     setSelectedTab(newTab);

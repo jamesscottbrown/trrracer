@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
-import { GiSewingString } from 'react-icons/gi';
 import * as d3 from 'd3';
 import {
   Button,
@@ -12,19 +11,17 @@ import {
   Box,
   SimpleGrid,
   Tooltip,
-  IconButton,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
+import { IconChartDots3 } from '@tabler/icons';
+
 import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
-import { drive_v3 } from 'googleapis';
 import { joinPath, readFileSync } from '../fileUtil';
-import { BiLinkExternal } from 'react-icons/bi';
-import { IconChartDots3 } from '@tabler/icons';
 
 interface EntryPropTypes {
   activityID: string;
@@ -46,7 +43,7 @@ interface ReadonlyEntryFilePropTypes {
 const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
   const { thisEntry, openFile, setViewType, file, i } = props;
   const [{ folderPath, isReadOnly, viewParams }, dispatch] = useProjectState();
- 
+
   return (
     <>
       <Box bg="#ececec" p={3}>
@@ -62,35 +59,37 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
             style={{ fontWeight: 800, fontSize: 16 }}
           >{`${file.artifactType}: `}</span>
           {file.title}{' '}
-       
-            <FaExternalLinkAlt
-              onClick={() => {
-                if(!isReadOnly){
-                  openFile(file.title, folderPath)
-                }else{
-                  if(file.fileType === 'gdoc'){
-                    window.open(`https://docs.google.com/document/d/${file.fileId}/edit?usp=sharing`, "_blank")
-                  }else if(file.fileType === 'pdf'){
-                    
-                    let perf = joinPath(folderPath, file.title);
-                    
-                      readFileSync(perf)
-                        .then((res) => res.text())
-                        .then((pap) => {
-                          console.log('PAP', pap);
-                          window.open(`data:application/pdf;base64,${pap}`, "_blank")
-                        });
-                        
-                  }else{
-                    window.open(`${folderPath}${file.title}`, "_blank")
-                  }
+          <FaExternalLinkAlt
+            onClick={() => {
+              if (!isReadOnly) {
+                openFile(file.title, folderPath);
+              } else {
+                if (file.fileType === 'gdoc') {
+                  window.open(
+                    `https://docs.google.com/document/d/${file.fileId}/edit?usp=sharing`,
+                    '_blank'
+                  );
+                } else if (file.fileType === 'pdf') {
+                  let perf = joinPath(folderPath, file.title);
+
+                  readFileSync(perf)
+                    .then((res) => res.text())
+                    .then((pap) => {
+                      console.log('PAP', pap);
+                      window.open(
+                        `data:application/pdf;base64,${pap}`,
+                        '_blank'
+                      );
+                    });
+                } else {
+                  window.open(`${folderPath}${file.title}`, '_blank');
                 }
-                }}
-              title="Open file externally"
-              size="13px"
-              style={{ display: 'inline', cursor:'pointer'}}
-            />
-       
+              }
+            }}
+            title="Open file externally"
+            size="13px"
+            style={{ display: 'inline', cursor: 'pointer' }}
+          />
           <Button
             size="xs"
             style={{
@@ -99,7 +98,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-              if(!viewParams){
+              if (!viewParams) {
                 setViewType('detail view');
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
@@ -145,7 +144,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   '<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>'
                 );
 
-                pop.style('height', '800px')
+                pop.style('height', '800px');
               }
             }}
           >
@@ -158,19 +157,11 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
 };
 
 const ReadonlyEntry = (props: EntryPropTypes) => {
-  const {
-    activityID,
-    makeEditable,
-    openFile,
-    setViewType,
-    viewType,
-    foundIn,
-  } = props;
+  const { activityID, makeEditable, openFile, setViewType, viewType, foundIn } =
+    props;
 
-  const [
-    { projectData, researchThreads, isReadOnly },
-    dispatch,
-  ] = useProjectState();
+  const [{ projectData, researchThreads, isReadOnly }, dispatch] =
+    useProjectState();
 
   const thisEntry = useMemo(() => {
     return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
@@ -259,56 +250,58 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
                     padding: 3,
                     margin: 3,
                   }}
-                >  
-                <IconChartDots3 size={'20px'} />
+                >
+                  <IconChartDots3 size={'20px'} />
                 </div>
               </Tooltip>
             </React.Fragment>
           ))}
         <br />
 
-        {(thisEntry.description && thisEntry.description != '' && thisEntry.description != 'Add description') && (
-          <div>
-            {thisEntry.tags.includes('email') ? (
-              <div>
-                <span>{`${thisEntry.description.split('.')[0]}...`}</span>
-                <Button
-                  onClick={() => {
-                    setViewType('detail view');
+        {thisEntry.description &&
+          thisEntry.description != '' &&
+          thisEntry.description != 'Add description' && (
+            <div>
+              {thisEntry.tags.includes('email') ? (
+                <div>
+                  <span>{`${thisEntry.description.split('.')[0]}...`}</span>
+                  <Button
+                    onClick={() => {
+                      setViewType('detail view');
 
-                    dispatch({
-                      type: 'SELECTED_ARTIFACT',
-                      activity: thisEntry,
-                      artifactIndex: null,
-                      hopArray: [
-                        {
-                          activity: thisEntry,
-                          artifactUid: null, // thisEntry.files[i].artifact_uid,
-                          hopReason: 'first hop',
-                        },
-                      ],
-                    });
-                  }}
-                >
-                  VIEW EMAIL
-                </Button>
-              </div>
-            ) : (
-              <ReactMde
-                value={thisEntry.description}
-                // onChange={setValue}
-                selectedTab="preview"
-                // onTabChange={()=> null}
-                minPreviewHeight={100}
-                generateMarkdownPreview={(markdown) =>
-                  Promise.resolve(converter.makeHtml(markdown))
-                }
-                readOnly
-                style={{ height: '100%', overflowY: 'scroll' }}
-              />
-            )}
-          </div>
-        )}
+                      dispatch({
+                        type: 'SELECTED_ARTIFACT',
+                        activity: thisEntry,
+                        artifactIndex: null,
+                        hopArray: [
+                          {
+                            activity: thisEntry,
+                            artifactUid: null, // thisEntry.files[i].artifact_uid,
+                            hopReason: 'first hop',
+                          },
+                        ],
+                      });
+                    }}
+                  >
+                    VIEW EMAIL
+                  </Button>
+                </div>
+              ) : (
+                <ReactMde
+                  value={thisEntry.description}
+                  // onChange={setValue}
+                  selectedTab="preview"
+                  // onTabChange={()=> null}
+                  minPreviewHeight={100}
+                  generateMarkdownPreview={(markdown) =>
+                    Promise.resolve(converter.makeHtml(markdown))
+                  }
+                  readOnly
+                  style={{ height: '100%', overflowY: 'scroll' }}
+                />
+              )}
+            </div>
+          )}
       </div>
 
       <SimpleGrid columns={1} spacing={1}>

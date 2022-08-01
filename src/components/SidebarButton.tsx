@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 
-import { FaFilter } from 'react-icons/fa';
 import { AiFillFilter, AiOutlineFilter } from 'react-icons/ai';
-import { GrAddCircle } from 'react-icons/gr';
+import type { ProjectState, TagType } from './types';
 
-const SidebarButton = (sidebarProps: any) => {
+type SidebarButtonProps = {
+  index: number;
+  data: TagType;
+  filterTags: string[] | null;
+  dispatch: (msg: any) => ProjectState;
+};
+
+const SidebarButton = (sidebarProps: SidebarButtonProps) => {
   const { index, data, filterTags, dispatch } = sidebarProps;
   const [barColor, setBarColor] = useState('#FFFFFF');
 
@@ -39,7 +45,11 @@ const SidebarButton = (sidebarProps: any) => {
             }
           }}
         >
-          {filterTags.includes(data.title) ? <AiFillFilter /> : <AiOutlineFilter />}
+          {filterTags.includes(data.title) ? (
+            <AiFillFilter />
+          ) : (
+            <AiOutlineFilter />
+          )}
         </Button>
         {/* <Button title='Add to thread.' size={"xs"}>{<GrAddCircle />}</Button> */}
       </span>

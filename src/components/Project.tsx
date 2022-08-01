@@ -24,8 +24,6 @@ import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
 
-const queryString = require('query-string');
-
 // CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 // const params = new URLSearchParams(location.search);
@@ -34,39 +32,10 @@ const queryString = require('query-string');
 interface ProjectProps {
   folderPath: string;
 }
-// two arrays are the same length,
-// you dont have a  - in object, each key is string or number.
-
-function compareObjects<T extends any>(objA: T, objB: T): boolean {
-  if (Object.keys(objA).length !== Object.keys(objB).length) {
-    return false;
-  }
-
-  for (const key in Object.keys(objA)) {
-    if (objA[key] !== objB[key]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function compareObjectList<T extends any[]>(listA: T, listB: T): boolean {
-  if (listA.length !== listB.length) {
-    return false;
-  }
-  for (let i = 0; i < listA.length; i += 1) {
-    if (!compareObjects(listA[i], listB[i])) {
-      return false;
-    }
-  }
-  return true;
-}
 
 const ResearchThreadTypeTags = () => {
-  const [
-    { filterRT, researchThreads, threadTypeFilterArray },
-    dispatch,
-  ] = useProjectState();
+  const [{ filterRT, researchThreads, threadTypeFilterArray }, dispatch] =
+    useProjectState();
 
   const chosenThread = filterRT
     ? researchThreads.research_threads.filter(
@@ -116,7 +85,7 @@ const ResearchThreadTypeTags = () => {
               style={{
                 marginRight: '15px',
                 cursor: 'pointer',
-                backgroundColor:`${chosenThread?.color}50`,
+                backgroundColor: `${chosenThread?.color}50`,
                 color: chosenThread?.color === '#3932a3' ? '#fff' : 'black',
                 opacity: tg.show && tg.matches.length > 0 ? 1 : 0.4,
               }}
@@ -210,18 +179,18 @@ export const ToolIcon = (toolProp: any) => {
 
 function debounce(fn, ms) {
   let timer: any;
-  return _ => {
-    clearTimeout(timer)
-    timer = setTimeout(_ => {
-      timer = null
-      fn.apply(this, arguments)
-    }, ms)
+  return (_) => {
+    clearTimeout(timer);
+    timer = setTimeout((_) => {
+      timer = null;
+      fn.apply(this, arguments);
+    }, ms);
   };
 }
 
 const Project = (ProjectPropValues: ProjectProps) => {
   const { folderPath, setPath } = ProjectPropValues;
- 
+
   const [
     {
       projectData,
@@ -233,22 +202,24 @@ const Project = (ProjectPropValues: ProjectProps) => {
       threadTypeFilterArray,
       goBackView,
       isReadOnly,
-      viewParams
+      viewParams,
     },
     dispatch,
   ] = useProjectState();
 
   const [viewType, setViewType] = useState<string>('overview');
-  const [newTitle, setNewTitle] = useState<string>(projectData.title === "Jen" ? "tRRRacer Meta" : projectData.title);
+  const [newTitle, setNewTitle] = useState<string>(
+    projectData.title === 'Jen' ? 'tRRRacer Meta' : projectData.title
+  );
   const [groupBy, setGroupBy] = useState(null);
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
-  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false)
+  const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
   const [bubbleDivWidth, setBubbleDivWidth] = useState(300);
   const [windowDimension, setWindowDimension] = useState({
     width: window.innerWidth,
-    height: window.innerHeight
-  })
+    height: window.innerHeight,
+  });
 
   const fromTop =
     (filterTags && filterTags?.length > 0) ||
@@ -257,8 +228,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
       ? 110
       : 70;
 
-  useEffect(()=> {
-    if(isReadOnly && viewParams && viewParams.view){
+  useEffect(() => {
+    if (isReadOnly && viewParams && viewParams.view) {
       setViewType(viewParams.view);
     }
   }, [isReadOnly, viewParams]);
@@ -267,14 +238,14 @@ const Project = (ProjectPropValues: ProjectProps) => {
     const debouncedHandleResize = debounce(function handleResize() {
       setWindowDimension({
         height: window.innerHeight,
-        width: window.innerWidth
-      })
-    }, 1000)
-    window.addEventListener('resize', debouncedHandleResize)
-    return _ => {
-      window.removeEventListener('resize', debouncedHandleResize)
-  }   
-  })
+        width: window.innerWidth,
+      });
+    }, 1000);
+    window.addEventListener('resize', debouncedHandleResize);
+    return (_) => {
+      window.removeEventListener('resize', debouncedHandleResize);
+    };
+  });
 
   const barWidth = useMemo(() => {
     const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;

@@ -5,9 +5,8 @@ import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
   const { setViewType, viewType } = ProjectPropValues;
-  const [
-    { projectData, selectedActivityURL, filteredActivities },
-  ] = useProjectState();
+  const [{ projectData, selectedActivityURL, filteredActivities }] =
+    useProjectState();
 
   const [usedEntries, setUsedEntries] = useState(filteredActivities);
 

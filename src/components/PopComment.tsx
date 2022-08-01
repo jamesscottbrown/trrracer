@@ -123,7 +123,6 @@ const PopComment = (props) => {
     if (anon) {
       return anon[type];
     }
-  
   };
 
   if (!showPopover) {

@@ -70,12 +70,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   const { widthSvg, filterType } = props;
 
   const [
-    {
-      projectData,
-      filteredActivities,
-      selectedArtifact,
-      hopArray,
-    },
+    { projectData, filteredActivities, selectedArtifact, hopArray },
     dispatch,
   ] = useProjectState();
 
@@ -338,7 +333,8 @@ const DetailBubble = (props: BubbleDetProps) => {
           ...hopArray,
           {
             activity: parentData,
-            artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
+            artifactUid:
+              parentData.files[selectedArtifact.artifactIndex].artifact_uid,
             hopReason: 'revisit hopped artifact',
           },
         ];
@@ -351,7 +347,8 @@ const DetailBubble = (props: BubbleDetProps) => {
             ...hopArray,
             {
               activity: parentData,
-              artifactUid: parentData.files[selectedArtifact.artifactIndex].artifact_uid,
+              artifactUid:
+                parentData.files[selectedArtifact.artifactIndex].artifact_uid,
               hopReason: 'revisit hopped artifact',
             },
           ],
@@ -359,11 +356,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       });
 
     // }
-  }, [
-    filteredActivities,
-    filterType,
-    selectedArtifact
-  ]);
+  }, [filteredActivities, filterType, selectedArtifact]);
 
   return (
     <div style={{ width: widthSvg, paddingTop: '10px' }}>

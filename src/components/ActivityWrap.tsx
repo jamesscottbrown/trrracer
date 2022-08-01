@@ -11,7 +11,7 @@ type ActivityWrapPropType = {
   activityData: EntryTypeWithIndex;
   editable: boolean[];
   setEditableStatus: (index: number, isEditable: boolean) => void;
-  setViewType: (v: any) => void;
+  setViewType: (v: string) => void;
   index: number;
   viewType: string;
 };

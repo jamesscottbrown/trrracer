@@ -62,13 +62,8 @@ const styleSection = (
 };
 
 const GoogDriveSpans = (googProps: any) => {
-  const {
-    googEl,
-    index,
-    comments,
-    setFragSelected,
-    artifactBookmarks,
-  } = googProps;
+  const { googEl, index, comments, setFragSelected, artifactBookmarks } =
+    googProps;
 
   const [spanColor, setSpanColor] = useState(false);
 
@@ -136,13 +131,8 @@ const GoogDriveSpans = (googProps: any) => {
 };
 
 const GoogDriveParagraph = (parProps: any) => {
-  const {
-    parData,
-    index,
-    comments,
-    setFragSelected,
-    artifactBookmarks,
-  } = parProps;
+  const { parData, index, comments, setFragSelected, artifactBookmarks } =
+    parProps;
 
   const getHeading = (
     styling: GoogleParagraphStyle,

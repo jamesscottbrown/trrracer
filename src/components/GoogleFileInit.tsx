@@ -83,13 +83,15 @@ const GoogFileInit = (props: {
               <Button
                 color="red.400"
                 onClick={() => {
-                  getDriveFiles(folderPath, googleCred, googData).then((googOb) => {
-                    dispatch({
-                      type: 'UPDATE_GOOG_DOC_DATA',
-                      googDocData: googOb.goog_doc_data,
-                    });
-                    // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
-                  });
+                  getDriveFiles(folderPath, googleCred, googData).then(
+                    (googOb) => {
+                      dispatch({
+                        type: 'UPDATE_GOOG_DOC_DATA',
+                        googDocData: googOb.goog_doc_data,
+                      });
+                      // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+                    }
+                  );
                   setShowFileCreate(false);
                 }}
                 type="button"

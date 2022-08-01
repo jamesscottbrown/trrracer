@@ -1,6 +1,6 @@
-import { AnyNsRecord } from 'dns';
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
+
 const queryString = require('query-string');
 
 const pickTagColor = (tags: TagType[]) => {
@@ -238,38 +238,39 @@ export const getAppStateReducer = (
 
       const research_threads = await checkRtFile(baseDir);
 
-      if(isReadOnly){
+      if (isReadOnly) {
         views = queryString.parse(location.search);
 
-        if(Object.keys(views).length > 0){
-
-          if(views.granularity === 'thread'){
-            let thisThread = research_threads.research_threads.filter(f => f.rt_id === views.id)[0];
+        if (Object.keys(views).length > 0) {
+          if (views.granularity === 'thread') {
+            let thisThread = research_threads.research_threads.filter(
+              (f) => f.rt_id === views.id
+            )[0];
             threadFil = {
               title: thisThread.title,
               rtId: views.id,
-              rtIndex: research_threads.research_threads.map((rt:any) => rt.rt_id).indexOf(views.id),
-              key: thisThread.evidence.map((m:any) => m.activityTitle),
-            
-            }
-          }else if(views.granularity === 'activity'){
+              rtIndex: research_threads.research_threads
+                .map((rt: any) => rt.rt_id)
+                .indexOf(views.id),
+              key: thisThread.evidence.map((m: any) => m.activityTitle),
+            };
+          } else if (views.granularity === 'activity') {
             selectedActivity = views.id;
-
-          }else if(views.granularity === 'artifact'){
+          } else if (views.granularity === 'artifact') {
             let activityTest = newEntries.filter((e, i) => {
-              let test = e.files.filter(f => f.artifact_uid === views.id);
+              let test = e.files.filter((f) => f.artifact_uid === views.id);
               return test.length > 0;
             })[0];
-            let artIn = activityTest.files.map(m => m.artifact_uid).indexOf(views.id);
+            let artIn = activityTest.files
+              .map((m) => m.artifact_uid)
+              .indexOf(views.id);
 
             selectedArtifact = {
               activity: activityTest,
-              artifactIndex: artIn
-            }
-
+              artifactIndex: artIn,
+            };
           }
         }
-        
       }
       const newProjectData = {
         entries: newEntries,
@@ -451,7 +452,7 @@ export const getAppStateReducer = (
       }
 
       case 'VIEW_PARAMS': {
-        console.log('project context common',action.viewParams);
+        console.log('project context common', action.viewParams);
         if (action.viewParams === null) {
           return {
             ...state,
@@ -539,7 +540,7 @@ export const getAppStateReducer = (
       }
       case 'UPDATE_GOOG_DOC_DATA': {
         setTimeout(() => {
-          if(Object.keys(action.googDocData).length > 1){
+          if (Object.keys(action.googDocData).length > 1) {
             return saveJSONGoogDoc(action.googDocData, state.folderPath, state);
           }
           return state;
@@ -548,15 +549,13 @@ export const getAppStateReducer = (
         return state;
       }
       case 'UPDATE_GOOG_IDS': {
-        const entries = [...state.projectData.entries].map(
-          (d: EntryType) => {
-            let files = d.files.map((f: any) => {
-              if (action.googFileIds && !f.title.includes('.txt')) {
-               
-                f.goog_ids = action.googFileIds[f.title]
-                  ? action.googFileIds[f.title]
-                  : null;
-              }
+        const entries = [...state.projectData.entries].map((d: EntryType) => {
+          let files = d.files.map((f: any) => {
+            if (action.googFileIds && !f.title.includes('.txt')) {
+              f.goog_ids = action.googFileIds[f.title]
+                ? action.googFileIds[f.title]
+                : null;
+            }
 
             return f;
           });
@@ -603,7 +602,7 @@ export const getAppStateReducer = (
       case 'REMOVE_BOOKMARK': {
         let bookmarks =
           action.selectedArtifactEntry.files[action.selectedArtifactIndex]
-            .bookmarks; 
+            .bookmarks;
         let entryIndex = action.selectedArtifactEntry.index;
         bookmarks = bookmarks.filter((f, i) => i != action.fragIndex); //.push({ 'fragment': action.bookmarkFragment })
 
@@ -805,7 +804,7 @@ export const getAppStateReducer = (
             filterRT: {
               title: action.filterRT.title,
               key: action.filterRT.evidence.map((m) => m.activityTitle),
-              rtIndex: action.rtIndex, 
+              rtIndex: action.rtIndex,
               rtId: action.filterRT.rt_id,
               associatedKey: associatedTest,
             },
@@ -842,7 +841,7 @@ export const getAppStateReducer = (
       case 'ADD_TAG_TO_ENTRY': {
         const { newTag, activityID } = action;
 
-        console.log(newTag, activityID)
+        console.log(newTag, activityID);
 
         const existingTags = state.projectData.tags.map((k) => k.title);
         const newColor = pickTagColor(state.projectData.tags);
@@ -914,7 +913,10 @@ export const getAppStateReducer = (
       case 'SELECTED_ARTIFACT': {
         return {
           ...state,
-          selectedArtifact: {activity: action.activity, artifactIndex: action.artifactIndex},
+          selectedArtifact: {
+            activity: action.activity,
+            artifactIndex: action.artifactIndex,
+          },
           hopArray: action.hopArray,
         };
       }

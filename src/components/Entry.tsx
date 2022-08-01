@@ -66,10 +66,10 @@ const FileContext = (props: FileContextProps) => {
   const contextFill = file.meta ? file.meta : file.context;
   const [{projectData}, dispatch] = useProjectState();
 
-  const contextStarter =
-    contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
-
-  const [context, setContext] = useState(contextStarter);
+  const context =
+    contextFill === 'null' || contextFill === null
+      ? 'No context here yet.'
+      : contextFill;
 
   const updateMeta = () => {
     dispatch({ type: 'FILE_META', 
@@ -140,14 +140,12 @@ const Entry = (props: EntryPropTypes) => {
     setValue(thisEntry.description);
   }, [thisEntry]);
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('write');
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-   
     dispatch({
       type: 'ADD_FILES_TO_ENTRY',
       fileList,
@@ -203,7 +201,6 @@ const Entry = (props: EntryPropTypes) => {
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
-           
             updateEntryField('title', val);
           }}
         >
@@ -355,7 +352,7 @@ const Entry = (props: EntryPropTypes) => {
         <br />
         <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
-          {filterfiles.map((file: File, j: any) => (
+          {filterfiles.map((file: File, j) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt
