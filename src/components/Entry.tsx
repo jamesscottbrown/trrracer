@@ -65,12 +65,10 @@ const FileContext = (props: FileContextProps) => {
   const { file, entryIndex, fileIndex, dispatch } = props;
   const contextFill = file.meta ? file.meta : file.context;
 
-  const contextStarter =
-    contextFill != 'null' || contextFill != null
-      ? contextFill
-      : 'No context here yet.';
-
-  const [context, setContext] = useState(contextStarter);
+  const context =
+    contextFill === 'null' || contextFill === null
+      ? 'No context here yet.'
+      : contextFill;
 
   const updateMeta = () => {
     dispatch({ type: 'FILE_META', entryIndex, fileIndex, context });
