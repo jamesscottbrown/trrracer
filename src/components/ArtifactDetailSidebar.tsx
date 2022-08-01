@@ -179,12 +179,12 @@ const FragmentToThread = (props: any) => {
   );
 };
 const InteractiveActivityTag = (props: any) => {
-  const { key, index, tag } = props;
+  const { index, tag } = props;
   const [{ projectData, hopArray, selectedArtifact }, dispatch] = useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
 
   const tagMatches = projectData.entries.filter(
-    (f: any) => f.tags.indexOf(tag) > -1
+    (f) => f.tags.indexOf(tag) > -1
   );
 
   return (
@@ -205,7 +205,7 @@ const InteractiveActivityTag = (props: any) => {
           style={{ cursor: 'pointer' }}
           onClick={() => {
             const indexOfE = tagMatches
-              .map((m: any) => m.title)
+              .map((m) => m.title)
               .indexOf(selectedArtifact.activity.title);
 
             if (indexOfE === 0) {
@@ -261,7 +261,7 @@ const InteractiveActivityTag = (props: any) => {
           style={{ cursor: 'pointer' }}
           onClick={() => {
             const indexOfE = tagMatches
-              .map((m: any) => m.title)
+              .map((m) => m.title)
               .indexOf(selectedArtifact.title);
             if (indexOfE === tagMatches.length - 1) {
               const newHop = [
@@ -303,7 +303,7 @@ const InteractiveActivityTag = (props: any) => {
       </Flex>
       {expandedTag && (
         <div>
-          {tagMatches.map((t: any, i: number) => (
+          {tagMatches.map((t, i) => (
             <React.Fragment key={`tag-match-${i}`}>
               {t.title === selectedArtifact.activity.title ? (
                 <div
@@ -449,7 +449,7 @@ const ArtifactDetailSidebar = (props: any) => {
               padding="3px"
             >
               {selectedArtifact.activity.files.length > 0 ?
-              selectedArtifact.activity.files.map((f: any, i: number) => (
+              selectedArtifact.activity.files.map((f, i) => (
                 <React.Fragment key={`fi-${f.title}-${i}`}>
                   {i === selectedArtifact.artifactIndex ? (
                     <div
