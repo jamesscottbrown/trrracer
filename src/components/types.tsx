@@ -53,6 +53,7 @@ interface TagType {
   title: string;
   color: string;
   dob: string;
+  matches?: string[];
 }
 
 interface ReactTagType {
@@ -159,6 +160,26 @@ type ViewParams = {
   id: string;
 };
 
+// used in some components like LeftSidebar
+type ArtifactTypesType = {
+  title: string;
+  matches: number;
+  color: string;
+};
+
+// used in project state
+type ArtifactTypesType2 = {
+  type: string;
+  color: string;
+};
+
+
+type FileTypesType = {
+  title: string;
+  matches: number;
+};
+
+
 type ProjectState = {
   projectData: ProjectType;
   isReadOnly: boolean;
@@ -172,7 +193,7 @@ type ProjectState = {
   filterRT: any;
   threadTypeFilterArray: any;
   query: any;
-  artifactTypes: any;
+  artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
   txtData?: TxtData[];
   researchThreads?: ResearchThreadData;
@@ -208,12 +229,14 @@ interface ReactTag {
 }
 
 export {
+  ArtifactTypesType,
   DeadlineType,
   EntryType,
   EntryPropTypes,
   EntryTypeWithIndex,
   File,
   FileObj,
+  FileTypesType,
   GoogleDocContent,
   GoogleDocParagraph,
   GoogleParagraphStyle,
