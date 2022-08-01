@@ -35,6 +35,7 @@ const url = (folderPath: string, title: string) => {
 interface DetailPreviewPropsType {
   openFile: (title: string, fp: string) => void;
   setFragSelected: any;
+  searchTermArtifact: string;
 }
 
 const TextRender = (textProps: { textArray: TextArray }) => {
@@ -57,7 +58,7 @@ const TextRender = (textProps: { textArray: TextArray }) => {
 };
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
-  const { setFragSelected, openFile } = props;
+  const { setFragSelected, searchTermArtifact, openFile } = props;
 
   const [
     {
@@ -148,6 +149,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             borderRadius: 6,
             padding: 10,
           }}
+          id="detail-preview"
         >
           <div
             style={{ height: '100%', width: '700px', overflow: 'auto' }}
@@ -218,12 +220,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     }
 
     getDriveFiles(folderPath, googleCred).then((googOb) => {
-      console.log('GOOGLE OB', googOb);
+    
       dispatch({
         type: 'UPDATE_GOOG_DOC_DATA',
         googDocData: googOb.goog_doc_data,
       });
-      // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
 
       const chosen = googOb.goog_doc_data[artifact.fileId];
 
@@ -280,10 +281,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.txt')) {
     const [textFile, setText] = useState<TextArray>([]);
 
+    console.log('searchTermArtifact!!!',searchTermArtifact)
+
     useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {
-        console.log('filllll', query);
-
+    
         let textArray =
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
         if (query) {
@@ -293,10 +295,20 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             keeper.push({ style: 'highlight', textData: query.term });
             keeper.push({ style: 'normal', textData: textA[j] });
           }
+          
+
+          textArray = keeper;
+        }else if (searchTermArtifact) {
+          const textA = text.split(searchTermArtifact);
+          const keeper = [{ style: 'normal', textData: textA[0] }];
+          for (let j = 1; j < textA.length - 1; j += 1) {
+            keeper.push({ style: 'highlight', textData: searchTermArtifact });
+            keeper.push({ style: 'normal', textData: textA[j] });
+          }
           console.log(textA);
 
           textArray = keeper;
-        } else if (artifact.bookmarks) {
+        }else if (artifact.bookmarks) {
           const start = textArray[0].textData.split(
             artifact.bookmarks[0].fragment
           );
@@ -345,6 +357,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             console.log('mouseup');
           }
         }}
+        id="detail-preview"
         style={{ height: '100%', width: '90%', padding: 8, overflow: 'auto' }}
       >
         {textFile.length > 0 ? (

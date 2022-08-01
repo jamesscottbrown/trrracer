@@ -143,7 +143,7 @@ interface QueryProps {
 }
 
 const QueryBar = (queryProps: QueryProps) => {
-  const { artifactData, setViewType, filteredActivities } = queryProps;
+  const { setSearchTermArtifact, setViewType, filteredActivities } = queryProps;
   const [{ txtData, googleData }, dispatch] = useProjectState();
 
   const [term, setTerm] = React.useState(null);
@@ -155,20 +155,19 @@ const QueryBar = (queryProps: QueryProps) => {
 
   let data;
 
-  if (artifactData) {
-    // data = ((artifactData.fileType === 'txt') && (txtData?['text-data'] != undefined)) ? txtData['text-data'].filter(
-    //         (f) => f['file-title'] === artifactData.title
-    //       )[0].text
-    //     : googleData[artifactData.fileId];
-    if (artifactData.fileType === 'txt' && txtData) {
-      const dataCheck = txtData['text-data'].filter(
-        (f) => f['file-title'] === artifactData.title
-      );
-      data = dataCheck.length > 0 ? dataCheck[0].text : [];
-    } else {
-      data = googleData[artifactData.fileId];
-    }
-  }
+  
+
+  // if (artifactData) {
+  //   console.log('text content!!', document.getElementById('detail-preview'))
+  //   if (artifactData.fileType === 'txt' && txtData) {
+  //     const dataCheck = txtData['text-data'].filter(
+  //       (f) => f['file-title'] === artifactData.title
+  //     );
+  //     data = dataCheck.length > 0 ? dataCheck[0].text : [];
+  //   } else {
+  //     data = googleData[artifactData.fileId];
+  //   }
+  // }
 
   return (
     <InputGroup align="center" width="400px" marginEnd="90px">
@@ -182,19 +181,20 @@ const QueryBar = (queryProps: QueryProps) => {
           h="1.75rem"
           size="sm"
           onClick={() => {
-            if (artifactData) {
-              console.log('DATA ON CLICK', data);
-              if (data.documentId) {
-                console.log('this is a google doc.');
-              } else {
-                console.log('this is text file', data);
-                if (data) {
-                  const matchArray = data.split(term);
-                  alert(`${matchArray.length - 1} matches`);
-                } else {
-                  alert('notext data for this file yet');
-                }
-              }
+            if (setSearchTermArtifact) {
+              // console.log('DATA ON CLICK', data);
+              // if (data.documentId) {
+              //   console.log('this is a google doc.');
+              // } else {
+              //   console.log('this is text file', data);
+              //   if (data) {
+              //     const matchArray = data.split(term);
+              //     alert(`${matchArray.length - 1} matches`);
+              //   } else {
+              //     alert('notext data for this file yet');
+              //   }
+              // }
+              setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(
                 term,
