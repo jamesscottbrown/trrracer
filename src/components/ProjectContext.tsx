@@ -27,7 +27,6 @@ export function useProjectState() {
   return useContext<DispatchType>(ProjectContext);
 }
 
-
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   if (isElectron) {

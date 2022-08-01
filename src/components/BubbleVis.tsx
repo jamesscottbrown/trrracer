@@ -401,14 +401,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', 6)
           .text((d) => {
-            const val = (d == 'handle--o') ? s1[0] : s1[1];
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
             return yScale.invert(val).toLocaleDateString('en-us', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 
@@ -923,14 +923,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
           .text((d: any) => {
-            const val = (d == 'handle--o') ? s1[0] : s1[1];
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
             return yScale.invert(val).toLocaleDateString('en-us', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              });
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 

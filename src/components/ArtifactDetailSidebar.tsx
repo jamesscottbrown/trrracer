@@ -5,57 +5,73 @@ import { FaArrowLeft, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useProjectState } from './ProjectContext';
 import { CreateThreadComponent } from './ThreadNav';
 
-const ArtifactDetailContext = (props:any) => {
-
+const ArtifactDetailContext = (props: any) => {
   const { selectedArtifactTest } = props;
   const [editMode, setEditMode] = useState(false);
   const [textValue, setTextValue] = useState(selectedArtifactTest.context);
-  const [{selectedArtifact}, dispatch] = useProjectState();
+  const [{ selectedArtifact }, dispatch] = useProjectState();
 
   return (
-    <div >
-      {
-      editMode ? <div
-      style={{
-        borderRadius:6,
-        border:'1px solid gray',
-        padding:10
-      }}
-      >
-      <textarea
-        value={textValue} 
-        onChange={(event)=> setTextValue(event.target.value)}
-      />
-      </div> :
-      <div
-      style={{
-        borderRadius:6,
-        border:'1px solid gray',
-        padding:10
-      }}
-      >
-        { selectedArtifactTest?.context != 'null' ? (
-        <div>{selectedArtifactTest?.context}</div>) :
-        <div>No context for file yet</div>
-        }</div>
-      }
-      {
-        editMode && (<Button
-        style={{marginRight:5}}
-          onClick={()=> {
-            dispatch({ type: 'FILE_META', activityID: selectedArtifact.activity.activity_uid, artifactTitle: selectedArtifactTest.title, artifactID: Object.keys(selectedArtifactTest).includes('artifact_uid') ? selectedArtifactTest.artifact_uid : null, context: textValue });
+    <div>
+      {editMode ? (
+        <div
+          style={{
+            borderRadius: 6,
+            border: '1px solid gray',
+            padding: 10,
+          }}
+        >
+          <textarea
+            value={textValue}
+            onChange={(event) => setTextValue(event.target.value)}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            borderRadius: 6,
+            border: '1px solid gray',
+            padding: 10,
+          }}
+        >
+          {selectedArtifactTest?.context != 'null' ? (
+            <div>{selectedArtifactTest?.context}</div>
+          ) : (
+            <div>No context for file yet</div>
+          )}
+        </div>
+      )}
+      {editMode && (
+        <Button
+          style={{ marginRight: 5 }}
+          onClick={() => {
+            dispatch({
+              type: 'FILE_META',
+              activityID: selectedArtifact.activity.activity_uid,
+              artifactTitle: selectedArtifactTest.title,
+              artifactID: Object.keys(selectedArtifactTest).includes(
+                'artifact_uid'
+              )
+                ? selectedArtifactTest.artifact_uid
+                : null,
+              context: textValue,
+            });
             editMode ? setEditMode(false) : setEditMode(true);
           }}
-        >Save</Button>)
-      }
+        >
+          Save
+        </Button>
+      )}
       <Button
-        onClick={()=> {
+        onClick={() => {
           editMode ? setEditMode(false) : setEditMode(true);
         }}
-      >{ editMode ? 'Cancel' : 'Edit Context'}</Button>
+      >
+        {editMode ? 'Cancel' : 'Edit Context'}
+      </Button>
     </div>
-  )
-}
+  );
+};
 
 const ArtifactToThread = (props: any) => {
   const [, dispatch] = useProjectState();
@@ -523,7 +539,7 @@ const ArtifactDetailSidebar = (props: any) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      <ArtifactDetailContext  selectedArtifactTest={selectedArtifactTest}/>
+      <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
       {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>

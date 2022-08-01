@@ -430,8 +430,7 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT }, dispatch] =
-    useProjectState();
+  const [{ projectData, isReadOnly, filterRT }, dispatch] = useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
@@ -443,9 +442,8 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
 
   const associatedTags = filteredThreads.map((rt) => {
     let tags = rt.evidence.flatMap((fm) => {
-      return projectData.entries.filter(
-        (f) => f.title === fm.activityTitle
-      )[0].tags;
+      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
+        .tags;
     });
     let groupTags = Array.from(d3.group(tags, (d) => d));
     let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);

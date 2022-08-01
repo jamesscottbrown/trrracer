@@ -26,7 +26,6 @@ import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
 import { IconChartDots3 } from '@tabler/icons';
 
-
 interface ReadonlyArtifactPropTypes {
   thisEntry: EntryType;
   openFile: (a: string, fp: string) => void;
@@ -110,16 +109,9 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
 };
 
 const ThreadedArtifact = (props: any) => {
-  const {
-    setViewType,
-    openFile,
-    fileData,
-    thisEntry,
-    folderPath,
-    i,
-  } = props;
+  const { setViewType, openFile, fileData, thisEntry, folderPath, i } = props;
 
-  const [ , dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
 
   return (
     <Box bg="#ececec" p={3}>
