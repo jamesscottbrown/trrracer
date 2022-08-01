@@ -166,7 +166,7 @@ type ProjectState = {
   filterTags: string[] | null;
   filterType: string | null;
   filterTypes: string[] | null;
-  //NEED TO MAKE THESE MORE SPECIFIC
+  // NEED TO MAKE THESE MORE SPECIFIC
   filterDates: any;
   filterQuery: any;
   filterRT: any;
@@ -179,7 +179,7 @@ type ProjectState = {
   selectedActivityURL: null | string;
   highlightedTag?: string;
   highlightedType?: string;
-  selectedArtifact: {activity:EntryTypeWithIndex, artifactIndex:number};
+  selectedArtifact: { activity: EntryTypeWithIndex; artifactIndex: number };
   filteredActivities: any;
   hopArray: any[];
   viewParams: ViewParams;
