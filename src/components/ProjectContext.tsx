@@ -97,7 +97,7 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
             if (!sourceIsInProjectDir) {
               fs.copyFileSync(file.path, destination);
             }
-         
+
             newFiles = [
               ...newFiles,
               {
@@ -244,7 +244,6 @@ export const readProjectFile = async (
     if (!fileType) {
       return JSON.parse(fileContents);
     }
-
   } else {
     const response = await fetch(`${folderPath}${fileName}`);
 
@@ -286,7 +285,6 @@ const saveJSONRT = (RTData: any, dir: string, state) => {
         }
       }
     );
-  
   }
   return { ...state, researchThreads: RTData };
 };
@@ -304,7 +302,6 @@ const saveJSONGoogDoc = (GDData: any, dir: string, state) => {
         }
       }
     );
-   
   }
   return { ...state, googDocData: GDData };
 };

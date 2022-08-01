@@ -108,49 +108,51 @@ const QueryView = (props: QueryViewProps) => {
       >
         <MdCancel size={30} />
       </div>
-      {
-        query.matches.length > 0 ?
-      
-      <div style={{ padding: 5, overflowY: 'auto' }}>
-        {query.matches.map((m: any, i: number) => (
-          <div key={`match-${i}`}>
-            <div style={{ fontSize: 18, fontWeight: 700, marginTop: 30 }}>
-              {m.entry.title}
+      {query.matches.length > 0 ? (
+        <div style={{ padding: 5, overflowY: 'auto' }}>
+          {query.matches.map((m: any, i: number) => (
+            <div key={`match-${i}`}>
+              <div style={{ fontSize: 18, fontWeight: 700, marginTop: 30 }}>
+                {m.entry.title}
+              </div>
+
+              {m.textMatch.length > 0 &&
+                m.textMatch.map((tm, j) => (
+                  <QueryMatchComponent
+                    m={m}
+                    tm={tm}
+                    setViewType={setViewType}
+                    j={j}
+                  />
+                ))}
+
+              {m.googMatch.length > 0 &&
+                m.googMatch.map((gm, j) => (
+                  <QueryMatchComponent
+                    m={m}
+                    tm={gm}
+                    setViewType={setViewType}
+                    j={j}
+                  />
+                ))}
             </div>
-
-            {m.textMatch.length > 0 &&
-              m.textMatch.map((tm, j) => (
-                <QueryMatchComponent
-                  m={m}
-                  tm={tm}
-                  setViewType={setViewType}
-                  j={j}
-                />
-              ))}
-
-            {m.googMatch.length > 0 &&
-              m.googMatch.map((gm, j) => (
-                <QueryMatchComponent
-                  m={m}
-                  tm={gm}
-                  setViewType={setViewType}
-                  j={j}
-                />
-              ))}
-          </div>
-        ))}
-      </div>:<div
-      style={{
-        borderRadius:6,
-        padding:30,
-        width:250,
-        backgroundColor:'#d3d3d3',
-        position:'absolute',
-        right:50,
-        textAlign:'center'
-      }}
-      >No matches found</div>
-}
+          ))}
+        </div>
+      ) : (
+        <div
+          style={{
+            borderRadius: 6,
+            padding: 30,
+            width: 250,
+            backgroundColor: '#d3d3d3',
+            position: 'absolute',
+            right: 50,
+            textAlign: 'center',
+          }}
+        >
+          No matches found
+        </div>
+      )}
     </div>
   );
 };

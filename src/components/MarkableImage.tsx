@@ -47,10 +47,8 @@ const MarkableImage = (props: MarkableImageProps) => {
 
   const artifactId = `${artifactIndex}-${activity.title}`;
 
-
   useEffect(() => {
     if (artifactIndex && activity.files[artifactIndex].markers) {
-    
       setMarkers(activity.files[artifactIndex].markers);
     }
   }, [artifactId]);

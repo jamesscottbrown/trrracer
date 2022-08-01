@@ -21,7 +21,9 @@ const converter = new Showdown.Converter({
 });
 
 type AddEntryFormPropsType = {
-  setAddEntrySplash: (value: (((prevState: boolean) => boolean) | boolean)) => void;
+  setAddEntrySplash: (
+    value: ((prevState: boolean) => boolean) | boolean
+  ) => void;
 };
 
 const AddEntryForm = (props: AddEntryFormPropsType) => {
@@ -70,9 +72,8 @@ const AddEntryForm = (props: AddEntryFormPropsType) => {
     );
   };
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'preview'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('preview');
 
   const handleChangeTab = (newTab: 'write' | 'preview') => {
     setSelectedTab(newTab);

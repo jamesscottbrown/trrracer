@@ -194,7 +194,6 @@ export default function groupBubbles(
 
   activityGroups
     .on('mouseover', (event, d) => {
-   
       d3.selectAll('.activity')
         .filter((f) => f.activity_uid === d.activity_uid)
         .attr('stroke', 'red')

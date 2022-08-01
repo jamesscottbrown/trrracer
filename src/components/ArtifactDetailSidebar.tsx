@@ -120,7 +120,8 @@ const FragmentToThread = (props: any) => {
 };
 const InteractiveActivityTag = (props: any) => {
   const { index, tag } = props;
-  const [{ projectData, hopArray, selectedArtifact }, dispatch] = useProjectState();
+  const [{ projectData, hopArray, selectedArtifact }, dispatch] =
+    useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
 
   const tagMatches = projectData.entries.filter(
@@ -329,7 +330,6 @@ const ArtifactDetailSidebar = (props: any) => {
     return test.length > 0;
   });
 
-
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -388,42 +388,44 @@ const ArtifactDetailSidebar = (props: any) => {
               borderLeftWidth="1px"
               padding="3px"
             >
-              {selectedArtifact.activity.files.length > 0 ?
-              selectedArtifact.activity.files.map((f, i) => (
-                <React.Fragment key={`fi-${f.title}-${i}`}>
-                  {i === selectedArtifact.artifactIndex ? (
-                    <div
-                      style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}
-                    >
-                      {selectedArtifact.activity.files[i].title}
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        dispatch({
-                          type: 'SELECTED_ARTIFACT',
-                          activity: selectedArtifact.activity,
-                          artifactIndex: i,
-                          hopArray: [
-                            ...hopArray,
-                            {
-                              activity: selectedArtifact.activity,
-                              artifactUid:
-                                selectedArtifact.activity.files[i].artifact_uid,
-                              hopReason: 'another artifact in activity',
-                            },
-                          ],
-                        });
-                      }}
-                    >
-                      {selectedArtifact.activity.files[i].title}
-                    </div>
-                  )}
-                </React.Fragment>
-              )):
-              <div>No files</div>
-            }
+              {selectedArtifact.activity.files.length > 0 ? (
+                selectedArtifact.activity.files.map((f, i) => (
+                  <React.Fragment key={`fi-${f.title}-${i}`}>
+                    {i === selectedArtifact.artifactIndex ? (
+                      <div
+                        style={{ backgroundColor: '#FFFBC8', fontWeight: 600 }}
+                      >
+                        {selectedArtifact.activity.files[i].title}
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          dispatch({
+                            type: 'SELECTED_ARTIFACT',
+                            activity: selectedArtifact.activity,
+                            artifactIndex: i,
+                            hopArray: [
+                              ...hopArray,
+                              {
+                                activity: selectedArtifact.activity,
+                                artifactUid:
+                                  selectedArtifact.activity.files[i]
+                                    .artifact_uid,
+                                hopReason: 'another artifact in activity',
+                              },
+                            ],
+                          });
+                        }}
+                      >
+                        {selectedArtifact.activity.files[i].title}
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))
+              ) : (
+                <div>No files</div>
+              )}
             </Box>
           )}
         </Box>
@@ -517,7 +519,10 @@ const ArtifactDetailSidebar = (props: any) => {
                   )
                 }
                 handleAddition={(tag: ReactTags) => {
-                  console.log('SELECTED',selectedArtifact.activity.activity_uid)
+                  console.log(
+                    'SELECTED',
+                    selectedArtifact.activity.activity_uid
+                  );
                   dispatch({
                     type: 'ADD_TAG_TO_ENTRY',
                     newTag: tag,
@@ -534,16 +539,11 @@ const ArtifactDetailSidebar = (props: any) => {
               />
             </div>
           )}
-          {(showTagList && !showTagAdd) && (
+          {showTagList && !showTagAdd && (
             <>
               {selectedArtifact.activity.tags.map((t: any, i: number) => (
-                <React.Fragment
-                key={`it-${i}`}
-                >
-                <InteractiveActivityTag
-                  tag={t}
-                  index={i}
-                />
+                <React.Fragment key={`it-${i}`}>
+                  <InteractiveActivityTag tag={t} index={i} />
                 </React.Fragment>
               ))}
             </>
@@ -644,18 +644,23 @@ const ArtifactDetailSidebar = (props: any) => {
                   ) : (
                     <div>No research threads yet.</div>
                   )}
-                  <div
-                  style={{margin:'auto', padding:5}}
-                  ><Button
-                    onClick={()=> showCreateThread ? setShowCreateThread(false) : setShowCreateThread(true)}
-                  >Create new thread thread</Button>
+                  <div style={{ margin: 'auto', padding: 5 }}>
+                    <Button
+                      onClick={() =>
+                        showCreateThread
+                          ? setShowCreateThread(false)
+                          : setShowCreateThread(true)
+                      }
+                    >
+                      Create new thread thread
+                    </Button>
 
-                {showCreateThread && (
-                  <CreateThreadComponent 
-                    setShowCreateThread={setShowCreateThread}
-                  />
-                )}
-                </div>
+                    {showCreateThread && (
+                      <CreateThreadComponent
+                        setShowCreateThread={setShowCreateThread}
+                      />
+                    )}
+                  </div>
                 </>
               )}{' '}
             </div>
@@ -693,15 +698,20 @@ const ArtifactDetailSidebar = (props: any) => {
                   {a.title}
                 </div>
                 {a.evidence
-                  .filter(
-                    (e) =>{
-                      if(selectedArtifact?.artifactIndex != null){
-                        return e.artifactTitle ===
-                        selectedArtifact?.activity.files[selectedArtifact?.artifactIndex].title
-                      }else{
-                        return e.activityTitle === selectedArtifact?.activity.title;
-                      }
-                    })
+                  .filter((e) => {
+                    if (selectedArtifact?.artifactIndex != null) {
+                      return (
+                        e.artifactTitle ===
+                        selectedArtifact?.activity.files[
+                          selectedArtifact?.artifactIndex
+                        ].title
+                      );
+                    } else {
+                      return (
+                        e.activityTitle === selectedArtifact?.activity.title
+                      );
+                    }
+                  })
                   .map((m, j) => (
                     <div key={`evi-${j}`} style={{ padding: 4 }}>
                       {m.type === 'fragment' && (

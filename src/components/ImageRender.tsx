@@ -9,9 +9,8 @@ type ImageRenderPropType = {
 };
 const ImageRender = (props: ImageRenderPropType) => {
   const { src, autoLoad } = props;
-  const [
-    { isReadOnly, selectedActivityURL, selectedArtifact },
-  ] = useProjectState();
+  const [{ isReadOnly, selectedActivityURL, selectedArtifact }] =
+    useProjectState();
 
   const [imgData, setImgData] = useState<any>(null);
 

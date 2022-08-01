@@ -28,7 +28,7 @@ const ViewTypeControl = (props: ViewTypeControlProps) => {
               dispatch({
                 type: 'THREAD_FILTER',
                 filterRT: null,
-                rtIndex:null
+                rtIndex: null,
               });
             }
             setViewType(ev.target.value);

@@ -16,12 +16,10 @@ import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 import { TextArray } from './types';
 
-
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 // import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
 
 if (isElectron) {
   googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -68,7 +66,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       folderPath,
       selectedArtifact,
       isReadOnly,
-      query
+      query,
     },
     dispatch,
   ] = useProjectState();
@@ -131,7 +129,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-  
     if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
       const googD = googleData[artifact.fileId];
 
@@ -171,7 +168,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       );
     } else {
       getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-       
         dispatch({
           type: 'UPDATE_GOOG_DOC_DATA',
           googDocData: googOb.goog_doc_data,
@@ -286,26 +282,21 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {
-      
-
-        console.log('filllll', query)
-       
+        console.log('filllll', query);
 
         let textArray =
           text.length > 0 ? [{ style: 'normal', textData: text }] : [];
-        if (query){
+        if (query) {
           let textA = text.split(query.term);
-          let keeper = [ { style: 'normal', textData: textA[0] } ];
-          for(let j = 1; j < textA.length - 1; j++){
-            keeper.push({ style: 'highlight', textData: query.term })
-            keeper.push({ style: 'normal', textData: textA[j] })
+          let keeper = [{ style: 'normal', textData: textA[0] }];
+          for (let j = 1; j < textA.length - 1; j++) {
+            keeper.push({ style: 'highlight', textData: query.term });
+            keeper.push({ style: 'normal', textData: textA[j] });
           }
-          console.log(textA)
+          console.log(textA);
 
           textArray = keeper;
-          
-
-        }else if (artifact.bookmarks) {
+        } else if (artifact.bookmarks) {
           const start = textArray[0].textData.split(
             artifact.bookmarks[0].fragment
           );
@@ -388,43 +379,35 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.pdf')) {
-    
     const perf = joinPath(folderPath, title);
     const [pageData, setPageData] = useState();
-   
-    useEffect(()=> {
 
+    useEffect(() => {
       if (isReadOnly) {
         readFileSync(perf)
           .then((res) => res.text())
           .then((pap) => {
             setPageData(pap);
           });
-          
       } else {
         setPageData(perf);
-      
       }
+    }, [folderPath, perf]);
 
-  }, [folderPath, perf]);
-
-    if(pageData){
-
-      return(
+    if (pageData) {
+      return (
         // <iframe src="data:application/pdf;base64,YOUR_BINARY_DATA" height="100%" width="100%"></iframe>
-        <iframe 
-        src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf} 
-        height="100%" 
-        width="700px"
-     
-        onLoad={(event)=> {
-          console.log('event', event);
-        }}
+        <iframe
+          src={isReadOnly ? `data:application/pdf;base64,${pageData}` : perf}
+          height="100%"
+          width="700px"
+          onLoad={(event) => {
+            console.log('event', event);
+          }}
         ></iframe>
-      )
-
+      );
     }
-    return <div>Loading</div>
+    return <div>Loading</div>;
   }
 
   if (title.endsWith('.HEIC')) {

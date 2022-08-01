@@ -66,7 +66,9 @@ const FileContext = (props: FileContextProps) => {
   const contextFill = file.meta ? file.meta : file.context;
 
   const contextStarter =
-    contextFill != 'null' || contextFill != null ? contextFill : 'No context here yet.';
+    contextFill != 'null' || contextFill != null
+      ? contextFill
+      : 'No context here yet.';
 
   const [context, setContext] = useState(contextStarter);
 
@@ -135,14 +137,12 @@ const Entry = (props: EntryPropTypes) => {
     setValue(thisEntry.description);
   }, [thisEntry]);
 
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+  const [selectedTab, setSelectedTab] =
+    React.useState<'write' | 'preview'>('write');
 
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-   
     dispatch({
       type: 'ADD_FILES_TO_ENTRY',
       fileList,
@@ -198,7 +198,6 @@ const Entry = (props: EntryPropTypes) => {
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
-           
             updateEntryField('title', val);
           }}
         >
