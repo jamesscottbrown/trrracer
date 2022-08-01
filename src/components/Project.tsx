@@ -32,21 +32,6 @@ import AddEntryForm from './AddEntryForm';
 interface ProjectProps {
   folderPath: string;
 }
-// two arrays are the same length,
-// you dont have a  - in object, each key is string or number.
-
-function compareObjects<T extends any>(objA: T, objB: T): boolean {
-  if (Object.keys(objA).length !== Object.keys(objB).length) {
-    return false;
-  }
-
-  for (const key in Object.keys(objA)) {
-    if (objA[key] !== objB[key]) {
-      return false;
-    }
-  }
-  return true;
-}
 
 const ResearchThreadTypeTags = () => {
   const [
