@@ -5,7 +5,7 @@ yarn.lock
 logs
 *.log
 
-#flask stuff 
+#flask stuff
 nlp-python/__pycache__
 nlp-python/.venv
 
@@ -67,3 +67,5 @@ npm-debug.log.*
 # local example project
 example/*
 
+
+src/web-dist-copy
