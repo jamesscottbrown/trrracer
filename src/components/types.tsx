@@ -182,7 +182,6 @@ type ProjectState = {
   filteredActivities: any;
   hopArray: any[];
   viewParams: ViewParams;
-  isReadOnly: boolean;
 };
 
 interface ProjectViewProps {
