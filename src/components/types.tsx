@@ -257,6 +257,8 @@ interface ReactTag {
   text: string;
 }
 
+type TextArray = { style: string; textData: string }[];
+
 export {
   ArtifactTypesType,
   DeadlineType,
@@ -273,6 +275,7 @@ export {
   TagType,
   TxtData,
   TextEntry,
+  TextArray,
   ProjectState,
   ProjectType,
   ProjectViewProps,

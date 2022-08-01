@@ -3,7 +3,11 @@ import { InView } from 'react-intersection-observer';
 import { readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 
-const ImageRender = (props: any) => {
+type ImageRenderPropType = {
+  src: string;
+  autoLoad?: boolean;
+};
+const ImageRender = (props: ImageRenderPropType) => {
   const { src, autoLoad } = props;
   const [
     { isReadOnly, selectedActivityURL, selectedArtifact },
@@ -73,6 +77,10 @@ const ImageRender = (props: any) => {
       )}
     </InView>
   );
+};
+
+ImageRender.defaultProps = {
+  autoLoad: false,
 };
 
 export default ImageRender;

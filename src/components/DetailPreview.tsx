@@ -14,6 +14,7 @@ import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
+import { TextArray } from './types';
 
 
 let googleCred: any;
@@ -38,7 +39,7 @@ interface DetailPreviewPropsType {
   setFragSelected: any;
 }
 
-const TextRender = (textProps: any) => {
+const TextRender = (textProps: { textArray: TextArray }) => {
   const { textArray } = textProps;
   if (textArray.length > 1) {
     return textArray.map((ta: any, i: number) => (
@@ -281,7 +282,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.txt')) {
-    const [textFile, setText] = useState<any>([]);
+    const [textFile, setText] = useState<TextArray>([]);
 
     useEffect(() => {
       readFileSync(`${folderPath}/${title}`).then((text) => {

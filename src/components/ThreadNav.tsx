@@ -25,7 +25,7 @@ import Showdown from 'showdown';
 import { IconEye, IconEyeOff } from '@tabler/icons';
 
 import { useProjectState } from './ProjectContext';
-import type { EntryType } from './types';
+import type { EntryType, ResearchThread } from './types';
 
 export const jitter = (val: any) => Math.random() * val;
 
@@ -180,7 +180,13 @@ type ThreadNavProps = {
   viewType: string; // TODO: tighten to specific values
 };
 
-const EditableThread = (threadProps: any) => {
+type EditableThreadPropType = {
+  index: number;
+  threadData: ResearchThread;
+  setEditMode: (value: (number | ((prevState: (number | null)) => (number | null)) | null)) => void;
+};
+
+const EditableThread = (threadProps: EditableThreadPropType) => {
   const { index, threadData, setEditMode } = threadProps;
   const [{ researchThreads }, dispatch] = useProjectState();
 
@@ -394,24 +400,32 @@ const ThreadBanner = (props:any) => {
           index != filterRT?.rtIndex && (
           <span
             style={{
-              padding: 5, 
-              float:'right', 
-              display:'inline', 
+              padding: 5,
+              float:'right',
+              display:'inline',
               cursor:'pointer'}}
             onClick={()=> {
               setExpanded(expanded ? false : true)
             }}
-          > 
+          >
             {expanded ? <IconEyeOff color='#3a3b3c'/> : <IconEye color='#3a3b3c'/>}
           </span>
         )}
-        
-      </div> 
+
+      </div>
   </div>
   )
 }
 
-const ThreadComponent = (props:any) => {
+type ThreadComponentPropType = {
+  rt: ResearchThread;
+  index: number;
+  editMode: number | null;
+  setEditMode: (value: (((prevState: (number | null)) => (number | null)) | number | null)) => void;
+  filteredThreads: any;
+};
+
+const ThreadComponent = (props: ThreadComponentPropType) => {
 
   const {rt, index, editMode, setEditMode, filteredThreads} = props;
   const [{projectData, isReadOnly, filterRT, viewParams}, dispatch] = useProjectState();
@@ -611,10 +625,7 @@ const ThreadComponent = (props:any) => {
 
 const ThreadNav = (threadProps: ThreadNavProps) => {
   const { viewType } = threadProps;
-  const [
-    { projectData, researchThreads, filterRT, isReadOnly, viewParams },
-    dispatch,
-  ] = useProjectState();
+  const [ { researchThreads, filterRT, isReadOnly, viewParams } ] = useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
   // const [threadName, setName] = useState(null);

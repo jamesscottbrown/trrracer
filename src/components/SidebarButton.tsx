@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 
 import { AiFillFilter, AiOutlineFilter } from 'react-icons/ai';
+import type { ProjectState, TagType } from './types';
 
-const SidebarButton = (sidebarProps: any) => {
+type SidebarButtonProps = {
+  index: number;
+  data: TagType;
+  filterTags: string[] | null;
+  dispatch: (msg: any) => ProjectState;
+};
+
+const SidebarButton = (sidebarProps: SidebarButtonProps) => {
   const { index, data, filterTags, dispatch } = sidebarProps;
   const [barColor, setBarColor] = useState('#FFFFFF');
 

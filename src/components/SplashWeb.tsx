@@ -17,7 +17,12 @@ const projectChoices = [
     // {name: 'Derya', data: 'derya'}
 ]
 
-const SplashWeb = (props: any) => {
+type SplashWebPropType = {
+  setPath: React.Dispatch<React.SetStateAction<string>>;
+  isDev: boolean;
+};
+
+const SplashWeb = (props: SplashWebPropType) => {
   const { setPath, isDev } = props;
 
   return (
