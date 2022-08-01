@@ -62,7 +62,7 @@ type FileContextProps = {
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex } = props;
+  const { file, entryIndex } = props;
   const contextFill = file.meta ? file.meta : file.context;
   const [{projectData}, dispatch] = useProjectState();
 
@@ -365,7 +365,7 @@ const Entry = (props: EntryPropTypes) => {
               />{' '}
               <FaTrashAlt
                 onClick={() => deleteFile(file)}
-                title="Unattahch or delete File"
+                title="Unattach or delete File"
                 size="12px"
                 style={{ display: 'inline' }}
               />

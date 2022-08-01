@@ -218,7 +218,6 @@ export const getAppStateReducer = (
         );
       } catch (e) {
         console.error('could not reformat entries', e);
-        newEntries = action.projectData.entries;
         return e;
       }
 
@@ -256,11 +255,11 @@ export const getAppStateReducer = (
           } else if (views.granularity === 'activity') {
             selectedActivity = views.id;
           } else if (views.granularity === 'artifact') {
-            let activityTest = newEntries.filter((e, i) => {
-              let test = e.files.filter((f) => f.artifact_uid === views.id);
+            const activityTest = newEntries.filter((e) => {
+              const test = e.files.filter((f) => f.artifact_uid === views.id);
               return test.length > 0;
             })[0];
-            let artIn = activityTest.files
+            const artIn = activityTest.files
               .map((m) => m.artifact_uid)
               .indexOf(views.id);
 
@@ -666,13 +665,12 @@ export const getAppStateReducer = (
           newRT.research_threads[threadIndex].description = newValue;
         }
         if (fieldName === 'merge') {
-          let filterThreads = newRT.research_threads;
           newRT.research_threads[threadIndex].actions.push({
             action: 'merge',
             to: newValue,
             when: new Date(),
           });
-          let newAddIndex = newRT.research_threads.indexOf(
+          const newAddIndex = newRT.research_threads.indexOf(
             (f) => f.title === newValue
           );
 

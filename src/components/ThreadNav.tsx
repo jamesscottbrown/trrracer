@@ -430,7 +430,7 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT, viewParams }, dispatch] =
+  const [{ projectData, isReadOnly, filterRT }, dispatch] =
     useProjectState();
   const [expanded, setExpanded] = useState(false);
 
@@ -441,7 +441,7 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
     return true;
   };
 
-  const associatedTags = filteredThreads.map((rt, i) => {
+  const associatedTags = filteredThreads.map((rt) => {
     let tags = rt.evidence.flatMap((fm) => {
       return projectData.entries.filter(
         (f) => f.title === fm.activityTitle

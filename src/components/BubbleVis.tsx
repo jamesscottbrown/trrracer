@@ -480,7 +480,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let eventLineEnd = eventRectGroups
+        eventRectGroups
           .selectAll('line.end')
           .data((d) => [d])
           .join('line')
@@ -501,7 +501,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let vertLine = eventRectGroups
+        eventRectGroups
           .append('line')
           .attr('x1', 400)
           .attr('x2', 400)

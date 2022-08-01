@@ -290,14 +290,6 @@ const deleteFileAction = (fileName, entryIndex, state) => {
   }
 };
 
-const deleteFile = (destination: string) => {
-  if (isElectron) {
-    return fs.unlinkSync(destination);
-  } else {
-    return null;
-  }
-};
-
 const appStateReducer = getAppStateReducer(
   copyFiles,
   readProjectFile,

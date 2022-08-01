@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   Box,
@@ -47,12 +47,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
-
-  const selectedArtifactOb = useMemo(() => {
-    return selectedArtifact.activity.files.length > 0
-      ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
-      : null;
-  }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
   const [fragSelected, setFragSelected] = useState(null);
 
