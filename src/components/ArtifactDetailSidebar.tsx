@@ -323,8 +323,8 @@ const ArtifactDetailSidebar = (props: any) => {
       ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
       : null;
 
-  let isArtifactInThread = researchThreads?.research_threads.filter((f) => {
-    let test = f.evidence.filter(
+  const isArtifactInThread = researchThreads?.research_threads.filter((f) => {
+    const test = f.evidence.filter(
       (e) => e.activityTitle === selectedArtifact.activity.title
     );
     return test.length > 0;
@@ -445,7 +445,7 @@ const ArtifactDetailSidebar = (props: any) => {
                 String.raw`\trrracer{detail view}{artifact}{${selectedArtifactTest.artifact_uid}}{${index}}`
               );
               if (indexTest === -1) {
-                let newCitations = [
+                const newCitations = [
                   ...projectData.citations,
                   { id: selectedArtifactTest.artifact_uid, cIndex: index },
                 ];
