@@ -48,7 +48,7 @@ const ImageRender = (props: ImageRenderPropType) => {
     </>
   ) : (
     <InView
-      onChange={(inView, entry) => {
+      onChange={(inView) => {
         if (
           (isReadOnly && inView) ||
           (isReadOnly && selectedActivityURL) ||
@@ -64,7 +64,7 @@ const ImageRender = (props: ImageRenderPropType) => {
         }
       }}
     >
-      {({ inView, ref, entry }) => (
+      {({ inView, ref }) => (
         <div ref={ref}>
           {inView && imgData && (
             <img
