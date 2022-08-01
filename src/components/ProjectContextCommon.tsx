@@ -463,6 +463,37 @@ export const getAppStateReducer = (
         return { ...state, viewParams: action.viewParams };
       }
 
+      case 'FILE_META': {
+        const {activityID, artifactTitle, artifactID, context } = action;
+        console.log(activityID, artifactTitle, artifactID, context)
+        const entries = [...state.projectData.entries].map(
+          (d: EntryType) => {
+            if(d.activity_uid === activityID){
+              d.files.map((f: any) => {
+               
+                if(artifactID && f.artifact_uid === artifactID){
+
+                  f.context = context;
+                  console.log('FF',f);
+                }else if(f.title === artifactTitle){
+                  f.context = context;
+                  console.log('FFFF',f);
+                }
+                return f;
+              });
+            }
+            
+          return d;
+        });
+
+       
+        const newProjectData = { ...state.projectData, entries };
+
+        return saveJSON(newProjectData, state);
+        
+
+      }
+
       case 'SET_FILTERED_ACTIVITIES': {
         return { ...state, filteredActivities: action.filteredActivities };
       }
@@ -617,6 +648,7 @@ export const getAppStateReducer = (
           ...state,
           goBackView: action.goBackView,
           filterQuery: action.filterQuery,
+          
         };
       }
 

@@ -62,8 +62,9 @@ type FileContextProps = {
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex, dispatch } = props;
+  const { file, entryIndex, fileIndex } = props;
   const contextFill = file.meta ? file.meta : file.context;
+  const [{projectData}, dispatch] = useProjectState();
 
   const context =
     contextFill === 'null' || contextFill === null
@@ -71,7 +72,11 @@ const FileContext = (props: FileContextProps) => {
       : contextFill;
 
   const updateMeta = () => {
-    dispatch({ type: 'FILE_META', entryIndex, fileIndex, context });
+    dispatch({ type: 'FILE_META', 
+    activityID: projectData.entries[entryIndex].activity_uid, 
+    artifactTitle: projectData.entries[entryIndex].title, 
+    artifactID: Object.keys(file).includes('artifact_uid') ? file.artifact_uid : null, 
+    context: context });
   };
 
   return (
