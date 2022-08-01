@@ -48,18 +48,6 @@ function compareObjects<T extends any>(objA: T, objB: T): boolean {
   return true;
 }
 
-function compareObjectList<T extends any[]>(listA: T, listB: T): boolean {
-  if (listA.length !== listB.length) {
-    return false;
-  }
-  for (let i = 0; i < listA.length; i += 1) {
-    if (!compareObjects(listA[i], listB[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
 const ResearchThreadTypeTags = () => {
   const [
     { filterRT, researchThreads, threadTypeFilterArray },
