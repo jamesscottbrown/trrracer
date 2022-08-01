@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 import { readFileSync } from '../fileUtil';
 // import * as fs from 'fs';

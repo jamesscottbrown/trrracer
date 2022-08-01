@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  Button,
-  ButtonGroup,
   Container,
   Heading,
   UnorderedList,
@@ -10,7 +8,6 @@ import {
 } from '@chakra-ui/react';
 
 import { BiLinkExternal } from 'react-icons/bi';
-import { FaFolderOpen, FaPlus } from 'react-icons/fa';
 
 // const { ipcRenderer } = require('electron');
 

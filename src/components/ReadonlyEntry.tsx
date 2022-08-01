@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
-import { GiSewingString } from 'react-icons/gi';
 import * as d3 from 'd3';
 import {
   Button,
@@ -12,19 +11,17 @@ import {
   Box,
   SimpleGrid,
   Tooltip,
-  IconButton,
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
+import { IconChartDots3 } from '@tabler/icons';
+
 import AttachmentPreview from './AttachmentPreview';
 import type { EntryType, File, ResearchThread } from './types';
 import ActivityTitlePopoverLogic from './PopoverTitle';
 import { useProjectState } from './ProjectContext';
-import { drive_v3 } from 'googleapis';
 import { joinPath, readFileSync } from '../fileUtil';
-import { BiLinkExternal } from 'react-icons/bi';
-import { IconChartDots3 } from '@tabler/icons';
 
 interface EntryPropTypes {
   activityID: string;

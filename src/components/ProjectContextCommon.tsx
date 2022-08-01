@@ -1,6 +1,6 @@
-import { AnyNsRecord } from 'dns';
 import { v4 as uuidv4 } from 'uuid';
 import { EntryType, TagType } from './types';
+
 const queryString = require('query-string');
 
 const pickTagColor = (tags: TagType[]) => {
