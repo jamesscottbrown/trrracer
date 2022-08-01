@@ -197,7 +197,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           >
             <div
               style={{ height: '100%', width: '700px', overflow: 'auto' }}
-              id='gdoc'
+              id="gdoc"
             >
               {gContent.map((m: any, i: number) => (
                 <GoogDriveParagraph
@@ -289,7 +289,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         if (query) {
           const textA = text.split(query.term);
           const keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j+=1) {
+          for (let j = 1; j < textA.length - 1; j += 1) {
             keeper.push({ style: 'highlight', textData: query.term });
             keeper.push({ style: 'normal', textData: textA[j] });
           }
@@ -307,7 +307,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
             { style: 'normal', textData: start[1] },
           ];
           if (artifact.bookmarks.length > 1) {
-            for (let j = 1; j < artifact.bookmarks.length; j+=1) {
+            for (let j = 1; j < artifact.bookmarks.length; j += 1) {
               const oldTextArray = textArray;
               const frag = artifact.bookmarks[j].fragment;
               const findIndex = textArray
