@@ -48,8 +48,7 @@ export const getAppStateReducer = (
       const filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
 
       try {
-        const res = await readProjectFile(dir, 'research_threads.json', null);
-        return res;
+        return await readProjectFile(dir, 'research_threads.json', null);
       } catch (e) {
         const rtOb = {
           title: action.projectData.title,
@@ -412,12 +411,9 @@ export const getAppStateReducer = (
           Number(new Date(a.date)) - Number(new Date(b.date))
       );
 
-      const queryFiltered =
-        filterQuery != null
-          ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-          : timeFiltered;
-
-      return queryFiltered;
+      return filterQuery != null
+        ? timeFiltered.filter((f) => filterQuery.includes(f.title))
+        : timeFiltered;
     };
 
     switch (action.type) {
@@ -595,8 +591,7 @@ export const getAppStateReducer = (
         );
 
         const newProjectData = { ...state.projectData, entries };
-        const newPD = saveJSON(newProjectData, state);
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'REMOVE_BOOKMARK': {
@@ -622,8 +617,7 @@ export const getAppStateReducer = (
 
         const newProjectData = { ...state.projectData, entries };
 
-        const newPD = saveJSON(newProjectData, state);
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'ADD_EVENT': {
@@ -720,18 +714,16 @@ export const getAppStateReducer = (
           when: new Date(),
         });
 
-        let fromEvidence = newRT.research_threads[fromIndex].evidence.map(
+        const fromEvidence = newRT.research_threads[fromIndex].evidence.map(
           (m) => {
             m.mergedFrom = fromThread;
             return m;
           }
         );
-        let newEvidence = [
+        newRT.research_threads[toIndex].evidence = [
           ...fromEvidence,
           ...newRT.research_threads[toIndex].evidence,
         ];
-
-        newRT.research_threads[toIndex].evidence = newEvidence;
 
         return saveJSONRT(newRT, state.folderPath, state);
       }
@@ -893,9 +885,7 @@ export const getAppStateReducer = (
         );
 
         const newProjectData = { ...state.projectData, entries };
-        const newPD = saveJSON(newProjectData, state);
-
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'CREATED_GOOGLE_IN_ENTRY': {

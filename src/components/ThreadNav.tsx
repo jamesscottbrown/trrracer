@@ -443,10 +443,9 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
 
   const associatedTags = filteredThreads.map((rt, i) => {
     let tags = rt.evidence.flatMap((fm) => {
-      let match = projectData.entries.filter(
+      return projectData.entries.filter(
         (f) => f.title === fm.activityTitle
       )[0].tags;
-      return match;
     });
     let groupTags = Array.from(d3.group(tags, (d) => d));
     let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
