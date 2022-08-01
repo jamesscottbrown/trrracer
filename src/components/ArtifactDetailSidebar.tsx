@@ -56,67 +56,7 @@ const ArtifactToThread = (props: any) => {
     </Box>
   );
 };
-const FragmentToBookmark = (props: any) => {
-  const [, dispatch] = useProjectState();
 
-  const {
-    thread,
-    threadIndex,
-    activity,
-    artifactIndex,
-    fragSelected,
-    setFragSelected,
-  } = props;
-
-  const [showDesc, setShowDesc] = useState(false);
-  const [threadRat, setThreadRat] = useState(null);
-
-  const handleDescriptionChange = (e: any) => {
-    const inputValue = e.target.value;
-    setThreadRat(inputValue);
-  };
-
-  return (
-    <Box
-      key={`t-${threadIndex}`}
-      style={{
-        border: '1px solid gray',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        textAlign: 'center',
-      }}
-    >
-      <div
-        onClick={() => (showDesc ? setShowDesc(false) : setShowDesc(true))}
-      >{`Add to "${thread.title}"`}</div>
-      {showDesc && (
-        <>
-          <Textarea
-            placeholder="Why are you including this?"
-            onChange={handleDescriptionChange}
-          />
-          <Button
-            onClick={() => {
-              setShowDesc(false);
-              dispatch({
-                type: 'ADD_FRAGMENT_TO_THREAD',
-                activity,
-                rationale: threadRat,
-                artifactIndex,
-                threadIndex,
-                fragment: fragSelected,
-                fragmentType: 'text',
-              });
-              setFragSelected(null);
-            }}
-          >
-            Add
-          </Button>
-        </>
-      )}
-    </Box>
-  );
-};
 const FragmentToThread = (props: any) => {
   const [, dispatch] = useProjectState();
 
