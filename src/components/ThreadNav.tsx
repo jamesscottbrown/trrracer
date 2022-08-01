@@ -691,7 +691,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
               marginBottom: 10,
             }}
           >
-            {filteredThreads.map((rt: any, i: number) => (
+            {filteredThreads.map((rt, i) => (
               <React.Fragment
               key={`rt-${rt.rt_id}`}
               >
