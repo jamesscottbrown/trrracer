@@ -85,6 +85,7 @@ type ResearchThreadEvidence = {
   activityTitle?: string;
   activity_index: number;
   ResearchThreadEvidence: string;
+  artifactTitle: string;
   artifactIndex?: string; // or number?
   dob: string;
   rationale: string;
