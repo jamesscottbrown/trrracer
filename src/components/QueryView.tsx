@@ -118,12 +118,12 @@ const QueryView = (props: QueryViewProps) => {
               <div style={{ fontSize: 18, fontWeight: 700, marginTop: 30 }}>
                 {m.entry.title}
               </div>
+
               {m.titleMatch.length > 0 && (
                 <div
                 style={{fontWeight: 700}}
                 >Matches in Titles :</div>
               )}
-              
               {
                 m.titleMatch.length > 0 && (
                   m.titleMatch.map((tm, j)=> (
@@ -133,7 +133,36 @@ const QueryView = (props: QueryViewProps) => {
                       Object.keys(tm).includes('fileTitle') ? 
                       <div><span
                       style={{fontWeight: 700}}
-                      >{'File title match: '}</span><HoverTitle title={tm.fileTitle} entry={m} match={tm} setViewType={setViewType}/></div> 
+                      >{'File title match: '}</span>
+                      <HoverTitle title={tm.fileTitle} entry={m} match={tm} setViewType={setViewType}/>
+                      </div> 
+                      : 
+                      <div></div>
+                    }
+                      
+                    </React.Fragment>
+                  ))
+                )
+              }
+              {
+                m.descriptionMatch.length > 0 && (
+                  <div
+                  style={{fontWeight: 700}}
+                  >Matches for description: </div>
+                )
+              }
+              {
+                m.descriptionMatch.length > 0 && (
+                  m.descriptionMatch.map((d, j) => (
+                    <React.Fragment
+                    key={`title-match-${j}`}
+                    >{
+                      Object.keys(d).includes('fileTitle') ? 
+                      <div><span
+                      style={{fontWeight: 700}}
+                      >{'File context match: '}</span>
+                      <HoverTitle title={d.fileTitle} entry={m} match={d} setViewType={setViewType}/>
+                      </div> 
                       : 
                       <div></div>
                     }
