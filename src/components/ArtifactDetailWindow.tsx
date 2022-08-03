@@ -11,8 +11,6 @@ import {
 } from '@chakra-ui/react';
 
 import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
-
-import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
 
 import { openFile } from '../fileUtil';
@@ -31,11 +29,29 @@ interface DetailProps {
 
 const ArtifactDetailWindow = (props: DetailProps) => {
   const { setViewType, goBackView } = props;
-  const [searchTermArtifact, setSearchTermArtifact] = useState(null);
+ 
   const [
-    { projectData, selectedArtifact, hopArray, researchThreads, isReadOnly },
+    { projectData, 
+      selectedArtifact, 
+      hopArray, 
+      researchThreads, 
+      isReadOnly,
+      query
+    },
     dispatch,
   ] = useProjectState();
+
+  const [searchTermArtifact, setSearchTermArtifact] = useState<null|string>(null);
+  const [editable, setEditable] = useState<boolean[]>(
+    Array.from(Array(projectData.entries.length), (_) => false)
+  );
+  const [fragSelected, setFragSelected] = useState(null);
+
+  console.log('SELECTED ARTIFACT', selectedArtifact, query);
+  if(query != null && searchTermArtifact === null){
+    setSearchTermArtifact(query.term);
+
+  }
 
   const converter = new Showdown.Converter({
     tables: true,
@@ -43,12 +59,6 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     strikethrough: true,
     tasklists: true,
   });
-
-  const [editable, setEditable] = useState<boolean[]>(
-    Array.from(Array(projectData.entries.length), (_) => false)
-  );
-
-  const [fragSelected, setFragSelected] = useState(null);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -176,7 +186,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             paddingTop: 5,
           }}
         >{`Artifact: ${
-          selectedArtifact
+          selectedArtifact.artifactIndex
             ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
                 .title
             : 'No artifacts with this activity'
@@ -293,17 +303,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               overflow: 'auto',
             }}
           >
-            <ReactMde
-              value={selectedArtifact.activity.description}
-              // onChange={setValue}
-              selectedTab="preview"
-              onTabChange={() => null}
-              generateMarkdownPreview={(markdown) =>
-                Promise.resolve(converter.makeHtml(markdown))
-              }
-              readOnly
-              style={{ height: '100%', overflowY: 'scroll' }}
-            />
+            {'No artifact selected'}
+            
           </div>
         </Flex>
       )}
