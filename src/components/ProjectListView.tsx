@@ -11,7 +11,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   const [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
-    if (selectedActivityURL && selectedActivityURL !== null) {
+    if (selectedActivityURL) {
       setUsedEntries(
         projectData.entries.filter(
           (f) => f.activity_uid === selectedActivityURL

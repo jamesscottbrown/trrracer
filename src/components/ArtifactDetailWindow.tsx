@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   Box,
@@ -42,23 +42,16 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   ] = useProjectState();
 
   const [searchTermArtifact, setSearchTermArtifact] = useState<null|string>(null);
+ 
+  if(query != null && searchTermArtifact === null){
+    setSearchTermArtifact(query.term);
+  }
+
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
+
   const [fragSelected, setFragSelected] = useState(null);
-
-  console.log('SELECTED ARTIFACT', selectedArtifact, query);
-  if(query != null && searchTermArtifact === null){
-    setSearchTermArtifact(query.term);
-
-  }
-
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
-  });
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {

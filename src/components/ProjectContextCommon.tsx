@@ -48,8 +48,7 @@ export const getAppStateReducer = (
       const filePath = dir[dir.length - 1] != '/' ? `${dir}/` : dir;
 
       try {
-        const res = await readProjectFile(dir, 'research_threads.json', null);
-        return res;
+        return await readProjectFile(dir, 'research_threads.json', null);
       } catch (e) {
         const rtOb = {
           title: action.projectData.title,
@@ -219,7 +218,6 @@ export const getAppStateReducer = (
         );
       } catch (e) {
         console.error('could not reformat entries', e);
-        newEntries = action.projectData.entries;
         return e;
       }
 
@@ -257,11 +255,11 @@ export const getAppStateReducer = (
           } else if (views.granularity === 'activity') {
             selectedActivity = views.id;
           } else if (views.granularity === 'artifact') {
-            let activityTest = newEntries.filter((e, i) => {
-              let test = e.files.filter((f) => f.artifact_uid === views.id);
+            const activityTest = newEntries.filter((e) => {
+              const test = e.files.filter((f) => f.artifact_uid === views.id);
               return test.length > 0;
             })[0];
-            let artIn = activityTest.files
+            const artIn = activityTest.files
               .map((m) => m.artifact_uid)
               .indexOf(views.id);
 
@@ -412,12 +410,9 @@ export const getAppStateReducer = (
           Number(new Date(a.date)) - Number(new Date(b.date))
       );
 
-      const queryFiltered =
-        filterQuery != null
-          ? timeFiltered.filter((f) => filterQuery.includes(f.title))
-          : timeFiltered;
-
-      return queryFiltered;
+      return filterQuery != null
+        ? timeFiltered.filter((f) => filterQuery.includes(f.title))
+        : timeFiltered;
     };
 
     switch (action.type) {
@@ -464,34 +459,28 @@ export const getAppStateReducer = (
       }
 
       case 'FILE_META': {
-        const {activityID, artifactTitle, artifactID, context } = action;
-        console.log(activityID, artifactTitle, artifactID, context)
-        const entries = [...state.projectData.entries].map(
-          (d: EntryType) => {
-            if(d.activity_uid === activityID){
-              d.files.map((f: any) => {
-               
-                if(artifactID && f.artifact_uid === artifactID){
+        const { activityID, artifactTitle, artifactID, context } = action;
+        console.log(activityID, artifactTitle, artifactID, context);
+        const entries = [...state.projectData.entries].map((d: EntryType) => {
+          if (d.activity_uid === activityID) {
+            d.files.map((f: any) => {
+              if (artifactID && f.artifact_uid === artifactID) {
+                f.context = context;
+                console.log('FF', f);
+              } else if (f.title === artifactTitle) {
+                f.context = context;
+                console.log('FFFF', f);
+              }
+              return f;
+            });
+          }
 
-                  f.context = context;
-                  console.log('FF',f);
-                }else if(f.title === artifactTitle){
-                  f.context = context;
-                  console.log('FFFF',f);
-                }
-                return f;
-              });
-            }
-            
           return d;
         });
 
-       
         const newProjectData = { ...state.projectData, entries };
 
         return saveJSON(newProjectData, state);
-        
-
       }
 
       case 'SET_FILTERED_ACTIVITIES': {
@@ -595,8 +584,7 @@ export const getAppStateReducer = (
         );
 
         const newProjectData = { ...state.projectData, entries };
-        const newPD = saveJSON(newProjectData, state);
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'REMOVE_BOOKMARK': {
@@ -622,8 +610,7 @@ export const getAppStateReducer = (
 
         const newProjectData = { ...state.projectData, entries };
 
-        const newPD = saveJSON(newProjectData, state);
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'ADD_EVENT': {
@@ -648,7 +635,6 @@ export const getAppStateReducer = (
           ...state,
           goBackView: action.goBackView,
           filterQuery: action.filterQuery,
-          
         };
       }
 
@@ -672,13 +658,12 @@ export const getAppStateReducer = (
           newRT.research_threads[threadIndex].description = newValue;
         }
         if (fieldName === 'merge') {
-          let filterThreads = newRT.research_threads;
           newRT.research_threads[threadIndex].actions.push({
             action: 'merge',
             to: newValue,
             when: new Date(),
           });
-          let newAddIndex = newRT.research_threads.indexOf(
+          const newAddIndex = newRT.research_threads.indexOf(
             (f) => f.title === newValue
           );
 
@@ -720,18 +705,16 @@ export const getAppStateReducer = (
           when: new Date(),
         });
 
-        let fromEvidence = newRT.research_threads[fromIndex].evidence.map(
+        const fromEvidence = newRT.research_threads[fromIndex].evidence.map(
           (m) => {
             m.mergedFrom = fromThread;
             return m;
           }
         );
-        let newEvidence = [
+        newRT.research_threads[toIndex].evidence = [
           ...fromEvidence,
           ...newRT.research_threads[toIndex].evidence,
         ];
-
-        newRT.research_threads[toIndex].evidence = newEvidence;
 
         return saveJSONRT(newRT, state.folderPath, state);
       }
@@ -893,9 +876,7 @@ export const getAppStateReducer = (
         );
 
         const newProjectData = { ...state.projectData, entries };
-        const newPD = saveJSON(newProjectData, state);
-
-        return newPD;
+        return saveJSON(newProjectData, state);
       }
 
       case 'CREATED_GOOGLE_IN_ENTRY': {

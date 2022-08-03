@@ -39,7 +39,7 @@ const SplashWeb = (props: SplashWebPropType) => {
         <p>Open a project :</p>
         <>
           <UnorderedList>
-            {projectChoices.map((pc, i) => (
+            {projectChoices.map((pc) => (
               <ListItem>
                 <IconButton
                   icon={<BiLinkExternal />}

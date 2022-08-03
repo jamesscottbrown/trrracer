@@ -61,8 +61,8 @@ export const CreateThreadComponent = (props: any) => {
         onChange={handleDescriptionChange}
       />
       <Button
-        isActive={threadName && description ? true : false}
-        isDisabled={threadName && description ? false : true}
+        isActive={!!(threadName && description)}
+        isDisabled={!(threadName && description)}
         onClick={() => {
           let actTitle = `Created thread: ${threadName}`;
           setName(null);
@@ -403,7 +403,7 @@ const ThreadBanner = (props: any) => {
               cursor: 'pointer',
             }}
             onClick={() => {
-              setExpanded(expanded ? false : true);
+              setExpanded(!expanded);
             }}
           >
             {expanded ? (
@@ -430,26 +430,20 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT, viewParams }, dispatch] =
-    useProjectState();
+  const [{ projectData, isReadOnly, filterRT }, dispatch] = useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
     if (filterRT && filterRT?.rtIndex != null) {
-      if (i != filterRT?.rtIndex) {
-        return false;
-      }
-      return true;
+      return i === filterRT?.rtIndex;
     }
     return true;
   };
 
-  const associatedTags = filteredThreads.map((rt, i) => {
+  const associatedTags = filteredThreads.map((rt) => {
     let tags = rt.evidence.flatMap((fm) => {
-      let match = projectData.entries.filter(
-        (f) => f.title === fm.activityTitle
-      )[0].tags;
-      return match;
+      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
+        .tags;
     });
     let groupTags = Array.from(d3.group(tags, (d) => d));
     let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);

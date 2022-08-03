@@ -375,8 +375,7 @@ const WhichFA = (props: any) => {
 };
 
 const CitationVis = (props: any) => {
-  const { anno, pageNumber, index, pageRectData, setPosition, setToolHtml } =
-    props;
+  const { pageNumber, pageRectData, setPosition, setToolHtml } = props;
 
   const svgRef = React.useRef(null);
   const iconSize = 20;

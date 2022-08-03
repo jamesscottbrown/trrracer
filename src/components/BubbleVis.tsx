@@ -345,11 +345,9 @@ const BubbleVis = (props: BubbleProps) => {
 
       const brushedEvent = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
-        const s0 = event.selection
+        let s1 = event.selection
           ? event.selection
           : [1, 2].fill(event.sourceEvent.offsetX);
-
-        let s1 = s0;
 
         if (event.sourceEvent && event.type === 'end') {
           s1 = event.selection;
@@ -403,22 +401,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', 6)
           .text((d) => {
-            const year =
-              d == 'handle--o'
-                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })
-                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
-            return year;
+            return yScale.invert(val).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 
@@ -490,7 +480,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let eventLineEnd = eventRectGroups
+        eventRectGroups
           .selectAll('line.end')
           .data((d) => [d])
           .join('line')
@@ -511,7 +501,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let vertLine = eventRectGroups
+        eventRectGroups
           .append('line')
           .attr('x1', 400)
           .attr('x2', 400)
@@ -624,7 +614,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 1);
-          } else if (selectedActivityURL && selectedActivityURL !== null) {
+          } else if (selectedActivityURL) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 1);
@@ -652,7 +642,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 0);
-          } else if (selectedActivityURL && selectedActivityURL !== null) {
+          } else if (selectedActivityURL) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 0.5);
@@ -699,7 +689,7 @@ const BubbleVis = (props: BubbleProps) => {
         const highlightedCircles =
           highlightedActivityGroups.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
-      } else if (selectedActivityURL && selectedActivityURL !== null) {
+      } else if (selectedActivityURL) {
         highlightedActivityGroups
           .select('.all-activities')
           .attr('fill', 'red')
@@ -903,11 +893,9 @@ const BubbleVis = (props: BubbleProps) => {
 
       const brushed = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
-        const s0 = event.selection
+        let s1 = event.selection
           ? event.selection
           : [1, 2].fill(event.sourceEvent.offsetX);
-
-        let s1 = s0;
 
         if (event.sourceEvent && event.type === 'end') {
           s1 = event.selection;
@@ -935,22 +923,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
           .text((d: any) => {
-            const year =
-              d === 'handle--o'
-                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })
-                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
-            return year;
+            return yScale.invert(val).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 

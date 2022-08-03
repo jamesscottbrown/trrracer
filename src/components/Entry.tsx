@@ -62,9 +62,9 @@ type FileContextProps = {
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex } = props;
+  const { file, entryIndex } = props;
   const contextFill = file.meta ? file.meta : file.context;
-  const [{projectData}, dispatch] = useProjectState();
+  const [{ projectData }, dispatch] = useProjectState();
 
   const context =
     contextFill === 'null' || contextFill === null
@@ -72,11 +72,15 @@ const FileContext = (props: FileContextProps) => {
       : contextFill;
 
   const updateMeta = () => {
-    dispatch({ type: 'FILE_META', 
-    activityID: projectData.entries[entryIndex].activity_uid, 
-    artifactTitle: projectData.entries[entryIndex].title, 
-    artifactID: Object.keys(file).includes('artifact_uid') ? file.artifact_uid : null, 
-    context: context });
+    dispatch({
+      type: 'FILE_META',
+      activityID: projectData.entries[entryIndex].activity_uid,
+      artifactTitle: projectData.entries[entryIndex].title,
+      artifactID: Object.keys(file).includes('artifact_uid')
+        ? file.artifact_uid
+        : null,
+      context: context,
+    });
   };
 
   return (
@@ -365,7 +369,7 @@ const Entry = (props: EntryPropTypes) => {
               />{' '}
               <FaTrashAlt
                 onClick={() => deleteFile(file)}
-                title="Unattahch or delete File"
+                title="Unattach or delete File"
                 size="12px"
                 style={{ display: 'inline' }}
               />
