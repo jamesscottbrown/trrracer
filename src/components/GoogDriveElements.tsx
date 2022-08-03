@@ -72,6 +72,7 @@ const GoogDriveSpans = (googProps: any) => {
       ? comments.filter(
           (f: any) =>
             googEl.textRun &&
+            f.quotedFileContent && 
             googEl.textRun.content.includes(f.quotedFileContent.value)
         )
       : [];

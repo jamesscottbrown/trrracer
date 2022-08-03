@@ -9,6 +9,7 @@ const processDataQuery = (
   googleData: any,
   activityData: any
 ) => {
+
   const textMatches = txtData['text-data'].filter((f) =>
     f.text.includes(queryTerm)
   );
@@ -41,13 +42,14 @@ const processDataQuery = (
 
   const titleMatches = activityData
     .filter((f) => {
-      return f.title.includes(queryTerm);
+      let temp = f.files.filter(f => f.title.includes(queryTerm));
+      return f.title.includes(queryTerm) || temp.length > 0;
     })
     .map((m) => m.activity_uid);
 
   console.log('title matches', titleMatches);
 
-  const matches = [];
+  const matches: any[] = [];
 
   activityData.forEach((ent: any) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
@@ -60,24 +62,24 @@ const processDataQuery = (
           if (t.includes(queryTerm)) {
             const con = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
 
             const test = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
+            con.push({ style: null, query_context: test[0] });
 
-            con.push({ style: 'bold', context: queryTerm });
+            con.push({ style: 'bold', query_context: queryTerm });
 
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
         return tt;
       });
     }
@@ -98,21 +100,21 @@ const processDataQuery = (
           if (t.includes(queryTerm)) {
             const con = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
             const test = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
-            con.push({ style: 'bold', context: queryTerm });
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test[0] });
+            con.push({ style: 'bold', query_context: queryTerm });
+            con.push({ style: null, query_context: test[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
 
         return tt;
       });
@@ -123,11 +125,18 @@ const processDataQuery = (
       tempG.length > 0 ||
       titleMatches.indexOf(ent.activity_uid) > -1
     ) {
+      let titleKeeper = []
+      if(titleMatches.indexOf(ent.activity_uid) > -1){
+        if(ent.title.includes(queryTerm)) titleKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid})
+        ent.files.forEach((f:any, j:number) => {
+          if(f.title.includes(queryTerm)) titleKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j})
+        })
+      }
       const entM = {
         entry: ent,
         textMatch: tempText,
         googMatch: tempG,
-        titleMatch: titleMatches.indexOf(ent.activity_uid) > -1,
+        titleMatch: titleKeeper//titleMatches.indexOf(ent.activity_uid) > -1,
       };
       matches.push(entM);
     }
@@ -140,10 +149,11 @@ interface QueryProps {
   setViewType: (viewType: string) => void;
   artifactData: any;
   filteredActivities: any;
+  setSearchTermArtifact:any;
 }
 
 const QueryBar = (queryProps: QueryProps) => {
-  const { artifactData, setViewType, filteredActivities } = queryProps;
+  const { setSearchTermArtifact, setViewType, filteredActivities } = queryProps;
   const [{ txtData, googleData }, dispatch] = useProjectState();
 
   const [term, setTerm] = React.useState(null);
@@ -155,20 +165,19 @@ const QueryBar = (queryProps: QueryProps) => {
 
   let data;
 
-  if (artifactData) {
-    // data = ((artifactData.fileType === 'txt') && (txtData?['text-data'] != undefined)) ? txtData['text-data'].filter(
-    //         (f) => f['file-title'] === artifactData.title
-    //       )[0].text
-    //     : googleData[artifactData.fileId];
-    if (artifactData.fileType === 'txt' && txtData) {
-      const dataCheck = txtData['text-data'].filter(
-        (f) => f['file-title'] === artifactData.title
-      );
-      data = dataCheck.length > 0 ? dataCheck[0].text : [];
-    } else {
-      data = googleData[artifactData.fileId];
-    }
-  }
+  
+
+  // if (artifactData) {
+  //   console.log('text content!!', document.getElementById('detail-preview'))
+  //   if (artifactData.fileType === 'txt' && txtData) {
+  //     const dataCheck = txtData['text-data'].filter(
+  //       (f) => f['file-title'] === artifactData.title
+  //     );
+  //     data = dataCheck.length > 0 ? dataCheck[0].text : [];
+  //   } else {
+  //     data = googleData[artifactData.fileId];
+  //   }
+  // }
 
   return (
     <InputGroup align="center" width="400px" marginEnd="90px">
@@ -182,19 +191,9 @@ const QueryBar = (queryProps: QueryProps) => {
           h="1.75rem"
           size="sm"
           onClick={() => {
-            if (artifactData) {
-              console.log('DATA ON CLICK', data);
-              if (data.documentId) {
-                console.log('this is a google doc.');
-              } else {
-                console.log('this is text file', data);
-                if (data) {
-                  const matchArray = data.split(term);
-                  alert(`${matchArray.length - 1} matches`);
-                } else {
-                  alert('notext data for this file yet');
-                }
-              }
+            if (setSearchTermArtifact) {
+            
+              setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(
                 term,

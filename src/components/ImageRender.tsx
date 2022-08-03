@@ -54,13 +54,13 @@ const ImageRender = (props: ImageRenderPropType) => {
           (isReadOnly && selectedActivityURL) ||
           (isReadOnly && selectedArtifact.activity)
         ) {
-          readFileSync(src)
+          return readFileSync(src)
             .then((res) => res.text())
             .then((img) => {
               setImgData(img);
             });
         } else {
-          setImgData(src);
+          return setImgData(src);
         }
       }}
     >
