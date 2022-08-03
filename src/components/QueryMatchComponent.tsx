@@ -83,10 +83,8 @@ const QueryMatchComponent = (props: any) => {
   const { m, tm, j, setViewType } = props;
   const [show, setShow] = useState(false);
 
-  console.log(m, tm);
-
   return (
-    // {matchArray.map((tm, j) => (
+
     <div style={{ marginTop: 10 }} key={`tm-${j}`}>
       <div>
         <HoverTitle
@@ -104,7 +102,7 @@ const QueryMatchComponent = (props: any) => {
       </div>
       {show && (
         <div>
-          {tm.context.map((c, ci) => (
+          {tm.query_context.map((c, ci) => (
             <div key={`div-cont-${ci}`}>
               {c.map((m, mi) => (
                 <span
@@ -116,7 +114,7 @@ const QueryMatchComponent = (props: any) => {
                     backgroundColor: m.style ? 'yellow' : '#ffffff',
                   }}
                 >
-                  {m.context}
+                  {m.query_context}
                   {m.style ? '' : '. '}
                 </span>
               ))}
