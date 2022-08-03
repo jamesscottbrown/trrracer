@@ -130,61 +130,48 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }
 
   if (title.endsWith('.gdoc')) {
-    if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
-      const googD = googleData[artifact.fileId];
 
-      const gContent = googD.body.content.filter((f: any) => f.startIndex);
+    const [chosenGoogData, setchosenGoogData] = useState<null|any>(null);
+    const [chosenComments, setChosenComments] = useState<null|any>(null);
 
-      const comments = artifact.comments ? artifact.comments.comments : [];
+    useEffect(()=> {
+      if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
 
-      return (
-        <Box
-          style={{
-            overflow: 'scroll',
-            height: 'calc(100vh - 150px)',
-            width: '700px',
-            display: 'inline',
-            boxShadow: '3px 3px 8px #A3AAAF',
-            border: '1px solid #A3AAAF',
-            borderRadius: 6,
-            padding: 10,
-          }}
-          id="detail-preview"
-        >
-          <div
-            style={{ height: '100%', width: '700px', overflow: 'auto' }}
-            id="gdoc"
-          >
-            {gContent.map((m: any, i: number) => (
-              <GoogDriveParagraph
-                key={`par-${i}`}
-                parData={m}
-                index={i}
-                comments={comments}
-                setFragSelected={setFragSelected}
-                artifactBookmarks={artifact.bookmarks}
-              />
-            ))}
-          </div>
-        </Box>
-      );
-    } else {
-      getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-        dispatch({
-          type: 'UPDATE_GOOG_DOC_DATA',
-          googDocData: googOb.goog_doc_data,
-        });
-        // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+        const googD = googleData[artifact.fileId];
+        setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
+        if(artifact.comments) setChosenComments(artifact.comments.comments);
 
-        const chosen = googOb.goog_doc_data[artifact.fileId];
+        // const comments = artifact.comments ? artifact.comments.comments : [];
+      }else{
 
-        const gContent = chosen
-          ? chosen.body.content.filter((f: any) => f.startIndex)
-          : [];
+        getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+        
+          const chosen = googOb.goog_doc_data[artifact.fileId];
 
-        const comments = artifact.comments ? artifact.comments.comments : [];
+          const gContent = chosen
+            ? chosen.body.content.filter((f: any) => f.startIndex)
+            : null;
+          
+         
+          
+          if(artifact.comments) setChosenComments(artifact.comments.comments);
+          if(chosenGoogData === null){
+            setchosenGoogData(gContent);
+            dispatch({
+              type: 'UPDATE_GOOG_DOC_DATA',
+              googDocData: googOb.goog_doc_data,
+            });
+              // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
 
-        return chosen ? (
+          }
+            
+          });
+      }
+
+    }, [title])
+
+    return (
+        chosenGoogData ? (
           <Box
             style={{
               overflow: 'scroll',
@@ -201,12 +188,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
               style={{ height: '100%', width: '700px', overflow: 'auto' }}
               id="gdoc"
             >
-              {gContent.map((m: any, i: number) => (
+              {chosenGoogData.map((m: any, i: number) => (
                 <GoogDriveParagraph
                   key={`par-${i}`}
                   parData={m}
                   index={i}
-                  comments={comments}
+                  comments={chosenComments}
                   setFragSelected={setFragSelected}
                   artifactBookmarks={artifact.bookmarks}
                 />
@@ -215,58 +202,149 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           </Box>
         ) : (
           <div>Oops could not load google doc</div>
-        );
-      });
-    }
+        )
+    )
 
-    getDriveFiles(folderPath, googleCred).then((googOb) => {
+    // if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
+    //   const googD = googleData[artifact.fileId];
+
+    //   const gContent = googD.body.content.filter((f: any) => f.startIndex);
+
+    //   const comments = artifact.comments ? artifact.comments.comments : [];
+
+    //   return (
+    //     <Box
+    //       style={{
+    //         overflow: 'scroll',
+    //         height: 'calc(100vh - 150px)',
+    //         width: '700px',
+    //         display: 'inline',
+    //         boxShadow: '3px 3px 8px #A3AAAF',
+    //         border: '1px solid #A3AAAF',
+    //         borderRadius: 6,
+    //         padding: 10,
+    //       }}
+    //       id="detail-preview"
+    //     >
+    //       <div
+    //         style={{ height: '100%', width: '700px', overflow: 'auto' }}
+    //         id="gdoc"
+    //       >
+    //         {gContent.map((m: any, i: number) => (
+    //           <React.Fragment
+    //             key={`par-${i}`}
+    //           >
+    //             <GoogDriveParagraph
+    //               parData={m}
+    //               index={i}
+    //               comments={comments}
+    //               setFragSelected={setFragSelected}
+    //               artifactBookmarks={artifact.bookmarks}
+    //             />
+    //           </React.Fragment>
+    //         ))}
+    //       </div>
+    //     </Box>
+    //   );
+    // } else {
+    //   getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+    //     dispatch({
+    //       type: 'UPDATE_GOOG_DOC_DATA',
+    //       googDocData: googOb.goog_doc_data,
+    //     });
+    //     // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+
+    //     const chosen = googOb.goog_doc_data[artifact.fileId];
+
+    //     const gContent = chosen
+    //       ? chosen.body.content.filter((f: any) => f.startIndex)
+    //       : [];
+
+    //     const comments = artifact.comments ? artifact.comments.comments : [];
+
+    //     return chosen ? (
+    //       <Box
+    //         style={{
+    //           overflow: 'scroll',
+    //           height: 'calc(100vh - 150px)',
+    //           width: '700px',
+    //           display: 'inline',
+    //           boxShadow: '3px 3px 8px #A3AAAF',
+    //           border: '1px solid #A3AAAF',
+    //           borderRadius: 6,
+    //           padding: 10,
+    //         }}
+    //       >
+    //         <div
+    //           style={{ height: '100%', width: '700px', overflow: 'auto' }}
+    //           id="gdoc"
+    //         >
+    //           {gContent.map((m: any, i: number) => (
+    //             <GoogDriveParagraph
+    //               key={`par-${i}`}
+    //               parData={m}
+    //               index={i}
+    //               comments={comments}
+    //               setFragSelected={setFragSelected}
+    //               artifactBookmarks={artifact.bookmarks}
+    //             />
+    //           ))}
+    //         </div>
+    //       </Box>
+    //     ) : (
+    //       <div>Oops could not load google doc</div>
+    //     );
+    //   });
+    // }
+
+    // getDriveFiles(folderPath, googleCred).then((googOb) => {
     
-      dispatch({
-        type: 'UPDATE_GOOG_DOC_DATA',
-        googDocData: googOb.goog_doc_data,
-      });
+    //   dispatch({
+    //     type: 'UPDATE_GOOG_DOC_DATA',
+    //     googDocData: googOb.goog_doc_data,
+    //   });
 
-      const chosen = googOb.goog_doc_data[artifact.fileId];
+    //   const chosen = googOb.goog_doc_data[artifact.fileId];
 
-      const gContent = chosen
-        ? chosen.body.content.filter((f: any) => f.startIndex)
-        : [];
+    //   const gContent = chosen
+    //     ? chosen.body.content.filter((f: any) => f.startIndex)
+    //     : [];
 
-      const comments = artifact.comments ? artifact.comments.comments : [];
+    //   const comments = artifact.comments ? artifact.comments.comments : [];
 
-      return chosen ? (
-        <Box
-          style={{
-            overflow: 'scroll',
-            height: 'calc(100vh - 150px)',
-            width: '700px',
-            display: 'inline',
-            boxShadow: '3px 3px 8px #A3AAAF',
-            border: '1px solid #A3AAAF',
-            borderRadius: 6,
-            padding: 10,
-          }}
-        >
-          <div
-            style={{ height: '100%', width: '700px', overflow: 'auto' }}
-            id="gdoc"
-          >
-            {gContent.map((m: any, i: number) => (
-              <GoogDriveParagraph
-                key={`par-${i}`}
-                parData={m}
-                index={i}
-                comments={comments}
-                setFragSelected={setFragSelected}
-                artifactBookmarks={artifact.bookmarks}
-              />
-            ))}
-          </div>
-        </Box>
-      ) : (
-        <div>Oops could not load google doc</div>
-      );
-    });
+    //   return chosen ? (
+    //     <Box
+    //       style={{
+    //         overflow: 'scroll',
+    //         height: 'calc(100vh - 150px)',
+    //         width: '700px',
+    //         display: 'inline',
+    //         boxShadow: '3px 3px 8px #A3AAAF',
+    //         border: '1px solid #A3AAAF',
+    //         borderRadius: 6,
+    //         padding: 10,
+    //       }}
+    //     >
+    //       <div
+    //         style={{ height: '100%', width: '700px', overflow: 'auto' }}
+    //         id="gdoc"
+    //       >
+    //         {gContent.map((m: any, i: number) => (
+    //           <GoogDriveParagraph
+    //             key={`par-${i}`}
+    //             parData={m}
+    //             index={i}
+    //             comments={comments}
+    //             setFragSelected={setFragSelected}
+    //             artifactBookmarks={artifact.bookmarks}
+    //           />
+    //         ))}
+    //       </div>
+    //     </Box>
+    //   ) : (
+    //     <div>Oops could not load google doc</div>
+    //   );
+    // });
   }
 
   if (title.endsWith('.gsheet')) {
@@ -435,11 +513,11 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   return (
     <ImageRender
       src={url(folderPath, title)}
-      onClick={() => {
-        !setFragSelected
-          ? openFile(title, folderPath)
-          : console.log(MouseEvent);
-      }}
+      // onClick={() => {
+      //   !setFragSelected
+      //     ? openFile(title, folderPath)
+      //     : console.log(MouseEvent);
+      // }}
       autoLoad
     />
   );
