@@ -1,11 +1,13 @@
 import * as d3 from 'd3';
-import React, { useEffect, useState } from 'react';
+import * as d3co from 'd3-color';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useProjectState } from './ProjectContext';
 import ForceMagic from '../ForceMagic';
 import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
+import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface BubbleDetProps {
   widthSvg: number;
@@ -14,6 +16,8 @@ interface BubbleDetProps {
 
 const ToolTip = (toolProp: any) => {
   const { hoverData, position } = toolProp;
+
+  const queryData = hoverData.queryMatch ? hoverData.queryMatch[0] : null;
 
   return (
     <div
@@ -45,8 +49,17 @@ const ToolTip = (toolProp: any) => {
       ) : (
         <div>uknown</div>
       )}
-
-      <div>
+      {hoverData.queryMatch ? (
+        <div>
+          {queryData.textMatch.length > 0 && (
+            `${queryData.textMatch.length} matches found in text`
+          )}
+          {queryData.googMatch.length > 0 && (
+            `${queryData.googMatch.length} matches found in google doc`
+          )}
+        </div>
+      ):(
+        <div>
         {hoverData.hopDataArray.map((fi: any, i: any) => (
           <div key={`act-data-${i}`} style={{ display: 'block', margin: 5 }}>
             <span
@@ -61,16 +74,18 @@ const ToolTip = (toolProp: any) => {
             </span>
           </div>
         ))}
-      </div>
+        </div>
+      )}
+     
     </div>
   );
 };
 
 const DetailBubble = (props: BubbleDetProps) => {
-  const { widthSvg, filterType } = props;
+  const { widthSvg, filterType  } = props;
 
   const [
-    { projectData, filteredActivities, selectedArtifact, hopArray },
+    { projectData, filteredActivities, selectedArtifact, hopArray, query },
     dispatch,
   ] = useProjectState();
 
@@ -80,10 +95,12 @@ const DetailBubble = (props: BubbleDetProps) => {
   const [hoverData, setHoverData] = useState({
     fileData: projectData.entries[0].files[0],
     hopDataArray: [{ hopReason: 'null' }],
+    queryMatch: null
   });
   const [toolPosition, setToolPosition] = useState([0, 0]);
 
   const width = 80;
+  const translateXforWraps = 90;
   const height = +newHeight; // .split('px')[0];
   const svgRef = React.useRef(null);
 
@@ -91,7 +108,9 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   d3.select('#tooltip').style('opacity', 0);
 
-  // const forced = new ForceMagic(packedCircData, width, height - 100);
+  console.log('QURYYYY', query);
+
+  console.log('FILTERED??', filteredActivities);
 
   useEffect(() => {
     if (svgRef.current) {
@@ -100,17 +119,48 @@ const DetailBubble = (props: BubbleDetProps) => {
     setSvgWidth(600);
   }, [window.innerHeight, window.innerWidth]);
 
-  const forced = new ForceMagic(packedCircData, width, newHeight - 100);
+  const usedEntries = useMemo(() => {
+    return query ?
+      filteredActivities
+      : projectData.entries.filter(f => hopArray.map(h => h.activity.activity_uid).includes(f.activity_uid));
+  }, [
+    projectData.entries.length,
+    filteredActivities.length,
+  ]);
+
+  const forced = useMemo(() => {
+    return new ForceMagic(packedCircData, width, newHeight - 100);
+  }, [packedCircData]);
+
+  const highlightedNodes = useMemo(() => {
+    const ids = usedEntries.map((m) => m.activity_uid);
+    return forced.nodes.filter((f) => ids.includes(f.activity_uid));
+  }, [usedEntries.length]);
+
+  const notNodes = useMemo(() => {
+    const ids = usedEntries.map((m) => m.activity_uid);
+    return forced.nodes.filter((f) => ids.indexOf(f.activity_uid) === -1);
+  }, [usedEntries.length]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const underWrap = svg.append('g').classed('path-wrap', true);
-    underWrap.attr('transform', `translate(115, ${translateY})`);
+    const underWrap = svg.append('g').classed('under-wrap', true);
+    underWrap.attr(
+      'transform',
+      `translate(${translateXforWraps}, ${translateY})`
+    );
+
+    const midWrap = svg.append('g').classed('path-wrap', true);
+    midWrap.attr(
+      'transform',
+      `translate(${translateXforWraps}, ${translateY})`
+    );
+
     const wrap = svg
       .append('g')
-      .attr('transform', `translate(115, ${translateY})`);
+      .attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
     const { yScale, margin } = forced;
     setTranslateY(margin / 2);
@@ -129,22 +179,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       yearMonth.length - 1
     ].months.filter((f: any, i: number) => i < endIndex);
 
-    const allActivityGroups = wrap
-      .selectAll('g.activity')
-      .data(forced.nodes)
-      .join('g')
-      .attr('class', 'activity');
-
-    allActivityGroups.attr('transform', (d) => `translate(${d.x}, ${d.y})`);
-
-    const activityBubbles = new Bubbles(
-      allActivityGroups,
-      true,
-      'all-activities'
-    );
-
     //// START AXIS
-
     const checkGroup = svg.select('g.timeline-wrap');
     const wrapAxisGroup = checkGroup.empty()
       ? svg.append('g').attr('class', 'timeline-wrap')
@@ -172,104 +207,131 @@ const DetailBubble = (props: BubbleDetProps) => {
       .join('text')
       .attr('font-size', '0.55rem')
       .attr('opacity', 0.5);
-    /// AXIS
+    /// END AXIS
 
-    activityBubbles.bubbles
-      .attr('fill', '#d3d3d3')
-      .attr('fill-opacity', 0.3)
-      .attr('stroke', '#d3d3d3')
-      .attr('stroke-width', 0.4);
+    //HIGHLIGHTED AND NOT HIGHLIGHTED GROUPS
 
-    const artifactCircles = allActivityGroups
-      .selectAll('circle.artifact')
-      .data((d) => d.files)
-      .join('circle')
-      .classed('artifact', true);
-    artifactCircles
-      .attr('r', () => 3)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
+    const hiddenActivityGroups = underWrap
+    .selectAll('g.hidden-activity')
+    .data(notNodes)
+    .join('g')
+    .attr('class', 'hidden-activity');
 
-    const highlightedActivities = allActivityGroups.filter((ac) => {
-      return hopArray
-        ? hopArray.map((m) => m.activity.title).includes(ac.title)
-        : [];
-    });
-
-    highlightedActivities
-      .select('.all-activities')
-      .attr('fill', '#F5F5F5')
-      .attr('fill-opacity', 1)
-      .attr('stroke-width', 1);
-
-    const highlightedCircles = highlightedActivities
-      .selectAll('circle.artifact')
-      .filter((f) => {
-        return hopArray.map((h) => h.artifactUid).includes(f.artifact_uid);
-      });
-
-    highlightedActivities
-      .selectAll('circle.artifact')
-      .filter((f) => {
-        return (
-          hopArray.map((h) => h.artifactUid).indexOf(f.artifact_uid) === -1
-        );
-      })
-      .attr('fill', 'gray')
-      .attr('fill-opacity', 0.2);
-
-    highlightedCircles.attr('fill', 'gray');
-
-    const theChosenOne = highlightedActivities.filter(
-      (f) => f.title === selectedArtifact.activity.title
+    hiddenActivityGroups.attr(
+      'transform',
+      (d) => `translate(${d.x}, ${d.y})`
     );
-    theChosenOne
-      .selectAll('circle.artifact')
-      .filter((af, i) => selectedArtifact.artifactIndex === i)
-      .attr('fill', 'red');
 
-    const hiddenCircles = allActivityGroups
-      .filter((ac) => {
-        return hopArray.map((m) => m.activity.title).indexOf(ac.title) === -1;
-      })
-      .selectAll('circle.artifact');
+  const hiddenBubbles = new Bubbles(hiddenActivityGroups, true, 'hidden');
 
-    hiddenCircles.attr('fill', 'gray').attr('fill-opacity', 0.2);
+  hiddenBubbles.bubbles
+    .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 })) // .attr('fill-opacity', .3)
+    .attr('stroke', '#d3d3d3')
+    .attr('stroke-width', 0.4);
 
-    const linkData = [];
+  const hiddenCircles = hiddenActivityGroups
+    .selectAll('circle.artifact')
+    .data((d) => d.files)
+    .join('circle')
+    .classed('artifact', true);
+  hiddenCircles
+    .attr('r', () => 3)
+    .attr('cx', (d) => d.x)
+    .attr('cy', (d) => d.y);
+  hiddenCircles.attr('fill', '#d3d3d3');
 
-    hopArray.forEach((h) => {
-      const temp = highlightedActivities.filter(
-        (f) => h.activity.title === f.title
-      );
-      const td = temp.data()[0];
-      if (td && td.x && td.y) {
-        linkData.push({ coord: [td.x - 8, td.y], date: td.date });
-      }
-    });
+  // HIGHLIGHTED ACTIVITIES
+  const highlightedActivityGroups = wrap
+    .selectAll('g.activity')
+    .data(highlightedNodes)
+    .join('g')
+    .attr('class', 'activity');
 
-    const lineGenerator = d3.line();
+  highlightedActivityGroups.attr(
+    'transform',
+    (d) => `translate(${d.x}, ${d.y})`
+  );
 
-    const pathStringSolid = lineGenerator(linkData.map((m) => m.coord));
+  const activityBubbles = new Bubbles(
+    highlightedActivityGroups,
+    true,
+    'all-activities'
+  );
 
-    underWrap
-      .append('path')
-      .attr('d', pathStringSolid)
-      .attr('fill', 'none')
-      .attr('stroke', 'gray')
-      .attr('stroke-width', 1);
+  activityBubbles.bubbles
+    .attr('fill', '#d3d3d360') // .attr('fill-opacity', .3)
+    .attr('stroke', '#d3d3d3')
+    .attr('stroke-width', 0.4);
 
-    highlightedCircles
+  const artifactCircles = highlightedActivityGroups
+    .selectAll('circle.artifact')
+    .data((d) => d.files)
+    .join('circle')
+    .classed('artifact', true);
+  artifactCircles
+    .attr('r', () => 3)
+    .attr('cx', (d) => d.x)
+    .attr('cy', (d) => d.y);
+
+  const theChosenOne = highlightedActivityGroups.filter(
+    (f) => f.title === selectedArtifact.activity.title
+  );
+  theChosenOne
+    .selectAll('circle.artifact')
+    .filter((af, i) => selectedArtifact.artifactIndex === i)
+    .attr('fill', 'red');
+
+   
+  const linkData = [];
+
+  hopArray.forEach((h) => {
+    const temp = highlightedActivityGroups.filter(
+      (f) => h.activity.title === f.title
+    );
+    const td = temp.data()[0];
+    if (td && td.x && td.y) {
+      linkData.push({ coord: [td.x - 8, td.y], date: td.date });
+    }
+  });
+
+  const lineGenerator = d3.line();
+
+  const pathStringSolid = lineGenerator(linkData.map((m) => m.coord));
+
+  underWrap
+    .append('path')
+    .attr('d', pathStringSolid)
+    .attr('fill', 'none')
+    .attr('stroke', 'gray')
+    .attr('stroke-width', 1);
+
+    artifactCircles
       .on('mouseover', (event, d) => {
-        const hopData = hopArray.filter(
-          (f) => f.artifactUid === d.artifact_uid
-        );
-        const parentData = d3.select(event.target.parentNode).data()[0];
-        setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
-        const hovData = { fileData: d, hopDataArray: hopData };
-        setHoverData(hovData);
-        d3.select('#tooltip').style('opacity', 1);
 
+        if(query){
+
+          console.log('QURY', query.matches)
+          const parentData = d3.select(event.target.parentNode).data()[0];
+          setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
+          const queryMatch = query.matches.filter(f=> f.entry.activity_uid === parentData.activity_uid);
+          const hovData = { fileData: d, hopDataArray: null, queryMatch: queryMatch };
+          console.log('HOVERRRR',hovData)
+          setHoverData(hovData);
+          d3.select('#tooltip').style('opacity', 1);
+
+        }else{
+
+          const hopData = hopArray.filter(
+            (f) => f.artifactUid === d.artifact_uid
+          );
+          const parentData = d3.select(event.target.parentNode).data()[0];
+          setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
+          const hovData = { fileData: d, hopDataArray: hopData, queryMatch: null };
+          setHoverData(hovData);
+          d3.select('#tooltip').style('opacity', 1);
+
+        }
+      
         const entry = projectData.entries.filter((en) => {
           const temp = en.files.filter((e) => e.title === d.title);
           return temp.length > 0;
@@ -328,17 +390,7 @@ const DetailBubble = (props: BubbleDetProps) => {
         const selectedArtIndex = parentData.files
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
-
-        let newHopData = [
-          ...hopArray,
-          {
-            activity: parentData,
-            artifactUid:
-              parentData.files[selectedArtifact.artifactIndex].artifact_uid,
-            hopReason: 'revisit hopped artifact',
-          },
-        ];
-
+        console.log(parentData, selectedArtIndex);
         dispatch({
           type: 'SELECTED_ARTIFACT',
           activity: parentData,
