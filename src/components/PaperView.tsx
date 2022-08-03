@@ -108,7 +108,7 @@ const PageNavigation = (props: any) => {
               researchThreads
             )}</span><br />
           <span
-          style="font-style:italic; font-size: 11px"; line-height:1
+          style="font-style:italic; font-size: 11px; line-height:1"
           >"${d.text[0]}"</span><div>`);
             d3.select('#tooltip-cite').style('opacity', 1);
           })
@@ -277,7 +277,7 @@ const CitationIcon = (props: any) => {
           researchThreads
         )}</span><br />
       <span
-      style="font-style:italic; font-size: 11px"; line-height:1
+      style="font-style:italic; font-size: 11px; line-height:1"
       >"${link.text[0]}"</span><div>`);
         d3.select('#tooltip-cite').style('opacity', 1);
       }}
