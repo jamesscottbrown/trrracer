@@ -619,10 +619,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-  // const [threadName, setName] = useState(null);
-  // const [description, setDescription] = useState(null);
   const [editMode, setEditMode] = useState<null | number>(null);
-  const [hasCancel, sethasCancel] = useState(true);
 
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
@@ -635,23 +632,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
       return test.indexOf('merge') === -1;
     });
   }, [researchThreads?.research_threads, viewParams]);
-
-  useEffect(() => {
-    if (viewParams && viewParams.view === 'paper') {
-      sethasCancel(false);
-    } else {
-      sethasCancel(true);
-    }
-  }, [viewParams]);
-
-  // const handleNameChange = (e: any) => {
-  //   const inputValue = e.target.value;
-  //   setName(inputValue);
-  // };
-  // const handleDescriptionChange = (e: any) => {
-  //   const inputValue = e.target.value;
-  //   setDescription(inputValue);
-  // };
 
   const headerStyle = {
     fontSize: '19px',

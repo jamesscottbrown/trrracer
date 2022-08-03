@@ -192,6 +192,8 @@ const InteractiveActivityTag = (props: any) => {
     useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
 
+  console.log('SELECTEDDD', selectedArtifact);
+
   const tagMatches = projectData.entries.filter(
     (f) => f.tags.indexOf(tag) > -1
   );
@@ -269,9 +271,10 @@ const InteractiveActivityTag = (props: any) => {
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
+            console.log('selectedArtifact',selectedArtifact)
             const indexOfE = tagMatches
               .map((m) => m.title)
-              .indexOf(selectedArtifact.title);
+              .indexOf(selectedArtifact.activity.title);
             if (indexOfE === tagMatches.length - 1) {
               const newHop = [
                 ...hopArray,
@@ -379,12 +382,11 @@ const ArtifactDetailSidebar = (props: any) => {
     dispatch,
   ] = useProjectState();
 
+
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
-
-  const [showCreateThread, setShowCreateThread] = useState(false);
 
   const selectedArtifactTest =
     selectedArtifact.activity.files.length > 0
@@ -398,6 +400,7 @@ const ArtifactDetailSidebar = (props: any) => {
     return test.length > 0;
   });
 
+  const [showCreateThread, setShowCreateThread] = useState(false);
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -411,6 +414,24 @@ const ArtifactDetailSidebar = (props: any) => {
       activityID: selectedArtifact.activity.activity_uid,
     });
   };
+
+  const selectOtherArtifact = (index:number) => {
+    dispatch({
+      type: 'SELECTED_ARTIFACT',
+      activity: selectedArtifact.activity,
+      artifactIndex: index,
+      hopArray: [
+        ...hopArray,
+        {
+          activity: selectedArtifact.activity,
+          artifactUid:
+            selectedArtifact.activity.files[index]
+              .artifact_uid,
+          hopReason: 'another artifact in activity',
+        },
+      ],
+    });
+  }
 
   return (
     <Box
@@ -468,23 +489,7 @@ const ArtifactDetailSidebar = (props: any) => {
                     ) : (
                       <div
                         style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          dispatch({
-                            type: 'SELECTED_ARTIFACT',
-                            activity: selectedArtifact.activity,
-                            artifactIndex: i,
-                            hopArray: [
-                              ...hopArray,
-                              {
-                                activity: selectedArtifact.activity,
-                                artifactUid:
-                                  selectedArtifact.activity.files[i]
-                                    .artifact_uid,
-                                hopReason: 'another artifact in activity',
-                              },
-                            ],
-                          });
-                        }}
+                        onClick={() => selectOtherArtifact(i)}
                       >
                         {selectedArtifact.activity.files[i].title}
                       </div>
