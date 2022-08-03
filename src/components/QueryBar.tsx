@@ -60,24 +60,24 @@ const processDataQuery = (
           if (t.includes(queryTerm)) {
             const con = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
 
             const test = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
+            con.push({ style: null, query_context: test[0] });
 
-            con.push({ style: 'bold', context: queryTerm });
+            con.push({ style: 'bold', query_context: queryTerm });
 
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
         return tt;
       });
     }
@@ -98,21 +98,21 @@ const processDataQuery = (
           if (t.includes(queryTerm)) {
             const con = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
             const test = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
-            con.push({ style: 'bold', context: queryTerm });
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test[0] });
+            con.push({ style: 'bold', query_context: queryTerm });
+            con.push({ style: null, query_context: test[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
 
         return tt;
       });
@@ -140,6 +140,7 @@ interface QueryProps {
   setViewType: (viewType: string) => void;
   artifactData: any;
   filteredActivities: any;
+  setSearchTermArtifact:any;
 }
 
 const QueryBar = (queryProps: QueryProps) => {
