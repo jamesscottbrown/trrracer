@@ -9,6 +9,7 @@ const processDataQuery = (
   googleData: any,
   activityData: any
 ) => {
+
   const textMatches = txtData['text-data'].filter((f) =>
     f.text.includes(queryTerm)
   );
@@ -41,13 +42,14 @@ const processDataQuery = (
 
   const titleMatches = activityData
     .filter((f) => {
-      return f.title.includes(queryTerm);
+      let temp = f.files.filter(f => f.title.includes(queryTerm));
+      return f.title.includes(queryTerm) || temp.length > 0;
     })
     .map((m) => m.activity_uid);
 
   console.log('title matches', titleMatches);
 
-  const matches = [];
+  const matches: any[] = [];
 
   activityData.forEach((ent: any) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
@@ -123,11 +125,18 @@ const processDataQuery = (
       tempG.length > 0 ||
       titleMatches.indexOf(ent.activity_uid) > -1
     ) {
+      let titleKeeper = []
+      if(titleMatches.indexOf(ent.activity_uid) > -1){
+        if(ent.title.includes(queryTerm)) titleKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid})
+        ent.files.forEach((f:any, j:number) => {
+          if(f.title.includes(queryTerm)) titleKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j})
+        })
+      }
       const entM = {
         entry: ent,
         textMatch: tempText,
         googMatch: tempG,
-        titleMatch: titleMatches.indexOf(ent.activity_uid) > -1,
+        titleMatch: titleKeeper//titleMatches.indexOf(ent.activity_uid) > -1,
       };
       matches.push(entM);
     }
@@ -183,18 +192,7 @@ const QueryBar = (queryProps: QueryProps) => {
           size="sm"
           onClick={() => {
             if (setSearchTermArtifact) {
-              // console.log('DATA ON CLICK', data);
-              // if (data.documentId) {
-              //   console.log('this is a google doc.');
-              // } else {
-              //   console.log('this is text file', data);
-              //   if (data) {
-              //     const matchArray = data.split(term);
-              //     alert(`${matchArray.length - 1} matches`);
-              //   } else {
-              //     alert('notext data for this file yet');
-              //   }
-              // }
+            
               setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(

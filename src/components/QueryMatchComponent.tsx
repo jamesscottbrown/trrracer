@@ -10,74 +10,8 @@ import {
 } from '@chakra-ui/react';
 
 import { useProjectState } from './ProjectContext';
+import { HoverTitle } from './QueryView';
 
-const HoverTitle = (props: any) => {
-  const { title, entry, match, setViewType } = props;
-
-  const [{ query }, dispatch] = useProjectState();
-
-  const fileIndex =
-    match.fileType === 'gdoc'
-      ? entry.files.map((m) => m.title).indexOf(match.title)
-      : match['file-index'];
-
-  const [showPopover, setShowPopover] = useState(false);
-
-  const closePopover = () => {
-    setShowPopover(false);
-  };
-
-  return (
-    <>
-      {showPopover ? (
-        <Popover isOpen={showPopover} onClose={closePopover}>
-          <PopoverTrigger>
-            <div style={{ display: 'inline', marginRight: 10 }}>{title}</div>
-          </PopoverTrigger>
-          <PopoverContent bg="white" color="gray">
-            <PopoverArrow bg="white" />
-            <PopoverBody>
-              <Button
-                onClick={() => {
-                  console.log('matches??', match);
-                  setViewType('detail view');
-                  dispatch({
-                    type: 'SELECTED_ARTIFACT',
-                    activity: entry,
-                    artifactIndex: fileIndex,
-                    hopArray: [
-                      {
-                        activity: entry,
-                        artifactUid: entry.files[fileIndex]
-                          ? entry.files[fileIndex].artifact_uid
-                          : null,
-                        hopReason: 'first hop',
-                      },
-                    ],
-                  });
-                  dispatch({
-                    type: 'UPDATE_GO_BACK',
-                    goBackView: 'query',
-                    filterQuery: query.matches.map((m) => m.entry.title),
-                  });
-                }}
-              >
-                See artifact in detail.
-              </Button>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      ) : (
-        <div
-          style={{ display: 'inline', marginRight: 10 }}
-          onMouseEnter={() => setShowPopover(true)}
-        >
-          {title}
-        </div>
-      )}
-    </>
-  );
-};
 
 const QueryMatchComponent = (props: any) => {
   const { m, tm, j, setViewType } = props;
