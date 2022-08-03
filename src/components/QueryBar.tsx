@@ -47,7 +47,13 @@ const processDataQuery = (
     })
     .map((m) => m.activity_uid);
 
-  console.log('title matches', titleMatches);
+  const descriptionMatches = activityData
+  .filter((a) => {
+    let temp = a.files.filter(f => f.context ? f.context.includes(queryTerm) : false);
+    let inDescription = a.description ? a.description.includes(queryTerm) : false;
+    return inDescription || temp.length > 0;
+  })
+  .map((m) => m.activity_uid);
 
   const matches: any[] = [];
 
@@ -55,7 +61,6 @@ const processDataQuery = (
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
     if (tempText.length > 0) {
       tempText.map((tt) => {
-        console.log('tt', tt);
         const txtArray = tt.text.split('. ');
         const indexArray = [];
         txtArray.forEach((t, i) => {
@@ -126,17 +131,29 @@ const processDataQuery = (
       titleMatches.indexOf(ent.activity_uid) > -1
     ) {
       let titleKeeper = []
+      
+
       if(titleMatches.indexOf(ent.activity_uid) > -1){
         if(ent.title.includes(queryTerm)) titleKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid})
         ent.files.forEach((f:any, j:number) => {
           if(f.title.includes(queryTerm)) titleKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j})
         })
       }
+
+      let descriptionKeeper = []
+      if(descriptionMatches.indexOf(ent.activity_uid) > -1){
+        if(ent.description && ent.description.includes(queryTerm)) descriptionKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid, blurb: ent.description})
+        ent.files.forEach((f:any, j:number) => {
+          if(f.title.includes(queryTerm)) descriptionKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j, blurb: f.context})
+        })
+      }
+      console.log('desssss keeper',descriptionKeeper)
       const entM = {
         entry: ent,
         textMatch: tempText,
         googMatch: tempG,
-        titleMatch: titleKeeper//titleMatches.indexOf(ent.activity_uid) > -1,
+        titleMatch: titleKeeper,//titleMatches.indexOf(ent.activity_uid) > -1,
+        descriptionMatch: descriptionKeeper
       };
       matches.push(entM);
     }
