@@ -82,10 +82,20 @@ const ToolTip = (toolProp: any) => {
 };
 
 const DetailBubble = (props: BubbleDetProps) => {
-  const { widthSvg, filterType  } = props;
+  const { 
+    widthSvg, 
+    filterType, 
+    windowDimension, 
+    bubbleDivWidth,
+    setBubbleDivWidth  
+  } = props;
 
   const [
-    { projectData, filteredActivities, selectedArtifact, hopArray, query },
+    { projectData, 
+      filteredActivities, 
+      selectedArtifact, 
+      hopArray, 
+      query },
     dispatch,
   ] = useProjectState();
 
@@ -97,20 +107,21 @@ const DetailBubble = (props: BubbleDetProps) => {
     hopDataArray: [{ hopReason: 'null' }],
     queryMatch: null
   });
+  const [height, setHeight] = useState(windowDimension.height - 200);
   const [toolPosition, setToolPosition] = useState([0, 0]);
+
+  useEffect(() => {
+    setHeight(windowDimension.height - 200);
+
+  }, [windowDimension]);
 
   const width = 80;
   const translateXforWraps = 90;
-  const height = +newHeight; // .split('px')[0];
   const svgRef = React.useRef(null);
 
   const packedCircData = calcCircles(projectData.entries);
 
   d3.select('#tooltip').style('opacity', 0);
-
-  console.log('QURYYYY', query);
-
-  console.log('FILTERED??', filteredActivities);
 
   useEffect(() => {
     if (svgRef.current) {
@@ -129,7 +140,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   ]);
 
   const forced = useMemo(() => {
-    return new ForceMagic(packedCircData, width, newHeight - 100);
+    return new ForceMagic(packedCircData, width, newHeight);
   }, [packedCircData]);
 
   const highlightedNodes = useMemo(() => {
@@ -163,7 +174,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       .attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
     const { yScale, margin } = forced;
-    setTranslateY(margin / 2);
+    // setTranslateY(margin / 2);
 
     const yearMonth = dataStructureForTimeline(projectData.entries);
 
@@ -234,6 +245,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     .data((d) => d.files)
     .join('circle')
     .classed('artifact', true);
+    
   hiddenCircles
     .attr('r', () => 3)
     .attr('cx', (d) => d.x)
@@ -259,7 +271,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   );
 
   activityBubbles.bubbles
-    .attr('fill', '#d3d3d360') // .attr('fill-opacity', .3)
+    .attr('fill', '#d3d3d3') // .attr('fill-opacity', .3)
     .attr('stroke', '#d3d3d3')
     .attr('stroke-width', 0.4);
 
@@ -310,12 +322,10 @@ const DetailBubble = (props: BubbleDetProps) => {
 
         if(query){
 
-          console.log('QURY', query.matches)
           const parentData = d3.select(event.target.parentNode).data()[0];
           setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
           const queryMatch = query.matches.filter(f=> f.entry.activity_uid === parentData.activity_uid);
           const hovData = { fileData: d, hopDataArray: null, queryMatch: queryMatch };
-          console.log('HOVERRRR',hovData)
           setHoverData(hovData);
           d3.select('#tooltip').style('opacity', 1);
 
@@ -349,11 +359,13 @@ const DetailBubble = (props: BubbleDetProps) => {
         const parent = d3.select(event.target.parentNode);
 
         const rect = labelG.append('rect');
+
         rect
           .attr('width', 50)
           .attr('height', 15)
           .attr('fill', '#fff')
           .attr('fill-opacity', 0.9);
+
         rect.attr('x', -50).attr('y', -12);
 
         labelG
@@ -390,7 +402,7 @@ const DetailBubble = (props: BubbleDetProps) => {
         const selectedArtIndex = parentData.files
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
-        console.log(parentData, selectedArtIndex);
+      
         dispatch({
           type: 'SELECTED_ARTIFACT',
           activity: parentData,

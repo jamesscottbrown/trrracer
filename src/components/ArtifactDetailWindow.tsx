@@ -28,7 +28,13 @@ interface DetailProps {
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
-  const { setViewType, goBackView } = props;
+  const { 
+    setViewType, 
+    goBackView,
+    bubbleDivWidth,
+    setBubbleDivWidth,
+    windowDimension
+  } = props;
  
   const [
     { projectData, 
@@ -50,6 +56,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), (_) => false)
   );
+
+  console.log('SELECTED ARTIFACT in detail window', selectedArtifact);
 
   const [fragSelected, setFragSelected] = useState(null);
 
@@ -193,9 +201,15 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       />
 
       <div style={{ width: 260 }}>
-        <DetailBubble widthSvg={360} filterType={null} />
+        <DetailBubble 
+        widthSvg={360} 
+        filterType={null} 
+        windowDimension={windowDimension} 
+        bubbleDivWidth={bubbleDivWidth}
+        setBubbleDivWidth={setBubbleDivWidth}
+        />
       </div>
-      {selectedArtifact ? (
+      {(selectedArtifact && selectedArtifact.artifactIndex) ? (
         <Box flex="3.5">
           {(selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'txt' ||
             selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'gdoc') && (
@@ -296,8 +310,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               overflow: 'auto',
             }}
           >
-            {'No artifact selected'}
-            
+            {selectedArtifact.activity && selectedArtifact.activity.description ? 
+            <div>{selectedArtifact.activity.description}</div> : <div>No artifact selected</div>}
           </div>
         </Flex>
       )}

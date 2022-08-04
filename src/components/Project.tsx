@@ -251,7 +251,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const barWidth = useMemo(() => {
     const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
-      ? window.innerWidth - 700
+      ? window.innerWidth - 800
       : window.innerWidth - (bubbleDivWidth - handicap);
   }, [windowDimension.width]);
 
@@ -319,7 +319,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
   }
   if (viewType === 'detail view') {
     return (
-      <ArtifactDetailWindow setViewType={setViewType} goBackView={goBackView} />
+      <ArtifactDetailWindow 
+        bubbleDivWidth={bubbleDivWidth}
+        setBubbleDivWidth={setBubbleDivWidth}
+        windowDimension={windowDimension}
+        setViewType={setViewType} 
+        goBackView={goBackView} 
+      />
     );
   }
   if (viewType === 'overview') {

@@ -188,7 +188,7 @@ export const getAppStateReducer = (
             //     // })
 
             // //     file.data.keyphrases.forEach((phrase) => {
-            // //       console.log(phrase.matches[0].nodes.map((d) => toString(d)).join(''))
+           
             // //     })
             //   })
             // }
@@ -284,8 +284,6 @@ export const getAppStateReducer = (
           : [],
       };
 
-      console.log('view in set data', views);
-
       return {
         folderPath: action.folderName,
         projectData: newProjectData,
@@ -366,7 +364,7 @@ export const getAppStateReducer = (
 
       const rtFiltered = typeFiltered.filter((entryData: any) => {
         if (filterRT) {
-          // console.log('filterrrrrttttt',filterRT);
+         
           return filterRT.key.includes(entryData.title);
         }
         return typeFiltered;
@@ -427,7 +425,7 @@ export const getAppStateReducer = (
         return state;
       }
       case 'SAVE_DATA': {
-        console.log('data', action.data);
+  
         return action.data;
       }
 
@@ -447,7 +445,7 @@ export const getAppStateReducer = (
       }
 
       case 'VIEW_PARAMS': {
-        console.log('project context common', action.viewParams);
+     
         if (action.viewParams === null) {
           return {
             ...state,
@@ -460,16 +458,16 @@ export const getAppStateReducer = (
 
       case 'FILE_META': {
         const { activityID, artifactTitle, artifactID, context } = action;
-        console.log(activityID, artifactTitle, artifactID, context);
+    
         const entries = [...state.projectData.entries].map((d: EntryType) => {
           if (d.activity_uid === activityID) {
             d.files.map((f: any) => {
               if (artifactID && f.artifact_uid === artifactID) {
                 f.context = context;
-                console.log('FF', f);
+               
               } else if (f.title === artifactTitle) {
                 f.context = context;
-                console.log('FFFF', f);
+               
               }
               return f;
             });
@@ -534,7 +532,7 @@ export const getAppStateReducer = (
           }
           return state;
         }, 1000);
-        // console.log('in update', action.googDocData)
+     
         return state;
       }
       case 'UPDATE_GOOG_IDS': {
@@ -555,10 +553,14 @@ export const getAppStateReducer = (
         return saveJSON(newProjectData, state);
       }
       case 'URL_SELECTED_ACTIVITY': {
-        console.log('is this working in URL_SELECTED_ACTIVITY', action);
+      
         return { ...state, selectedActivityURL: action.selectedActivityURL };
       }
       case 'BOOKMARK_FRAGMENT': {
+      //  selectedArtifactEntry: selectedArtifact.activity,
+      //             selectedArtifactIndex: selectedArtifact.artifactIndex,
+      //             bookmarkFragment: fragSelected,
+
         let bookmarks = action.selectedArtifactEntry.files[
           action.selectedArtifactIndex
         ].bookmarks
@@ -568,7 +570,9 @@ export const getAppStateReducer = (
 
         bookmarks.push({ fragment: action.bookmarkFragment });
 
-        const currentFiles = state.projectData.entries[entryIndex].files.map(
+        console.log('bookmark', bookmarks);
+
+        const currentFiles = state.projectData.entries[action.selectedArtifactIndex].files.map(
           (f, i) => {
             if (i === action.selectedArtifactIndex) {
               f.bookmarks = bookmarks;
@@ -582,7 +586,7 @@ export const getAppStateReducer = (
             ? { ...d, files: currentFiles }
             : d
         );
-
+        
         const newProjectData = { ...state.projectData, entries };
         return saveJSON(newProjectData, state);
       }
@@ -823,9 +827,6 @@ export const getAppStateReducer = (
 
       case 'ADD_TAG_TO_ENTRY': {
         const { newTag, activityID } = action;
-
-        console.log(newTag, activityID);
-
         const existingTags = state.projectData.tags.map((k) => k.title);
         const newColor = pickTagColor(state.projectData.tags);
         let newTags;
@@ -951,7 +952,7 @@ export const getAppStateReducer = (
 
       case 'ADD_FILES': {
         const { fileList } = action;
-
+        console.log('in add files',fileList, action.folderPath);
         const copiedFiles = copyFiles(fileList, state.folderPath);
 
         const newEntry: EntryType = {

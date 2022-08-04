@@ -192,8 +192,6 @@ const InteractiveActivityTag = (props: any) => {
     useProjectState();
   const [expandedTag, setExpandedTag] = useState(false);
 
-  console.log('SELECTEDDD', selectedArtifact);
-
   const tagMatches = projectData.entries.filter(
     (f) => f.tags.indexOf(tag) > -1
   );
@@ -271,7 +269,7 @@ const InteractiveActivityTag = (props: any) => {
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
-            console.log('selectedArtifact',selectedArtifact)
+           
             const indexOfE = tagMatches
               .map((m) => m.title)
               .indexOf(selectedArtifact.activity.title);
@@ -544,7 +542,11 @@ const ArtifactDetailSidebar = (props: any) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
+      
+      {selectedArtifactTest && (
+        <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
+      )}
+     
       {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>

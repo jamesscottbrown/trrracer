@@ -145,7 +145,7 @@ const renderAxis = (wrap: any, yScale: any, translateY: any) => {
   wrap.selectAll('*').remove();
   wrap.attr('transform', `translate(110, ${translateY})`);
 
-  console.log('render axis', yScale.range());
+
 
   const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
@@ -208,7 +208,7 @@ const BubbleVis = (props: BubbleProps) => {
   ]);
 
   const { eventArray } = projectData;
-  const [svgWidth, setSvgWidth] = useState(500);
+ 
   const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
@@ -219,7 +219,7 @@ const BubbleVis = (props: BubbleProps) => {
   const [onActivityColor, setOnActivityColor] = useState(grayLighter);
   const [onArtifactColor, setOnArtifactColor] = useState(grayStart);
 
-  const width = 300;
+  const width = 350;
   const translateXforWraps = 90;
   const [height, setHeight] = useState(windowDimension.height - 200);
   const svgRef = useRef(null);
@@ -231,7 +231,6 @@ const BubbleVis = (props: BubbleProps) => {
 
     if (groupBy) {
       setBubbleDivWidth(windowDimension.width);
-      setSvgWidth(researchThreads?.research_threads.length * 200);
     }
   }, [windowDimension]);
 
@@ -244,7 +243,7 @@ const BubbleVis = (props: BubbleProps) => {
   );
 
   const forced = useMemo(() => {
-    console.log('dimensuion', windowDimension);
+  
     return new ForceMagic(packedCircData, width, windowDimension.height - 200);
   }, [packedCircData, windowDimension]);
 
@@ -259,10 +258,6 @@ const BubbleVis = (props: BubbleProps) => {
   }, [usedEntries.length]);
 
   const { yScale, margin } = forced;
-
-  useEffect(() => {
-    console.log('YSCALE', yScale.range());
-  }, [yScale]);
 
   useEffect(() => {
     if (filterRT) {
@@ -281,7 +276,7 @@ const BubbleVis = (props: BubbleProps) => {
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
-
+    
     const underWrap = svg.append('g').classed('under-wrap', true);
     underWrap.attr(
       'transform',
@@ -880,12 +875,7 @@ const BubbleVis = (props: BubbleProps) => {
         });
     }
 
-    setSvgWidth(
-      wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width
-    );
-
     setBubbleDivWidth(wrap.node().getBBox().width - 250);
-
     renderAxis(wrapAxisGroup, yScale, translateY);
 
     if (!defineEvent) {
