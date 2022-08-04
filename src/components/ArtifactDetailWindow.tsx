@@ -51,6 +51,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
+  console.log('SELECTED ARTIFACT in detail window', selectedArtifact);
+
   const [fragSelected, setFragSelected] = useState(null);
 
   useEffect(() => {

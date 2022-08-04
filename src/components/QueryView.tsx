@@ -43,7 +43,6 @@ export const HoverTitle = (props: any) => {
             <PopoverBody>
               <Button
                 onClick={() => {
-                  console.log('matches??', match);
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
@@ -86,8 +85,6 @@ export const HoverTitle = (props: any) => {
 const QueryView = (props: QueryViewProps) => {
   const { setViewType } = props;
   const [{ query }, dispatch] = useProjectState();
-
-  console.log('query matchessss', query.matches);
 
   return (
     <div>

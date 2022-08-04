@@ -11,7 +11,7 @@ export const GoogleAuth = (function () {
     }
 
     function changeAuth(auth) {
-      console.log('auth in singleton', auth);
+      // console.log('auth in singleton', auth);
       _auth = auth;
     }
 

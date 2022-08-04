@@ -108,10 +108,6 @@ const DetailBubble = (props: BubbleDetProps) => {
 
   d3.select('#tooltip').style('opacity', 0);
 
-  console.log('QURYYYY', query);
-
-  console.log('FILTERED??', filteredActivities);
-
   useEffect(() => {
     if (svgRef.current) {
       setNewHeight(window.innerHeight - 150);
@@ -310,12 +306,10 @@ const DetailBubble = (props: BubbleDetProps) => {
 
         if(query){
 
-          console.log('QURY', query.matches)
           const parentData = d3.select(event.target.parentNode).data()[0];
           setToolPosition([parentData.x - (parentData.radius + 5), parentData.y]);
           const queryMatch = query.matches.filter(f=> f.entry.activity_uid === parentData.activity_uid);
           const hovData = { fileData: d, hopDataArray: null, queryMatch: queryMatch };
-          console.log('HOVERRRR',hovData)
           setHoverData(hovData);
           d3.select('#tooltip').style('opacity', 1);
 
@@ -390,7 +384,7 @@ const DetailBubble = (props: BubbleDetProps) => {
         const selectedArtIndex = parentData.files
           .map((f) => f.artifact_uid)
           .indexOf(d.artifact_uid);
-        console.log(parentData, selectedArtIndex);
+      
         dispatch({
           type: 'SELECTED_ARTIFACT',
           activity: parentData,
