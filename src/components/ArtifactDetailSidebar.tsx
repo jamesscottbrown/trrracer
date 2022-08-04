@@ -542,7 +542,11 @@ const ArtifactDetailSidebar = (props: any) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
+      
+      {selectedArtifactTest && (
+        <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
+      )}
+     
       {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>

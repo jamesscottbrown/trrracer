@@ -245,6 +245,7 @@ const DetailBubble = (props: BubbleDetProps) => {
     .data((d) => d.files)
     .join('circle')
     .classed('artifact', true);
+    
   hiddenCircles
     .attr('r', () => 3)
     .attr('cx', (d) => d.x)

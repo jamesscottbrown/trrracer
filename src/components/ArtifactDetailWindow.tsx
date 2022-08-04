@@ -209,7 +209,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         setBubbleDivWidth={setBubbleDivWidth}
         />
       </div>
-      {selectedArtifact ? (
+      {(selectedArtifact && selectedArtifact.artifactIndex) ? (
         <Box flex="3.5">
           {(selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'txt' ||
             selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'gdoc') && (
@@ -310,8 +310,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               overflow: 'auto',
             }}
           >
-            {'No artifact selected'}
-            
+            {selectedArtifact.activity && selectedArtifact.activity.description ? 
+            <div>{selectedArtifact.activity.description}</div> : <div>No artifact selected</div>}
           </div>
         </Flex>
       )}
