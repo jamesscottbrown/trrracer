@@ -159,7 +159,7 @@ const DetailBubble = (props: BubbleDetProps) => {
       .attr('transform', `translate(${translateXforWraps}, ${translateY})`);
 
     const { yScale, margin } = forced;
-    setTranslateY(margin / 2);
+    // setTranslateY(margin / 2);
 
     const yearMonth = dataStructureForTimeline(projectData.entries);
 
@@ -255,7 +255,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   );
 
   activityBubbles.bubbles
-    .attr('fill', '#d3d3d360') // .attr('fill-opacity', .3)
+    .attr('fill', '#d3d3d3') // .attr('fill-opacity', .3)
     .attr('stroke', '#d3d3d3')
     .attr('stroke-width', 0.4);
 
@@ -343,11 +343,13 @@ const DetailBubble = (props: BubbleDetProps) => {
         const parent = d3.select(event.target.parentNode);
 
         const rect = labelG.append('rect');
+
         rect
           .attr('width', 50)
           .attr('height', 15)
           .attr('fill', '#fff')
           .attr('fill-opacity', 0.9);
+
         rect.attr('x', -50).attr('y', -12);
 
         labelG
