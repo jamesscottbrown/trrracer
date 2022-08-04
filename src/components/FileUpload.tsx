@@ -65,7 +65,11 @@ const FileUpload = (props: FileUploadProps) => {
       smalltalk
         .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
         .then((value: string) => {
-          const newFiles = files.map((m) => ({ ...m, artifactType: value }));
+          const newFiles = files.map((m) => {
+           
+            m.artifactType = value;
+            return m//{ ...m, artifactType: value }
+          });
           saveFiles(newFiles);
         })
         .catch(() => {

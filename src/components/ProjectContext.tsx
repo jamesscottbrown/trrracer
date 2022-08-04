@@ -7,12 +7,15 @@ import { getAppStateReducer } from './ProjectContextCommon';
 
 const isElectron = process.env.NODE_ENV === 'development';
 
+console.log('isElectron', isElectron);
+
 let path: any;
 let fs: any;
 let googleCred: any;
 let google: any;
 
 if (isElectron) {
+  console.log('IS THIS REACHING', path);
   path = require('path');
   fs = require('fs');
   // googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -31,8 +34,10 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   if (isElectron) {
     for (const file of fileList) {
-      const sourceIsInProjectDir = file.path.startsWith(folderPath);
-      let destination = path.join(folderPath, file.name);
+
+      console.log('FILE', file);
+      const sourceIsInProjectDir = file.path && file.path.startsWith(folderPath);
+      let destination = `${folderPath}/${file.name}`;//path.join(folderPath, file.name);
       /**
        * is it google??
        */
