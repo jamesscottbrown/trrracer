@@ -319,7 +319,13 @@ const Project = (ProjectPropValues: ProjectProps) => {
   }
   if (viewType === 'detail view') {
     return (
-      <ArtifactDetailWindow setViewType={setViewType} goBackView={goBackView} />
+      <ArtifactDetailWindow 
+        bubbleDivWidth={bubbleDivWidth}
+        setBubbleDivWidth={setBubbleDivWidth}
+        windowDimension={windowDimension}
+        setViewType={setViewType} 
+        goBackView={goBackView} 
+      />
     );
   }
   if (viewType === 'overview') {

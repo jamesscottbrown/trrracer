@@ -82,10 +82,20 @@ const ToolTip = (toolProp: any) => {
 };
 
 const DetailBubble = (props: BubbleDetProps) => {
-  const { widthSvg, filterType  } = props;
+  const { 
+    widthSvg, 
+    filterType, 
+    windowDimension, 
+    bubbleDivWidth,
+    setBubbleDivWidth  
+  } = props;
 
   const [
-    { projectData, filteredActivities, selectedArtifact, hopArray, query },
+    { projectData, 
+      filteredActivities, 
+      selectedArtifact, 
+      hopArray, 
+      query },
     dispatch,
   ] = useProjectState();
 
@@ -97,11 +107,16 @@ const DetailBubble = (props: BubbleDetProps) => {
     hopDataArray: [{ hopReason: 'null' }],
     queryMatch: null
   });
+  const [height, setHeight] = useState(windowDimension.height - 200);
   const [toolPosition, setToolPosition] = useState([0, 0]);
+
+  useEffect(() => {
+    setHeight(windowDimension.height - 200);
+
+  }, [windowDimension]);
 
   const width = 80;
   const translateXforWraps = 90;
-  const height = +newHeight; // .split('px')[0];
   const svgRef = React.useRef(null);
 
   const packedCircData = calcCircles(projectData.entries);
@@ -125,7 +140,7 @@ const DetailBubble = (props: BubbleDetProps) => {
   ]);
 
   const forced = useMemo(() => {
-    return new ForceMagic(packedCircData, width, newHeight - 100);
+    return new ForceMagic(packedCircData, width, newHeight);
   }, [packedCircData]);
 
   const highlightedNodes = useMemo(() => {

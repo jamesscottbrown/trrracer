@@ -28,7 +28,13 @@ interface DetailProps {
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
-  const { setViewType, goBackView } = props;
+  const { 
+    setViewType, 
+    goBackView,
+    bubbleDivWidth,
+    setBubbleDivWidth,
+    windowDimension
+  } = props;
  
   const [
     { projectData, 
@@ -195,7 +201,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
       />
 
       <div style={{ width: 260 }}>
-        <DetailBubble widthSvg={360} filterType={null} />
+        <DetailBubble 
+        widthSvg={360} 
+        filterType={null} 
+        windowDimension={windowDimension} 
+        bubbleDivWidth={bubbleDivWidth}
+        setBubbleDivWidth={setBubbleDivWidth}
+        />
       </div>
       {selectedArtifact ? (
         <Box flex="3.5">

@@ -231,7 +231,6 @@ const BubbleVis = (props: BubbleProps) => {
 
     if (groupBy) {
       setBubbleDivWidth(windowDimension.width);
-     
     }
   }, [windowDimension]);
 
