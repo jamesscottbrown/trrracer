@@ -251,7 +251,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const barWidth = useMemo(() => {
     const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
-      ? window.innerWidth - 700
+      ? window.innerWidth - 800
       : window.innerWidth - (bubbleDivWidth - handicap);
   }, [windowDimension.width]);
 
