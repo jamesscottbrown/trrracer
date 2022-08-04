@@ -50,7 +50,7 @@ export async function getDriveFiles(folderName, googleCred, loadedData) {
 
   console.log('LOADED DATA', loadedData);      
 
-  const googData = Object.keys(loadedData).length > 1 ? loadedData : {};
+  const googData = (loadedData && Object.keys(loadedData).length > 1) ? loadedData : {};
   googData['revisionDate'] = new Date();
   const googFileIds = {};
 
