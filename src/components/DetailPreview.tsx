@@ -72,6 +72,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     dispatch,
   ] = useProjectState();
 
+  console.log('DETAIL VIEW HITTING', selectedArtifact);
+
   const activity = useMemo(() => {
     return projectData.entries.filter(
       (f) => f.activity_uid === selectedArtifact.activity.activity_uid
@@ -83,6 +85,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
   const { title } = artifact;
+
+  console.log('title',title);
 
   if (
     title.endsWith('.mp4') ||
@@ -134,7 +138,14 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const [chosenGoogData, setchosenGoogData] = useState<null|any>(null);
     const [chosenComments, setChosenComments] = useState<null|any>(null);
 
+    console.log('is it here outside of useEffect', Object.keys(googleData).indexOf(artifact.fileId) > -1)
+    console.log('artifact id, outside of use effect', artifact.fileId);
+
     useEffect(()=> {
+
+      console.log('is it here', Object.keys(googleData).indexOf(artifact.fileId) > -1)
+      console.log('artifact id', artifact.fileId);
+
       if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
 
         const googD = googleData[artifact.fileId];
@@ -145,14 +156,12 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       }else{
 
         getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-        
+          console.log('goog',googOb)
           const chosen = googOb.goog_doc_data[artifact.fileId];
 
           const gContent = chosen
             ? chosen.body.content.filter((f: any) => f.startIndex)
             : null;
-          
-         
           
           if(artifact.comments) setChosenComments(artifact.comments.comments);
           if(chosenGoogData === null){
