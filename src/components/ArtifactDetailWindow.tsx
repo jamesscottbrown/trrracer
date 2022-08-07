@@ -37,7 +37,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   } = props;
  
   const [
-    { projectData, 
+    { 
+      projectData, 
       selectedArtifact, 
       hopArray, 
       researchThreads, 
@@ -213,7 +214,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         setBubbleDivWidth={setBubbleDivWidth}
         />
       </div>
-      {(selectedArtifact && selectedArtifact.artifactIndex) ? (
+      {(selectedArtifact && selectedArtifact.artifactIndex > -1) ? (
         <Box flex="3.5">
           {(selectedFileType === 'txt' ||
             selectedFileType === 'gdoc') && (

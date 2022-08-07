@@ -39,8 +39,6 @@ export const HoverTitle = (props: any) => {
   //   fileIndex = match['file-index'];
   // }
 
-  console.log('fileIndex', fileIndex);
-
   const [showPopover, setShowPopover] = useState(false);
 
   const closePopover = () => {
@@ -59,9 +57,6 @@ export const HoverTitle = (props: any) => {
             <PopoverBody>
               <Button
                 onClick={() => {
-
-                  console.log('ENTRY', entry)
-                  console.log('file', fileIndex)
 
                   setViewType('detail view');
                   dispatch({
