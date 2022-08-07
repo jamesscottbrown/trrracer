@@ -58,13 +58,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  console.log('SELECTED ARTIFACT in detail window', selectedArtifact, selectedArtifact.artifactIndex);
-
   const [fragSelected, setFragSelected] = useState(null);
 
-  let selectedFileType = selectedArtifact.activity.files[selectedArtifact.artifactIndex].title.split('.')[1];
-
-  console.log('FILE TYPE', selectedFileType);
+  let selectedFileType = selectedArtifact.activity.files[selectedArtifact.artifactIndex].title.split('.').at(-1);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
