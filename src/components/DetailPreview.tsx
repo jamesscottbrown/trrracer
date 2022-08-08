@@ -16,6 +16,8 @@ import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 import { TextArray } from './types';
 
+var ner = require( 'wink-ner' );
+
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 // import { Document, Page, pdfjs } from 'react-pdf/dist/esm/entry.webpack';
@@ -368,70 +370,91 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.txt')) {
     const [textFile, setText] = useState<TextArray>([]);
 
-    console.log('searchTermArtifact!!!',searchTermArtifact)
+    const textProcess = (textDat:any) => {
 
-    useEffect(() => {
-      readFileSync(`${folderPath}/${title}`).then((text) => {
-    
-        let textArray =
-          text.length > 0 ? [{ style: 'normal', textData: text }] : [];
-        if (query) {
-          const textA = text.split(query.term);
-          const keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j += 1) {
-            keeper.push({ style: 'highlight', textData: query.term });
-            keeper.push({ style: 'normal', textData: textA[j] });
-          }
-          
+      let textArray =
+      textDat.length > 0 ? [{ style: 'normal', textData: textDat }] : [];
 
-          textArray = keeper;
-        }else if (searchTermArtifact) {
-          const textA = text.split(searchTermArtifact);
-          const keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j += 1) {
-            keeper.push({ style: 'highlight', textData: searchTermArtifact });
-            keeper.push({ style: 'normal', textData: textA[j] });
-          }
-          console.log(textA);
+      if (query) {
+        const textA = textDat.split(query.term);
+        const keeper = [{ style: 'normal', textData: textA[0] }];
+        for (let j = 1; j < textA.length - 1; j += 1) {
+          keeper.push({ style: 'highlight', textData: query.term });
+          keeper.push({ style: 'normal', textData: textA[j] });
+        }
+        
 
-          textArray = keeper;
-        }else if (artifact.bookmarks) {
-          const start = textArray[0].textData.split(
-            artifact.bookmarks[0].fragment
-          );
+        textArray = keeper;
+      }else if (searchTermArtifact) {
+        const textA = text.split(searchTermArtifact);
+        const keeper = [{ style: 'normal', textData: textA[0] }];
+        for (let j = 1; j < textA.length - 1; j += 1) {
+          keeper.push({ style: 'highlight', textData: searchTermArtifact });
+          keeper.push({ style: 'normal', textData: textA[j] });
+        }
+        console.log(textA);
 
-          textArray = [
-            { style: 'normal', textData: start[0] },
-            { style: 'highlight', textData: artifact.bookmarks[0].fragment },
-            { style: 'normal', textData: start[1] },
-          ];
-          if (artifact.bookmarks.length > 1) {
-            for (let j = 1; j < artifact.bookmarks.length; j += 1) {
-              const oldTextArray = textArray;
-              const frag = artifact.bookmarks[j].fragment;
-              const findIndex = textArray
-                .map((ta) => ta.textData.includes(frag))
-                .indexOf(true);
+        textArray = keeper;
+      }else if (artifact.bookmarks) {
+        const start = textArray[0].textData.split(
+          artifact.bookmarks[0].fragment
+        );
 
-              let newArray = oldTextArray.slice(0, findIndex);
+        textArray = [
+          { style: 'normal', textData: start[0] },
+          { style: 'highlight', textData: artifact.bookmarks[0].fragment },
+          { style: 'normal', textData: start[1] },
+        ];
+        if (artifact.bookmarks.length > 1) {
+          for (let j = 1; j < artifact.bookmarks.length; j += 1) {
+            const oldTextArray = textArray;
+            const frag = artifact.bookmarks[j].fragment;
+            const findIndex = textArray
+              .map((ta) => ta.textData.includes(frag))
+              .indexOf(true);
 
-              const addThis = oldTextArray[findIndex].textData.split(frag);
-              const makeArray = [
-                { style: 'normal', textData: addThis[0] },
-                { style: 'highlight', textData: frag },
-                { style: 'normal', textData: addThis[1] },
-              ];
-              newArray = [...newArray, ...makeArray];
+            let newArray = oldTextArray.slice(0, findIndex);
 
-              if (oldTextArray.length > findIndex + 1) {
-                newArray = [...newArray, ...oldTextArray.slice(findIndex + 1)];
-              }
-              textArray = newArray;
+            const addThis = oldTextArray[findIndex].textData.split(frag);
+            const makeArray = [
+              { style: 'normal', textData: addThis[0] },
+              { style: 'highlight', textData: frag },
+              { style: 'normal', textData: addThis[1] },
+            ];
+            newArray = [...newArray, ...makeArray];
+
+            if (oldTextArray.length > findIndex + 1) {
+              newArray = [...newArray, ...oldTextArray.slice(findIndex + 1)];
             }
+            textArray = newArray;
           }
         }
-        setText(textArray);
-      });
+      }
+      return textArray;
+
+    }
+
+    let path = isReadOnly ? `${folderPath}${title}` : `${folderPath}/${title}`;
+
+    useEffect(() => {
+
+      if (isReadOnly) {
+        readFileSync(path)
+          .then((res) => res.text())
+          .then((tex) => {
+            let textArray = textProcess(tex);
+            setText(textArray);
+            
+          });
+      }else{
+        readFileSync(path).then((text) => {
+          console.log('TEXT?', text);
+
+          let textArray = textProcess(text);
+          setText(textArray);
+        });
+      }
+      
     }, [folderPath, title, searchTermArtifact]);
 
     return (
