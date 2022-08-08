@@ -15,8 +15,7 @@ import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 import { TextArray } from './types';
-
-var ner = require( 'wink-ner' );
+import { replaceNames } from '../nameReplacer';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
@@ -74,8 +73,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     dispatch,
   ] = useProjectState();
 
-  console.log('DETAIL VIEW HITTING', selectedArtifact);
-
   const activity = useMemo(() => {
     return projectData.entries.filter(
       (f) => f.activity_uid === selectedArtifact.activity.activity_uid
@@ -87,8 +84,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   }, [selectedArtifact.activity.activity_uid, selectedArtifact.artifactIndex]);
 
   const { title } = artifact;
-
-  console.log('title',title);
 
   if (
     title.endsWith('.mp4') ||
@@ -140,43 +135,63 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const [chosenGoogData, setchosenGoogData] = useState<null|any>(null);
     const [chosenComments, setChosenComments] = useState<null|any>(null);
 
-    console.log('is it here outside of useEffect', Object.keys(googleData).indexOf(artifact.fileId) > -1)
-    console.log('artifact id, outside of use effect', artifact.fileId);
+    // console.log('is it here outside of useEffect', Object.keys(googleData).indexOf(artifact.fileId) > -1)
+    // console.log('artifact id, outside of use effect', artifact.fileId);
 
     useEffect(()=> {
 
-      console.log('is it here', Object.keys(googleData).indexOf(artifact.fileId) > -1)
-      console.log('artifact id', artifact.fileId);
+      if(isReadOnly){
 
-      if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
+        if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
 
-        const googD = googleData[artifact.fileId];
-        setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
-        if(artifact.comments) setChosenComments(artifact.comments.comments);
-
-        // const comments = artifact.comments ? artifact.comments.comments : [];
-      }else{
-
-        getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-          console.log('goog',googOb)
-          const chosen = googOb.goog_doc_data[artifact.fileId];
-
-          const gContent = chosen
-            ? chosen.body.content.filter((f: any) => f.startIndex)
-            : null;
-          
+          const googD = googleData[artifact.fileId];
+          setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
           if(artifact.comments) setChosenComments(artifact.comments.comments);
-          if(chosenGoogData === null){
-            setchosenGoogData(gContent);
-            dispatch({
-              type: 'UPDATE_GOOG_DOC_DATA',
-              googDocData: googOb.goog_doc_data,
-            });
-              // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+  
+        }else{
 
-          }
+        readFileSync(`${folderPath}${title}`)
+          .then((res) => res.text())
+          .then((tex) => {
+
+            console.log('TEXT',tex);
+            // let textAnon = replaceNames(tex)
+            // let textArray = textProcess(textAnon);
+            // setText(textArray);
             
           });
+        }
+
+      }else{
+        if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
+
+          const googD = googleData[artifact.fileId];
+          setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
+          if(artifact.comments) setChosenComments(artifact.comments.comments);
+  
+        }else{
+  
+          getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+          
+            const chosen = googOb.goog_doc_data[artifact.fileId];
+  
+            const gContent = chosen
+              ? chosen.body.content.filter((f: any) => f.startIndex)
+              : null;
+            
+            if(artifact.comments) setChosenComments(artifact.comments.comments);
+            if(chosenGoogData === null){
+              setchosenGoogData(gContent);
+              dispatch({
+                type: 'UPDATE_GOOG_DOC_DATA',
+                googDocData: googOb.goog_doc_data,
+              });
+                // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+  
+            }
+              
+          });
+        }
       }
 
     }, [title])
@@ -370,7 +385,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.txt')) {
     const [textFile, setText] = useState<TextArray>([]);
 
-    const textProcess = (textDat:any) => {
+    const textProcess = (textDat:string) => {
 
       let textArray =
       textDat.length > 0 ? [{ style: 'normal', textData: textDat }] : [];
@@ -383,10 +398,9 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           keeper.push({ style: 'normal', textData: textA[j] });
         }
         
-
         textArray = keeper;
       }else if (searchTermArtifact) {
-        const textA = text.split(searchTermArtifact);
+        const textA = textDat.split(searchTermArtifact);
         const keeper = [{ style: 'normal', textData: textA[0] }];
         for (let j = 1; j < textA.length - 1; j += 1) {
           keeper.push({ style: 'highlight', textData: searchTermArtifact });
@@ -395,6 +409,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         console.log(textA);
 
         textArray = keeper;
+
       }else if (artifact.bookmarks) {
         const start = textArray[0].textData.split(
           artifact.bookmarks[0].fragment
@@ -442,14 +457,14 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
         readFileSync(path)
           .then((res) => res.text())
           .then((tex) => {
-            let textArray = textProcess(tex);
+
+            let textAnon = replaceNames(tex)
+            let textArray = textProcess(textAnon);
             setText(textArray);
             
           });
       }else{
         readFileSync(path).then((text) => {
-          console.log('TEXT?', text);
-
           let textArray = textProcess(text);
           setText(textArray);
         });
@@ -545,11 +560,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   return (
     <ImageRender
       src={url(folderPath, title)}
-      // onClick={() => {
-      //   !setFragSelected
-      //     ? openFile(title, folderPath)
-      //     : console.log(MouseEvent);
-      // }}
       autoLoad
     />
   );
