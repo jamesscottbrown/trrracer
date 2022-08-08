@@ -6,6 +6,7 @@ import {
   PopoverContent,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { replaceNames } from '../nameReplacer';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
 const colorConvert = (codes: any) => {
@@ -98,7 +99,7 @@ const GoogDriveSpans = (googProps: any) => {
     <Popover trigger="hover">
       <PopoverTrigger>
         <span key={`elem-${index}`} style={styleOb}>
-          {googEl.textRun.content}
+          {replaceNames(googEl.textRun.content)}
         </span>
       </PopoverTrigger>
 
@@ -126,7 +127,7 @@ const GoogDriveSpans = (googProps: any) => {
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
     >
-      {googEl.textRun.content}
+      {replaceNames(googEl.textRun.content)}
     </span>
   );
 };
