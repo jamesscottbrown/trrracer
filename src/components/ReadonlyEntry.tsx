@@ -98,7 +98,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-              if (!viewParams) {
+              if (!viewParams || viewParams.view != 'paper') {
                 setViewType('detail view');
                 dispatch({
                   type: 'SELECTED_ARTIFACT',

@@ -6,6 +6,8 @@ import {
   PopoverContent,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { replaceNames } from '../nameReplacer';
+import { useProjectState } from './ProjectContext';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
 const colorConvert = (codes: any) => {
@@ -67,6 +69,8 @@ const GoogDriveSpans = (googProps: any) => {
 
   const [spanColor, setSpanColor] = useState(false);
 
+  const [{isReadOnly}] = useProjectState();
+
   const temp =
     comments && comments.length > 0
       ? comments.filter(
@@ -76,6 +80,8 @@ const GoogDriveSpans = (googProps: any) => {
             googEl.textRun.content.includes(f.quotedFileContent.value)
         )
       : [];
+
+  console.log('TEMP', temp);
 
   var styleOb = styleSection(googEl, temp.length > 0, spanColor, false);
 
@@ -98,7 +104,7 @@ const GoogDriveSpans = (googProps: any) => {
     <Popover trigger="hover">
       <PopoverTrigger>
         <span key={`elem-${index}`} style={styleOb}>
-          {googEl.textRun.content}
+          {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
         </span>
       </PopoverTrigger>
 
@@ -126,7 +132,7 @@ const GoogDriveSpans = (googProps: any) => {
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
     >
-      {googEl.textRun.content}
+      {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
     </span>
   );
 };

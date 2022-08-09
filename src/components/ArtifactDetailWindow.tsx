@@ -37,7 +37,8 @@ const ArtifactDetailWindow = (props: DetailProps) => {
   } = props;
  
   const [
-    { projectData, 
+    { 
+      projectData, 
       selectedArtifact, 
       hopArray, 
       researchThreads, 
@@ -57,9 +58,9 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  console.log('SELECTED ARTIFACT in detail window', selectedArtifact);
-
   const [fragSelected, setFragSelected] = useState(null);
+
+  let selectedFileType = selectedArtifact.activity.files[selectedArtifact.artifactIndex].title.split('.').at(-1);
 
   useEffect(() => {
     if (editable.length === projectData.entries.length - 1) {
@@ -149,7 +150,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             style={{ marginLeft: '10px' }}
             onClick={() => {
               const selectActivity =
-                selectedArtifact.index < projectData.entries.length - 1
+                selectedArtifact.artifactIndex < projectData.entries.length - 1
                   ? projectData.entries[selectedArtifact.artifactIndex + 1]
                   : projectData.entries[0];
 
@@ -187,7 +188,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
             paddingTop: 5,
           }}
         >{`Artifact: ${
-          selectedArtifact.artifactIndex
+          (selectedArtifact && selectedArtifact.artifactIndex > -1)
             ? selectedArtifact.activity.files[selectedArtifact.artifactIndex]
                 .title
             : 'No artifacts with this activity'
@@ -209,10 +210,10 @@ const ArtifactDetailWindow = (props: DetailProps) => {
         setBubbleDivWidth={setBubbleDivWidth}
         />
       </div>
-      {(selectedArtifact && selectedArtifact.artifactIndex) ? (
+      {(selectedArtifact && selectedArtifact.artifactIndex > -1) ? (
         <Box flex="3.5">
-          {(selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'txt' ||
-            selectedArtifact.activity.files[selectedArtifact.artifactIndex].fileType === 'gdoc') && (
+          {(selectedFileType === 'txt' ||
+            selectedFileType === 'gdoc') && (
             <Flex
               p={5}
               width="100%"
@@ -272,15 +273,13 @@ const ArtifactDetailWindow = (props: DetailProps) => {
               paddingRight: 20,
             }}
           >
-            {selectedArtifact ? (
-              <DetailPreview
-                setFragSelected={setFragSelected}
-                searchTermArtifact={searchTermArtifact}
-                openFile={openFile}
-              />
-            ) : (
-              <div>No Artifact for this activity</div>
-            )}
+      
+            <DetailPreview
+              setFragSelected={setFragSelected}
+              searchTermArtifact={searchTermArtifact}
+              openFile={openFile}
+            />
+          
           </Flex>
         </Box>
       ) : (

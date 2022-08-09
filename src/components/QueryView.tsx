@@ -18,12 +18,26 @@ interface QueryViewProps {
 export const HoverTitle = (props: any) => {
   const { title, entry, match, setViewType } = props;
 
-  const [{ query }, dispatch] = useProjectState();
+  const [{ query, projectData }, dispatch] = useProjectState();
 
-  const fileIndex =
-    match.fileType === 'gdoc'
-      ? entry.files.map((m) => m.title).indexOf(match.title)
-      : match['file-index'];
+  let fileIndex: number = 0; 
+
+  projectData.entries.forEach(f => {
+    f.files.forEach((fi, i) => {
+      if(fi.title === title){
+        console.log('FOUND FILE HERE');
+        fileIndex = i};
+    });
+  })
+
+  // if(entry && entry.files && entry.files.map(m => m.title).indexOf(title) > -1){
+  //   fileIndex = entry.files.map(m => m.title).indexOf(title);
+  // }else if(match.artifactIndex){
+  //   console.log('NO INDEX??',entry, match)
+  //   fileIndex = match.artifactIndex;
+  // }else{
+  //   fileIndex = match['file-index'];
+  // }
 
   const [showPopover, setShowPopover] = useState(false);
 
@@ -43,6 +57,7 @@ export const HoverTitle = (props: any) => {
             <PopoverBody>
               <Button
                 onClick={() => {
+
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
@@ -51,7 +66,7 @@ export const HoverTitle = (props: any) => {
                     hopArray: [
                       {
                         activity: entry,
-                        artifactUid: entry.files[fileIndex]
+                        artifactUid: entry && entry.files[fileIndex]
                           ? entry.files[fileIndex].artifact_uid
                           : null,
                         hopReason: 'first hop',

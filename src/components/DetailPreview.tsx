@@ -15,6 +15,7 @@ import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../googleUtil';
 import { TextArray } from './types';
+import { replaceNames } from '../nameReplacer';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
@@ -134,38 +135,63 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
     const [chosenGoogData, setchosenGoogData] = useState<null|any>(null);
     const [chosenComments, setChosenComments] = useState<null|any>(null);
 
+    // console.log('is it here outside of useEffect', Object.keys(googleData).indexOf(artifact.fileId) > -1)
+    // console.log('artifact id, outside of use effect', artifact.fileId);
+
     useEffect(()=> {
-      if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
 
-        const googD = googleData[artifact.fileId];
-        setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
-        if(artifact.comments) setChosenComments(artifact.comments.comments);
+      if(isReadOnly){
 
-        // const comments = artifact.comments ? artifact.comments.comments : [];
-      }else{
+        if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
 
-        getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
-        
-          const chosen = googOb.goog_doc_data[artifact.fileId];
-
-          const gContent = chosen
-            ? chosen.body.content.filter((f: any) => f.startIndex)
-            : null;
-          
-         
-          
+          const googD = googleData[artifact.fileId];
+          setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
           if(artifact.comments) setChosenComments(artifact.comments.comments);
-          if(chosenGoogData === null){
-            setchosenGoogData(gContent);
-            dispatch({
-              type: 'UPDATE_GOOG_DOC_DATA',
-              googDocData: googOb.goog_doc_data,
-            });
-              // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+  
+        }else{
 
-          }
+        readFileSync(`${folderPath}${title}`)
+          .then((res) => res.text())
+          .then((tex) => {
+
+            console.log('TEXT',tex);
+            // let textAnon = replaceNames(tex)
+            // let textArray = textProcess(textAnon);
+            // setText(textArray);
             
           });
+        }
+
+      }else{
+        if (Object.keys(googleData).indexOf(artifact.fileId) > -1) {
+
+          const googD = googleData[artifact.fileId];
+          setchosenGoogData(googD.body.content.filter((f: any) => f.startIndex));
+          if(artifact.comments) setChosenComments(artifact.comments.comments);
+  
+        }else{
+  
+          getDriveFiles(folderPath, googleCred, googleData).then((googOb) => {
+          
+            const chosen = googOb.goog_doc_data[artifact.fileId];
+  
+            const gContent = chosen
+              ? chosen.body.content.filter((f: any) => f.startIndex)
+              : null;
+            
+            if(artifact.comments) setChosenComments(artifact.comments.comments);
+            if(chosenGoogData === null){
+              setchosenGoogData(gContent);
+              dispatch({
+                type: 'UPDATE_GOOG_DOC_DATA',
+                googDocData: googOb.goog_doc_data,
+              });
+                // dispatch({type: 'UPDATE_GOOG_IDS', googFileIds: googOb.goog_file_ids});
+  
+            }
+              
+          });
+        }
       }
 
     }, [title])
@@ -359,70 +385,91 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.txt')) {
     const [textFile, setText] = useState<TextArray>([]);
 
-    console.log('searchTermArtifact!!!',searchTermArtifact)
+    const textProcess = (textDat:string) => {
 
-    useEffect(() => {
-      readFileSync(`${folderPath}/${title}`).then((text) => {
-    
-        let textArray =
-          text.length > 0 ? [{ style: 'normal', textData: text }] : [];
-        if (query) {
-          const textA = text.split(query.term);
-          const keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j += 1) {
-            keeper.push({ style: 'highlight', textData: query.term });
-            keeper.push({ style: 'normal', textData: textA[j] });
-          }
-          
+      let textArray =
+      textDat.length > 0 ? [{ style: 'normal', textData: textDat }] : [];
 
-          textArray = keeper;
-        }else if (searchTermArtifact) {
-          const textA = text.split(searchTermArtifact);
-          const keeper = [{ style: 'normal', textData: textA[0] }];
-          for (let j = 1; j < textA.length - 1; j += 1) {
-            keeper.push({ style: 'highlight', textData: searchTermArtifact });
-            keeper.push({ style: 'normal', textData: textA[j] });
-          }
-          console.log(textA);
+      if (query) {
+        const textA = textDat.split(query.term);
+        const keeper = [{ style: 'normal', textData: textA[0] }];
+        for (let j = 1; j < textA.length - 1; j += 1) {
+          keeper.push({ style: 'highlight', textData: query.term });
+          keeper.push({ style: 'normal', textData: textA[j] });
+        }
+        
+        textArray = keeper;
+      }else if (searchTermArtifact) {
+        const textA = textDat.split(searchTermArtifact);
+        const keeper = [{ style: 'normal', textData: textA[0] }];
+        for (let j = 1; j < textA.length - 1; j += 1) {
+          keeper.push({ style: 'highlight', textData: searchTermArtifact });
+          keeper.push({ style: 'normal', textData: textA[j] });
+        }
+        console.log(textA);
 
-          textArray = keeper;
-        }else if (artifact.bookmarks) {
-          const start = textArray[0].textData.split(
-            artifact.bookmarks[0].fragment
-          );
+        textArray = keeper;
 
-          textArray = [
-            { style: 'normal', textData: start[0] },
-            { style: 'highlight', textData: artifact.bookmarks[0].fragment },
-            { style: 'normal', textData: start[1] },
-          ];
-          if (artifact.bookmarks.length > 1) {
-            for (let j = 1; j < artifact.bookmarks.length; j += 1) {
-              const oldTextArray = textArray;
-              const frag = artifact.bookmarks[j].fragment;
-              const findIndex = textArray
-                .map((ta) => ta.textData.includes(frag))
-                .indexOf(true);
+      }else if (artifact.bookmarks) {
+        const start = textArray[0].textData.split(
+          artifact.bookmarks[0].fragment
+        );
 
-              let newArray = oldTextArray.slice(0, findIndex);
+        textArray = [
+          { style: 'normal', textData: start[0] },
+          { style: 'highlight', textData: artifact.bookmarks[0].fragment },
+          { style: 'normal', textData: start[1] },
+        ];
+        if (artifact.bookmarks.length > 1) {
+          for (let j = 1; j < artifact.bookmarks.length; j += 1) {
+            const oldTextArray = textArray;
+            const frag = artifact.bookmarks[j].fragment;
+            const findIndex = textArray
+              .map((ta) => ta.textData.includes(frag))
+              .indexOf(true);
 
-              const addThis = oldTextArray[findIndex].textData.split(frag);
-              const makeArray = [
-                { style: 'normal', textData: addThis[0] },
-                { style: 'highlight', textData: frag },
-                { style: 'normal', textData: addThis[1] },
-              ];
-              newArray = [...newArray, ...makeArray];
+            let newArray = oldTextArray.slice(0, findIndex);
 
-              if (oldTextArray.length > findIndex + 1) {
-                newArray = [...newArray, ...oldTextArray.slice(findIndex + 1)];
-              }
-              textArray = newArray;
+            const addThis = oldTextArray[findIndex].textData.split(frag);
+            const makeArray = [
+              { style: 'normal', textData: addThis[0] },
+              { style: 'highlight', textData: frag },
+              { style: 'normal', textData: addThis[1] },
+            ];
+            newArray = [...newArray, ...makeArray];
+
+            if (oldTextArray.length > findIndex + 1) {
+              newArray = [...newArray, ...oldTextArray.slice(findIndex + 1)];
             }
+            textArray = newArray;
           }
         }
-        setText(textArray);
-      });
+      }
+      return textArray;
+
+    }
+
+    let path = isReadOnly ? `${folderPath}${title}` : `${folderPath}/${title}`;
+
+    useEffect(() => {
+
+      if (isReadOnly) {
+        readFileSync(path)
+          .then((res) => res.text())
+          .then((tex) => {
+
+            let textAnon = replaceNames(tex)
+            let textArray = textProcess(textAnon);
+            setText(textArray);
+            
+          });
+      }else{
+        readFileSync(path).then((text) => {
+          let textArray = textProcess(text);
+          setText(textArray);
+        });
+      }
+      
     }, [folderPath, title, searchTermArtifact]);
 
     return (
@@ -513,11 +560,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   return (
     <ImageRender
       src={url(folderPath, title)}
-      // onClick={() => {
-      //   !setFragSelected
-      //     ? openFile(title, folderPath)
-      //     : console.log(MouseEvent);
-      // }}
       autoLoad
     />
   );
