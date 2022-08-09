@@ -11,6 +11,8 @@ const ArtifactDetailContext = (props: any) => {
   const [textValue, setTextValue] = useState(selectedArtifactTest.context);
   const [{ selectedArtifact }, dispatch] = useProjectState();
 
+  const contextFile = typeof selectedArtifactTest.context === 'string' ? selectedArtifactTest.context : 'null';
+
   return (
     <div>
       {editMode ? (
@@ -34,7 +36,7 @@ const ArtifactDetailContext = (props: any) => {
             padding: 10,
           }}
         >
-          {selectedArtifactTest?.context != 'null' ? (
+          {contextFile != 'null' ? (
             <div>{selectedArtifactTest?.context}</div>
           ) : (
             <div>No context for file yet</div>
