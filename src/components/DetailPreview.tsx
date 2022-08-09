@@ -47,7 +47,7 @@ const TextRender = (textProps: { textArray: TextArray }) => {
         key={`book-span-${i}`}
         style={{
           color: ta.style === 'normal' ? 'black' : '#ffffff',
-          backgroundColor: ta.style === 'normal' ? '#ffffff' : '#485063',
+          backgroundColor: ta.style === 'normal' ? '#ffffff' : '#ff5f1f',
           padding: ta.style === 'normal' ? 1 : 5,
         }}
       >

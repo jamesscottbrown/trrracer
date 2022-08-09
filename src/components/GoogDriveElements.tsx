@@ -69,7 +69,7 @@ const GoogDriveSpans = (googProps: any) => {
 
   const [spanColor, setSpanColor] = useState(false);
 
-  const [{isReadOnly}] = useProjectState();
+  const [{isReadOnly, query}] = useProjectState();
 
   const temp =
     comments && comments.length > 0
@@ -80,8 +80,6 @@ const GoogDriveSpans = (googProps: any) => {
             googEl.textRun.content.includes(f.quotedFileContent.value)
         )
       : [];
-
-  console.log('TEMP', temp);
 
   var styleOb = styleSection(googEl, temp.length > 0, spanColor, false);
 
@@ -103,9 +101,19 @@ const GoogDriveSpans = (googProps: any) => {
   return temp.length > 0 ? (
     <Popover trigger="hover">
       <PopoverTrigger>
-        <span key={`elem-${index}`} style={styleOb}>
-          {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
-        </span>
+        {
+          query && googEl.textRun.content.includes(query?.term) ? 
+
+          <span 
+          key={`elem-${index}`} 
+          style={{backgroundColor: '#ff5f1f', color:'#fff'}}>
+             {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+          </span> :  
+          <span key={`elem-${index}`} style={styleOb}>
+            {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+          </span>
+        }
+       
       </PopoverTrigger>
 
       <PopoverContent bg="white" color="gray">
@@ -125,7 +133,22 @@ const GoogDriveSpans = (googProps: any) => {
       </PopoverContent>
     </Popover>
   ) : (
-    <span
+    
+      (query && googEl.textRun.content.includes(query?.term)) ? 
+      <span
+      key={`elem-${index}`}
+      style={{
+        backgroundColor: '#ff5f1f', 
+        color:'#fff',
+        cursor:'pointer'
+      }}
+      onMouseOver={() => setSpanColor(true)}
+      onMouseOut={() => setSpanColor(false)}
+      onClick={() => setFragSelected(googEl.textRun.content)}
+      >
+         {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+      </span> :
+      <span
       key={`elem-${index}`}
       style={styleOb}
       onMouseOver={() => setSpanColor(true)}
@@ -134,6 +157,8 @@ const GoogDriveSpans = (googProps: any) => {
     >
       {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
     </span>
+    
+   
   );
 };
 
