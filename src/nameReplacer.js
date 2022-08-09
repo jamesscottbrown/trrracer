@@ -12,7 +12,7 @@ const trainingData = [
     { text: 'John', entityType: 'name', uid: 'J' },
     { text: 'Jason', entityType: 'name', uid: 'JD' },
     { text: 'Miriah', entityType: 'name', uid: 'MM' },
-    { text: 'Mariah', entityType: 'name', uid: 'MM' },
+    { text: 'Mariah', entityType: 'name', uid: 'MM' }
   ];
 
   export const replaceNames = (text) => {
