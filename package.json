@@ -296,6 +296,7 @@
     "stream-browserify": "^3.0.0",
     "tiny-invariant": "^1.2.0",
     "uuid": "^8.3.2",
+    "wink-ner": "^2.1.0",
     "wndb-with-exceptions": "^3.0.2"
   },
   "devEngines": {
