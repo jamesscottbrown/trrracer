@@ -597,10 +597,7 @@ const ArtifactDetailSidebar = (props: any) => {
                   )
                 }
                 handleAddition={(tag: ReactTags) => {
-                  console.log(
-                    'SELECTED',
-                    selectedArtifact.activity.activity_uid
-                  );
+                
                   dispatch({
                     type: 'ADD_TAG_TO_ENTRY',
                     newTag: tag,

@@ -61,8 +61,6 @@ const TextRender = (textProps: { textArray: TextArray }) => {
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { setFragSelected, searchTermArtifact, openFile } = props;
 
-  console.log('SERCH TERMS',searchTermArtifact)
-
   const [
     {
       googleData,
@@ -156,11 +154,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
           .then((res) => res.text())
           .then((tex) => {
 
-            console.log('TEXT',tex);
-            // let textAnon = replaceNames(tex)
-            // let textArray = textProcess(textAnon);
-            // setText(textArray);
-            
           });
         }
 
@@ -328,7 +321,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       }else{
         readFileSync(path).then((text) => {
           let textArray = textProcess(text, searchTermArtifact);
-          console.log('TEXT ARRAY',textArray)
+        
           setText(textArray);
         });
       }
