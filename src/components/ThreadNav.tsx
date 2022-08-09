@@ -430,7 +430,7 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT }, dispatch] = useProjectState();
+  const [{ projectData, isReadOnly, filterRT, researchThreads }, dispatch] = useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
@@ -441,14 +441,46 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
   };
 
   const associatedTags = filteredThreads.map((rt) => {
-    let tags = rt.evidence.flatMap((fm) => {
-      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
-        .tags;
+    let tagArrayMain = rt.evidence.filter(f => !f.mergedFrom).map((m, i)=> {
+      m.color = rt.color;
+      return m;
     });
-    let groupTags = Array.from(d3.group(tags, (d) => d));
-    let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
+    let tagArrayMerged = rt.evidence.filter(f => f.mergedFrom).map((m, i) => {
+      m.color = researchThreads?.research_threads.filter(f => f.title === m.mergedFrom)[0].color;
+      return m;
+    });
 
-    return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
+    console.log('tagsArrayMain', tagArrayMain, tagArrayMerged);
+
+    let tags = [...tagArrayMain, ...tagArrayMerged].flatMap((fm) => {
+      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
+        .tags.map((t) => {
+          let temp = {
+            tag: t,
+            color: fm.color,
+          }
+          
+          return temp;
+        });
+    });
+    let groupTags = Array.from(d3.group(tags.map(t => t.tag), (d) => d));
+    let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
+    let sortedList = sorted.length > 10 ? sorted.slice(0, 10) : sorted;
+    let alreadyThere: string[] = [];
+    let tagObs:any = []
+    
+    tags.forEach((t:any)=> {
+      let list = sortedList.map(s => s[0]);
+    
+      if(list.includes(t.tag) && !alreadyThere.includes(t.tag)){
+        alreadyThere.push(t.tag);
+        tagObs.push(t)
+      }
+    });
+
+    console.log('TAG OBS', tagObs);
+
+    return tagObs;
   });
 
   return (
@@ -545,9 +577,10 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
                       style={{
                         margin: 2,
                         fontSize: 10,
+                        backgroundColor: at.color + "20"
                       }}
                     >
-                      {at[0]}
+                      {at.tag}
                     </Badge>
                   ))}
                 </div>
