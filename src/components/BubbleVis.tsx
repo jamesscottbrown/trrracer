@@ -944,16 +944,23 @@ const BubbleVis = (props: BubbleProps) => {
               .filter((f, i, n) => {
                 return n[i].innerText.includes(d.title);
               });
-
+             
+              const elementPosition =  document.getElementById(`threaded-${d.activity_uid}`).getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - 250;
+              
             if (activities.nodes().length > 0) {
               activities
                 .nodes()[0]
-                .scrollIntoView({ behavior: 'smooth', block: 'start' });
+                .scrollIntoView({ 
+                  behavior: 'smooth', 
+                  block: 'center',
+                  // top: offsetPosition
+                });
             }
           }
 
           console.log('d3 mouse', d.activity_uid);
-          d3.select(`#threaded-${d.activity_uid}`).style('background-color', '#ff5f1f60')
+          d3.select(`#threaded-${d.activity_uid}`).style('background-color', '#fed758')
         })
         .on('mouseout', () => {
           d3.select('#tooltip').style('opacity', 0);
