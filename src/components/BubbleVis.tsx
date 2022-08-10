@@ -814,7 +814,7 @@ const BubbleVis = (props: BubbleProps) => {
             if (f.type === 'activity') {
               temp.select('.all-activities').attr('fill', onActivityColor);
 
-              temp.selectAll('circle.artifact').attr('fill', '#d3d3d3');
+              temp.selectAll('circle.artifact').attr('fill', onArtifactColor);
             } else if (f.type === 'artifact' || f.type === 'fragment') {
               temp
                 .selectAll('circle.artifact')
