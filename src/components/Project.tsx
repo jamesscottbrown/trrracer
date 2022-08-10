@@ -64,16 +64,15 @@ const ResearchThreadTypeTags = () => {
         width: '100%',
         zIndex: 5000,
         position: 'fixed',
-        top: filterRT ? 70 : -50,
+        top: filterRT ? 60 : -50,
       }}
     >
       {filterRT && (
         <Flex
           style={{
             backgroundColor: '#fff',
-            paddingBottom: '20px',
-            paddingTop: '20px',
-            paddingLeft: '40px',
+            paddingBottom: '10px',
+            paddingLeft: '140px',
             paddingRight: '20px',
             alignContent: 'space-around',
             alignItems: 'center',

@@ -946,15 +946,15 @@ const BubbleVis = (props: BubbleProps) => {
               });
              
               const elementPosition =  document.getElementById(`threaded-${d.activity_uid}`).getBoundingClientRect().top;
-              const offsetPosition = elementPosition + window.pageYOffset - 250;
+              const offsetPosition = elementPosition + window.pageYOffset - 100;
               
             if (activities.nodes().length > 0) {
               activities
                 .nodes()[0]
                 .scrollIntoView({ 
                   behavior: 'smooth', 
-                  block: 'center',
-                  // top: offsetPosition
+                  // block: 'center',
+                  top: offsetPosition
                 });
             }
           }
