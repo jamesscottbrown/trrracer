@@ -411,7 +411,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
         />
-        <PaperView folderPath={folderPath} />
+        <PaperView folderPath={folderPath} windowDimension={windowDimension} setWindowDimension={setWindowDimension} />
       </div>
     );
   }

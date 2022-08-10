@@ -488,7 +488,7 @@ const BubbLabel = () => {
 };
 
 const PaperView = (props: any) => {
-  const { folderPath } = props;
+  const { folderPath, windowDimension, setWindowDimension } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
@@ -597,6 +597,8 @@ const PaperView = (props: any) => {
                 defineEvent={null}
                 bubbleDivWidth={bubbleDivWidth}
                 setBubbleDivWidth={setBubbleDivWidth}
+                windowDimension={windowDimension}
+                setWindowDimension={setWindowDimension}
               />
             </div>
           )}
