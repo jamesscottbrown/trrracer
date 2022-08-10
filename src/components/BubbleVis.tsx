@@ -691,10 +691,14 @@ const BubbleVis = (props: BubbleProps) => {
       highlightedActivityGroups
         .select('.all-activities')
         .on('mouseover', (event) => {
+
+          console.log('d3 mouse', d3.select(event.target).data()[0].activity_uid);
+
           if (filterRT) {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 2);
+              
           } else if (filterType || filterTags.length > 0) {
             d3.select(event.target)
               .attr('stroke', 'gray')
@@ -947,11 +951,16 @@ const BubbleVis = (props: BubbleProps) => {
                 .scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
           }
+
+          console.log('d3 mouse', d.activity_uid);
+          d3.select(`#threaded-${d.activity_uid}`).style('background-color', '#ff5f1f60')
         })
         .on('mouseout', () => {
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#label-group').remove();
+
+          d3.select(`#threaded-${d3.select(event.target).data()[0].activity_uid}`).style('background-color', '#fff');
         })
         .on('click', (event: any, d: any) => {
           const activities = d3

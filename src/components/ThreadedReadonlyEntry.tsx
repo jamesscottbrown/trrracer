@@ -276,7 +276,11 @@ const ThreadedReadonlyEntry = (props: any) => {
 
   return (
     <Box>
-      <div style={{ padding: 10 }}>
+      <div style={{ 
+        padding: 10,
+        }}
+        id={`threaded-${thisEntry.activity_uid}`}
+        >
         <span style={{ fontSize: 22, fontWeight: 'bold' }}>
           {thisEntry.isPrivate && (
             <FaLock
