@@ -1151,7 +1151,7 @@ const BubbleVis = (props: BubbleProps) => {
         flex: flexAmount,
         paddingTop: '30px',
         paddingLeft: groupBy ? 30 : 0,
-        width: bubbleDivWidth,
+        width: 500,
         overflowX: 'auto',
       }}
     >
@@ -1211,7 +1211,7 @@ const BubbleVis = (props: BubbleProps) => {
       <svg
         ref={svgRef}
         width={
-          groupBy !== null ? researchThreads.research_threads.length * 280 : 600
+          groupBy !== null ? researchThreads.research_threads.length * 280 : '600px'
         }
         height={height}
         style={{ display: 'inline' }}

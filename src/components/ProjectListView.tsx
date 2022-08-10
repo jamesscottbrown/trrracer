@@ -4,8 +4,11 @@ import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
-  const { setViewType, viewType } = ProjectPropValues;
-  const [{ projectData, selectedActivityURL, filteredActivities }] =
+  const { setViewType, viewType, width } = ProjectPropValues;
+  const [{ 
+    projectData, 
+    selectedActivityURL, 
+    filteredActivities }] =
     useProjectState();
 
   const [usedEntries, setUsedEntries] = useState(filteredActivities);
@@ -46,7 +49,12 @@ const ProjectListView = (ProjectPropValues: any) => {
   };
 
   return (
-    <div style={{ padding: '10px', marginTop: '20px', width:'100%' }}>
+    <div style={{ 
+      padding: '10px', 
+      marginTop: '20px', 
+      width: width ? width : '100%',
+      float: 'right'
+      }}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
