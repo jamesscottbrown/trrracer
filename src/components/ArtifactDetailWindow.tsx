@@ -25,6 +25,9 @@ import ActivityTitlePopoverLogic from './PopoverTitle';
 interface DetailProps {
   setViewType: (view: string) => void;
   goBackView: any;
+  bubbleDivWidth: number;
+  setBubbleDivWidth: (value: (((prevState: number) => number) | number)) => void;
+  windowDimension: { width: number, height: number };
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
