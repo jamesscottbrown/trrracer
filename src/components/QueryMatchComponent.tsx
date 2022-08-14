@@ -31,7 +31,7 @@ const QueryMatchComponent = (props: any) => {
           size="xs"
           onClick={() => (show ? setShow(false) : setShow(true))}
         >
-          show text
+          {show ? 'Hide ' : 'Show '} text
         </Button>
       </div>
       {show && (
