@@ -230,7 +230,14 @@ const ActivityTitleLogic = (props: ActivityTitleLogicProps) => {
   );
 };
 
-const ThreadedReadonlyEntry = (props: any) => {
+type ThreadedReadonlyEntryProps = {
+  activityID: string;
+  makeEditable: (index: number, isEditable: boolean) => void;
+  openFile: (a: string, fp: string) => void;
+  setViewType: (vieType: string) => void;
+  viewType: string;
+};
+const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
   const { activityID, makeEditable, openFile, setViewType, viewType } = props;
 
   const [{ projectData, researchThreads, filterRT, folderPath, isReadOnly }] =

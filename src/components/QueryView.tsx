@@ -15,8 +15,14 @@ interface QueryViewProps {
   setViewType: (viewType: string) => void;
 }
 
-export const HoverTitle = (props: any) => {
-  const { title, entry, match, setViewType } = props;
+type HoverTitleProps = {
+  title: string;
+  entry: any;
+  setViewType: (viewType: string) => void;
+};
+
+export const HoverTitle = (props: HoverTitleProps) => {
+  const { title, entry, setViewType } = props;
 
   const [{ query, projectData }, dispatch] = useProjectState();
 
@@ -146,9 +152,9 @@ const QueryView = (props: QueryViewProps) => {
                       <div><span
                       style={{fontWeight: 700}}
                       >{'File title match: '}</span>
-                      <HoverTitle title={tm.fileTitle} entry={m} match={tm} setViewType={setViewType}/>
-                      </div> 
-                      : 
+                      <HoverTitle title={tm.fileTitle} entry={m} setViewType={setViewType}/>
+                      </div>
+                      :
                       <div></div>
                     }
                       
@@ -173,9 +179,9 @@ const QueryView = (props: QueryViewProps) => {
                       <div><span
                       style={{fontWeight: 700}}
                       >{'File context match: '}</span>
-                      <HoverTitle title={d.fileTitle} entry={m} match={d} setViewType={setViewType}/>
-                      </div> 
-                      : 
+                      <HoverTitle title={d.fileTitle} entry={m} setViewType={setViewType}/>
+                      </div>
+                      :
                       <div></div>
                     }
                       
