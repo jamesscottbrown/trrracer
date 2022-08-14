@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Tag, TagLabel } from '@chakra-ui/react';
+import { Flex, Box, Tag, TagLabel, position } from '@chakra-ui/react';
 
 import { MdComment, MdPresentToAll } from 'react-icons/md';
 import { GrNotes } from 'react-icons/gr';
@@ -23,6 +23,7 @@ import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
 import AddEntryForm from './AddEntryForm';
+import { autoType } from 'd3';
 
 // CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
@@ -250,7 +251,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const barWidth = useMemo(() => {
     const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
     return bubbleDivWidth < 0
-      ? window.innerWidth - 700
+      ? window.innerWidth - 800
       : window.innerWidth - (bubbleDivWidth - handicap);
   }, [windowDimension.width]);
 
@@ -298,16 +299,33 @@ const Project = (ProjectPropValues: ProjectProps) => {
             setBubbleDivWidth={setBubbleDivWidth}
             windowDimension={windowDimension}
           />
-          <Box flex="3" h="calc(100vh - 130px)" overflowY="auto">
+          <div 
+          style={{
+            width:"400px",
+            height: "calc(100vh - 120px)", 
+            overflow: "auto",
+            backgroundColor:'#fff',
+            position:'fixed',
+            right:'10px',
+            top: '90px',
+            padding:'15px'
+          }}
+          >
             <QueryView setViewType={setViewType} />
-          </Box>
+          </div>
         </Flex>
       </div>
     );
   }
   if (viewType === 'detail view') {
     return (
-      <ArtifactDetailWindow setViewType={setViewType} goBackView={goBackView} />
+      <ArtifactDetailWindow 
+        bubbleDivWidth={bubbleDivWidth}
+        setBubbleDivWidth={setBubbleDivWidth}
+        windowDimension={windowDimension}
+        setViewType={setViewType} 
+        goBackView={goBackView} 
+      />
     );
   }
   if (viewType === 'overview') {

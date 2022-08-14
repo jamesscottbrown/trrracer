@@ -25,8 +25,8 @@ const formatText = (blob, spanType) => {
 };
 
 const formatContext = (blob, pos) => {
-  if (blob.context) {
-    return pos === 'before' ? blob.context[0] : blob.context[1];
+  if (blob.comment_context) {
+    return pos === 'before' ? blob.comment_context[0] : blob.comment_context[1];
   }
   return '';
 };

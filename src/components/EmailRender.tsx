@@ -16,7 +16,7 @@ const EmailRender = (props: any) => {
     tasklists: true,
   });
 
-  const [emailData, setEmailData] = useState('Email failed to load');
+  const [emailData, setEmailData] = useState<null|any>(null);
 
   useEffect(() => {
     readFileSync(`${folderPath}/${title}`).then((eml) => {
@@ -39,7 +39,7 @@ const EmailRender = (props: any) => {
     // style={{ height: '95%', overflow: 'auto' }}
     // dangerouslySetInnerHTML={{__html: emailData}}
     // />
-    emailData && (
+    emailData ? (
       <div
         style={{
           width: '700px',
@@ -49,11 +49,13 @@ const EmailRender = (props: any) => {
         }}
       >
         {/* <div dangerouslySetInnerHTML={{__html: emailData}} /> */}
-        {emailData.map((em) => (
-          <div>{em}</div>
+        {emailData.map((em, i) => (
+          <div
+          key={`email-${i}`}
+          >{em}</div>
         ))}
       </div>
-    )
+    ) : "Email failed to load."
   );
 };
 

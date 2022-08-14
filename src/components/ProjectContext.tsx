@@ -7,12 +7,15 @@ import { getAppStateReducer } from './ProjectContextCommon';
 
 const isElectron = process.env.NODE_ENV === 'development';
 
+console.log('isElectron', isElectron);
+
 let path: any;
 let fs: any;
 let googleCred: any;
 let google: any;
 
 if (isElectron) {
+  console.log('IS THIS REACHING', path);
   path = require('path');
   fs = require('fs');
   // googleCred = require('../../assets/google_cred_desktop_app.json');
@@ -27,28 +30,14 @@ export function useProjectState() {
   return useContext<DispatchType>(ProjectContext);
 }
 
-export function addMetaDescrip(projectData, state) {
-  const newProjEntries = projectData.entries.map((e: EntryType) => {
-    e.files = e.files.map((f) => {
-      if (!f.context) {
-        f.context = 'null';
-      }
-      return f;
-    });
-    return e;
-  });
-
-  const newProj = { ...projectData, entries: newProjEntries };
-
-  return null; // saveJSON(newProj);
-}
-
 const copyFiles = (fileList: FileObj[], folderPath: string) => {
   let newFiles: File[] = [];
   if (isElectron) {
     for (const file of fileList) {
-      const sourceIsInProjectDir = file.path.startsWith(folderPath);
-      let destination = path.join(folderPath, file.name);
+
+      console.log('FILE', file);
+      const sourceIsInProjectDir = file.path && file.path.startsWith(folderPath);
+      let destination = `${folderPath}/${file.name}`;//path.join(folderPath, file.name);
       /**
        * is it google??
        */
@@ -122,55 +111,6 @@ const copyFiles = (fileList: FileObj[], folderPath: string) => {
     return null;
   }
 };
-
-export async function getGoogleIds(projectData, state) {
-  if (isElectron) {
-    const oAuth2Client = new google.auth.OAuth2(
-      googleCred.installed.client_id,
-      googleCred.installed.client_secret,
-      googleCred.installed.redirect_uris[0]
-    );
-    const token = fs.readFileSync('token.json', { encoding: 'utf-8' });
-    oAuth2Client.setCredentials(JSON.parse(token));
-
-    const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-
-    drive.files
-      .list({
-        q: `"1-tPBWWUaf7CzNYRyVOqfZvmYg3I4r9Zg" in parents and trashed = false`,
-        fields: 'nextPageToken, files(id, name)',
-        supportsAllDrives: true,
-        includeItemsFromAllDrives: true,
-      })
-      .then((fi) => {
-        const newProjEntries = projectData.entries.map((e: EntryType) => {
-          e.files = e.files.map((f) => {
-            const nameCheck = f.title.split('.');
-
-            if (nameCheck[nameCheck.length - 1] === 'gdoc') {
-              const id = fi.data.files.filter((m) => {
-                return `${m.name}.gdoc` === f.title;
-              });
-
-              if (id.length != 0) {
-                f.fileType = 'gdoc';
-                f.fileId = id[0].id;
-              }
-            }
-
-            return f;
-          });
-
-          return e;
-        });
-
-        const newProj = { ...projectData, entries: newProjEntries };
-        return saveJSON(newProj, state);
-      });
-  } else {
-    return null;
-  }
-}
 
 async function copyGoogle(file: any, fileList: any) {
   if (isElectron) {
@@ -349,14 +289,6 @@ const deleteFileAction = (fileName, entryIndex, state) => {
 
     const newProjectData = { ...state.projectData, entries };
     return saveJSON(newProjectData, state);
-  } else {
-    return null;
-  }
-};
-
-const deleteFile = (destination: string) => {
-  if (isElectron) {
-    return fs.unlinkSync(destination);
   } else {
     return null;
   }

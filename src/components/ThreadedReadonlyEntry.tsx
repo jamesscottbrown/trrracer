@@ -21,25 +21,10 @@ import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { GiCancel } from 'react-icons/gi';
 import { format } from 'date-fns';
-import * as Showdown from 'showdown';
 import AttachmentPreview from './AttachmentPreview';
 import { EntryType, File } from './types';
 import { useProjectState } from './ProjectContext';
 import { IconChartDots3 } from '@tabler/icons';
-
-interface EntryPropTypes {
-  thisEntry: EntryType;
-  openFile: (a: string, fp: string) => void;
-  makeEditable: () => void;
-  setViewType: (viewType: string) => void;
-}
-
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true,
-});
 
 interface ReadonlyArtifactPropTypes {
   thisEntry: EntryType;
@@ -141,11 +126,7 @@ const ThreadedArtifact = (props: ThreadedArtifactProps) => {
     i,
   } = props;
 
-  const [{ researchThreads, filterRT }, dispatch] = useProjectState();
-
-  const selectedThread = researchThreads.research_threads.filter(
-    (f) => f.title === filterRT.title
-  )[0];
+  const [, dispatch] = useProjectState();
 
   return (
     <Box bg="#ececec" p={3}>

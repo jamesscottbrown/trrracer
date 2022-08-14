@@ -128,12 +128,7 @@ const AttachmentPreview = (props: AttachmentPreviewPropsType) => {
   return (
     <ImageRender
       src={joinPath(folderPath, title)}
-      onClick={() => openFile(title, folderPath)}
     />
-    // <Image
-    //   src={url(folderPath, title)}
-    //   onClick={() => openFile(title, folderPath)}
-    // />
   );
 };
 

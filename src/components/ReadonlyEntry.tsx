@@ -98,7 +98,7 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
               backgroundColor: 'gray',
             }}
             onClick={() => {
-              if (!viewParams) {
+              if (!viewParams || viewParams.view != 'paper') {
                 setViewType('detail view');
                 dispatch({
                   type: 'SELECTED_ARTIFACT',
@@ -173,14 +173,6 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
     strikethrough: true,
     tasklists: true,
   });
-
-  const checkTagColor = (tagName: string) => {
-    const tagFil = researchThreads.research_threads.filter((f: any) => {
-      return f.associated_tags.indexOf(tagName) > -1;
-    });
-    if (tagFil.length > 0) return tagFil[tagFil.length - 1].color;
-    return '#D4D4D4';
-  };
 
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');

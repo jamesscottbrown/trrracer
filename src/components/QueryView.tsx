@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-
+import { MdCancel } from 'react-icons/md';
+import { useProjectState } from './ProjectContext';
+import QueryMatchComponent from './QueryMatchComponent';
 import {
   Button,
   Popover,
@@ -9,19 +11,33 @@ import {
   PopoverBody,
 } from '@chakra-ui/react';
 
-import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
-import QueryMatchComponent from './QueryMatchComponent';
+interface QueryViewProps {
+  setViewType: (viewType: string) => void;
+}
 
-const HoverTitle = (props: any) => {
+export const HoverTitle = (props: any) => {
   const { title, entry, match, setViewType } = props;
 
-  const [{ query }, dispatch] = useProjectState();
+  const [{ query, projectData }, dispatch] = useProjectState();
 
-  const fileIndex =
-    match.fileType === 'gdoc'
-      ? entry.files.map((m) => m.title).indexOf(match.title)
-      : match['file-index'];
+  let fileIndex: number = 0; 
+
+  projectData.entries.forEach(f => {
+    f.files.forEach((fi, i) => {
+      if(fi.title === title){
+        console.log('FOUND FILE HERE');
+        fileIndex = i};
+    });
+  })
+
+  // if(entry && entry.files && entry.files.map(m => m.title).indexOf(title) > -1){
+  //   fileIndex = entry.files.map(m => m.title).indexOf(title);
+  // }else if(match.artifactIndex){
+  //   console.log('NO INDEX??',entry, match)
+  //   fileIndex = match.artifactIndex;
+  // }else{
+  //   fileIndex = match['file-index'];
+  // }
 
   const [showPopover, setShowPopover] = useState(false);
 
@@ -34,23 +50,23 @@ const HoverTitle = (props: any) => {
       {showPopover ? (
         <Popover isOpen={showPopover} onClose={closePopover}>
           <PopoverTrigger>
-            <div>{title}</div>
+            <div style={{ display: 'inline', marginRight: 10 }}>{title}</div>
           </PopoverTrigger>
           <PopoverContent bg="white" color="gray">
             <PopoverArrow bg="white" />
             <PopoverBody>
               <Button
                 onClick={() => {
-                  console.log('matches??', match);
+
                   setViewType('detail view');
                   dispatch({
                     type: 'SELECTED_ARTIFACT',
                     activity: entry,
                     artifactIndex: fileIndex,
-                    hopselArray: [
+                    hopArray: [
                       {
                         activity: entry,
-                        artifactUid: entry.files[fileIndex]
+                        artifactUid: entry && entry.files[fileIndex]
                           ? entry.files[fileIndex].artifact_uid
                           : null,
                         hopReason: 'first hop',
@@ -70,21 +86,20 @@ const HoverTitle = (props: any) => {
           </PopoverContent>
         </Popover>
       ) : (
-        <div onMouseEnter={() => setShowPopover(true)}>{title}</div>
+        <div
+          style={{ display: 'inline', marginRight: 10 }}
+          onMouseEnter={() => setShowPopover(true)}
+        >
+          {title}
+        </div>
       )}
     </>
   );
 };
 
-interface QueryViewProps {
-  setViewType: (viewType: string) => void;
-}
-
 const QueryView = (props: QueryViewProps) => {
   const { setViewType } = props;
   const [{ query }, dispatch] = useProjectState();
-
-  console.log('query matchessss', query.matches);
 
   return (
     <div>
@@ -92,7 +107,7 @@ const QueryView = (props: QueryViewProps) => {
         style={{
           padding: 5,
           position: 'absolute',
-          top: '-20px',
+          top: '0px',
           right: '10px',
           zIndex: '1000',
           cursor: 'pointer',
@@ -116,24 +131,94 @@ const QueryView = (props: QueryViewProps) => {
                 {m.entry.title}
               </div>
 
+              {m.titleMatch.length > 0 && (
+                <div
+                style={{fontWeight: 700}}
+                >Matches in Titles :</div>
+              )}
+              {
+                m.titleMatch.length > 0 && (
+                  m.titleMatch.map((tm, j)=> (
+                    <React.Fragment
+                    key={`title-match-${j}`}
+                    >{
+                      Object.keys(tm).includes('fileTitle') ? 
+                      <div><span
+                      style={{fontWeight: 700}}
+                      >{'File title match: '}</span>
+                      <HoverTitle title={tm.fileTitle} entry={m} match={tm} setViewType={setViewType}/>
+                      </div> 
+                      : 
+                      <div></div>
+                    }
+                      
+                    </React.Fragment>
+                  ))
+                )
+              }
+              {
+                m.descriptionMatch.length > 0 && (
+                  <div
+                  style={{fontWeight: 700}}
+                  >Matches for description: </div>
+                )
+              }
+              {
+                m.descriptionMatch.length > 0 && (
+                  m.descriptionMatch.map((d, j) => (
+                    <React.Fragment
+                    key={`title-match-${j}`}
+                    >{
+                      Object.keys(d).includes('fileTitle') ? 
+                      <div><span
+                      style={{fontWeight: 700}}
+                      >{'File context match: '}</span>
+                      <HoverTitle title={d.fileTitle} entry={m} match={d} setViewType={setViewType}/>
+                      </div> 
+                      : 
+                      <div></div>
+                    }
+                      
+                    </React.Fragment>
+                  ))
+                )
+              }
+              {m.textMatch.length > 0 && (
+                <div
+                style={{fontWeight: 700}}
+                >Matches in Text files :</div>
+              )}
               {m.textMatch.length > 0 &&
                 m.textMatch.map((tm, j) => (
-                  <QueryMatchComponent
-                    m={m}
-                    tm={tm}
-                    setViewType={setViewType}
-                    j={j}
-                  />
+                  <React.Fragment
+                  key={`rf-${j}`}
+                  >
+                    <QueryMatchComponent
+                      m={m}
+                      tm={tm}
+                      setViewType={setViewType}
+                      j={j}
+                    />
+                  </React.Fragment>
+               
                 ))}
-
+              {m.googMatch.length > 0 && (
+                <div
+                style={{fontWeight: 700}}
+                >Matches in google docs :</div>
+              )}
               {m.googMatch.length > 0 &&
                 m.googMatch.map((gm, j) => (
+                  <React.Fragment
+                  key={`gf-${j}`}
+                  >
                   <QueryMatchComponent
                     m={m}
                     tm={gm}
                     setViewType={setViewType}
                     j={j}
                   />
+                  </React.Fragment>
                 ))}
             </div>
           ))}

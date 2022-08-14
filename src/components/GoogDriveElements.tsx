@@ -6,6 +6,8 @@ import {
   PopoverContent,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { replaceNames } from '../nameReplacer';
+import { useProjectState } from './ProjectContext';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
 const colorConvert = (codes: any) => {
@@ -67,11 +69,14 @@ const GoogDriveSpans = (googProps: any) => {
 
   const [spanColor, setSpanColor] = useState(false);
 
+  const [{isReadOnly, query}] = useProjectState();
+
   const temp =
     comments && comments.length > 0
       ? comments.filter(
           (f: any) =>
             googEl.textRun &&
+            f.quotedFileContent && 
             googEl.textRun.content.includes(f.quotedFileContent.value)
         )
       : [];
@@ -96,9 +101,19 @@ const GoogDriveSpans = (googProps: any) => {
   return temp.length > 0 ? (
     <Popover trigger="hover">
       <PopoverTrigger>
-        <span key={`elem-${index}`} style={styleOb}>
-          {googEl.textRun.content}
-        </span>
+        {
+          query && googEl.textRun.content.includes(query?.term) ? 
+
+          <span 
+          key={`elem-${index}`} 
+          style={{backgroundColor: '#ff5f1f', color:'#fff'}}>
+             {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+          </span> :  
+          <span key={`elem-${index}`} style={styleOb}>
+            {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+          </span>
+        }
+       
       </PopoverTrigger>
 
       <PopoverContent bg="white" color="gray">
@@ -118,15 +133,32 @@ const GoogDriveSpans = (googProps: any) => {
       </PopoverContent>
     </Popover>
   ) : (
-    <span
+    
+      (query && googEl.textRun.content.includes(query?.term)) ? 
+      <span
+      key={`elem-${index}`}
+      style={{
+        backgroundColor: '#ff5f1f', 
+        color:'#fff',
+        cursor:'pointer'
+      }}
+      onMouseOver={() => setSpanColor(true)}
+      onMouseOut={() => setSpanColor(false)}
+      onClick={() => setFragSelected(googEl.textRun.content)}
+      >
+         {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+      </span> :
+      <span
       key={`elem-${index}`}
       style={styleOb}
       onMouseOver={() => setSpanColor(true)}
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
     >
-      {googEl.textRun.content}
+      {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
     </span>
+    
+   
   );
 };
 

@@ -11,7 +11,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   const [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
-    if (selectedActivityURL && selectedActivityURL !== null) {
+    if (selectedActivityURL) {
       setUsedEntries(
         projectData.entries.filter(
           (f) => f.activity_uid === selectedActivityURL
@@ -46,7 +46,7 @@ const ProjectListView = (ProjectPropValues: any) => {
   };
 
   return (
-    <div style={{ padding: '10px', marginTop: '20px' }}>
+    <div style={{ padding: '10px', marginTop: '20px', width:'100%' }}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}

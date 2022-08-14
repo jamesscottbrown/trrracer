@@ -65,8 +65,8 @@ export const CreateThreadComponent = (props: CreateThreadComponentPropType) => {
         onChange={handleDescriptionChange}
       />
       <Button
-        isActive={threadName && description ? true : false}
-        isDisabled={threadName && description ? false : true}
+        isActive={!!(threadName && description)}
+        isDisabled={!(threadName && description)}
         onClick={() => {
           let actTitle = `Created thread: ${threadName}`;
           setName(null);
@@ -413,7 +413,7 @@ const ThreadBanner = (props: ThreadBannerPropType) => {
               cursor: 'pointer',
             }}
             onClick={() => {
-              setExpanded(expanded ? false : true);
+              setExpanded(!expanded);
             }}
           >
             {expanded ? (
@@ -440,31 +440,57 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT, viewParams }, dispatch] =
-    useProjectState();
+  const [{ projectData, isReadOnly, filterRT, researchThreads }, dispatch] = useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
     if (filterRT && filterRT?.rtIndex != null) {
-      if (i != filterRT?.rtIndex) {
-        return false;
-      }
-      return true;
+      return i === filterRT?.rtIndex;
     }
     return true;
   };
 
-  const associatedTags = filteredThreads.map((rt, i) => {
-    let tags = rt.evidence.flatMap((fm) => {
-      let match = projectData.entries.filter(
-        (f) => f.title === fm.activityTitle
-      )[0].tags;
-      return match;
+  const associatedTags = filteredThreads.map((rt) => {
+    let tagArrayMain = rt.evidence.filter(f => !f.mergedFrom).map((m, i)=> {
+      m.color = rt.color;
+      return m;
     });
-    let groupTags = Array.from(d3.group(tags, (d) => d));
-    let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
+    let tagArrayMerged = rt.evidence.filter(f => f.mergedFrom).map((m, i) => {
+      m.color = researchThreads?.research_threads.filter(f => f.title === m.mergedFrom)[0].color;
+      return m;
+    });
 
-    return sorted.length > 10 ? sorted.slice(0, 10) : sorted;
+    console.log('tagsArrayMain', tagArrayMain, tagArrayMerged);
+
+    let tags = [...tagArrayMain, ...tagArrayMerged].flatMap((fm) => {
+      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
+        .tags.map((t) => {
+          let temp = {
+            tag: t,
+            color: fm.color,
+          }
+          
+          return temp;
+        });
+    });
+    let groupTags = Array.from(d3.group(tags.map(t => t.tag), (d) => d));
+    let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
+    let sortedList = sorted.length > 10 ? sorted.slice(0, 10) : sorted;
+    let alreadyThere: string[] = [];
+    let tagObs:any = []
+    
+    tags.forEach((t:any)=> {
+      let list = sortedList.map(s => s[0]);
+    
+      if(list.includes(t.tag) && !alreadyThere.includes(t.tag)){
+        alreadyThere.push(t.tag);
+        tagObs.push(t)
+      }
+    });
+
+    console.log('TAG OBS', tagObs);
+
+    return tagObs;
   });
 
   return (
@@ -561,9 +587,10 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
                       style={{
                         margin: 2,
                         fontSize: 10,
+                        backgroundColor: at.color + "20"
                       }}
                     >
-                      {at[0]}
+                      {at.tag}
                     </Badge>
                   ))}
                 </div>
@@ -635,10 +662,7 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
     useProjectState();
 
   const [showCreateThread, setShowCreateThread] = useState(false);
-  // const [threadName, setName] = useState(null);
-  // const [description, setDescription] = useState(null);
   const [editMode, setEditMode] = useState<null | number>(null);
-  const [hasCancel, sethasCancel] = useState(true);
 
   const filteredThreads = useMemo(() => {
     if (viewParams && viewParams.view === 'paper') {
@@ -651,23 +675,6 @@ const ThreadNav = (threadProps: ThreadNavProps) => {
       return test.indexOf('merge') === -1;
     });
   }, [researchThreads?.research_threads, viewParams]);
-
-  useEffect(() => {
-    if (viewParams && viewParams.view === 'paper') {
-      sethasCancel(false);
-    } else {
-      sethasCancel(true);
-    }
-  }, [viewParams]);
-
-  // const handleNameChange = (e: any) => {
-  //   const inputValue = e.target.value;
-  //   setName(inputValue);
-  // };
-  // const handleDescriptionChange = (e: any) => {
-  //   const inputValue = e.target.value;
-  //   setDescription(inputValue);
-  // };
 
   const headerStyle = {
     fontSize: '19px',

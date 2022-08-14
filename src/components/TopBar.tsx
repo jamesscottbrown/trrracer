@@ -128,7 +128,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         </div>
         {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
           <QueryBar
-            artifactData={null}
+            setSearchTermArtifact={null}
             setViewType={setViewType}
             filteredActivities={filteredActivities}
           />

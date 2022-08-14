@@ -145,7 +145,7 @@ const renderAxis = (wrap: any, yScale: any, translateY: any) => {
   wrap.selectAll('*').remove();
   wrap.attr('transform', `translate(110, ${translateY})`);
 
-  console.log('render axis', yScale.range());
+
 
   const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
@@ -208,7 +208,7 @@ const BubbleVis = (props: BubbleProps) => {
   ]);
 
   const { eventArray } = projectData;
-  const [svgWidth, setSvgWidth] = useState(500);
+ 
   const [translateY, setTranslateY] = useState(55);
   const [hoverData, setHoverData] = useState(projectData.entries[0]);
   const [toolPosition, setToolPosition] = useState([0, 0]);
@@ -219,7 +219,7 @@ const BubbleVis = (props: BubbleProps) => {
   const [onActivityColor, setOnActivityColor] = useState(grayLighter);
   const [onArtifactColor, setOnArtifactColor] = useState(grayStart);
 
-  const width = 300;
+  const width = 350;
   const translateXforWraps = 90;
   const [height, setHeight] = useState(windowDimension.height - 200);
   const svgRef = useRef(null);
@@ -231,7 +231,6 @@ const BubbleVis = (props: BubbleProps) => {
 
     if (groupBy) {
       setBubbleDivWidth(windowDimension.width);
-      setSvgWidth(researchThreads?.research_threads.length * 200);
     }
   }, [windowDimension]);
 
@@ -244,7 +243,7 @@ const BubbleVis = (props: BubbleProps) => {
   );
 
   const forced = useMemo(() => {
-    console.log('dimensuion', windowDimension);
+  
     return new ForceMagic(packedCircData, width, windowDimension.height - 200);
   }, [packedCircData, windowDimension]);
 
@@ -259,10 +258,6 @@ const BubbleVis = (props: BubbleProps) => {
   }, [usedEntries.length]);
 
   const { yScale, margin } = forced;
-
-  useEffect(() => {
-    console.log('YSCALE', yScale.range());
-  }, [yScale]);
 
   useEffect(() => {
     if (filterRT) {
@@ -281,7 +276,7 @@ const BubbleVis = (props: BubbleProps) => {
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
-
+    
     const underWrap = svg.append('g').classed('under-wrap', true);
     underWrap.attr(
       'transform',
@@ -345,11 +340,9 @@ const BubbleVis = (props: BubbleProps) => {
 
       const brushedEvent = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
-        const s0 = event.selection
+        let s1 = event.selection
           ? event.selection
           : [1, 2].fill(event.sourceEvent.offsetX);
-
-        let s1 = s0;
 
         if (event.sourceEvent && event.type === 'end') {
           s1 = event.selection;
@@ -403,22 +396,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', 6)
           .text((d) => {
-            const year =
-              d == 'handle--o'
-                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })
-                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
-            return year;
+            return yScale.invert(val).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 
@@ -490,7 +475,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let eventLineEnd = eventRectGroups
+        eventRectGroups
           .selectAll('line.end')
           .data((d) => [d])
           .join('line')
@@ -511,7 +496,7 @@ const BubbleVis = (props: BubbleProps) => {
           .attr('stroke-dasharray', '5,5')
           .attr('stroke-width', 0.4);
 
-        let vertLine = eventRectGroups
+        eventRectGroups
           .append('line')
           .attr('x1', 400)
           .attr('x2', 400)
@@ -624,7 +609,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 1);
-          } else if (selectedActivityURL && selectedActivityURL !== null) {
+          } else if (selectedActivityURL) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 1);
@@ -652,7 +637,7 @@ const BubbleVis = (props: BubbleProps) => {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 0);
-          } else if (selectedActivityURL && selectedActivityURL !== null) {
+          } else if (selectedActivityURL) {
             highlightedActivityGroups
               .select('.all-activities')
               .attr('fill-opacity', 0.5);
@@ -699,7 +684,7 @@ const BubbleVis = (props: BubbleProps) => {
         const highlightedCircles =
           highlightedActivityGroups.selectAll('circle.artifact');
         highlightedCircles.attr('fill', 'gray');
-      } else if (selectedActivityURL && selectedActivityURL !== null) {
+      } else if (selectedActivityURL) {
         highlightedActivityGroups
           .select('.all-activities')
           .attr('fill', 'red')
@@ -890,12 +875,7 @@ const BubbleVis = (props: BubbleProps) => {
         });
     }
 
-    setSvgWidth(
-      wrap.node().getBBox().width + wrapAxisGroup.node().getBBox().width
-    );
-
     setBubbleDivWidth(wrap.node().getBBox().width - 250);
-
     renderAxis(wrapAxisGroup, yScale, translateY);
 
     if (!defineEvent) {
@@ -903,11 +883,9 @@ const BubbleVis = (props: BubbleProps) => {
 
       const brushed = function (event: any) {
         if (!event.selection && !event.sourceEvent) return;
-        const s0 = event.selection
+        let s1 = event.selection
           ? event.selection
           : [1, 2].fill(event.sourceEvent.offsetX);
-
-        let s1 = s0;
 
         if (event.sourceEvent && event.type === 'end') {
           s1 = event.selection;
@@ -935,22 +913,14 @@ const BubbleVis = (props: BubbleProps) => {
           .selectAll('text')
           .attr('dy', (d) => (d === 'handle--o' ? -2 : 10))
           .text((d: any) => {
-            const year =
-              d === 'handle--o'
-                ? yScale.invert(s1[0]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })
-                : yScale.invert(s1[1]).toLocaleDateString('en-us', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
+            const val = d == 'handle--o' ? s1[0] : s1[1];
 
-            return year;
+            return yScale.invert(val).toLocaleDateString('en-us', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
           });
       };
 

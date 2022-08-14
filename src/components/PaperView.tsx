@@ -108,7 +108,7 @@ const PageNavigation = (props: any) => {
               researchThreads
             )}</span><br />
           <span
-          style="font-style:italic; font-size: 11px"; line-height:1
+          style="font-style:italic; font-size: 11px; line-height:1"
           >"${d.text[0]}"</span><div>`);
             d3.select('#tooltip-cite').style('opacity', 1);
           })
@@ -284,7 +284,7 @@ const CitationIcon = (props: CitationIconProps) => {
           researchThreads
         )}</span><br />
       <span
-      style="font-style:italic; font-size: 11px"; line-height:1
+      style="font-style:italic; font-size: 11px; line-height:1"
       >"${link.text[0]}"</span><div>`);
         d3.select('#tooltip-cite').style('opacity', 1);
       }}
@@ -504,8 +504,6 @@ const PaperView = (props: { folderPath: string }) => {
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
-
-  console.log('VIEW PARAMS INPAPER VIEW', viewParams);
 
   let passedLink = linkData
     ? linkData.filter((f) => viewParams && f.cIndex === viewParams.cIndex)

@@ -6,57 +6,75 @@ import { useProjectState } from './ProjectContext';
 import { CreateThreadComponent } from './ThreadNav';
 import { EntryTypeWithIndex, ResearchThread } from './types';
 
-const ArtifactDetailContext = (props:any) => {
-
+const ArtifactDetailContext = (props: any) => {
   const { selectedArtifactTest } = props;
   const [editMode, setEditMode] = useState(false);
   const [textValue, setTextValue] = useState(selectedArtifactTest.context);
-  const [{selectedArtifact}, dispatch] = useProjectState();
+  const [{ selectedArtifact }, dispatch] = useProjectState();
+
+  const contextFile = typeof selectedArtifactTest.context === 'string' ? selectedArtifactTest.context : 'null';
 
   return (
-    <div >
-      {
-      editMode ? <div
-      style={{
-        borderRadius:6,
-        border:'1px solid gray',
-        padding:10
-      }}
-      >
-      <textarea
-        value={textValue}
-        onChange={(event)=> setTextValue(event.target.value)}
-      />
-      </div> :
-      <div
-      style={{
-        borderRadius:6,
-        border:'1px solid gray',
-        padding:10
-      }}
-      >
-        { selectedArtifactTest?.context != 'null' ? (
-        <div>{selectedArtifactTest?.context}</div>) :
-        <div>No context for file yet</div>
-        }</div>
-      }
-      {
-        editMode && (<Button
-        style={{marginRight:5}}
-          onClick={()=> {
-            dispatch({ type: 'FILE_META', activityID: selectedArtifact.activity.activity_uid, artifactTitle: selectedArtifactTest.title, artifactID: Object.keys(selectedArtifactTest).includes('artifact_uid') ? selectedArtifactTest.artifact_uid : null, context: textValue });
+    <div>
+      {editMode ? (
+        <div
+          style={{
+            borderRadius: 6,
+            border: '1px solid gray',
+            padding: 10,
+          }}
+        >
+          <textarea
+            value={textValue}
+            onChange={(event) => setTextValue(event.target.value)}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            borderRadius: 6,
+            border: '1px solid gray',
+            padding: 10,
+          }}
+        >
+          {contextFile != 'null' ? (
+            <div>{selectedArtifactTest?.context}</div>
+          ) : (
+            <div>No context for file yet</div>
+          )}
+        </div>
+      )}
+      {editMode && (
+        <Button
+          style={{ marginRight: 5 }}
+          onClick={() => {
+            dispatch({
+              type: 'FILE_META',
+              activityID: selectedArtifact.activity.activity_uid,
+              artifactTitle: selectedArtifactTest.title,
+              artifactID: Object.keys(selectedArtifactTest).includes(
+                'artifact_uid'
+              )
+                ? selectedArtifactTest.artifact_uid
+                : null,
+              context: textValue,
+            });
             editMode ? setEditMode(false) : setEditMode(true);
           }}
-        >Save</Button>)
-      }
+        >
+          Save
+        </Button>
+      )}
       <Button
-        onClick={()=> {
+        onClick={() => {
           editMode ? setEditMode(false) : setEditMode(true);
         }}
-      >{ editMode ? 'Cancel' : 'Edit Context'}</Button>
+      >
+        {editMode ? 'Cancel' : 'Edit Context'}
+      </Button>
     </div>
-  )
-}
+  );
+};
 
 type ArtifactToThreadProps = {
   thread: ResearchThread;
@@ -273,9 +291,10 @@ const InteractiveActivityTag = (props: InteractiveActivityTagProps) => {
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
+           
             const indexOfE = tagMatches
               .map((m) => m.title)
-              .indexOf(selectedArtifact.title);
+              .indexOf(selectedArtifact.activity.title);
             if (indexOfE === tagMatches.length - 1) {
               const newHop = [
                 ...hopArray,
@@ -387,12 +406,11 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
     dispatch,
   ] = useProjectState();
 
+
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
-
-  const [showCreateThread, setShowCreateThread] = useState(false);
 
   const selectedArtifactTest =
     selectedArtifact.activity.files.length > 0
@@ -406,6 +424,7 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
     return test.length > 0;
   });
 
+  const [showCreateThread, setShowCreateThread] = useState(false);
   const [showThreadAdd, setShowThreadAdd] = useState(false);
   const [showTagAdd, setShowTagAdd] = useState(false);
   const [showFileList, setShowFileList] = useState(true);
@@ -419,6 +438,24 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
       activityID: selectedArtifact.activity.activity_uid,
     });
   };
+
+  const selectOtherArtifact = (index:number) => {
+    dispatch({
+      type: 'SELECTED_ARTIFACT',
+      activity: selectedArtifact.activity,
+      artifactIndex: index,
+      hopArray: [
+        ...hopArray,
+        {
+          activity: selectedArtifact.activity,
+          artifactUid:
+            selectedArtifact.activity.files[index]
+              .artifact_uid,
+          hopReason: 'another artifact in activity',
+        },
+      ],
+    });
+  }
 
   return (
     <Box
@@ -476,23 +513,7 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
                     ) : (
                       <div
                         style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          dispatch({
-                            type: 'SELECTED_ARTIFACT',
-                            activity: selectedArtifact.activity,
-                            artifactIndex: i,
-                            hopArray: [
-                              ...hopArray,
-                              {
-                                activity: selectedArtifact.activity,
-                                artifactUid:
-                                  selectedArtifact.activity.files[i]
-                                    .artifact_uid,
-                                hopReason: 'another artifact in activity',
-                              },
-                            ],
-                          });
-                        }}
+                        onClick={() => selectOtherArtifact(i)}
                       >
                         {selectedArtifact.activity.files[i].title}
                       </div>
@@ -547,7 +568,11 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
             : 'No Artifact to Cite'}
         </Box>
       )}
-      <ArtifactDetailContext  selectedArtifactTest={selectedArtifactTest}/>
+      
+      {selectedArtifactTest && (
+        <ArtifactDetailContext selectedArtifactTest={selectedArtifactTest} />
+      )}
+     
       {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
         <Box>
           <div style={{ fontSize: 20, fontWeight: 700, marginTop: 20 }}>
@@ -596,10 +621,7 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
                   )
                 }
                 handleAddition={(tag: ReactTags) => {
-                  console.log(
-                    'SELECTED',
-                    selectedArtifact.activity.activity_uid
-                  );
+                
                   dispatch({
                     type: 'ADD_TAG_TO_ENTRY',
                     newTag: tag,
