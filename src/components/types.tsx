@@ -122,17 +122,22 @@ type GoogleDocParagraph = {
   paragraphStyle: GoogleParagraphStyle;
 };
 
+type GooogleDocSectionBreak = {
+  sectionBreak: any;
+  endIndex: number;
+};
+
 type GoogleDocContent = {
   startIndex: number;
   endIndex: number;
-  paragraph?: GoogleDocParagraph;
+  paragraph: GoogleDocParagraph;
 };
 
 type GoogleDocData = {
   title: string;
 
   body: {
-    content: GoogleDocContent;
+    content: (GoogleDocContent | GooogleDocSectionBreak)[];
   };
 
   revisionId: string;
@@ -273,8 +278,10 @@ export {
   FileTypesType,
   GoogleData,
   GoogleDocContent,
+  GoogleDocData,
   GoogleDocParagraph,
   GoogleParagraphStyle,
+  GoogleTextElement,
   URLAttachment,
   TagType,
   TxtData,

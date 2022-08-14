@@ -2,10 +2,25 @@ import React, { ChangeEvent } from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
-import { EntryType, GoogleData, TextEntry, TxtData } from './types';
+import type {
+  EntryType,
+  GoogleData,
+  GoogleDocContent,
+  GoogleDocData,
+  GoogleTextElement,
+  TextEntry,
+  TxtData
+} from './types';
 
 
 type StyledQueryContext = { style: string | null, query_context: string };
+
+type GoogleMatch = {
+  fileId: string;
+  data: GoogleDocData;
+  textBlock: string;
+  textArray: string[];
+};
 
 const processDataQuery = (
   queryTerm: string,
@@ -22,16 +37,17 @@ const processDataQuery = (
   }
 
 
-  let googMatches = [];
+  let googMatches: GoogleMatch[] = [];
   if (googleData) {
     googMatches = Object.entries(googleData)
       .map((f) => {
-        const content =
-          f[1] && f[1].body
-            ? f[1].body.content
-              .filter((p: any) => p.paragraph)
-              .map((m: any) => m.paragraph.elements)
-            : [];
+
+        let content: GoogleTextElement[][] = [];
+        if (f[1] && f[1].body) {
+          const paragraphs = f[1].body.content.filter((p) => 'paragraph' in p);
+          content = paragraphs.map((m) => (m as GoogleDocContent).paragraph.elements);
+        }
+
         const flatContent = content.flatMap((m) => m);
         const flatTextRun = flatContent.map((m) =>
           m.textRun ? m.textRun.content : ''
@@ -121,7 +137,7 @@ const processDataQuery = (
             }
             const test2 = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, query_context: test[20] });
+            con.push({ style: null, query_context: test2[0] });
             con.push({ style: 'bold', query_context: queryTerm });
             con.push({ style: null, query_context: test2[1] });
 
