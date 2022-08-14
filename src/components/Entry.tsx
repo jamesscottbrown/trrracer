@@ -354,7 +354,7 @@ const Entry = (props: EntryPropTypes) => {
         <br />
         <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
-          {filterfiles.map((file: File, j) => (
+          {filterfiles.map((file, j) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt

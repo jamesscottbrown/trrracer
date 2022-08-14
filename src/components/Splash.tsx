@@ -34,7 +34,7 @@ const Splash = (props: SplashProps) => {
         <>
           <Heading as="h2">Recently opened projects</Heading>
           <UnorderedList>
-            {recentPaths.map((p: string) => (
+            {recentPaths.map((p) => (
               <ListItem key={p}>
                 <IconButton
                   icon={<BiLinkExternal />}
