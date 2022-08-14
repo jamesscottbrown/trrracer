@@ -34,7 +34,20 @@ const getName = (parsed: any, activities: any, researchThreads: any) => {
   }
 };
 
-const PageNavigation = (props: any) => {
+type PageNavigationProps = {
+  pageData: string;
+  pageNumber: number;
+  numPages: number;
+  pageRectData: { pageIndex: number, anno: unknown[] }[];
+  anno: [any, unknown[]][] | null;
+  onDocumentLoadSuccess: (numPages: any) => void;
+  previousPage: () => void;
+  nextPage: () => void;
+  perf: any;
+  setToolHtml: React.Dispatch<React.SetStateAction<string>>;
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+};
+const PageNavigation = (props: PageNavigationProps) => {
   const {
     pageData,
     pageNumber,
@@ -511,7 +524,7 @@ const PaperView = (props: { folderPath: string }) => {
 
   const anno = linkData ? d3.groups(linkData, (d) => d.page) : null;
   const index = filterRT?.rtId || 0;
-  const [numPages, setNumPages] = useState(null);
+  const [numPages, setNumPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
   const [pageData, setPageData] = useState('');
