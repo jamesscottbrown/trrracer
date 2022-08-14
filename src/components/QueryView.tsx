@@ -131,7 +131,7 @@ const QueryView = (props: QueryViewProps) => {
       </div>
       {query.matches.length > 0 ? (
         <div style={{ padding: 5, overflowY: 'auto' }}>
-          {query.matches.map((m: any, i: number) => (
+          {query.matches.map((m, i) => (
             <div key={`match-${i}`}>
               <div style={{ fontSize: 18, fontWeight: 700, marginTop: 30 }}>
                 {m.entry.title}
