@@ -2,70 +2,82 @@ import React, { ChangeEvent } from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
+import { EntryType, GoogleData, TextEntry, TxtData } from './types';
+
+
+type StyledQueryContext = { style: string | null, query_context: string };
 
 const processDataQuery = (
   queryTerm: string,
-  txtData: any,
-  googleData: any,
-  activityData: any
+  txtData: TxtData | undefined,
+  googleData: GoogleData | undefined,
+  activityData: EntryType[]
 ) => {
 
-  const textMatches = txtData['text-data'].filter((f) =>
-    f.text.includes(queryTerm)
-  );
+  let textMatches: TextEntry[] = [];
+  if (txtData) {
+    textMatches = txtData['text-data'].filter((f) =>
+      f.text.includes(queryTerm)
+    );
+  }
 
-  const googMatches = Object.entries(googleData)
-    .map((f) => {
-      const content =
-        f[1] && f[1].body
-          ? f[1].body.content
-              .filter((p) => p.paragraph)
-              .map((m) => m.paragraph.elements)
-          : [];
-      const flatContent = content.flatMap((m) => m);
-      const flatTextRun = flatContent.map((m) =>
-        m.textRun ? m.textRun.content : ''
-      );
-      const txtBlock = flatTextRun.join('');
 
-      return {
-        fileId: f[0],
-        data: f[1],
-        textBlock: txtBlock,
-        textArray: flatTextRun,
-      };
-    })
-    .filter((ft) => {
-      const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
-      return tmp.length > 0;
-    });
+  let googMatches = [];
+  if (googleData) {
+    googMatches = Object.entries(googleData)
+      .map((f) => {
+        const content =
+          f[1] && f[1].body
+            ? f[1].body.content
+              .filter((p: any) => p.paragraph)
+              .map((m: any) => m.paragraph.elements)
+            : [];
+        const flatContent = content.flatMap((m) => m);
+        const flatTextRun = flatContent.map((m) =>
+          m.textRun ? m.textRun.content : ''
+        );
+        const txtBlock = flatTextRun.join('');
+
+        return {
+          fileId: f[0],
+          data: f[1],
+          textBlock: txtBlock,
+          textArray: flatTextRun,
+        };
+      })
+      .filter((ft) => {
+        const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
+        return tmp.length > 0;
+      });
+  }
+
 
   const titleMatches = activityData
     .filter((f) => {
-      let temp = f.files.filter(f => f.title.includes(queryTerm));
+      const temp = f.files.filter((f2) => f2.title.includes(queryTerm));
       return f.title.includes(queryTerm) || temp.length > 0;
     })
     .map((m) => m.activity_uid);
 
   const descriptionMatches = activityData
   .filter((a) => {
-    let temp = a.files.filter(f => f.context ? f.context.includes(queryTerm) : false);
-    let inDescription = a.description ? a.description.includes(queryTerm) : false;
+    const temp = a.files.filter(f => f.context ? f.context.includes(queryTerm) : false);
+    const inDescription = a.description ? a.description.includes(queryTerm) : false;
     return inDescription || temp.length > 0;
   })
   .map((m) => m.activity_uid);
 
   const matches: any[] = [];
 
-  activityData.forEach((ent: any) => {
+  activityData.forEach((ent ) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
     if (tempText.length > 0) {
       tempText.map((tt) => {
         const txtArray = tt.text.split('. ');
-        const indexArray = [];
+        const indexArray: StyledQueryContext[][] = [];
         txtArray.forEach((t, i) => {
           if (t.includes(queryTerm)) {
-            const con = [];
+            const con: StyledQueryContext[] = [];
             if (i > 0) {
               con.push({ style: null, query_context: txtArray[i - 1] });
             }
@@ -90,7 +102,7 @@ const processDataQuery = (
     }
 
     const tempG = ent.files.filter(
-      (fg: any) =>
+      (fg) =>
         fg.fileType === 'gdoc' &&
         googMatches.map((gm) => gm.fileId).includes(fg.fileId)
     );
@@ -98,20 +110,20 @@ const processDataQuery = (
     if (tempG.length > 0) {
       tempG.map((tt) => {
         const test = googMatches.filter((f) => f.fileId === tt.fileId)[0];
-        const txtArray = test.textBlock.split('. ');
-        const indexArray = [];
+        const txtArray: string[] = test.textBlock.split('. ');
+        const indexArray: StyledQueryContext[][] = [];
 
         txtArray.forEach((t, i) => {
           if (t.includes(queryTerm)) {
-            const con = [];
+            const con: StyledQueryContext[] = [];
             if (i > 0) {
               con.push({ style: null, query_context: txtArray[i - 1] });
             }
-            const test = txtArray[i].split(queryTerm);
+            const test2 = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, query_context: test[0] });
+            con.push({ style: null, query_context: test[20] });
             con.push({ style: 'bold', query_context: queryTerm });
-            con.push({ style: null, query_context: test[1] });
+            con.push({ style: null, query_context: test2[1] });
 
             if (i < txtArray.length - 1) {
               con.push({ style: null, query_context: txtArray[i + 1] });
@@ -130,20 +142,20 @@ const processDataQuery = (
       tempG.length > 0 ||
       titleMatches.indexOf(ent.activity_uid) > -1
     ) {
-      let titleKeeper = []
-      
+      const titleKeeper = [];
+
 
       if(titleMatches.indexOf(ent.activity_uid) > -1){
         if(ent.title.includes(queryTerm)) titleKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid})
-        ent.files.forEach((f:any, j:number) => {
+        ent.files.forEach((f, j) => {
           if(f.title.includes(queryTerm)) titleKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j})
         })
       }
 
-      let descriptionKeeper = []
+      const descriptionKeeper = [];
       if(descriptionMatches.indexOf(ent.activity_uid) > -1){
         if(ent.description && ent.description.includes(queryTerm)) descriptionKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid, blurb: ent.description})
-        ent.files.forEach((f:any, j:number) => {
+        ent.files.forEach((f, j) => {
           if(f.title.includes(queryTerm)) descriptionKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j, blurb: f.context})
         })
       }
@@ -164,7 +176,7 @@ const processDataQuery = (
 
 interface QueryProps {
   setViewType: (viewType: string) => void;
-  filteredActivities: any;
+  filteredActivities: EntryType[];
   setSearchTermArtifact: any;
 }
 

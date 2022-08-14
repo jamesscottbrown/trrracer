@@ -185,13 +185,15 @@ type FileTypesType = {
 
 type QueryType = {
   term: string;
-  matches: {
-    entry: any;
-    textMatch: any[];
-    googMatch: any[];
-    titleMatch: boolean;
-  }[];
+  matches: QueryMatchType[];
 };
+
+type QueryMatchType = {
+  entry: any;
+  textMatch: any[];
+  googMatch: any[];
+  titleMatch: boolean;
+}
 
 type HopEntryType = {
   activity: any;
@@ -225,7 +227,7 @@ type ProjectState = {
   query: null | QueryType;
   artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
-  txtData?: TxtData[];
+  txtData?: TxtData;
   researchThreads?: ResearchThreadData;
   selectedActivityURL: null | string;
   highlightedTag?: string;
@@ -269,6 +271,7 @@ export {
   File,
   FileObj,
   FileTypesType,
+  GoogleData,
   GoogleDocContent,
   GoogleDocParagraph,
   GoogleParagraphStyle,
@@ -280,6 +283,7 @@ export {
   ProjectState,
   ProjectType,
   ProjectViewProps,
+  QueryMatchType,
   ResearchThread,
   ResearchThreadEvidence,
   ResearchThreadData,
