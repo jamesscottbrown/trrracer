@@ -9,11 +9,10 @@ import type {
   GoogleDocData,
   GoogleTextElement,
   TextEntry,
-  TxtData
+  TxtData,
 } from './types';
 
-
-type StyledQueryContext = { style: string | null, query_context: string };
+type StyledQueryContext = { style: string | null; query_context: string };
 
 type GoogleMatch = {
   fileId: string;
@@ -28,7 +27,6 @@ const processDataQuery = (
   googleData: GoogleData | undefined,
   activityData: EntryType[]
 ) => {
-
   let textMatches: TextEntry[] = [];
   if (txtData) {
     textMatches = txtData['text-data'].filter((f) =>
@@ -36,16 +34,16 @@ const processDataQuery = (
     );
   }
 
-
   let googMatches: GoogleMatch[] = [];
   if (googleData) {
     googMatches = Object.entries(googleData)
       .map((f) => {
-
         let content: GoogleTextElement[][] = [];
         if (f[1] && f[1].body) {
           const paragraphs = f[1].body.content.filter((p) => 'paragraph' in p);
-          content = paragraphs.map((m) => (m as GoogleDocContent).paragraph.elements);
+          content = paragraphs.map(
+            (m) => (m as GoogleDocContent).paragraph.elements
+          );
         }
 
         const flatContent = content.flatMap((m) => m);
@@ -67,7 +65,6 @@ const processDataQuery = (
       });
   }
 
-
   const titleMatches = activityData
     .filter((f) => {
       const temp = f.files.filter((f2) => f2.title.includes(queryTerm));
@@ -76,16 +73,20 @@ const processDataQuery = (
     .map((m) => m.activity_uid);
 
   const descriptionMatches = activityData
-  .filter((a) => {
-    const temp = a.files.filter(f => f.context ? f.context.includes(queryTerm) : false);
-    const inDescription = a.description ? a.description.includes(queryTerm) : false;
-    return inDescription || temp.length > 0;
-  })
-  .map((m) => m.activity_uid);
+    .filter((a) => {
+      const temp = a.files.filter((f) =>
+        f.context ? f.context.includes(queryTerm) : false
+      );
+      const inDescription = a.description
+        ? a.description.includes(queryTerm)
+        : false;
+      return inDescription || temp.length > 0;
+    })
+    .map((m) => m.activity_uid);
 
   const matches: any[] = [];
 
-  activityData.forEach((ent ) => {
+  activityData.forEach((ent) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
     if (tempText.length > 0) {
       tempText.map((tt) => {
@@ -160,28 +161,47 @@ const processDataQuery = (
     ) {
       const titleKeeper = [];
 
-
-      if(titleMatches.indexOf(ent.activity_uid) > -1){
-        if(ent.title.includes(queryTerm)) titleKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid})
+      if (titleMatches.indexOf(ent.activity_uid) > -1) {
+        if (ent.title.includes(queryTerm))
+          titleKeeper.push({
+            activityTitle: ent.title,
+            activityID: ent.activity_uid,
+          });
         ent.files.forEach((f, j) => {
-          if(f.title.includes(queryTerm)) titleKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j})
-        })
+          if (f.title.includes(queryTerm))
+            titleKeeper.push({
+              fileTitle: f.title,
+              artifactID: f.artifact_uid,
+              artifactIndex: j,
+            });
+        });
       }
 
       const descriptionKeeper = [];
-      if(descriptionMatches.indexOf(ent.activity_uid) > -1){
-        if(ent.description && ent.description.includes(queryTerm)) descriptionKeeper.push({activityTitle: ent.title, activityID: ent.activity_uid, blurb: ent.description})
+      if (descriptionMatches.indexOf(ent.activity_uid) > -1) {
+        if (ent.description && ent.description.includes(queryTerm))
+          descriptionKeeper.push({
+            activityTitle: ent.title,
+            activityID: ent.activity_uid,
+            blurb: ent.description,
+          });
         ent.files.forEach((f, j) => {
-          if(f.title.includes(queryTerm)) descriptionKeeper.push({fileTitle: f.title, artifactID:f.artifact_uid, artifactIndex:j, blurb: f.context})
-        })
+          if (f.title.includes(queryTerm))
+            descriptionKeeper.push({
+              fileTitle: f.title,
+              artifactID: f.artifact_uid,
+              artifactIndex: j,
+              blurb: f.context,
+            });
+        });
       }
-      console.log('desssss keeper',descriptionKeeper)
+      console.log('desssss keeper', descriptionKeeper);
       const entM = {
         entry: ent,
         textMatch: tempText,
         googMatch: tempG,
-        titleMatch: titleKeeper,//titleMatches.indexOf(ent.activity_uid) > -1,
-        descriptionMatch: descriptionKeeper
+        titleMatch: titleKeeper, // titleMatches.indexOf(ent.activity_uid) > -1,
+        descriptionMatch: descriptionKeeper,
       };
       matches.push(entM);
     }
