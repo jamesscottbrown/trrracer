@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
@@ -164,37 +164,20 @@ const processDataQuery = (
 
 interface QueryProps {
   setViewType: (viewType: string) => void;
-  artifactData: any;
   filteredActivities: any;
-  setSearchTermArtifact:any;
+  setSearchTermArtifact: any;
 }
 
 const QueryBar = (queryProps: QueryProps) => {
   const { setSearchTermArtifact, setViewType, filteredActivities } = queryProps;
   const [{ txtData, googleData }, dispatch] = useProjectState();
 
-  const [term, setTerm] = React.useState(null);
+  const [term, setTerm] = React.useState('');
 
-  const handleTermChange = (e) => {
-    const inputValue = e.target.value;
+  const handleTermChange = (ev: ChangeEvent) => {
+    const inputValue = (ev.target as HTMLInputElement).value;
     setTerm(inputValue);
   };
-
-  let data;
-
-  
-
-  // if (artifactData) {
-  //   console.log('text content!!', document.getElementById('detail-preview'))
-  //   if (artifactData.fileType === 'txt' && txtData) {
-  //     const dataCheck = txtData['text-data'].filter(
-  //       (f) => f['file-title'] === artifactData.title
-  //     );
-  //     data = dataCheck.length > 0 ? dataCheck[0].text : [];
-  //   } else {
-  //     data = googleData[artifactData.fileId];
-  //   }
-  // }
 
   return (
     <InputGroup align="center" width="400px" marginEnd="90px">
@@ -209,7 +192,6 @@ const QueryBar = (queryProps: QueryProps) => {
           size="sm"
           onClick={() => {
             if (setSearchTermArtifact) {
-            
               setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(
