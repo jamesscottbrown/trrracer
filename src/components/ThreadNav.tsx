@@ -103,6 +103,8 @@ export const CreateThreadComponent = (props: any) => {
 const MiniTimline = (props: MiniTimelineProps) => {
   const { researchT, activities } = props;
 
+  const [{researchThreads}] = useProjectState();
+
   const lilSVG = React.useRef(null);
 
   const ex = d3.extent(activities.map((m: any) => new Date(m.date)));
@@ -135,19 +137,27 @@ const MiniTimline = (props: MiniTimelineProps) => {
 
     circleG
       .selectAll('circle.associated')
-      .data(
-        researchT.tagged_activities && researchT.tagged_activities.length > 0
-          ? researchT.tagged_activities.flatMap(
-              (fm: any) => fm.associatedActivities
-            )
-          : []
-      )
+      .data(() => {
+        let acts = Array.from(d3.group(researchT.evidence, (d) => d.activityTitle));
+
+        return acts.length > 0 ?
+        acts
+        : []
+      })
       .join('circle')
       .attr('class', 'associated')
-      .attr('cx', (d: any) => xScale(new Date(d.date)))
+      .attr('cx', (d: any) => xScale(new Date(d[1][0].dob)))
       .attr('cy', () => jitter(10))
       .attr('r', 3)
-      .attr('fill', researchT.color)
+      .attr('fill', (fc) => {
+        let main = fc[1].filter(f => !f.mergedFrom);
+        let sec = fc[1].filter(f => f.mergedFrom);
+        if(main.length > sec.length){
+          return researchT.color
+        }else{
+          return researchThreads?.research_threads.filter(f => f.title === sec[0].mergedFrom);
+        }
+        })
       .attr('fill-opacity', 0.5);
 
     circleG
@@ -440,6 +450,8 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
     return true;
   };
 
+  let mergeTest = rt.evidence.filter(f=> f.mergedFrom);
+
   const associatedTags = filteredThreads.map((rt) => {
     let tagArrayMain = rt.evidence.filter(f => !f.mergedFrom).map((m, i)=> {
       m.color = rt.color;
@@ -449,8 +461,6 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
       m.color = researchThreads?.research_threads.filter(f => f.title === m.mergedFrom)[0].color;
       return m;
     });
-
-    console.log('tagsArrayMain', tagArrayMain, tagArrayMerged);
 
     let tags = [...tagArrayMain, ...tagArrayMerged].flatMap((fm) => {
       return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
@@ -477,8 +487,6 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
         tagObs.push(t)
       }
     });
-
-    console.log('TAG OBS', tagObs);
 
     return tagObs;
   });
@@ -532,6 +540,18 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
 
           {expanded && (
             <div style={{ paddingTop: 5 }}>
+
+              <React.Fragment>
+              {mergeTest.length > 0 && (
+              <div
+              style={{fontSize:11}}
+              ><Badge
+                style={{
+                  backgroundColor: researchThreads?.research_threads.filter(t => t.title === mergeTest[0].mergedFrom)[0].color + 20,
+                }}
+              >{`Merged with ${mergeTest[0].mergedFrom} thread`}</Badge></div>)}
+              </React.Fragment>
+
               {!isReadOnly && (
                 <div style={{ display: 'inline', float: 'right' }}>
                   <span style={{ display: 'inline' }}>

@@ -64,16 +64,15 @@ const ResearchThreadTypeTags = () => {
         width: '100%',
         zIndex: 5000,
         position: 'fixed',
-        top: filterRT ? 70 : -50,
+        top: filterRT ? 60 : -50,
       }}
     >
       {filterRT && (
         <Flex
           style={{
             backgroundColor: '#fff',
-            paddingBottom: '20px',
-            paddingTop: '20px',
-            paddingLeft: '40px',
+            paddingBottom: '10px',
+            paddingLeft: '140px',
             paddingRight: '20px',
             alignContent: 'space-around',
             alignItems: 'center',
@@ -248,11 +247,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
     };
   });
 
+
   const barWidth = useMemo(() => {
-    const handicap = window.innerWidth > 1300 && barWidth > 0 ? 150 : 0;
+    const handicap = window.innerWidth > 1300 ? 50 : 0;
     return bubbleDivWidth < 0
       ? window.innerWidth - 800
-      : window.innerWidth - (bubbleDivWidth - handicap);
+      : window.innerWidth - (bubbleDivWidth + 600);
   }, [windowDimension.width]);
 
   useEffect(() => {
@@ -366,14 +366,26 @@ const Project = (ProjectPropValues: ProjectProps) => {
           )}
 
           {!groupBy && !hideByDefault && (
-            <Box
-              w={barWidth}
-              h={`calc(100vh - ${fromTop + 5}px)`}
-              overflowY="auto"
+            <div
+            style={{
+              width: barWidth,
+              height: `calc(100vh - ${fromTop + 5}px)`,
+              overflow: "auto",
+              position: 'absolute',
+              right: 0,
+              top: 0
+            }}
+              // w={barWidth}
+              // h={`calc(100vh - ${fromTop + 5}px)`}
+              // overflowY="auto"
             >
               <ResearchThreadTypeTags />
-              <ProjectListView setViewType={setViewType} viewType={viewType} />
-            </Box>
+              <ProjectListView 
+                width={barWidth}
+                setViewType={setViewType} 
+                viewType={viewType} 
+              />
+            </div>
           )}
         </Flex>
       </div>
@@ -399,7 +411,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
         />
-        <PaperView folderPath={folderPath} />
+        <PaperView folderPath={folderPath} windowDimension={windowDimension} setWindowDimension={setWindowDimension} />
       </div>
     );
   }

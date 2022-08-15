@@ -227,7 +227,6 @@ const ThreadedReadonlyEntry = (props: any) => {
   const isEntryInThread = selectedThread.evidence.filter(
     (f) => f.activityTitle === thisEntry.title
   );
-
   const isEntryInAnyThreads = researchThreads.research_threads.filter((f) => {
     const temp = f.evidence
       .map((m) => m.activityTitle)
@@ -238,9 +237,10 @@ const ThreadedReadonlyEntry = (props: any) => {
   const urls = thisEntry.files.filter((f) => f.fileType === 'url');
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
-  const activitiesAsEvidence = isEntryInThread.filter(
-    (f) => f.type === 'fragment' || f.type === 'artifact'
-  );
+  const activitiesAsEvidence = isEntryInThread;
+  // .filter(
+  //   (f) => f.type === 'fragment' || f.type === 'artifact'
+  // );
 
   const threadedFiles = files
     .filter((f) =>
@@ -248,15 +248,16 @@ const ThreadedReadonlyEntry = (props: any) => {
     )
     .map((m) => {
       m.threadPart = activitiesAsEvidence.filter(
-        (f) => f.artifactTitle === m.title
+        (f) => (f.artifactTitle && f.artifactTitle === m.title) || f.type === 'activity'
       )[0];
       return m;
     });
 
   const otherFiles = files.filter(
-    (f) =>
-      activitiesAsEvidence.map((m) => m.artifactTitle).indexOf(f.title) === -1
+    (f) => threadedFiles.map(m => m.title).indexOf(f.title) === -1
+      // activitiesAsEvidence.map((m) => m.artifactTitle).indexOf(f.title) === -1 && 
   );
+
   const threadedActivity = isEntryInThread.filter((f) => f.type === 'activity');
 
   const threadedTags = thisEntry.tags.filter((f) =>
@@ -276,7 +277,11 @@ const ThreadedReadonlyEntry = (props: any) => {
 
   return (
     <Box>
-      <div style={{ padding: 10 }}>
+      <div style={{ 
+        padding: 10,
+        }}
+        id={`threaded-${thisEntry.activity_uid}`}
+        >
         <span style={{ fontSize: 22, fontWeight: 'bold' }}>
           {thisEntry.isPrivate && (
             <FaLock
@@ -326,7 +331,7 @@ const ThreadedReadonlyEntry = (props: any) => {
         <div>
           {thisEntry.tags.length === 0 ? (
             <b>No tags.</b>
-          ) : (
+          ) : ( 
             <>
               <div style={{ display: 'inline' }}>
                 {threadedTags.map((t) => (

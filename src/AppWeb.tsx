@@ -13,6 +13,8 @@ import './App.global.css';
 import { useProjectState } from './components/ProjectContext';
 import SplashWeb from './components/SplashWeb';
 
+const queryString = require('query-string');
+
 const migrateTrrraceFormat = (projectData: any) => {
   // - add url array if not already present
   // - convert tags list on entry from object to string
@@ -41,11 +43,22 @@ export default function App() {
   const [{ projectData }, dispatch] = useProjectState();
   const isDev = process.env.NODE_ENV === 'development';
   // const isDev = true;
-  let test = document.cookie.split(';').filter(f => f.includes('folderName'))
  
+  let views = queryString.parse(location.search);
+
+  let testCookie = document.cookie.split(';').filter(f => f.includes('folderName'))
+
   useEffect(()=> {
-    if(test.length > 0){
-      let path  = test[0].split('=')[1];
+    if(testCookie.length > 0 && !views.path){
+      let path  = testCookie[0].split('=')[1];
+       setPath(
+        `${
+          isDev ? 'http://localhost:9999' : '.'
+        }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
+      ); // TODO: make not a constant
+    }else if(views.path){
+      
+      let path = views.path;
      
        setPath(
         `${
@@ -53,7 +66,7 @@ export default function App() {
         }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
       ); // TODO: make not a constant
     }
-  }, [folderPath]);
+  }, [folderPath, views]);
   
 
   if (!folderPath) {
