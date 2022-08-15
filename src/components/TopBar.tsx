@@ -134,7 +134,7 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
           />
         )}
 
-        {viewParams && (
+        {(viewParams && viewParams.view === 'paper') && (
           <div
             style={{
               fontWeight: 600,

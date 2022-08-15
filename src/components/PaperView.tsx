@@ -449,7 +449,7 @@ const BubbLabel = () => {
         zIndex: 6000,
         position: 'absolute',
         top: 0,
-        left: 600,
+        left: 700,
       }}
     >
       <svg>
