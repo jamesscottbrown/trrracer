@@ -17,7 +17,6 @@ const SidebarButton = (sidebarProps: SidebarButtonProps) => {
 
   return (
     <Box
-      style={{ cursor: 'pointer' }}
       bg={barColor}
       key={`${data.title}-${index}`}
       onMouseOver={() => setBarColor('#D3D3D3')}
@@ -28,7 +27,7 @@ const SidebarButton = (sidebarProps: SidebarButtonProps) => {
         <Button
           title="Filter by."
           size="xs"
-          style={{ marginLeft: 10 }}
+          style={{ marginLeft: 10, cursor:'pointer' }}
           onClick={() => {
             console.log('tags filter check', filterTags);
             // nee to make a tag filter function

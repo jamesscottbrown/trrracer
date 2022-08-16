@@ -389,7 +389,7 @@ const ThreadBanner = (props: any) => {
           style={{
             cursor: 'pointer',
             display: 'inline',
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: 600,
             color: '#3a3b3c',
           }}
@@ -407,7 +407,7 @@ const ThreadBanner = (props: any) => {
         {index != filterRT?.rtIndex && (
           <span
             style={{
-              padding: 5,
+              padding: 2,
               float: 'right',
               display: 'inline',
               cursor: 'pointer',
