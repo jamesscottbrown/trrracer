@@ -211,6 +211,8 @@ const InteractiveActivityTag = (props: any) => {
         boxShadow: '1px 1px 2px #A3AAAF',
       }}
     >
+      {
+        tagMatches.length > 1 ? 
       <Flex>
         <span
           style={{ cursor: 'pointer' }}
@@ -313,6 +315,12 @@ const InteractiveActivityTag = (props: any) => {
           <FaArrowRight />
         </span>
       </Flex>
+      : <Flex>
+          <span
+          style={{ alignSelf: 'center' }}
+          >{tag}
+          </span>
+        </Flex>}
       {expandedTag && (
         <div>
           {tagMatches.map((t, i) => (

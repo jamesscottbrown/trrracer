@@ -490,6 +490,7 @@ const BubbLabel = () => {
 const PaperView = (props: any) => {
   const { folderPath, windowDimension, setWindowDimension } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+  console.log('folder path???', folderPath);
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
