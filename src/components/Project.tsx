@@ -288,7 +288,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
         />
-        <Flex position="relative" top={130}>
+        <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
           <BubbleVis
             groupBy={groupBy}
