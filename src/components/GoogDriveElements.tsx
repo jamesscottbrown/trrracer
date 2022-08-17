@@ -142,7 +142,7 @@ const GoogDriveSpans = (googProps: any) => {
         color:'#fff',
         cursor:'pointer'
       }}
-      onMouseOver={() => setSpanColor(true)}
+      onMouseOver={() => isReadOnly ? setSpanColor(false) : setSpanColor(true)}
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
       >
