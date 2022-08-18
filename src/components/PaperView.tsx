@@ -493,7 +493,7 @@ const PaperView = (props: any) => {
   const { folderPath, windowDimension, setWindowDimension, setViewType } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
 
-  const perf = joinPath(folderPath, '2022_trevo_new_links-compressed.pdf');
+  const perf = joinPath(`trrracer/${folderPath}`, '2022_trevo_new_links-compressed.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
   console.log('PERF in paper view', perf);
