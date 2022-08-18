@@ -60,7 +60,7 @@ const TextRender = (textProps: { textArray: TextArray }) => {
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { setFragSelected, searchTermArtifact, openFile } = props;
-
+  console.log('SEARCH TERM ARTIFACT IN DETAIL VIEW', searchTermArtifact);
   const [
     {
       googleData,
@@ -134,9 +134,6 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     const [chosenGoogData, setchosenGoogData] = useState<null|any>(null);
     const [chosenComments, setChosenComments] = useState<null|any>(null);
-
-    // console.log('is it here outside of useEffect', Object.keys(googleData).indexOf(artifact.fileId) > -1)
-    // console.log('artifact id, outside of use effect', artifact.fileId);
 
     useEffect(()=> {
 
@@ -217,6 +214,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
                   comments={chosenComments}
                   setFragSelected={setFragSelected}
                   artifactBookmarks={artifact.bookmarks}
+                  searchTermArtifact={searchTermArtifact}
                 />
               ))}
             </div>
@@ -306,8 +304,10 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     let path = isReadOnly ? `${folderPath}${title}` : `${folderPath}/${title}`;
 
-    useEffect(() => {
+    console.log('searchTermArtifact', searchTermArtifact);
 
+    useEffect(() => {
+      console.log('SEARCHHHH TERMMMM ARTIFACTTTT', searchTermArtifact);
       if (isReadOnly) {
         readFileSync(path)
           .then((res) => res.text())

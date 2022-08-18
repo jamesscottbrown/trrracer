@@ -64,8 +64,10 @@ const styleSection = (
 };
 
 const GoogDriveSpans = (googProps: any) => {
-  const { googEl, index, comments, setFragSelected, artifactBookmarks } =
+  const { googEl, index, comments, setFragSelected, artifactBookmarks, searchTermArtifact } =
     googProps;
+
+  console.log('searchTermArtifact in span',searchTermArtifact)
 
   const [spanColor, setSpanColor] = useState(false);
 
@@ -102,7 +104,7 @@ const GoogDriveSpans = (googProps: any) => {
     <Popover trigger="hover">
       <PopoverTrigger>
         {
-          query && googEl.textRun.content.includes(query?.term) ? 
+          (query && googEl.textRun.content.includes(query?.term)) || (searchTermArtifact && googEl.textRun.content.includes(searchTermArtifact)) ? 
 
           <span 
           key={`elem-${index}`} 
@@ -134,13 +136,13 @@ const GoogDriveSpans = (googProps: any) => {
     </Popover>
   ) : (
     
-      (query && googEl.textRun.content.includes(query?.term)) ? 
+      ((query && googEl.textRun.content.includes(query?.term)) || (searchTermArtifact && googEl.textRun.content.includes(searchTermArtifact))) ? 
       <span
       key={`elem-${index}`}
       style={{
         backgroundColor: '#ff5f1f', 
         color:'#fff',
-        cursor:'pointer'
+        cursor: isReadOnly ? "" : 'pointer'
       }}
       onMouseOver={() => isReadOnly ? setSpanColor(false) : setSpanColor(true)}
       onMouseOut={() => setSpanColor(false)}
@@ -151,7 +153,7 @@ const GoogDriveSpans = (googProps: any) => {
       <span
       key={`elem-${index}`}
       style={styleOb}
-      onMouseOver={() => setSpanColor(true)}
+      onMouseOver={() => isReadOnly ? setSpanColor(false) : setSpanColor(true)}
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
     >
@@ -163,7 +165,7 @@ const GoogDriveSpans = (googProps: any) => {
 };
 
 const GoogDriveParagraph = (parProps: any) => {
-  const { parData, index, comments, setFragSelected, artifactBookmarks } =
+  const { parData, index, comments, setFragSelected, artifactBookmarks, searchTermArtifact } =
     parProps;
 
   const getHeading = (
@@ -234,6 +236,7 @@ const GoogDriveParagraph = (parProps: any) => {
                 comments={comments}
                 setFragSelected={setFragSelected}
                 artifactBookmarks={artifactBookmarks}
+                searchTermArtifact={searchTermArtifact}
               />
             ) : (
               <GoogInline sectionData={elem} />
