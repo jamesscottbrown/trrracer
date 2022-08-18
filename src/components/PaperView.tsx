@@ -496,6 +496,8 @@ const PaperView = (props: any) => {
   const perf = joinPath(folderPath, '2022_trevo_new_links-compressed.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
+  console.log('PERF in paper view', perf);
+
   let passedLink = linkData
     ? linkData.filter((f) => viewParams && f.cIndex === viewParams.cIndex)
     : [];
