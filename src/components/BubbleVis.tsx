@@ -47,6 +47,12 @@ const RTtooltip = (toolProp: any) => {
     (e) => e.activityTitle === activityData.title
   );
 
+
+  let activityEv = evidence.filter(e => e.type === 'activity');
+  let artifactEv = Array.from(d3.group(evidence.filter(e => e.type === 'artifact' || 'fragment'), d => d.artifactTitle));
+
+  console.log(activityEv, artifactEv);
+
   return (
     <div
       id="tooltip"
@@ -74,7 +80,91 @@ const RTtooltip = (toolProp: any) => {
       >
         {activityData.title}
       </span>
-      {evidence.map((e: any, i: number) => (
+      {
+        activityEv.length > 0 && (
+          activityEv.map((ae, ai) => (
+            <div
+            key={`activity-ev-${ai}`}
+            style={{
+              padding:10,
+              backgroundColor: '#d3d3d340',
+              borderRadius:5,
+              fontSize:10
+            }}
+            >
+              <span>{`Whole activity threaded because:  `}</span>
+              <span>{ae.rationale}</span>
+            </div>
+          ))
+        )
+      }
+      {
+        artifactEv.length > 0 && (
+          <React.Fragment>
+            <div
+            style={{fontSize:12}}
+            >Threaded artifacts:</div>
+            {artifactEv.map((ae, ai)=> (
+              <div
+              key={`artifact-${ai}`}
+              style={{
+                border: "1px solid #d3d3d3",
+                borderRadius:6,
+                marginBottom:5,
+              }}
+              >
+                <div
+                style={{
+                  backgroundColor: '#d3d3d340',
+                  padding:5,
+                  fontSize:11,
+                }}
+                >{ae[0]}</div>
+                {
+                  ae[1].map((m, j) => (
+                    <div
+                    key={`art-ev-${j}`}
+                    >
+                      <div 
+                      style={{
+                        fontSize:12,
+                        backgroundColor: `${m.color}40`,
+                        padding:5
+                        }}>
+                        {m.mergedFrom && <span
+                        style={{marginRight:10}}
+                        >{`* Merged from ${m.mergedFrom} thread`}</span>}
+                        <span
+                        style={{fontWeight:800}}
+                        >{m.rationale}</span>
+                      </div>
+                      {
+                        m.type === 'fragment' && (
+                          <React.Fragment>
+                          <span
+                          style={{
+                            fontSize: 11, 
+                            fontWeight: 800,
+                            lineHeight:.9
+                          }}
+                          >{`Threaded ${m.type}: `}</span>
+                          <span
+                          style={{fontSize:11, fontStyle:'italic'}}
+                          >{`"${m.anchors[0].frag_type}"`}</span>
+                          </React.Fragment>
+                        ) 
+                      }
+                     
+                     
+                    </div>
+                  ))
+                }
+              </div>
+            ))}
+          </React.Fragment>
+        )
+      }
+      {/* {evidence.map((e: any, i: number) => (
         <div
           key={`artifact-evidence-${i}`}
           style={{ marginTop: 10, fontSize: 12 }}
@@ -92,7 +182,7 @@ const RTtooltip = (toolProp: any) => {
             {e.rationale}
           </div>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 };
@@ -144,8 +234,6 @@ const ToolTip = (toolProp: any) => {
 const renderAxis = (wrap: any, yScale: any, translateY: any) => {
   wrap.selectAll('*').remove();
   wrap.attr('transform', `translate(110, ${translateY})`);
-
-
 
   const yAxis = d3.axisLeft(yScale).ticks(40).tickSize(10);
 
@@ -550,7 +638,7 @@ const BubbleVis = (props: BubbleProps) => {
       const hiddenBubbles = new Bubbles(hiddenActivityGroups, true, 'hidden');
 
       hiddenBubbles.bubbles
-        .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 })) // .attr('fill-opacity', .3)
+        .attr('fill', d3co.hsl('#d3d3d3').copy({ l: 0.94 })) 
         .attr('stroke', '#d3d3d3')
         .attr('stroke-width', 0.4);
 
@@ -584,7 +672,9 @@ const BubbleVis = (props: BubbleProps) => {
       );
 
       activityBubbles.bubbles
-        .attr('fill', onActivityColor) // .attr('fill-opacity', .3)
+        .attr('fill', (d) => {
+          return onActivityColor;
+        }) // .attr('fill-opacity', .3)
         .attr('stroke', '#d3d3d3')
         .attr('stroke-width', 0.4);
 
@@ -601,10 +691,14 @@ const BubbleVis = (props: BubbleProps) => {
       highlightedActivityGroups
         .select('.all-activities')
         .on('mouseover', (event) => {
+
+          console.log('d3 mouse', d3.select(event.target).data()[0].activity_uid);
+
           if (filterRT) {
             d3.select(event.target)
               .attr('stroke', 'gray')
               .attr('stroke-width', 2);
+              
           } else if (filterType || filterTags.length > 0) {
             d3.select(event.target)
               .attr('stroke', 'gray')
@@ -720,7 +814,7 @@ const BubbleVis = (props: BubbleProps) => {
             if (f.type === 'activity') {
               temp.select('.all-activities').attr('fill', onActivityColor);
 
-              temp.selectAll('circle.artifact').attr('fill', '#d3d3d3');
+              temp.selectAll('circle.artifact').attr('fill', onArtifactColor);
             } else if (f.type === 'artifact' || f.type === 'fragment') {
               temp
                 .selectAll('circle.artifact')
@@ -850,18 +944,30 @@ const BubbleVis = (props: BubbleProps) => {
               .filter((f, i, n) => {
                 return n[i].innerText.includes(d.title);
               });
-
+             
+              const elementPosition =  document.getElementById(`threaded-${d.activity_uid}`).getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - 100;
+              
             if (activities.nodes().length > 0) {
               activities
                 .nodes()[0]
-                .scrollIntoView({ behavior: 'smooth', block: 'start' });
+                .scrollIntoView({ 
+                  behavior: 'smooth', 
+                  // block: 'center',
+                  top: offsetPosition
+                });
             }
           }
+
+          console.log('d3 mouse', d.activity_uid);
+          d3.select(`#threaded-${d.activity_uid}`).style('background-color', '#fed758')
         })
         .on('mouseout', () => {
           d3.select('#tooltip').style('opacity', 0);
           d3.select('#date_line').remove();
           d3.select('#label-group').remove();
+
+          d3.select(`#threaded-${d3.select(event.target).data()[0].activity_uid}`).style('background-color', '#fff');
         })
         .on('click', (event: any, d: any) => {
           const activities = d3
@@ -1061,7 +1167,7 @@ const BubbleVis = (props: BubbleProps) => {
         flex: flexAmount,
         paddingTop: '30px',
         paddingLeft: groupBy ? 30 : 0,
-        width: bubbleDivWidth,
+        width: 500,
         overflowX: 'auto',
       }}
     >
@@ -1121,7 +1227,7 @@ const BubbleVis = (props: BubbleProps) => {
       <svg
         ref={svgRef}
         width={
-          groupBy !== null ? researchThreads.research_threads.length * 280 : 600
+          groupBy !== null ? researchThreads.research_threads.length * 280 : '600px'
         }
         height={height}
         style={{ display: 'inline' }}

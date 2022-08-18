@@ -474,7 +474,7 @@ const BubbLabel = () => {
         zIndex: 6000,
         position: 'absolute',
         top: 0,
-        left: 600,
+        left: 700,
       }}
     >
       <svg>
@@ -512,9 +512,10 @@ const BubbLabel = () => {
   );
 };
 
-const PaperView = (props: { folderPath: string }) => {
-  const { folderPath } = props;
+const PaperView = (props: any) => {
+  const { folderPath, windowDimension, setWindowDimension } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
+  console.log('folder path???', folderPath);
   const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
@@ -622,6 +623,8 @@ const PaperView = (props: { folderPath: string }) => {
                 defineEvent={null}
                 bubbleDivWidth={bubbleDivWidth}
                 setBubbleDivWidth={setBubbleDivWidth}
+                windowDimension={windowDimension}
+                setWindowDimension={setWindowDimension}
               />
             </div>
           )}
