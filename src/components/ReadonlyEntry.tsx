@@ -113,40 +113,26 @@ const ReadonlyEntryFile = (props: ReadonlyEntryFilePropTypes) => {
                   ],
                 });
               } else {
-                d3.select('#popover-det').remove();
-
-                const pop = d3
-                  .select('body')
-                  .append('div')
-                  .attr('id', 'popover-det');
-                pop
-                  .style('position', 'absolute')
-                  .style('left', '370px')
-                  .style('top', '100px')
-                  .style('width', '700px')
-                  .style('padding', '10px')
-                  .style('background-color', '#fff')
-                  .style('border', '2px solid gray')
-                  .style('border-radius', '10px')
-                  .style('z-index', '6000');
-
-                const cancel = pop
-                  .append('div')
-                  .style('background-color', '#d3d3d3')
-                  .style('border-radius', '6px');
-                cancel.append('text').text('x').style('font-weight', '900');
-                cancel.style('float', 'right');
-                cancel.style('cursor', 'pointer');
-                cancel.on('click', () => pop.remove());
-
-                const textDiv = pop.append('div');
-                textDiv.html(
-                  '<div>THIS IS WHERE THE DETAIL FOR THE ARTIFACT GOES.</div>'
-                );
-
-                pop.style('height', '800px');
-              }
+                setViewType('detail view');
+                dispatch({
+                  type: 'SELECTED_ARTIFACT',
+                  activity: thisEntry,
+                  artifactIndex: i,
+                  hopArray: [
+                    {
+                      activity: thisEntry,
+                      artifactUid: thisEntry.files[i].artifact_uid,
+                      hopReason: 'first hop',
+                    },
+                  ],
+                });
+                dispatch({
+                  type: 'UPDATE_GO_BACK',
+                  goBackView: 'paper',
+                  filterQuery: null//query.matches.map((m) => m.entry.title),
+                });
             }}
+          }
           >
             See in detail
           </Button>

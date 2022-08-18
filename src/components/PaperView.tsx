@@ -189,7 +189,9 @@ const PageNavigation = (props: any) => {
   );
 };
 
-const DetailComponent = () => {
+const DetailComponent = (props) => {
+
+  const {setViewType} = props;
   const [{ viewParams, researchThreads, projectData }] = useProjectState();
 
   const associatedThreads = useMemo(() => {
@@ -219,7 +221,7 @@ const DetailComponent = () => {
         <ThreadNav viewType="paper" />
       )}
       <div style={{ overflow: 'auto', height: '100vh' }}>
-        <ProjectListView />
+        <ProjectListView setViewType={setViewType}/>
       </div>
       {associatedThreads.length > 0 &&
       viewParams &&
@@ -488,10 +490,10 @@ const BubbLabel = () => {
 };
 
 const PaperView = (props: any) => {
-  const { folderPath, windowDimension, setWindowDimension } = props;
+  const { folderPath, windowDimension, setWindowDimension, setViewType } = props;
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
-  console.log('folder path???', folderPath);
-  const perf = joinPath(folderPath, '2022_trevo_new_links.pdf');
+
+  const perf = joinPath(folderPath, '2022_trevo_new_links-compressed.pdf');
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
 
   let passedLink = linkData
@@ -580,7 +582,7 @@ const PaperView = (props: any) => {
             width: '350px',
           }}
         >
-          <DetailComponent />
+          <DetailComponent setViewType={setViewType}/>
         </div>
         <div style={{ height: '100%', float: 'left' }}>
           {viewParams && viewParams.granularity === 'artifact' ? (
