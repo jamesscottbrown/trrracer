@@ -54,7 +54,7 @@ export default function App() {
        setPath(
         `${
           isDev ? 'http://localhost:9999' : '.'
-        }/trrracer/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
+        }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
       ); // TODO: make not a constant
     }else if(views.path){
       
