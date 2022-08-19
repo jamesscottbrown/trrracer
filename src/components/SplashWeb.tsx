@@ -26,42 +26,44 @@ const SplashWeb = (props: SplashWebPropType) => {
   const { setPath, isDev } = props;
 
   return (
-    <Container>
-      <Heading as="h1">Welcome to Trracer!</Heading>
-      <div
-        style={{
-          width: '400px',
-          margin: 'auto',
-          backgroundColor: '#d3d3d3',
-          padding: '10px',
-        }}
-      >
-        <p>Open a project :</p>
-        <>
-          <UnorderedList>
-            {projectChoices.map((pc) => (
-              <ListItem>
-                <IconButton
-                  icon={<BiLinkExternal />}
-                  aria-label="Open project"
-                  onClick={() => {
-                    document.cookie = `folderName=${pc.data}`; //'dark_mode=true'
-                    setPath(
-                      `${
-                        isDev ? 'http://localhost:9999' : '.'
-                      }/.netlify/functions/download-gdrive-file/?folderName=${
-                        pc.data
-                      }&fileName=`
-                    );
-                  }}
-                />{' '}
-                {pc.name}{' '}
-              </ListItem>
-            ))}
-          </UnorderedList>
-        </>
-      </div>
-    </Container>
+    <div style={{ display: 'flex', alignItems: 'center', height: '100vh' }}>
+      <Container style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+        <Heading as='h1'>Welcome to Trracer!</Heading>
+        <div
+          style={{
+            width: '400px',
+            margin: 'auto',
+            backgroundColor: '#d3d3d3',
+            padding: '10px'
+          }}
+        >
+          <p>Open a project :</p>
+          <>
+            <UnorderedList>
+              {projectChoices.map((pc) => (
+                <ListItem>
+                  <IconButton
+                    icon={<BiLinkExternal />}
+                    aria-label='Open project'
+                    onClick={() => {
+                      document.cookie = `folderName=${pc.data}`; //'dark_mode=true'
+                      setPath(
+                        `${
+                          isDev ? 'http://localhost:9999' : '.'
+                        }/.netlify/functions/download-gdrive-file/?folderName=${
+                          pc.data
+                        }&fileName=`
+                      );
+                    }}
+                  />{' '}
+                  {pc.name}{' '}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </>
+        </div>
+      </Container>
+    </div>
   );
 };
 
