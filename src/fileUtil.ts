@@ -31,7 +31,7 @@ export const openFile = (fileName: string, folderPath: string) => {
     ipcRenderer.send('open-file', path.join(folderPath, fileName));
   } else {
     const name = fileName.endsWith('.gdoc') ? fileName.slice(0, -5) : fileName;
-    window.open(`${folderPath}${fileName}`, '_blank');
+    window.open(`${folderPath}${name}`, '_blank');
   }
 };
 
