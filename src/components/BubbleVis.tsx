@@ -810,6 +810,10 @@ const BubbleVis = (props: BubbleProps) => {
             );
 
             const chosenActivityData = temp.select('.all-activities').data()[0];
+            // don't crash if no activities are visible
+            if (!chosenActivityData) {
+              return;
+            }
 
             if (f.type === 'activity') {
               temp.select('.all-activities').attr('fill', onActivityColor);
