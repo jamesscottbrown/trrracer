@@ -336,10 +336,12 @@ const InteractiveActivityTag = (props: InteractiveActivityTagProps) => {
         </span>
       </Flex>
       : <Flex>
+        <Spacer />
           <span
           style={{ alignSelf: 'center' }}
           >{tag}
           </span>
+          <Spacer />
         </Flex>}
       {expandedTag && (
         <div>

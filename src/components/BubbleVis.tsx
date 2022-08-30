@@ -51,7 +51,7 @@ const RTtooltip = (toolProp: any) => {
   let activityEv = evidence.filter(e => e.type === 'activity');
   let artifactEv = Array.from(d3.group(evidence.filter(e => e.type === 'artifact' || 'fragment'), d => d.artifactTitle));
 
-  console.log(activityEv, artifactEv);
+ 
 
   return (
     <div
@@ -692,7 +692,7 @@ const BubbleVis = (props: BubbleProps) => {
         .select('.all-activities')
         .on('mouseover', (event) => {
 
-          console.log('d3 mouse', d3.select(event.target).data()[0].activity_uid);
+       
 
           if (filterRT) {
             d3.select(event.target)
@@ -959,7 +959,6 @@ const BubbleVis = (props: BubbleProps) => {
             }
           }
 
-          console.log('d3 mouse', d.activity_uid);
           d3.select(`#threaded-${d.activity_uid}`).style('background-color', '#fed758')
         })
         .on('mouseout', () => {

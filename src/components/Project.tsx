@@ -288,7 +288,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
         />
-        <Flex position="relative" top={130}>
+        <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
           <BubbleVis
             groupBy={groupBy}
@@ -411,7 +411,12 @@ const Project = (ProjectPropValues: ProjectProps) => {
           hideByDefault={hideByDefault}
           setAddEntrySplash={setAddEntrySplash}
         />
-        <PaperView folderPath={folderPath} windowDimension={windowDimension} setWindowDimension={setWindowDimension} />
+        <PaperView 
+        folderPath={folderPath} 
+        windowDimension={windowDimension} 
+        setWindowDimension={setWindowDimension} 
+        setViewType={setViewType}
+        />
       </div>
     );
   }

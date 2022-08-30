@@ -239,7 +239,9 @@ const QueryBar = (queryProps: QueryProps) => {
           h="1.75rem"
           size="sm"
           onClick={() => {
+            console.log('IS THIS WORKING');
             if (setSearchTermArtifact) {
+
               setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(
