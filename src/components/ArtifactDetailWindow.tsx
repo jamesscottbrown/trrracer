@@ -25,6 +25,9 @@ import ActivityTitlePopoverLogic from './PopoverTitle';
 interface DetailProps {
   setViewType: (view: string) => void;
   goBackView: any;
+  bubbleDivWidth: number;
+  setBubbleDivWidth: (value: (((prevState: number) => number) | number)) => void;
+  windowDimension: { width: number, height: number };
 }
 
 const ArtifactDetailWindow = (props: DetailProps) => {
@@ -58,7 +61,7 @@ const ArtifactDetailWindow = (props: DetailProps) => {
     Array.from(Array(projectData.entries.length), (_) => false)
   );
 
-  const [fragSelected, setFragSelected] = useState(null);
+  const [fragSelected, setFragSelected] = useState<boolean>(false);
 
   let selectedFileType = selectedArtifact.activity.files[selectedArtifact.artifactIndex].title.split('.').at(-1);
 
