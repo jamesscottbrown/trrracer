@@ -17,9 +17,7 @@ const EditDate = (props: EditDateTypes) => {
   const { date, field, msg } = props;
   const [{ projectData }, dispatch] = useProjectState();
 
-  const entryDates = projectData.entries.map(
-    (e: EntryType) => new Date(e.date)
-  );
+  const entryDates = projectData.entries.map((e) => new Date(e.date));
   const firstDate = min(entryDates);
   const finalDate = max(entryDates);
 

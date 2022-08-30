@@ -63,7 +63,6 @@ const AddEntryForm = (props: AddEntryFormPropsType) => {
     };
     return (
       <DatePicker
-        style={{ cursor: 'pointer' }}
         selected={new Date(currentDateVal)}
         onChange={updateDate}
         dateFormat="dd MMMM yyyy"

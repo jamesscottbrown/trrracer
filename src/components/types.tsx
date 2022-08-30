@@ -122,17 +122,22 @@ type GoogleDocParagraph = {
   paragraphStyle: GoogleParagraphStyle;
 };
 
+type GooogleDocSectionBreak = {
+  sectionBreak: any;
+  endIndex: number;
+};
+
 type GoogleDocContent = {
   startIndex: number;
   endIndex: number;
-  paragraph?: GoogleDocParagraph;
+  paragraph: GoogleDocParagraph;
 };
 
 type GoogleDocData = {
   title: string;
 
   body: {
-    content: GoogleDocContent;
+    content: (GoogleDocContent | GooogleDocSectionBreak)[];
   };
 
   revisionId: string;
@@ -185,13 +190,15 @@ type FileTypesType = {
 
 type QueryType = {
   term: string;
-  matches: {
-    entry: any;
-    textMatch: any[];
-    googMatch: any[];
-    titleMatch: boolean;
-  }[];
+  matches: QueryMatchType[];
 };
+
+type QueryMatchType = {
+  entry: any;
+  textMatch: any[];
+  googMatch: any[];
+  titleMatch: boolean;
+}
 
 type HopEntryType = {
   activity: any;
@@ -225,7 +232,7 @@ type ProjectState = {
   query: null | QueryType;
   artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
-  txtData?: TxtData[];
+  txtData?: TxtData;
   researchThreads?: ResearchThreadData;
   selectedActivityURL: null | string;
   highlightedTag?: string;
@@ -269,9 +276,12 @@ export {
   File,
   FileObj,
   FileTypesType,
+  GoogleData,
   GoogleDocContent,
+  GoogleDocData,
   GoogleDocParagraph,
   GoogleParagraphStyle,
+  GoogleTextElement,
   URLAttachment,
   TagType,
   TxtData,
@@ -280,6 +290,7 @@ export {
   ProjectState,
   ProjectType,
   ProjectViewProps,
+  QueryMatchType,
   ResearchThread,
   ResearchThreadEvidence,
   ResearchThreadData,

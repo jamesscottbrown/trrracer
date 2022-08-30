@@ -57,8 +57,6 @@ const EditDate = (props: EditDateTypes) => {
 type FileContextProps = {
   file: File;
   entryIndex: number;
-  fileIndex: number;
-  dispatch: any;
 };
 
 const FileContext = (props: FileContextProps) => {
@@ -356,7 +354,7 @@ const Entry = (props: EntryPropTypes) => {
         <br />
         <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
-          {filterfiles.map((file: File, j) => (
+          {filterfiles.map((file, j) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt

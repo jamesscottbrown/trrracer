@@ -34,7 +34,20 @@ const getName = (parsed: any, activities: any, researchThreads: any) => {
   }
 };
 
-const PageNavigation = (props: any) => {
+type PageNavigationProps = {
+  pageData: string;
+  pageNumber: number;
+  numPages: number;
+  pageRectData: { pageIndex: number, anno: unknown[] }[];
+  anno: [any, unknown[]][] | null;
+  onDocumentLoadSuccess: (numPages: any) => void;
+  previousPage: () => void;
+  nextPage: () => void;
+  perf: any;
+  setToolHtml: React.Dispatch<React.SetStateAction<string>>;
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+};
+const PageNavigation = (props: PageNavigationProps) => {
   const {
     pageData,
     pageNumber,
@@ -252,7 +265,14 @@ const DetailComponent = (props) => {
   );
 };
 
-const CitationIcon = (props: any) => {
+type CitationIconProps = {
+  link: any;
+  setPosition: (value: (((prevState: number[]) => number[]) | number[])) => void;
+  setHTML: React.Dispatch<React.SetStateAction<string>>;
+  index: number;
+  rectWidth: number;
+};
+const CitationIcon = (props: CitationIconProps) => {
   const { link, setPosition, setHTML, index, rectWidth } = props;
   const [{ projectData, researchThreads }] = useProjectState();
 
@@ -290,13 +310,13 @@ const CitationIcon = (props: any) => {
       transform={calcPos(index)}
     >
       <a href={link.url}>
-        <WhichFA link={link} index={index} />
+        <WhichFA link={link} />
       </a>
     </g>
   );
 };
 
-const WhichFA = (props: any) => {
+const WhichFA = (props: { link: any }) => {
   const { link } = props;
   const [{ viewParams }] = useProjectState();
 
@@ -376,8 +396,15 @@ const WhichFA = (props: any) => {
   );
 };
 
-const CitationVis = (props: any) => {
-  const { pageNumber, pageRectData, setPosition, setToolHtml } = props;
+type CitationVisProps = {
+  pageNumber: number;
+  pageRectData: { pageIndex: number; anno: unknown[] }[];
+  setPosition: React.Dispatch<React.SetStateAction<number[]>>;
+  setToolHtml: React.Dispatch<React.SetStateAction<string>>;
+};
+const CitationVis = (props: CitationVisProps) => {
+  const { pageNumber, pageRectData, setPosition, setToolHtml } =
+    props;
 
   const svgRef = React.useRef(null);
   const iconSize = 20;
@@ -423,8 +450,6 @@ const CitationVis = (props: any) => {
                   index={j}
                   setPosition={setPosition}
                   setHTML={setToolHtml}
-                  rectH={rectHeight}
-                  total={prd.anno.length}
                   rectWidth={calWidth(prd.anno.length)}
                 />
               ))}
@@ -504,7 +529,7 @@ const PaperView = (props: any) => {
 
   const anno = linkData ? d3.groups(linkData, (d) => d.page) : null;
   const index = filterRT?.rtId || 0;
-  const [numPages, setNumPages] = useState(null);
+  const [numPages, setNumPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1); // setting 1 to show fisrt page
   const [bubbleDivWidth, setBubbleDivWidth] = useState(200);
   const [pageData, setPageData] = useState('');
@@ -608,10 +633,8 @@ const PaperView = (props: any) => {
             </div>
           )}
           <CitationVis
-            anno={anno}
             pageNumber={pageNumber}
             pageRectData={pageRectData}
-            index={index}
             setToolHtml={setToolHtml}
             setPosition={setPosition}
           />

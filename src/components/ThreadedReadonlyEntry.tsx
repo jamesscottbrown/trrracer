@@ -108,8 +108,23 @@ const ReadonlyArtifact = (props: ReadonlyArtifactPropTypes) => {
   );
 };
 
-const ThreadedArtifact = (props: any) => {
-  const { setViewType, openFile, fileData, thisEntry, folderPath, i } = props;
+type ThreadedArtifactProps = {
+  setViewType: (viewType: string) => void;
+  openFile: (a: string, fp: string) => void;
+  fileData: File;
+  thisEntry: EntryType;
+  folderPath: string;
+  i: number;
+};
+const ThreadedArtifact = (props: ThreadedArtifactProps) => {
+  const {
+    setViewType,
+    openFile,
+    fileData,
+    thisEntry,
+    folderPath,
+    i,
+  } = props;
 
   const [, dispatch] = useProjectState();
 
@@ -187,7 +202,11 @@ const ThreadedArtifact = (props: any) => {
   );
 };
 
-const ActivityTitleLogic = (props: any) => {
+type ActivityTitleLogicProps = {
+  thisEntry: EntryType;
+  color: string;
+};
+const ActivityTitleLogic = (props: ActivityTitleLogicProps) => {
   const { thisEntry, color } = props;
   return (
     <div
@@ -211,7 +230,14 @@ const ActivityTitleLogic = (props: any) => {
   );
 };
 
-const ThreadedReadonlyEntry = (props: any) => {
+type ThreadedReadonlyEntryProps = {
+  activityID: string;
+  makeEditable: (index: number, isEditable: boolean) => void;
+  openFile: (a: string, fp: string) => void;
+  setViewType: (vieType: string) => void;
+  viewType: string;
+};
+const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
   const { activityID, makeEditable, openFile, setViewType, viewType } = props;
 
   const [{ projectData, researchThreads, filterRT, folderPath, isReadOnly }] =
