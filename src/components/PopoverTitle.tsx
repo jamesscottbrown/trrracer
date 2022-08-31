@@ -47,18 +47,10 @@ const ActivityTitlePopoverLogic = (
             cursor: 'pointer',
           }}
           onMouseOver={() => {
-            const circles = d3.selectAll('circle.all-activities');
-
-            circles
-              .filter((f) => f.title === activityData.title)
-              .attr('fill', 'red');
+            dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: activityData });
           }}
           onMouseLeave={() => {
-            const circles = d3.selectAll('circle.all-activities');
-
-            circles
-              .filter((f) => f.title === activityData.title)
-              .attr('fill', '#d3d3d3');
+            dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: null });
           }}
         >
           {activityData.title}

@@ -234,6 +234,7 @@ type ProjectState = {
   filteredActivities: EntryType[];
   hopArray: HopEntryType[];
   viewParams: ViewParams;
+  hoverActivity?: EntryType;
 };
 
 interface ProjectViewProps {
