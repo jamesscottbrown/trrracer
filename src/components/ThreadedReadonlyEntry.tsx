@@ -387,7 +387,7 @@ const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
                       }}
                     >
                       {nonThreadedTags.length}
-                      {threadedTags.length > 0 ? ' More Tags' : 'Tags'}
+                      {threadedTags.length > 0 ? ' More Tags' : ' Tags'}
                     </Badge>
                   </PopoverTrigger>
 
