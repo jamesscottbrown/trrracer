@@ -36,6 +36,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     return test.length > 0;
   });
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const updateEntryField = (fieldName: string, newValue: any) => {
     dispatch({
       type: 'UPDATE_ENTRY_FIELD',

@@ -34,7 +34,11 @@ type MiniTimelineProps = {
   activities: EntryType[];
 };
 
-export const CreateThreadComponent = (props: any) => {
+type CreateThreadComponentPropType = {
+   setShowCreateThread: React.Dispatch<React.SetStateAction<boolean>>
+};
+
+export const CreateThreadComponent = (props: CreateThreadComponentPropType) => {
   const { setShowCreateThread } = props;
   const [{ projectData }, dispatch] = useProjectState();
 
@@ -357,7 +361,13 @@ const EditableThread = (threadProps: EditableThreadPropType) => {
   );
 };
 
-const ThreadBanner = (props: any) => {
+type ThreadBannerPropType = {
+  index: number;
+  rt: ResearchThread;
+  expanded: boolean;
+  setExpanded: (value: (((prevState: boolean) => boolean) | boolean)) => void;
+};
+const ThreadBanner = (props: ThreadBannerPropType) => {
   const { index, rt, expanded, setExpanded } = props;
   const [{ isReadOnly, filterRT }, dispatch] = useProjectState();
   const [bannerColor, setBannerColor] = useState(
