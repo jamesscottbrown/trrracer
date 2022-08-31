@@ -66,7 +66,14 @@ export const HighlightedActivity = (props: any) => {
     setHoverData(event);
     setMousedOverActivity(event);
 
-    // TODO: convert
+    const el = document.getElementById(`${filterRT ? "threaded" : "unthreaded"}-${event.activity_uid}`);
+    console.log(`threaded-${event.activity_uid}`)
+    console.log("el:", el);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // TODO: convert?
     /*
     if (filterRT) {
       let activities = d3
@@ -109,14 +116,10 @@ export const HighlightedActivity = (props: any) => {
   };
 
   const onClick = () => {
-    // TODO: chekc this works, and make less hacky
-
-    const activities = d3.selectAll('.list-activity').filter((f, i, n) => {
-      return d3.select(n[i]).attr('id') === event.title;
-    });
-    activities
-      .nodes()[0]
-      .scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const el = document.getElementById(`${filterRT ? "threaded" : "unthreaded"}-${event.activity_uid}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
