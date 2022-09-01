@@ -82,6 +82,8 @@ const BubbleVis = (props: BubbleProps) => {
 
   const [mousedOverActivity, setMousedOverActivity] = useState(false);
 
+  const [mouseDownTime, setMouseDownTime] = useState(null);
+
   const width = 350;
   const translateXforWraps = 90;
   const [height, setHeight] = useState(windowDimension.height - 200);
@@ -240,7 +242,28 @@ const BubbleVis = (props: BubbleProps) => {
             : '600px'
         }
         height={height}
-        style={{ display: 'inline' }}
+        style={{ display: 'inline', cursor: 'crosshair' }}
+        onMouseDown={(ev) => setMouseDownTime(yScale.invert(ev.clientY - svgRef.current.getBoundingClientRect().y - translateY))}
+        onMouseUp={(ev) => {
+          if (mouseDownTime){
+            const mouseUpTime = yScale.invert(ev.clientY - svgRef.current.getBoundingClientRect().y - translateY);
+
+            if (mouseUpTime > mouseDownTime) {
+              dispatch({
+                type: 'UPDATE_FILTER_DATES',
+                filterDates: [mouseDownTime, mouseUpTime]
+              });
+
+            } else {
+              dispatch({
+                type: 'UPDATE_FILTER_DATES',
+                filterDates: [mouseUpTime, mouseDownTime]
+              });
+
+            }
+            setMouseDownTime(null);
+          }
+        }}
       >
         <g
           className='under-wrap'

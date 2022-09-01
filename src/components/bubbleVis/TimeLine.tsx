@@ -28,7 +28,8 @@ const yAxisGroup = wrap
     .selectAll('text')
     .join('text')
     .attr('font-size', '0.55rem')
-    .attr('opacity', 0.5);
+    .attr('opacity', 0.5)
+    .style("user-select", "none");
 
   return <g ref={axisRef} transform={`translate(10, 0)`} />;
 };

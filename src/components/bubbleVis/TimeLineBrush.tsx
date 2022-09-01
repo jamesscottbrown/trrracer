@@ -87,13 +87,8 @@ const BrushDefiningEvent = (props) => {
 */
 
 const BrushFiltering = (props) => {
-  const { windowDimension, margin, usedEntries, yScale } = props;
+  const { usedEntries, yScale, selectedActivityURL } = props;
   const [{ filterDates, projectData }, dispatch] = useProjectState();
-
-
-  // const triangle = d3.symbol().size(50).type(d3.symbolTriangle);
-
-  // TODO: actually update on drag
 
   const filteredActivitiesExtentTest = d3.extent(
     usedEntries.map((m: any) => new Date(m.date))
@@ -120,21 +115,26 @@ const BrushFiltering = (props) => {
   });
 
 
-  const dragEndTime1 = (ev) => {
-    console.log('DRAG end:', ev);
+  const resetTime = () => {
+    dispatch({
+      type: 'UPDATE_FILTER_DATES',
+      filterDates: [null, null]
+    });
   };
 
-
   // prettier-ignore
-  return <g fill='none' pointerEvents='all'>
+  return <g fill='none' pointerEvents='all' >
+
+    {!selectedActivityURL && <text transform="translate(-35, -30)" style={{fontSize: '12px', cursor: 'pointer', fill: 'black'}} onClick={resetTime}>Reset Time</text>}
+
     <rect className='overlay' pointerEvents='all' cursor='crosshair' x='0' y='0' width='20' height='1557.2' />
-    <rect className='selection' cursor='move' fill='#777' fillOpacity='0.3' stroke='#fff' shapeRendering='crispEdges'
-          x='0' y='0' width='20' height={windowDimension.height - 200 - margin} opacity='0.2' />
-    <rect className='handle handle--n' cursor='ns-resize' x='-4' y='-4' width='28' height='8' />
-    <rect className='handle handle--s' cursor='ns-resize' x='-4' y='1553.2' width='28' height='8' />
+    <rect className='selection' fill='#777' fillOpacity='0.3' stroke='#fff' shapeRendering='crispEdges'
+          x='0' y={yScale(startDate)} width='20' height={yScale(endDate) - yScale(startDate)} opacity='0.2' />
+    <rect className='handle handle--n' x='-4' y='-4' width='28' height='8' />
+    <rect className='handle handle--s' x='-4' y='1553.2' width='28' height='8' />
     <g className='handles handle--o' fill='black' opacity='1'
-       transform={`translate(0, ${yScale(filteredActivitiesExtent[0])})`}>
-      <rect className='handle-rect' fill='#fff' width='70' height='13' y='-13' x='-50' onDragEnd={dragEndTime1}></rect>
+       transform={`translate(0, ${yScale(startDate)})`}>
+      <rect className='handle-rect' fill='#fff' width='70' height='13' y='-13' x='-50'></rect>
       <text textAnchor='middle' dy='-2' style={{ fontSize: '11px', pointerEvents: 'none' }}>{startDateString}
       </text>
       <path className='triangle handle--o'
@@ -143,8 +143,7 @@ const BrushFiltering = (props) => {
       <line className='line handle--o' x1='0' y1='0' x2='20' y2='0' stroke='black' />
     </g>
     <g className='handles handle--e' fill='black' opacity='1'
-       transform={`translate(0, ${yScale(filteredActivitiesExtent[0])})`}>
-      <rect className='handle-rect' fill='#fff' width='70' height='13' y='0' x='-50' />
+       transform={`translate(0, ${yScale(endDate)})`} y='0' x='-50' >
       <text textAnchor='middle' dy='10' style={{ fontSize: '11px', pointerEvents: 'none' }}>{endDateString}
       </text>
       <path className='triangle handle--e'
@@ -152,33 +151,7 @@ const BrushFiltering = (props) => {
             transform='translate(20, 17) rotate(180)' />
       <line className='line handle--e' x1='0' y1='0' x2='20' y2='0' stroke='black' />
     </g>
-  </g>
-    ;
-
-  // TOOD: re-enable
-  /*
-   if (!selectedActivityURL) {
-     const resetTest = svg.select('text.reset');
-
-     const reset = resetTest.empty()
-       ? wrapAxisGroup.append('text').classed('reset', true)
-       : resetTest;
-
-     reset
-       .text('Reset Time')
-       .attr('transform', 'translate(-25, -30)')
-       .style('font-size', '12px')
-       .style('cursor', 'pointer')
-       .on('click', () => {
-         dispatch({
-           type: 'UPDATE_FILTER_DATES',
-           filterDates: [null, null]
-         });
-       });
-   }
-
-   */
-
+  </g>;
 };
 
 export const TimeLineBrush = (props) => {
@@ -202,10 +175,8 @@ export const TimeLineBrush = (props) => {
     return null;
 //    return <BrushDefiningEvent />;
   } else {
-    return <BrushFiltering windowDimension={windowDimension} margin={margin} usedEntries={usedEntries}
-                           yScale={yScale} />;
+    return <BrushFiltering usedEntries={usedEntries} yScale={yScale} selectedActivityURL={selectedActivityURL} />;
   }
-
 
   return (
     <rect
