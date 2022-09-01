@@ -135,7 +135,7 @@ const BrushFiltering = (props) => {
     <g className='handles handle--o' fill='black' opacity='1'
        transform={`translate(0, ${yScale(startDate)})`}>
       <rect className='handle-rect' fill='#fff' width='70' height='13' y='-13' x='-50'></rect>
-      <text textAnchor='middle' dy='-2' style={{ fontSize: '11px', pointerEvents: 'none' }}>{startDateString}
+      <text textAnchor='middle' dy='-2' style={{ fontSize: '11px', pointerEvents: 'none', userSelect: 'none' }}>{startDateString}
       </text>
       <path className='triangle handle--o'
             d='M0,-6.204032394013997L5.372849659117709,3.1020161970069986L-5.372849659117709,3.1020161970069986Z'
@@ -144,7 +144,7 @@ const BrushFiltering = (props) => {
     </g>
     <g className='handles handle--e' fill='black' opacity='1'
        transform={`translate(0, ${yScale(endDate)})`} y='0' x='-50' >
-      <text textAnchor='middle' dy='10' style={{ fontSize: '11px', pointerEvents: 'none' }}>{endDateString}
+      <text textAnchor='middle' dy='10' style={{ fontSize: '11px', pointerEvents: 'none', userSelect: 'none' }}>{endDateString}
       </text>
       <path className='triangle handle--e'
             d='M0,-6.204032394013997L5.372849659117709,3.1020161970069986L-5.372849659117709,3.1020161970069986Z'
