@@ -331,7 +331,7 @@ const BubbleVis = (props: BubbleProps) => {
           mousedOverActivity={mousedOverActivity}
         />
       ) : (
-        <ToolTip activityData={hoverData} position={toolPosition} />
+        <ToolTip activityData={hoverData} position={toolPosition} mousedOverActivity={mousedOverActivity} />
       )}
     </div>
   );

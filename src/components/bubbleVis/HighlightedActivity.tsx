@@ -126,6 +126,7 @@ export const HighlightedActivity = (props: any) => {
     <g className="activity" transform={`translate(${event.x}, ${event.y})`}>
       <circle
         className="all-activities"
+        style={{cursor: 'pointer' }}
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}
@@ -200,6 +201,7 @@ const HighLightedArtifact = (props) => {
   return (
     <circle
       className="artifact"
+      style={{cursor: 'pointer' }}
       r={3}
       cx={artifact.x}
       cy={artifact.y}

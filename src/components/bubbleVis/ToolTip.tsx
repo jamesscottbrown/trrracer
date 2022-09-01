@@ -2,7 +2,7 @@ import React from 'react';
 import { ToolIcon } from '../Project';
 
 export const ToolTip = (toolProp: any) => {
-  const { activityData, position } = toolProp;
+  const { activityData, position, mousedOverActivity } = toolProp;
 
   return (
     <div
@@ -20,6 +20,7 @@ export const ToolTip = (toolProp: any) => {
         borderRadius: 10,
         pointerEvents: 'none',
         zIndex: 6000,
+        opacity: mousedOverActivity ? 1 : 0,
       }}
     >
       <span

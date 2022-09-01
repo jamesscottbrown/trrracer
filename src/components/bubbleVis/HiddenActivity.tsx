@@ -10,6 +10,7 @@ export const HiddenActivity = (props) => {
     <g
       className="hidden-activity"
       transform={`translate(${event.x}, ${event.y})`}
+      style={{cursor: 'pointer' }}
     >
       <circle
         className="hidden"
