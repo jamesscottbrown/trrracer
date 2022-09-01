@@ -64,7 +64,7 @@ const ActivityTitlePopoverLogic = (
             <div>
               {researchThreads &&
               researchThreads.research_threads.length > 0 ? (
-                researchThreads.research_threads.map((rt, tIndex: number) => (
+                researchThreads.research_threads.map((rt, tIndex) => (
                   <React.Fragment key={`rt-${tIndex}`}>
                     <ActivitytoThread
                       thread={rt}

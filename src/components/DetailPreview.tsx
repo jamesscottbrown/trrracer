@@ -42,7 +42,7 @@ interface DetailPreviewPropsType {
 const TextRender = (textProps: { textArray: TextArray }) => {
   const { textArray } = textProps;
   if (textArray.length > 1) {
-    return textArray.map((ta: any, i: number) => (
+    return textArray.map((ta, i) => (
       <span
         key={`book-span-${i}`}
         style={{
