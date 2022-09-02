@@ -66,9 +66,16 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       let citationData = action.projectData.citations ? action.projectData.citations : [];
       let newTags = [...action.projectData.tags];
 
+      const googleEnRequest = readProjectFile(baseDir, 'goog_em.json', null);
+      const googleDataRequest = readProjectFile(baseDir, 'goog_doc_data.json', null);
+      const googleCommsRequest = readProjectFile(baseDir, 'goog_comms.json', null);
+      const txtDataRequest = readProjectFile(baseDir, 'text_data.json', null);
+      const relDataRequest = readProjectFile(baseDir, 'roles.json', null);
+      const artifactTYpesRequest = readProjectFile(baseDir, 'artifactTypes.json', null);
+      const linksRequest = readProjectFile(baseDir, 'links.json', null);
+
       try {
-        google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-        
+        google_em = await googleEnRequest;
       } catch (e: any) {
         console.error('could not load google em file');
         google_em = null;
@@ -76,14 +83,13 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
 
       try {
         // google_data = await readProjectFile(baseDir, 'goog_data.json', null);
-        google_data = await readProjectFile(baseDir, 'goog_doc_data.json', null);
-       
+        google_data = await googleDataRequest;
       } catch (e: any) {
         console.error('could not load google data file');
       }
 
       try {
-        google_comms = await readProjectFile(baseDir, 'goog_comms.json', null);
+        google_comms = await googleCommsRequest;
         // console.log('yes to goog comments');
       } catch (e) {
         google_comms = null;
@@ -91,7 +97,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       try {
-        txt_data = await readProjectFile(baseDir, 'text_data.json', null);
+        txt_data = await txtDataRequest
         // console.log('yes to txtData');
       } catch (e) {
         txt_data = null;
@@ -99,14 +105,14 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       try {
-        roleData = await readProjectFile(baseDir, 'roles.json', null);
+        roleData = await relDataRequest;
         // console.log('yes to role data');
       } catch (e) {
         console.error('could not load role data');
       }
 
       try {
-        artifact_types = await readProjectFile(baseDir, 'artifactTypes.json', null);
+        artifact_types = await artifactTYpesRequest;
         // console.log('yes to artifact types data');
       } catch (e) {
         artifact_types = null;
@@ -114,7 +120,7 @@ export const getAppStateReducer = (copyFiles: any, readProjectFile: any, saveJSO
       }
 
       try {
-        link_data = await readProjectFile(baseDir, 'links.json', null);
+        link_data = await linksRequest;
         console.log('yes to linkData', baseDir);
       } catch (e) {
         link_data = null;
