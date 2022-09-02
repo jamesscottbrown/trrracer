@@ -86,6 +86,7 @@ export const getAppStateReducer = (
       const relDataRequest = readProjectFile(baseDir, 'roles.json', null);
       const artifactTypesRequest = readProjectFile(baseDir, 'artifactTypes.json', null);
       const linksRequest = readProjectFile(baseDir, 'links.json', null);
+      const researchThreadsRequest = checkRtFile(baseDir);
 
       try {
         google_em = await googleEnRequest;
@@ -234,7 +235,7 @@ export const getAppStateReducer = (
         console.log('error with tags?');
       }
 
-      const research_threads = await checkRtFile(baseDir);
+      const research_threads = await researchThreadsRequest;
 
       if (isReadOnly) {
         views = queryString.parse(location.search);
