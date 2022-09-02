@@ -248,7 +248,14 @@ const BubbleVis = (props: BubbleProps) => {
           if (mouseDownTime){
             const mouseUpTime = yScale.invert(ev.clientY - svgRef.current.getBoundingClientRect().y - translateY);
 
-            if (mouseUpTime > mouseDownTime) {
+            const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+            if (Math.abs(mouseUpTime - mouseDownTime) < (0.2 * millisecondsPerDay) ){
+               dispatch({
+                type: 'UPDATE_FILTER_DATES',
+                filterDates: [null, null]
+              });
+            } else if (mouseUpTime > mouseDownTime) {
               dispatch({
                 type: 'UPDATE_FILTER_DATES',
                 filterDates: [mouseDownTime, mouseUpTime]
