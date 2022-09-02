@@ -418,10 +418,7 @@ export const getAppStateReducer = (
         // loading a project requires waiting for files to load over the network
         // the simplest way to handle this is to handle this in an async function,
         // and dispatch a new message to save the project data when it is ready
-        getData(action, isReadOnly).then((data) =>
-          action.dispatch({ type: 'SAVE_DATA', data })
-        );
-
+        getData(action, isReadOnly).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
         return state;
       }
       case 'SAVE_DATA': {
