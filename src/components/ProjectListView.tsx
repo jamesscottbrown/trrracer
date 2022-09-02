@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { EntryTypeWithIndex, ProjectViewProps } from './types';
+import { EntryTypeWithIndex } from './types';
 import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
 
 const ProjectListView = (ProjectPropValues: any) => {
-  const {
-    setViewType,
-    viewType,
-  } = ProjectPropValues;
+  const { setViewType, viewType, width } = ProjectPropValues;
+  const [{ 
+    projectData, 
+    selectedActivityURL, 
+    filteredActivities }] =
+    useProjectState();
 
-  //selectedActivityURL !== null
-  const [{projectData, selectedActivityURL, filteredActivities},] = useProjectState();
-
-  let [usedEntries, setUsedEntries] = useState(filteredActivities)
+  const [usedEntries, setUsedEntries] = useState(filteredActivities);
 
   useEffect(() => {
-
-    if(selectedActivityURL !== null){
-      setUsedEntries(projectData.entries.filter(f => f.activity_uid === selectedActivityURL))
-    }else{
-      setUsedEntries(filteredActivities)
+    if (selectedActivityURL) {
+      setUsedEntries(
+        projectData.entries.filter(
+          (f) => f.activity_uid === selectedActivityURL
+        )
+      );
+    } else {
+      setUsedEntries(filteredActivities);
     }
-
-  }, [selectedActivityURL, projectData.entries.length, filteredActivities.length])
+  }, [
+    selectedActivityURL,
+    projectData.entries.length,
+    filteredActivities.length,
+  ]);
 
   const [editable, setEditable] = useState<boolean[]>(
     Array.from(Array(projectData.entries.length), () => false)
@@ -33,16 +38,9 @@ const ProjectListView = (ProjectPropValues: any) => {
       // one more entry was added
       setEditable([...editable, true]);
     } else if (editable.length !== projectData.entries.length) {
-      setEditable(
-        Array.from(Array(projectData.entries.length), () => false)
-      );
+      setEditable(Array.from(Array(projectData.entries.length), () => false));
     }
   }, [projectData.entries.length, filteredActivities.length]);
-
-  // useEffect(() => {
-  //   setEditable(Array.from(Array(projectData.entries.length), () => false));
-  //   setEditableStatus(selectedEntryIndex, true);
-  // }, [selectedEntryIndex]);
 
   const setEditableStatus = (index: number, isEditable: boolean) => {
     setEditable((oldEditable) =>
@@ -51,8 +49,12 @@ const ProjectListView = (ProjectPropValues: any) => {
   };
 
   return (
-    <div style={{ padding: '10px', marginTop: '20px' }}>
-      
+    <div style={{ 
+      padding: '10px', 
+      marginTop: '20px', 
+      width: width ? width : '100%',
+      float: 'right'
+      }}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
         <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}

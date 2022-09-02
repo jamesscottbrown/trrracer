@@ -8,6 +8,7 @@ interface File {
   fileId?: string;
   artifactType: string;
   artifact_uid: string;
+  meta: string; // ?
 }
 
 interface FileObj {
@@ -45,12 +46,14 @@ interface EntryTypeWithIndex {
   quoteTags: string[];
   isPrivate: boolean;
   artifact_uid: string;
+  activity_uid: string;
 }
 
 interface TagType {
   title: string;
   color: string;
   dob: string;
+  matches?: string[];
 }
 
 interface ReactTagType {
@@ -63,22 +66,37 @@ interface DeadlineType {
   date: string;
 }
 
+interface Citation {
+  id: string;
+  cIndex: number;
+}
 interface ProjectType {
   title: string;
   description: string;
   tags: TagType[];
   entries: EntryType[];
   eventArray: any[];
+
+  citations: Citation[];
 }
 
 type ResearchThreadEvidence = {
   type: string;
   activityTitle?: string;
+  activity_index: number;
+  ResearchThreadEvidence: string;
+  artifactTitle: string;
   artifactIndex?: string; // or number?
+  dob: string;
+  rationale: string;
 };
 
 type ResearchThread = {
   evidence: ResearchThreadEvidence[];
+  color: string;
+  title: string;
+  actions: { action: string; when: string }[];
+  rt_id: string;
 };
 
 type ResearchThreadData = {
@@ -104,17 +122,22 @@ type GoogleDocParagraph = {
   paragraphStyle: GoogleParagraphStyle;
 };
 
+type GooogleDocSectionBreak = {
+  sectionBreak: any;
+  endIndex: number;
+};
+
 type GoogleDocContent = {
   startIndex: number;
   endIndex: number;
-  paragraph?: GoogleDocParagraph;
+  paragraph: GoogleDocParagraph;
 };
 
 type GoogleDocData = {
   title: string;
 
   body: {
-    content: GoogleDocContent;
+    content: (GoogleDocContent | GooogleDocSectionBreak)[];
   };
 
   revisionId: string;
@@ -140,57 +163,99 @@ type TxtData = {
   'text-data': TextEntry[];
 };
 
+type ViewParams = {
+  view: string;
+  granularity: 'paper' | 'artifact' | 'thread' | 'activity';
+  cIndex: string;
+  id: string;
+};
+
+// used in some components like LeftSidebar
+type ArtifactTypesType = {
+  title: string;
+  matches: number;
+  color: string;
+};
+
+// used in project state
+type ArtifactTypesType2 = {
+  type: string;
+  color: string;
+};
+
+type FileTypesType = {
+  title: string;
+  matches: number;
+};
+
+type QueryType = {
+  term: string;
+  matches: QueryMatchType[];
+};
+
+type QueryMatchType = {
+  entry: any;
+  textMatch: any[];
+  googMatch: any[];
+  titleMatch: boolean;
+}
+
+type HopEntryType = {
+  activity: any;
+  artifactUid: string;
+  hopReason: string;
+  tag: any;
+};
+
 type ProjectState = {
   projectData: ProjectType;
+  isReadOnly: boolean;
   folderPath: string | null;
   filterTags: string[] | null;
   filterType: string | null;
   filterTypes: string[] | null;
-
-  //NEED TO MAKE THESE MORE SPECIFIC
-  filterDates:any;
-  filterQuery:any;
-  filterRT:any;
-  threadTypeFilterArray:any;
-  query:any;
-  artifactTypes:any;
-
+  // NEED TO MAKE THESE MORE SPECIFIC
+  filterDates: [null | Date, null | Date];
+  filterQuery: string[]; // list of titles of matching activities?
+  filterRT: null | {
+    title: string;
+    key: string[];
+    rtIndex: number;
+    rtId: string;
+    associatedKey: string[];
+  };
+  threadTypeFilterArray: {
+    type: 'string';
+    show: boolean;
+    matches: ResearchThreadEvidence[];
+  }[];
+  query: null | QueryType;
+  artifactTypes: { artifact_types: ArtifactTypesType2[] };
   googleData?: GoogleData;
-  txtData?: TxtData[];
+  txtData?: TxtData;
   researchThreads?: ResearchThreadData;
-  selectedThread?: number;
-
   selectedActivityURL: null | string;
-
   highlightedTag?: string;
   highlightedType?: string;
-
-  selectedArtifactEntry: EntryTypeWithIndex; // ?
-  selectedArtifactIndex: number;
-
-  filteredActivities:any;
-
-  hopArray: any[];
-  
+  selectedArtifact: { activity: EntryTypeWithIndex; artifactIndex: number };
+  filteredActivities: EntryType[];
+  hopArray: HopEntryType[];
+  viewParams: ViewParams;
 };
 
 interface ProjectViewProps {
   projectData: ProjectType;
   filteredActivites: EntryType[];
   folderPath: string;
-  setViewType: (v: any) => void;
-  setSelectedArtifactIndex: (i: number) => void;
-  setSelectedArtifactEntry: (e: any) => void;
+  setViewType: (v: string) => void;
+  setSelectedArtifact: (e: any) => void;
 }
 
 interface EntryPropTypes {
   entryData: EntryType;
   entryIndex: number;
   openFile: (a: string) => void;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
   allTags: TagType[];
   makeNonEditable: () => void;
 }
@@ -200,25 +265,35 @@ interface ReactTag {
   text: string;
 }
 
+type TextArray = { style: string; textData: string }[];
+
 export {
+  ArtifactTypesType,
   DeadlineType,
   EntryType,
   EntryPropTypes,
   EntryTypeWithIndex,
   File,
   FileObj,
+  FileTypesType,
+  GoogleData,
   GoogleDocContent,
+  GoogleDocData,
   GoogleDocParagraph,
   GoogleParagraphStyle,
+  GoogleTextElement,
   URLAttachment,
   TagType,
   TxtData,
   TextEntry,
+  TextArray,
   ProjectState,
   ProjectType,
   ProjectViewProps,
+  QueryMatchType,
   ResearchThread,
   ResearchThreadEvidence,
+  ResearchThreadData,
   ReactTagType,
   ReactTag,
 };

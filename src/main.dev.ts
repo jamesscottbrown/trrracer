@@ -18,7 +18,6 @@ import log from 'electron-log';
 
 import ProjectLoader from './ProjectLoader';
 import { authenticate } from './authenticateGoogle';
-import { useState } from 'react';
 
 export default class AppUpdater {
   constructor() {
@@ -106,8 +105,8 @@ const openProjectWindow = async (projectPath: string) => {
     } else {
       mainWindow.show();
       mainWindow.focus();
-      
-      console.log('NEED TO ADD THIS BACK IN')
+
+      console.log('NEED TO ADD THIS BACK IN');
       authenticate();
     }
 
@@ -120,7 +119,7 @@ const openProjectWindow = async (projectPath: string) => {
   });
 
   // Open urls in the user's browser
-  const handleRedirect = (e, url) => {
+  const handleRedirect = (e: any, url: string) => {
     if (url !== e.sender.getURL()) {
       e.preventDefault();
       shell.openExternal(url);
@@ -143,7 +142,7 @@ interface MenuDivider {
 }
 
 async function createSplashWindow() {
-  console.log('create splash window')
+  console.log('create splash window');
   const splashWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -268,7 +267,7 @@ app.on('window-all-closed', () => {
 app.whenReady().then(createSplashWindow).catch(console.log);
 
 app.on('activate', () => {
-  console.log('activated!!!!', mainWindow)
+  console.log('activated!!!!', mainWindow);
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   // if (mainWindow === null) createSplashWindow().catch(console.log);

@@ -1,23 +1,26 @@
 import { Box, Button, Textarea } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useProjectState } from './ProjectContext';
+import { EntryTypeWithIndex, ResearchThread } from './types';
 
-const ActivitytoThread = (props: any) => {
+type ActivitytoThreadPropType = {
+  thread: ResearchThread;
+  threadIndex: number;
+  activity: EntryTypeWithIndex;
+  activityIndex: number;
+  setSeeThreadAssign: (seeThreadAssign: boolean) => void;
+};
+
+const ActivitytoThread = (props: ActivitytoThreadPropType) => {
   const [, dispatch] = useProjectState();
 
-  const {
-    thread,
-    threadIndex,
-    activity,
-    activityIndex,
-    setSeeThreadAssign,
-    closePopover,
-  } = props;
+  const { thread, threadIndex, activity, activityIndex, setSeeThreadAssign } =
+    props;
   const [showDesc, setShowDesc] = useState(false);
-  const [threadRat, setThreadRat] = useState(null);
+  const [threadRat, setThreadRat] = useState('');
 
-  const handleDescriptionChange = (e: any) => {
-    const inputValue = e.target.value;
+  const handleDescriptionChange = (e: ChangeEvent) => {
+    const inputValue = (e.target as HTMLInputElement).value;
     setThreadRat(inputValue);
   };
 
@@ -31,7 +34,10 @@ const ActivitytoThread = (props: any) => {
         textAlign: 'center',
       }}
     >
-      <div onClick={() => setShowDesc(true)}>{`Add to "${thread.title}"`}</div>
+      <button
+        onClick={() => setShowDesc(true)}
+        type="button"
+      >{`Add to "${thread.title}"`}</button>
       {showDesc && (
         <>
           <Textarea

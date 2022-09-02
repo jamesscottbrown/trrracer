@@ -11,7 +11,7 @@ export const GoogleAuth = (function () {
     }
 
     function changeAuth(auth) {
-      console.log('auth in singleton', auth);
+      // console.log('auth in singleton', auth);
       _auth = auth;
     }
 
@@ -20,7 +20,6 @@ export const GoogleAuth = (function () {
         ? myApiOauth.setTokens({ refresh_token: _token })
         : myApiOauth.openAuthWindowAndGetTokens().then((token) => {
             _token = token;
-           
 
             // save the token.refresh_token secured to use it the next time the app loading
             // use your token.access_token

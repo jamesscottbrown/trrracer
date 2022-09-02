@@ -27,39 +27,38 @@ hr {
   margin-bottom: 2em;
 }
 
-#pdf-wrap{
-  position:absolute;
-  top:0;
-  right:0;
+#pdf-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
-#button-wrap{
-  position:absolute;
+#button-wrap {
+  position: absolute;
   top: 0px;
-  right:220px;
+  right: 220px;
 }
 
 /* For pdf */
 .react-pdf__Document {
-  position:relative;
-  top:80px;
-  right:10px;
-  width:500px;
+  position: relative;
+  top: 80px;
+  right: 10px;
+  width: 500px;
 }
 
 /* For pdf */
 .react-pdf__Page {
   margin-top: 10px;
   /* display:inline; */
-  width:500px;
-  position:relative;
- 
+  width: 500px;
+  position: relative;
 }
 .react-pdf__Page__textContent {
   border: 1px solid darkgrey;
   box-shadow: 5px 5px 5px 1px #ccc;
   border-radius: 5px;
-  right:10px;
+  right: 10px;
   transform: translate(0, 0) rotate(0deg) !important;
   top: 0px !important;
   left: 0px !important;
@@ -71,10 +70,9 @@ hr {
 
 .react-pdf__Page__canvas {
   margin: 0 auto;
-  position:relative;
-  width:600px;
+  position: relative;
+  width: 600px;
 }
-
 
 /* For markdown editor component */
 @import '~react-mde/lib/styles/css/react-mde-all.css';
@@ -187,36 +185,36 @@ hr {
   margin-bottom: 16px;
 }
 
-.smalltalk{
-  position:absolute;
-  z-index:1000;
-  
-  top:200px;
-  bottom:200px;
-  left:200px;
-  right:200px;
+.smalltalk {
+  position: absolute;
+  z-index: 1000;
+
+  top: 200px;
+  bottom: 200px;
+  left: 200px;
+  right: 200px;
   background-color: aliceblue;
-  padding:10px;
-  min-height:200px;
+  padding: 10px;
+  min-height: 200px;
   box-shadow: 5px 5px 5px 1px #ccc;
   border-radius: 5px;
 }
 
-.smalltalk div.page{
-  margin:auto;
-  width:200px;
-  padding:10px;
+.smalltalk div.page {
+  margin: auto;
+  width: 200px;
+  padding: 10px;
 }
 
-.smalltalk div.page header{
+.smalltalk div.page header {
   font-size: large;
   font-weight: 700;
 }
 
-.smalltalk div.page button{
+.smalltalk div.page button {
   background-color: #777;
   font-weight: 700;
   color: #fff;
-  padding:5px 14px;
-  margin:5px
+  padding: 5px 14px;
+  margin: 5px;
 }

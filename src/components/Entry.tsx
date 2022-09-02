@@ -4,16 +4,15 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  Heading,
   ListItem,
   UnorderedList,
   Flex,
-  Tooltip
+  Tooltip,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
-import { GiCancel, GiSewingString } from 'react-icons/gi';
+import { GiSewingString } from 'react-icons/gi';
 import {
   FaExternalLinkAlt,
   FaLock,
@@ -24,17 +23,14 @@ import {
 import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
 import FileUpload from './FileUpload';
-import { EntryType, File, FileObj, TagType } from './types';
+import { File, FileObj, ResearchThread } from './types';
 import URLList from './URLList';
 import { useProjectState } from './ProjectContext';
 import GoogFileInit from './GoogleFileInit';
 
 interface EditDateTypes {
   date: string;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
 }
 
 const EditDate = (props: EditDateTypes) => {
@@ -44,10 +40,7 @@ const EditDate = (props: EditDateTypes) => {
     // if in GMT, the time will be returned in UTC, so will be 11pm of the day before
     newDate.setHours(newDate.getHours() + 1);
 
-    updateEntryField(
-      'date',
-      newDate.toISOString().substring(0, 10)
-    );
+    updateEntryField('date', newDate.toISOString().substring(0, 10));
   };
 
   return (
@@ -64,21 +57,28 @@ const EditDate = (props: EditDateTypes) => {
 type FileContextProps = {
   file: File;
   entryIndex: number;
-  fileIndex: number;
-  dispatch: any;
 };
 
 const FileContext = (props: FileContextProps) => {
-  const { file, entryIndex, fileIndex, dispatch } = props;
+  const { file, entryIndex } = props;
   const contextFill = file.meta ? file.meta : file.context;
+  const [{ projectData }, dispatch] = useProjectState();
 
-  const contextStarter =
-    contextFill != 'null' ? contextFill : 'No context here yet.';
-
-  const [context, setContext] = useState(contextStarter);
+  const context =
+    contextFill === 'null' || contextFill === null
+      ? 'No context here yet.'
+      : contextFill;
 
   const updateMeta = () => {
-    dispatch({ type: 'FILE_META', entryIndex, fileIndex, context });
+    dispatch({
+      type: 'FILE_META',
+      activityID: projectData.entries[entryIndex].activity_uid,
+      artifactTitle: projectData.entries[entryIndex].title,
+      artifactID: Object.keys(file).includes('artifact_uid')
+        ? file.artifact_uid
+        : null,
+      context: context,
+    });
   };
 
   return (
@@ -95,13 +95,11 @@ const FileContext = (props: FileContextProps) => {
 interface EntryPropTypes {
   activityID: string;
   entryIndex: number;
-  openFile: (a: any) => void;
-  updateEntryField: (
-    fieldName: string,
-    newData: any
-  ) => void;
+  openFile: (fileName: string, filePath: string) => void;
+  updateEntryField: (fieldName: string, newData: any) => void;
   makeNonEditable: () => void;
   files: File[];
+  foundIn: ResearchThread[];
 }
 
 interface ReactTag {
@@ -117,16 +115,20 @@ const Entry = (props: EntryPropTypes) => {
     openFile,
     updateEntryField,
     makeNonEditable,
-    foundIn
+    foundIn,
   } = props;
 
-  const [{projectData}, dispatch] = useProjectState();
+  const [{ projectData, filterRT, folderPath }, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
   const thisEntry = useMemo(() => {
-    return projectData.entries.filter(f => f.activity_uid === activityID)[0];
-  }, [allTags, projectData.entries.length, projectData.entries.flatMap(fm => fm.files).length]);
+    return projectData.entries.filter((f) => f.activity_uid === activityID)[0];
+  }, [
+    allTags,
+    projectData.entries.length,
+    projectData.entries.flatMap((fm) => fm.files).length,
+  ]);
 
   const [value, setValue] = useState(thisEntry.description);
   const [showDescription, setShowDescription] = useState(
@@ -146,8 +148,12 @@ const Entry = (props: EntryPropTypes) => {
   const [showFileUpload, setShowFileUpload] = useState(true);
 
   const saveFiles = (fileList: FileObj[]) => {
-    console.log('fileListtt', fileList, 'activity uid',thisEntry.activity_uid)
-    dispatch({ type: 'ADD_FILES_TO_ENTRY', fileList, entryIndex, activityID: thisEntry.activity_uid });
+    dispatch({
+      type: 'ADD_FILES_TO_ENTRY',
+      fileList,
+      entryIndex,
+      activityID: thisEntry.activity_uid,
+    });
     setShowFileUpload(false);
   };
 
@@ -180,27 +186,31 @@ const Entry = (props: EntryPropTypes) => {
   const filterfiles = files.filter((f) => f.fileType !== 'url');
 
   return (
-    <div style={{ 
-      margin: 'auto',
-      padding:6,
-      border: '1px solid gray',
-      borderRadius: 5
-      }}>
+    <div
+      style={{
+        margin: 'auto',
+        padding: 6,
+        border: '1px solid gray',
+        borderRadius: 5,
+      }}
+    >
       <br />
-      <span style={{
-        fontSize:28,
-      }}>
+      <span
+        style={{
+          fontSize: 28,
+        }}
+      >
         <Editable
           defaultValue={thisEntry.title}
           onSubmit={(val) => {
-            console.log('entry field', val);
-            updateEntryField('title', val)}}
+            updateEntryField('title', val);
+          }}
         >
           <EditablePreview />
           <EditableInput />
         </Editable>
         <Button
-          size={'xs'}
+          size="xs"
           style={{ display: 'inline' }}
           onClick={makeNonEditable}
           type="button"
@@ -209,12 +219,10 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
+          size="xs"
           style={{ marginLeft: 5 }}
           colorScheme="red"
-          onClick={() =>
-            updateEntryField('isPrivate', !thisEntry.isPrivate)
-          }
+          onClick={() => updateEntryField('isPrivate', !thisEntry.isPrivate)}
         >
           {thisEntry.isPrivate ? (
             <FaLock title="Entry is currently private; click to make it public." />
@@ -224,8 +232,8 @@ const Entry = (props: EntryPropTypes) => {
         </Button>
 
         <Button
-          size={'xs'}
-          style={{ display: 'inline', marginLeft:5 }}
+          size="xs"
+          style={{ display: 'inline', marginLeft: 5 }}
           colorScheme="red"
           leftIcon={<DeleteIcon />}
           onClick={() => dispatch({ type: 'DELETE_ENTRY', entryIndex })}
@@ -235,14 +243,14 @@ const Entry = (props: EntryPropTypes) => {
       </span>
       <br />
       <div>
-        <span 
-        style={{ 
-          fontWeight: 500,
-          fontSize:14,
-          textAlign:'right',
-          paddingRight:5,
-          lineHeight:1
-         }}
+        <span
+          style={{
+            fontWeight: 500,
+            fontSize: 14,
+            textAlign: 'right',
+            paddingRight: 5,
+            lineHeight: 1,
+          }}
         >
           {'Date Activity Happened: '}
         </span>
@@ -254,38 +262,31 @@ const Entry = (props: EntryPropTypes) => {
             cursor: 'pointer',
           }}
         >
-          <EditDate
-            date={thisEntry.date}
-            updateEntryField={updateEntryField}
-          />
+          <EditDate date={thisEntry.date} updateEntryField={updateEntryField} />
         </div>
       </div>
-        {
-          foundIn.length > 0 && (
-            <React.Fragment
-          key={`tool-${ti}`}
-          >
-          <Tooltip 
-            
-            style={{padding:5}}
-            label={`Threaded in ${m.title}`}>
-          <div
-          style={{
-            fontSize:20, 
-            backgroundColor: m.color, 
-            borderRadius:50, 
-            width:26, 
-            display:'inline-block', 
-            padding:3,
-            margin:3,
-            opacity: m.title === selectedThread.title ? 1 : .4
-          }} 
-          ><GiSewingString size={'20px'}/>
-          </div>
-          </Tooltip>
+      {foundIn.length > 0 &&
+        foundIn.map((fi, fIndex) => (
+          <React.Fragment key={`tool-${fIndex}`}>
+            <Tooltip style={{ padding: 5 }} label={`Threaded in ${fi.title}`}>
+              <div
+                style={{
+                  fontSize: 20,
+                  backgroundColor: fi.color,
+                  borderRadius: 50,
+                  width: 26,
+                  display: 'inline-block',
+                  padding: 3,
+                  margin: 3,
+                  opacity: filterRT && fi.title === filterRT.title ? 1 : 0.4,
+                }}
+              >
+                <GiSewingString size="20px" />
+              </div>
+            </Tooltip>
           </React.Fragment>
-          )
-        }
+        ))}
+
       <br />
       <span style={{ fontSize: 18, fontWeight: 600, display: 'block' }}>
         {'Tags: '}
@@ -301,7 +302,11 @@ const Entry = (props: EntryPropTypes) => {
           )
         }
         handleAddition={(tag: ReactTag) => {
-          dispatch({ type: 'ADD_TAG_TO_ENTRY', newTag: tag, entryIndex, activityID: thisEntry.activity_uid });
+          dispatch({
+            type: 'ADD_TAG_TO_ENTRY',
+            newTag: tag,
+            activityID: thisEntry.activity_uid,
+          });
         }}
       />
 
@@ -330,7 +335,8 @@ const Entry = (props: EntryPropTypes) => {
               <Button
                 onClick={() => {
                   thisEntry.description = value;
-                  updateEntryField('description', value)}}
+                  updateEntryField('description', value);
+                }}
               >
                 Save
               </Button>
@@ -345,15 +351,15 @@ const Entry = (props: EntryPropTypes) => {
 
       <br />
       <div style={{ marginTop: 10 }}>
-      <br />
+        <br />
         <span style={{ fontSize: 18, fontWeight: 600 }}>{'Artifacts: '}</span>
         <UnorderedList>
-          {filterfiles.map((file: File, j: any) => (
+          {filterfiles.map((file, j) => (
             <ListItem key={file.title}>
               {file.title}{' '}
               <FaExternalLinkAlt
                 onClick={() => {
-                  openFile(file.title);
+                  openFile(file.title, folderPath as string);
                 }}
                 title="Open file externally"
                 size="12px"
@@ -361,7 +367,7 @@ const Entry = (props: EntryPropTypes) => {
               />{' '}
               <FaTrashAlt
                 onClick={() => deleteFile(file)}
-                title="Unattahch or delete File"
+                title="Unattach or delete File"
                 size="12px"
                 style={{ display: 'inline' }}
               />
@@ -380,7 +386,7 @@ const Entry = (props: EntryPropTypes) => {
         </UnorderedList>
       </div>
       <br />
-   
+
       {showFileUpload ? (
         <>
           <Flex
@@ -418,7 +424,6 @@ const Entry = (props: EntryPropTypes) => {
       />
 
       <URLList urls={urls} entryIndex={entryIndex} dispatch={dispatch} />
-    
     </div>
   );
 };

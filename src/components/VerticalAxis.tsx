@@ -10,7 +10,7 @@ export const dataStructureForTimeline = (activityData: any) => {
     .map((year: any) => {
       const mon = d3.groups(year[1], (m: any) => new Date(m.date).getMonth());
 
-      const wrapper = new Array(12).fill({}).map((m, i) => {
+      const wrapper = new Array(12).fill({}).map((_, i) => {
         const activ = mon.filter((f: any) => f[0] === i);
         const allActivities =
           activ.length > 0
@@ -32,4 +32,3 @@ export const dataStructureForTimeline = (activityData: any) => {
       return { year: year[0], months: wrapper };
     });
 };
-

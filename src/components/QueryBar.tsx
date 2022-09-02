@@ -1,85 +1,125 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useProjectState } from './ProjectContext';
+import type {
+  EntryType,
+  GoogleData,
+  GoogleDocContent,
+  GoogleDocData,
+  GoogleTextElement,
+  TextEntry,
+  TxtData,
+} from './types';
 
+type StyledQueryContext = { style: string | null; query_context: string };
+
+type GoogleMatch = {
+  fileId: string;
+  data: GoogleDocData;
+  textBlock: string;
+  textArray: string[];
+};
 
 const processDataQuery = (
   queryTerm: string,
-  txtData: any,
-  googleData: any,
-  activityData: any
+  txtData: TxtData | undefined,
+  googleData: GoogleData | undefined,
+  activityData: EntryType[]
 ) => {
-  const textMatches = txtData['text-data'].filter((f) =>
-    f.text.includes(queryTerm)
-  );
+  let textMatches: TextEntry[] = [];
+  if (txtData) {
+    textMatches = txtData['text-data'].filter((f) =>
+      f.text.includes(queryTerm)
+    );
+  }
 
-  const googMatches = Object.entries(googleData)
-    .map((f) => {
-      const content = (f[1] && f[1].body) ? f[1].body.content
-        .filter((p) => p.paragraph)
-        .map((m) => m.paragraph.elements) : [];
-      const flatContent = content.flatMap((m) => m);
-      const flatTextRun = flatContent.map((m) =>
-        m.textRun ? m.textRun.content : ''
-      );
-      const txtBlock = flatTextRun.join('');
+  let googMatches: GoogleMatch[] = [];
+  if (googleData) {
+    googMatches = Object.entries(googleData)
+      .map((f) => {
+        let content: GoogleTextElement[][] = [];
+        if (f[1] && f[1].body) {
+          const paragraphs = f[1].body.content.filter((p) => 'paragraph' in p);
+          content = paragraphs.map(
+            (m) => (m as GoogleDocContent).paragraph.elements
+          );
+        }
 
-      return {
-        fileId: f[0],
-        data: f[1],
-        textBlock: txtBlock,
-        textArray: flatTextRun,
-      };
+        const flatContent = content.flatMap((m) => m);
+        const flatTextRun = flatContent.map((m) =>
+          m.textRun ? m.textRun.content : ''
+        );
+        const txtBlock = flatTextRun.join('');
+
+        return {
+          fileId: f[0],
+          data: f[1],
+          textBlock: txtBlock,
+          textArray: flatTextRun,
+        };
+      })
+      .filter((ft) => {
+        const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
+        return tmp.length > 0;
+      });
+  }
+
+  const titleMatches = activityData
+    .filter((f) => {
+      const temp = f.files.filter((f2) => f2.title.includes(queryTerm));
+      return f.title.includes(queryTerm) || temp.length > 0;
     })
-    .filter((ft) => {
-      const tmp = ft.textArray.filter((a) => a.includes(queryTerm));
-      return tmp.length > 0;
-    });
-  
-  const titleMatches = activityData.filter(f => {
-    return f.title.includes(queryTerm)
-  }).map(m => m.activity_uid);
+    .map((m) => m.activity_uid);
 
-  console.log('title matches',titleMatches);
+  const descriptionMatches = activityData
+    .filter((a) => {
+      const temp = a.files.filter((f) =>
+        f.context ? f.context.includes(queryTerm) : false
+      );
+      const inDescription = a.description
+        ? a.description.includes(queryTerm)
+        : false;
+      return inDescription || temp.length > 0;
+    })
+    .map((m) => m.activity_uid);
 
-  const matches = [];
+  const matches: any[] = [];
 
-  activityData.forEach((ent: any) => {
+  activityData.forEach((ent) => {
     const tempText = textMatches.filter((t) => t['entry-title'] === ent.title);
     if (tempText.length > 0) {
       tempText.map((tt) => {
-        console.log('tt', tt);
         const txtArray = tt.text.split('. ');
-        const indexArray = [];
+        const indexArray: StyledQueryContext[][] = [];
         txtArray.forEach((t, i) => {
           if (t.includes(queryTerm)) {
-            const con = [];
+            const con: StyledQueryContext[] = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
 
             const test = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
+            con.push({ style: null, query_context: test[0] });
 
-            con.push({ style: 'bold', context: queryTerm });
+            con.push({ style: 'bold', query_context: queryTerm });
 
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
         return tt;
       });
     }
 
     const tempG = ent.files.filter(
-      (fg: any) =>
+      (fg) =>
         fg.fileType === 'gdoc' &&
         googMatches.map((gm) => gm.fileId).includes(fg.fileId)
     );
@@ -87,35 +127,82 @@ const processDataQuery = (
     if (tempG.length > 0) {
       tempG.map((tt) => {
         const test = googMatches.filter((f) => f.fileId === tt.fileId)[0];
-        const txtArray = test.textBlock.split('. ');
-        const indexArray = [];
+        const txtArray: string[] = test.textBlock.split('. ');
+        const indexArray: StyledQueryContext[][] = [];
 
         txtArray.forEach((t, i) => {
           if (t.includes(queryTerm)) {
-            const con = [];
+            const con: StyledQueryContext[] = [];
             if (i > 0) {
-              con.push({ style: null, context: txtArray[i - 1] });
+              con.push({ style: null, query_context: txtArray[i - 1] });
             }
-            const test = txtArray[i].split(queryTerm);
+            const test2 = txtArray[i].split(queryTerm);
 
-            con.push({ style: null, context: test[0] });
-            con.push({ style: 'bold', context: queryTerm });
-            con.push({ style: null, context: test[1] });
+            con.push({ style: null, query_context: test2[0] });
+            con.push({ style: 'bold', query_context: queryTerm });
+            con.push({ style: null, query_context: test2[1] });
 
             if (i < txtArray.length - 1) {
-              con.push({ style: null, context: txtArray[i + 1] });
+              con.push({ style: null, query_context: txtArray[i + 1] });
             }
             indexArray.push(con);
           }
         });
-        tt.context = indexArray;
+        tt.query_context = indexArray;
 
         return tt;
       });
     }
 
-    if (tempText.length > 0 || tempG.length > 0 || titleMatches.indexOf(ent.activity_uid) > -1) {
-      const entM = { entry: ent, textMatch: tempText, googMatch: tempG, titleMatch: titleMatches.indexOf(ent.activity_uid) > -1 };
+    if (
+      tempText.length > 0 ||
+      tempG.length > 0 ||
+      titleMatches.indexOf(ent.activity_uid) > -1
+    ) {
+      const titleKeeper = [];
+
+      if (titleMatches.indexOf(ent.activity_uid) > -1) {
+        if (ent.title.includes(queryTerm))
+          titleKeeper.push({
+            activityTitle: ent.title,
+            activityID: ent.activity_uid,
+          });
+        ent.files.forEach((f, j) => {
+          if (f.title.includes(queryTerm))
+            titleKeeper.push({
+              fileTitle: f.title,
+              artifactID: f.artifact_uid,
+              artifactIndex: j,
+            });
+        });
+      }
+
+      const descriptionKeeper = [];
+      if (descriptionMatches.indexOf(ent.activity_uid) > -1) {
+        if (ent.description && ent.description.includes(queryTerm))
+          descriptionKeeper.push({
+            activityTitle: ent.title,
+            activityID: ent.activity_uid,
+            blurb: ent.description,
+          });
+        ent.files.forEach((f, j) => {
+          if (f.title.includes(queryTerm))
+            descriptionKeeper.push({
+              fileTitle: f.title,
+              artifactID: f.artifact_uid,
+              artifactIndex: j,
+              blurb: f.context,
+            });
+        });
+      }
+      console.log('desssss keeper', descriptionKeeper);
+      const entM = {
+        entry: ent,
+        textMatch: tempText,
+        googMatch: tempG,
+        titleMatch: titleKeeper, // titleMatches.indexOf(ent.activity_uid) > -1,
+        descriptionMatch: descriptionKeeper,
+      };
       matches.push(entM);
     }
   });
@@ -125,35 +212,20 @@ const processDataQuery = (
 
 interface QueryProps {
   setViewType: (viewType: string) => void;
-  artifactData: any;
-  filteredActivities: any;
+  filteredActivities: EntryType[];
+  setSearchTermArtifact: any;
 }
 
 const QueryBar = (queryProps: QueryProps) => {
-  const { artifactData, setViewType, filteredActivities } = queryProps;
+  const { setSearchTermArtifact, setViewType, filteredActivities } = queryProps;
   const [{ txtData, googleData }, dispatch] = useProjectState();
 
-  const [term, setTerm] = React.useState(null);
+  const [term, setTerm] = React.useState('');
 
-  const handleTermChange = (e) => {
-    const inputValue = e.target.value;
+  const handleTermChange = (ev: ChangeEvent) => {
+    const inputValue = (ev.target as HTMLInputElement).value;
     setTerm(inputValue);
   };
-
-  let data;
-
-  if (artifactData) {
-    // data = ((artifactData.fileType === 'txt') && (txtData?['text-data'] != undefined)) ? txtData['text-data'].filter(
-    //         (f) => f['file-title'] === artifactData.title
-    //       )[0].text
-    //     : googleData[artifactData.fileId];
-    if((artifactData.fileType === 'txt') && (txtData)){
-      let dataCheck = txtData['text-data'].filter((f) => f['file-title'] === artifactData.title);
-      data = dataCheck.length > 0 ? dataCheck[0].text : [];
-    }else{
-      data = googleData[artifactData.fileId];
-    }
-  }
 
   return (
     <InputGroup align="center" width="400px" marginEnd="90px">
@@ -167,21 +239,10 @@ const QueryBar = (queryProps: QueryProps) => {
           h="1.75rem"
           size="sm"
           onClick={() => {
-            if (artifactData) {
-              console.log('DATA ON CLICK', data);
-              if(data.documentId){
-                console.log('this is a google doc.');
-              }else{
-                console.log('this is text file', data)
-                if(data){
-                  const matchArray = data.split(term);
-                  alert(`${matchArray.length - 1} matches`);
-                }else{
-                  alert('notext data for this file yet');
-                }
-                
-              }
-              
+            console.log('IS THIS WORKING');
+            if (setSearchTermArtifact) {
+
+              setSearchTermArtifact(term);
             } else {
               const matches = processDataQuery(
                 term,

@@ -59,17 +59,17 @@ const FileUpload = (props: FileUploadProps) => {
       event.preventDefault();
     },
     // accept: '.pdf,.doc,.docx',
-    onDropAccepted: (files: any) => {
+    onDropAccepted: (files: File[]) => {
       console.log('dropAccepted', files[0].name);
 
       smalltalk
         .prompt('Artifact Type', 'What kind of artifact is this?', 'notes')
-        .then((value) => {
+        .then((value: string) => {
           const newFiles = files.map((m) => {
+           
             m.artifactType = value;
-            return m;
+            return m//{ ...m, artifactType: value }
           });
-
           saveFiles(newFiles);
         })
         .catch(() => {

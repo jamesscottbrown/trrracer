@@ -5,6 +5,8 @@ import { useProjectState } from './ProjectContext';
 import { EntryType } from './types';
 
 const CustomMarker = (props: MarkerComponentProps) => {
+  const { note } = props;
+
   return (
     <div>
       <div
@@ -24,7 +26,9 @@ const CustomMarker = (props: MarkerComponentProps) => {
           display: 'inline',
         }}
         className="custom-marker"
-      >{`${props.note}`}</div>
+      >
+        {note}
+      </div>
     </div>
   );
 };
@@ -36,17 +40,15 @@ type MarkableImageProps = {
 };
 
 const MarkableImage = (props: MarkableImageProps) => {
-  const [{}, dispatch] = useProjectState();
+  const [, dispatch] = useProjectState();
   const { imgPath, activity, artifactIndex } = props;
-  console.log(imgPath, activity, artifactIndex);
+
   const [markers, setMarkers] = useState([]);
 
   const artifactId = `${artifactIndex}-${activity.title}`;
-  console.log('testing', artifactId);
 
   useEffect(() => {
     if (artifactIndex && activity.files[artifactIndex].markers) {
-      console.log('this is going to run forever');
       setMarkers(activity.files[artifactIndex].markers);
     }
   }, [artifactId]);
@@ -78,10 +80,11 @@ const MarkableImage = (props: MarkableImageProps) => {
           />
           <Button
             onClick={() => {
-              const marker = {};
-              marker.left = markerCoor[0];
-              marker.top = markerCoor[1];
-              marker.note = note;
+              const marker = {
+                left: markerCoor[0],
+                top: markerCoor[1],
+                note,
+              };
               const newMarkers = [...markers, marker];
               setMarkers(newMarkers);
               setNote('add note');

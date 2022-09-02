@@ -19,7 +19,7 @@
     <div id="root"></div>
     <script>
       const scripts = [];
-      console.log('is this loading again')
+    
       if (process.env.NODE_ENV === 'development') {
         // Dynamically insert the DLL script in development env in the
         // renderer process
@@ -33,14 +33,13 @@
       }
 
       if (scripts.length) {
-        console.log(scripts)
+        console.log(scripts);
         document.write(
           scripts
             .map((script) => `<script defer src="${script}"><\/script>`)
             .join('')
         );
       }
-
     </script>
   </body>
 </html>

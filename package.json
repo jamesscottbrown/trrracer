@@ -158,6 +158,7 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.2",
+    "@types/d3": "^7.4.0",
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/history": "4.7.6",
@@ -244,7 +245,6 @@
     "@getstation/electron-google-oauth2": "^2.1.0",
     "@tabler/icons": "^1.76.0",
     "buffer": "^6.0.3",
-    "copy-webpack-plugin": "^11.0.0",
     "d3": "^7.0.1",
     "d3-array": "^2.12.1",
     "d3-color": "^3.1.0",
@@ -296,6 +296,7 @@
     "stream-browserify": "^3.0.0",
     "tiny-invariant": "^1.2.0",
     "uuid": "^8.3.2",
+    "wink-ner": "^2.1.0",
     "wndb-with-exceptions": "^3.0.2"
   },
   "devEngines": {

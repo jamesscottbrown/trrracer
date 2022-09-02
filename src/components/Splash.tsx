@@ -22,41 +22,43 @@ const Splash = (props: SplashProps) => {
   const { recentPaths } = props;
 
   return (
-    <Container>
-      <Heading as="h1">Welcome to Trracer!</Heading>
-      <p>Open a project or create a new project to get started.</p>
+    <div style={{ display: 'flex', alignItems: 'center', height: '100vh' }}>
+      <Container style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+        <Heading as='h1'>Welcome to Trracer!</Heading>
+        <p>Open a project or create a new project to get started.</p>
 
-      <br />
+        <br />
 
-      {recentPaths.length === 0 ? (
-        <p>No recently opened paths</p>
-      ) : (
-        <>
-          <Heading as="h2">Recently opened projects</Heading>
-          <UnorderedList>
-            {recentPaths.map((p: string) => (
-              <ListItem key={p}>
-                <IconButton
-                  icon={<BiLinkExternal />}
-                  aria-label="Open project"
-                  onClick={() => ipcRenderer.send('openProject', p)}
-                />{' '}
-                {p}{' '}
-              </ListItem>
-            ))}
-          </UnorderedList>
-        </>
-      )}
+        {recentPaths.length === 0 ? (
+          <p>No recently opened paths</p>
+        ) : (
+          <>
+            <Heading as='h2'>Recently opened projects</Heading>
+            <UnorderedList>
+              {recentPaths.map((p: string) => (
+                <ListItem key={p}>
+                  <IconButton
+                    icon={<BiLinkExternal />}
+                    aria-label='Open project'
+                    onClick={() => ipcRenderer.send('openProject', p)}
+                  />{' '}
+                  {p}{' '}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </>
+        )}
 
-      <ButtonGroup paddingTop="1em">
-        <Button type="button" onClick={() => ipcRenderer.send('newProject')}>
-          <FaPlus /> New project
-        </Button>
-        <Button type="button" onClick={() => ipcRenderer.send('openProject')}>
-          <FaFolderOpen /> Open project
-        </Button>
-      </ButtonGroup>
-    </Container>
+        <ButtonGroup paddingTop='1em'>
+          <Button type='button' onClick={() => ipcRenderer.send('newProject')}>
+            <FaPlus /> New project
+          </Button>
+          <Button type='button' onClick={() => ipcRenderer.send('openProject')}>
+            <FaFolderOpen /> Open project
+          </Button>
+        </ButtonGroup>
+      </Container>
+    </div>
   );
 };
 

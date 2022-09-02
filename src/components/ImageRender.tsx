@@ -1,60 +1,85 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Image } from '@chakra-ui/react';
-import { InView, useInView } from 'react-intersection-observer';
-import { URL } from 'url';
+import React, { useEffect, useState } from 'react';
+import { InView } from 'react-intersection-observer';
 import { readFileSync } from '../fileUtil';
-import { readProjectFile, useProjectState } from './ProjectContext';
+import { useProjectState } from './ProjectContext';
 
-const ImageRender = (props:any) => {
+type ImageRenderPropType = {
+  src: string;
+  autoLoad?: boolean;
+};
+const ImageRender = (props: ImageRenderPropType) => {
+  const { src, autoLoad } = props;
+  const [{ isReadOnly, selectedActivityURL, selectedArtifact }] =
+    useProjectState();
 
-    const { src, onClick, autoLoad } = props;
-    const [{isReadOnly, selectedActivityURL, selectedArtifactEntry}] = useProjectState();
-    const [imgData, setImgData] = useState<any>(null);
+  const [imgData, setImgData] = useState<any>(null);
 
-    useEffect(()=> {
-      if(autoLoad){
-        if(isReadOnly){
-          readFileSync(src)
+  useEffect(() => {
+    if (autoLoad) {
+      if (isReadOnly) {
+        readFileSync(src)
           .then((res) => res.text())
           .then((img) => {
             setImgData(img);
-          })
-        }else{
-          setImgData(src);
-        }
+          });
+      } else {
+        setImgData(src);
       }
-    }, [src])
+    }
+  }, [src]);
 
-    return (
-        autoLoad ? <React.Fragment>{
-          imgData && (<div
-          style={{display:'inline-block', marginLeft:'20px', width:'750px', height:'auto'}}
-          ><img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} /></div>)
-          }</React.Fragment>  :
-          <InView onChange={(inView, entry) => {
-            if((isReadOnly && inView) || (isReadOnly && selectedActivityURL) || (isReadOnly && selectedArtifactEntry)){
-            readFileSync(src)
+  return autoLoad ? (
+    <>
+      {imgData && (
+        <div
+          style={{
+            display: 'inline-block',
+            marginLeft: '20px',
+            width: '750px',
+            height: 'auto',
+          }}
+        >
+          <img
+            src={isReadOnly ? `data:image/png;base64,${imgData}` : src}
+            alt="An attached image."
+          />
+        </div>
+      )}
+    </>
+  ) : (
+    <InView
+      onChange={(inView) => {
+        if (
+          (isReadOnly && inView) ||
+          (isReadOnly && selectedActivityURL) ||
+          (isReadOnly && selectedArtifact && selectedArtifact.activity)
+        ) {
+          return readFileSync(src)
             .then((res) => res.text())
             .then((img) => {
-              setImgData(img)
-            })
-            }else{
-              setImgData(src);
-            }
-          }}>
-        {({ inView, ref, entry }) => (
-          <div ref={ref}>
-           {
-            (inView && imgData) && (
-            <img src={isReadOnly ? `data:image/png;base64,${imgData}` : src} />
-            )
-           }
-            
-          </div>
-        )}
-      </InView>
-    
-    );
+              setImgData(img);
+            });
+        } else {
+          return setImgData(src);
+        }
+      }}
+    >
+      {({ inView, ref }) => (
+        <div ref={ref}>
+          {inView && imgData && (
+            <img
+              src={isReadOnly ? `data:image/png;base64,${imgData}` : src}
+              alt="An attached image."
+            />
+          )}
+        </div>
+      )}
+    </InView>
+  );
+};
+
+ImageRender.defaultProps = {
+  autoLoad: false,
 };
 
 export default ImageRender;

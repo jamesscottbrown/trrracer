@@ -9,25 +9,29 @@ interface ViewTypeControlProps {
 
 const ViewTypeControl = (props: ViewTypeControlProps) => {
   const { viewType, setViewType } = props;
-  const [{isReadOnly}, dispatch] = useProjectState();
+  const [{ isReadOnly }, dispatch] = useProjectState();
 
   return (
     <>
       <FormControl>
         <Select
           onChange={(ev) => {
-            if(isReadOnly){ 
-              window.history.pushState("object or string", "Title", "/" );
+            if (isReadOnly) {
+              console.log('is this firing in view change');
+              window.history.pushState('object or string', 'Title', '/');
               dispatch({
                 type: 'VIEW_PARAMS',
                 viewParams: null,
               });
             }
-            if(viewType === 'overview'){
-              dispatch({ type: 'THREAD_FILTER', filterRT: null, selectedThread: null });
+            if (viewType === 'overview') {
+              dispatch({
+                type: 'THREAD_FILTER',
+                filterRT: null,
+                rtIndex: null,
+              });
             }
             setViewType(ev.target.value);
-           
           }}
           value={viewType}
           width="max-content"

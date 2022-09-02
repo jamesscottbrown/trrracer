@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import {
   Box,
@@ -15,6 +15,8 @@ import {
 } from '@chakra-ui/react';
 
 import { FaPlus } from 'react-icons/fa';
+import { BiLogOut } from 'react-icons/bi';
+
 import ViewTypeControl from './ViewTypeControl';
 import QueryBar from './QueryBar';
 import { useProjectState } from './ProjectContext';
@@ -25,12 +27,12 @@ interface TopbarProps {
   newTitle: string;
   setNewTitle: any;
   setHideByDefault: (boo: any) => void;
-  hideByDefault: Boolean;
+  hideByDefault: boolean;
   setAddEntrySplash: (boo: any) => void;
+  setPath: any;
 }
 
 const TopBar = (ProjectPropValues: TopbarProps) => {
-
   const {
     viewType,
     setViewType,
@@ -39,26 +41,40 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
     setHideByDefault,
     hideByDefault,
     setAddEntrySplash,
+    setPath,
   } = ProjectPropValues;
 
-  const [{ projectData, filteredActivities, selectedActivityURL, selectedArtifactEntry, selectedArtifactIndex, filterRT, isReadOnly, viewParams }, dispatch] = useProjectState();
+  const [
+    {
+      projectData,
+      filteredActivities,
+      selectedArtifact,
+      isReadOnly,
+      viewParams,
+      researchThreads,
+    },
+    dispatch,
+  ] = useProjectState();
 
-  //USE callback when you pass anonymous functions to big components!!
+  // USE callback when you pass anonymous functions to big components!!
   // const callBackOnClick = useCallback((event) => setAddEntrySplash(true), [setAddEntrySplash])
-  let getName = () => {
-    if(viewParams.granularity === 'thread'){
-      console.log('thread',filterRT)
-      return filterRT.title
-    }else if(viewParams.granularity === 'artifact'){
-      console.log('ARTIFACT', selectedArtifactEntry.files[selectedArtifactIndex])
-      return selectedArtifactEntry.files[selectedArtifactIndex].title;
-    }else if(viewParams.granularity === 'activity'){
-      console.log('activity', selectedActivityURL);
-      return projectData.entries.filter(f => f.activity_uid === viewParams.id)[0].title;
-    }else{
-      return "Unknown";
+  const getName = () => {
+    if (viewParams.granularity === 'thread') {
+      return researchThreads?.research_threads.filter(
+        (f) => f.rt_id === viewParams.id
+      )[0].title;
     }
-  }
+    if (viewParams.granularity === 'artifact') {
+      return selectedArtifact.activity.files[selectedArtifact.artifactIndex]
+        .title;
+    }
+    if (viewParams.granularity === 'activity') {
+      return projectData.entries.filter(
+        (f) => f.activity_uid === viewParams.id
+      )[0].title;
+    }
+    return 'Unknown';
+  };
 
   return (
     <Box
@@ -81,11 +97,20 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
         align="center"
       >
         <Heading as="h1">
-          {
-            isReadOnly ? <span
-            style={{fontSize:30, fontWeight:800, margin:10}}
-            >{projectData.title}</span>
-            :
+          {isReadOnly ? (
+            <span style={{ fontSize: 30, fontWeight: 800, margin: 10 }}>
+              <BiLogOut
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  document.cookie =
+                    'folderName=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                  console.log(document.cookie);
+                  setPath('');
+                }}
+              />{' '}
+              {projectData.title === 'Jen' ? 'tRRRace Meta' : projectData.title}
+            </span>
+          ) : (
             <Editable
               value={newTitle}
               onChange={(val) => setNewTitle(val)}
@@ -95,124 +120,91 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               <EditablePreview />
               <EditableInput />
             </Editable>
-          }
-          
+          )}
         </Heading>
 
-        <div style={{ marginLeft: '20px', marginRight:'20px' }}>
+        <div style={{ marginLeft: '20px', marginRight: '20px' }}>
           <ViewTypeControl viewType={viewType} setViewType={setViewType} />
         </div>
-        {
-          (!viewParams || (viewParams && viewParams.view != 'paper')) && (
-            <QueryBar
-            artifactData={null}
+        {(!viewParams || (viewParams && viewParams.view !== 'paper')) && (
+          <QueryBar
+            setSearchTermArtifact={null}
             setViewType={setViewType}
             filteredActivities={filteredActivities}
           />
-          )
-        }
+        )}
 
-        {
-          (viewParams) && (
-            <div
-            style={{fontWeight: 600, fontSize: 22, marginLeft:'200px', marginRight:'100px', float:'right'}}
-            >Cited {viewParams.granularity}: {getName()}</div>
-          )
-        }
-        
-        {(viewType === 'activity view' ||
-                  viewType === 'timeline' ||
-                  viewType === 'overview') && (
+        {(viewParams && viewParams.view === 'paper') && (
           <div
             style={{
-              float:'right',
+              fontWeight: 600,
+              fontSize: 22,
+              marginLeft: '200px',
+              marginRight: '100px',
+              float: 'right',
+            }}
+          >
+            Cited {viewParams.granularity}: {getName()}
+          </div>
+        )}
+
+        {(viewType === 'activity view' ||
+          viewType === 'timeline' ||
+          viewType === 'overview') && (
+          <div
+            style={{
+              float: 'right',
               fontSize: 24,
               fontWeight: 700,
               textAlign: 'end',
             }}
           >
             <div
-            style={{
-              display:'inline-block', 
-              fontSize:"14px",
-              paddingRight:15,
-            }}> 
-          <FormControl display="flex" alignItems="center" marginBottom={10}>
-          <FormLabel
-            htmlFor="split-by"
-            mb="0"
-            textAlign="right"
-            fontSize="12px"
-          >
-            Hide all by default
-          </FormLabel>
-          <Switch
-            id="show-all"
-            onChange={(event) => {
-            hideByDefault ? setHideByDefault(false) : setHideByDefault(true);
-            }}
-          />
-        </FormControl> 
+              style={{
+                display: 'inline-block',
+                fontSize: '14px',
+                paddingRight: 15,
+              }}
+            >
+              <FormControl display="flex" alignItems="center" marginBottom={10}>
+                <FormLabel
+                  htmlFor="split-by"
+                  mb="0"
+                  textAlign="right"
+                  fontSize="12px"
+                >
+                  Hide all by default
+                </FormLabel>
+                <Switch
+                  id="show-all"
+                  onChange={() => setHideByDefault(!hideByDefault)}
+                />
+              </FormControl>
             </div>
-            {
-              (filteredActivities.length != projectData.entries.length || !hideByDefault) && (
-                <div
-                  style={{display:'inline-block', fontSize:"14px", marginRight:15}}
-                >{`${filteredActivities.length} Activities Shown  `}</div> 
-              )
-            }
-            {
-              !isReadOnly && (
-                <Button
+            {(filteredActivities.length !== projectData.entries.length ||
+              !hideByDefault) && (
+              <div
+                style={{
+                  display: 'inline-block',
+                  fontSize: '14px',
+                  marginRight: 15,
+                }}
+              >{`${filteredActivities.length} Activities Shown  `}</div>
+            )}
+            {!isReadOnly && (
+              <Button
                 marginLeft="3px"
                 alignSelf="end"
                 // onClick={addEntry}
-                onClick={(event) => setAddEntrySplash(true)}
+                onClick={() => setAddEntrySplash(true)}
                 type="button"
-                >
-                  <FaPlus /> Add activity
-                </Button>
-              )
-            }
-           
+              >
+                <FaPlus /> Add activity
+              </Button>
+            )}
           </div>
-          )}
+        )}
       </Flex>
-      {/* <Flex style={{ 
-        height: filterTags.length > 0 ? 70 : 0 }}>
-        <Flex flex={4} flexDirection="column">
-          <Box style={{ width: 'calc(100% - 200px)', display: 'block' }}>
-            {filterTags.length > 0 &&
-              filterTags.map((t, i) => (
-                <div
-                  key={`tags-${i}`}
-                  style={{
-                    display: 'inline-block',
-                    margin: 5,
-                    backgroundColor: 'gray',
-                    color: '#ffffff',
-                    borderRadius: 5,
-                    padding: 5,
-                  }}
-                >
-                  <span>{`${t}`}</span>
-                  <span
-                    onClick={() => {
-                      dispatch({
-                        type: 'UPDATE_FILTER_TAGS',
-                        filterTags: filterTags.filter((f) => f != t),
-                      });
-                    }}
-                    style={{ padding: 5, cursor: 'pointer' }}
-                  >
-                    x
-                  </span>
-                </div>
-              ))}
-           
-          </Box>
-        </Flex>
-      </Flex> */}
     </Box>
   );
 };
