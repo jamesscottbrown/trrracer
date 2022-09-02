@@ -394,6 +394,14 @@ const ThreadBanner = (props: ThreadBannerPropType) => {
           borderRadius: 5,
           backgroundColor: bannerColor,
         }}
+        onClick={() => {
+          dispatch({
+            type: 'THREAD_FILTER',
+            filterRT: rt,
+            rtIndex: index,
+          });
+          setExpanded(true);
+        }}
       >
         <span
           style={{
