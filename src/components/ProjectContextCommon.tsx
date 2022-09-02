@@ -79,26 +79,31 @@ export const getAppStateReducer = (
         : [];
       let newTags = [...action.projectData.tags];
 
+      const googleEnRequest = readProjectFile(baseDir, 'goog_em.json', null);
+      const googleDataRequest = readProjectFile(baseDir, 'goog_doc_data.json', null);
+      const googleCommsRequest = readProjectFile(baseDir, 'goog_comms.json', null);
+      const txtDataRequest = readProjectFile(baseDir, 'text_data.json', null);
+      const relDataRequest = readProjectFile(baseDir, 'roles.json', null);
+      const artifactTypesRequest = readProjectFile(baseDir, 'artifactTypes.json', null);
+      const linksRequest = readProjectFile(baseDir, 'links.json', null);
+      const researchThreadsRequest = checkRtFile(baseDir);
+
       try {
-        google_em = await readProjectFile(baseDir, 'goog_em.json', null);
-      } catch (e) {
+        google_em = await googleEnRequest;
+      } catch (e: any) {
         console.error('could not load google em file');
         google_em = null;
       }
 
       try {
         // google_data = await readProjectFile(baseDir, 'goog_data.json', null);
-        google_data = await readProjectFile(
-          baseDir,
-          'goog_doc_data.json',
-          null
-        );
-      } catch (e) {
+        google_data = await googleDataRequest;
+      } catch (e: any) {
         console.error('could not load google data file');
       }
 
       try {
-        google_comms = await readProjectFile(baseDir, 'goog_comms.json', null);
+        google_comms = await googleCommsRequest;
         // console.log('yes to goog comments');
       } catch (e) {
         google_comms = null;
@@ -106,7 +111,7 @@ export const getAppStateReducer = (
       }
 
       try {
-        txt_data = await readProjectFile(baseDir, 'text_data.json', null);
+        txt_data = await txtDataRequest
         // console.log('yes to txtData');
       } catch (e) {
         txt_data = null;
@@ -114,18 +119,14 @@ export const getAppStateReducer = (
       }
 
       try {
-        roleData = await readProjectFile(baseDir, 'roles.json', null);
+        roleData = await relDataRequest;
         // console.log('yes to role data');
       } catch (e) {
         console.error('could not load role data');
       }
 
       try {
-        artifact_types = await readProjectFile(
-          baseDir,
-          'artifactTypes.json',
-          null
-        );
+        artifact_types = await artifactTypesRequest;
         // console.log('yes to artifact types data');
       } catch (e) {
         artifact_types = null;
@@ -133,7 +134,7 @@ export const getAppStateReducer = (
       }
 
       try {
-        link_data = await readProjectFile(baseDir, 'links.json', null);
+        link_data = await linksRequest;
         console.log('yes to linkData', baseDir);
       } catch (e) {
         link_data = null;
@@ -234,7 +235,7 @@ export const getAppStateReducer = (
         console.log('error with tags?');
       }
 
-      const research_threads = await checkRtFile(baseDir);
+      const research_threads = await researchThreadsRequest;
 
       if (isReadOnly) {
         views = queryString.parse(location.search);
@@ -418,10 +419,7 @@ export const getAppStateReducer = (
         // loading a project requires waiting for files to load over the network
         // the simplest way to handle this is to handle this in an async function,
         // and dispatch a new message to save the project data when it is ready
-        getData(action, isReadOnly).then((data) =>
-          action.dispatch({ type: 'SAVE_DATA', data })
-        );
-
+        getData(action, isReadOnly).then(data => action.dispatch({ type: 'SAVE_DATA', data }));
         return state;
       }
       case 'SAVE_DATA': {
