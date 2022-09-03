@@ -3,6 +3,7 @@ const { GOOGLE_DRIVE_CREDENTIALS } = process.env;
 const FOLDER_MAP = {
   jen: '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp',
   evobio: '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC',
+  ethics: '1GOu9GPI3_mLk8zXc08CNYkG-WfapQkAj'
 };
 
 // eslint-disable-next-line func-names
