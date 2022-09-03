@@ -14,6 +14,7 @@ import { BiLinkExternal } from 'react-icons/bi';
 const projectChoices = [
   { name: 'Evo Bio', data: 'evobio' },
   { name: 'tRRRacer meta', data: 'jen' },
+  { name: 'Ethics of Exit', data: 'ethics'}
   // {name: 'Derya', data: 'derya'}
 ];
 

@@ -18,6 +18,9 @@ export function googleFolderDict(folder) {
   if (folder?.includes('Jen')) {
     return '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp';
   }
+  if (folder?.includes('Ethics of Exit')) {
+    return '1GOu9GPI3_mLk8zXc08CNYkG-WfapQkAj';
+  }
   alert('google folder not found');
   return null;
 }

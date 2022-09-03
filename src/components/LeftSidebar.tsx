@@ -31,7 +31,7 @@ const LeftSidebar = (props: { fromTop: number }) => {
     title: 'all',
     matches: artifacts.length,
   });
-
+  
   const tags = [...projectData.tags]
     .filter((f) => filterTags?.indexOf(f.title) === -1)
     .map((t) => {
@@ -41,7 +41,7 @@ const LeftSidebar = (props: { fromTop: number }) => {
       t.matches = matches.map((m) => m.activity_uid);
       return t;
     });
-
+    console.log('TAGS', tags, projectData, filterTags)
   const [sortedTags, setSortedTags] = useState(
     tags.sort((a, b) => (b.matches || []).length - (a.matches || []).length)
   );
