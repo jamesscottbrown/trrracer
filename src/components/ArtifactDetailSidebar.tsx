@@ -550,6 +550,28 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
                 'Evo Bio' : 'evobio',
                 'Ethics of Exit': 'ethics'
               }
+
+              if(!selectedArtifactTest.artifact_uid){
+                
+                if(selectedArtifactTest.goog_ids && selectedArtifactTest.goog_ids.googId){
+                  selectedArtifactTest.artifact_uid = selectedArtifactTest.goog_ids.googId;
+
+                  console.log('ARTIFACT GOOG ID', selectedArtifactTest);
+
+                  dispatch({
+                    type: 'ADD_ARTIFACT_UID',
+                    activityID: selectedArtifact.activity.activity_uid,
+                    artifactIndex: selectedArtifact.artifactIndex,
+                    artifactUID: selectedArtifactTest.goog_ids.googId
+                    // activityID: selectedArtifact.activity.activity_uid,
+                  });
+
+                  // dispatch('ADD_ARTIFACT_UID', selectedArtifactTest)
+                }else{
+                  console.log('DOES NOT HAVE GOOGLE ID', selectedArtifactTest);
+                }
+                
+              }
             
               navigator.clipboard.writeText(
                 String.raw`\trrracer{${dataDict[what]}}{detail view}{artifact}{${selectedArtifactTest.artifact_uid}}`
