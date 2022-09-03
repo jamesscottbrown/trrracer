@@ -412,6 +412,7 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
       selectedArtifact,
       isReadOnly,
       viewParams,
+      folderPath
     },
     dispatch,
   ] = useProjectState();
@@ -541,23 +542,19 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
         <Box>
           <Button
             onClick={() => {
-              const indexTest = projectData.citations
-                .map((c) => c.id)
-                .indexOf(selectedArtifactTest.artifact_uid);
-              const index =
-                indexTest > -1
-                  ? indexTest + 1
-                  : projectData.citations.length + 1;
-              navigator.clipboard.writeText(
-                String.raw`\trrracer{detail view}{artifact}{${selectedArtifactTest.artifact_uid}}{${index}}`
-              );
-              if (indexTest === -1) {
-                const newCitations = [
-                  ...projectData.citations,
-                  { id: selectedArtifactTest.artifact_uid, cIndex: index },
-                ];
-                dispatch({ type: 'ADD_CITATION', citations: newCitations });
+
+              let what = folderPath?.split('/').at(-1);
+
+              let dataDict = {
+                'Jen' : 'jen',
+                'Evo Bio' : 'evobio',
+                'Ethics of Exit': 'ethics'
               }
+            
+              navigator.clipboard.writeText(
+                String.raw`\trrracer{${dataDict[what]}}{detail view}{artifact}{${selectedArtifactTest.artifact_uid}}`
+              );
+            
             }}
           >
             Copy this ref

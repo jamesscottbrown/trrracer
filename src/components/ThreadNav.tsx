@@ -636,27 +636,20 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
                         <span style={{ display: 'block' }}>
                           <Button
                             onClick={() => {
-                              let indexTest = projectData.citations
-                                .map((c) => c.id)
-                                .indexOf(rt.rt_id);
-                              let index =
-                                indexTest > -1
-                                  ? indexTest + 1
-                                  : projectData.citations.length + 1;
+
+                              let what = folderPath?.split('/').at(-1);
+      
+                              let dataDict = {
+                                'Jen' : 'jen',
+                                'Evo Bio' : 'evobio',
+                                'Ethics of Exit': 'ethics'
+                              }
+                             
                               navigator.clipboard.writeText(
-                                String.raw`\trrracer{overview}{thread}{${rt.rt_id}}{${index}}`
+                                String.raw`\trrracer{${dataDict[what]}}{overview}{thread}{${rt.rt_id}}`
                               );
 
-                              if (indexTest === -1) {
-                                let newCitations = [
-                                  ...projectData.citations,
-                                  { id: rt.rt_id, cIndex: index },
-                                ];
-                                dispatch({
-                                  type: 'ADD_CITATION',
-                                  citations: newCitations,
-                                });
-                              }
+                             
                             }}
                           >
                             Copy this ref
