@@ -66,13 +66,6 @@ export const HighlightedActivity = (props: any) => {
     setHoverData(event);
     setMousedOverActivity(event);
 
-    const el = document.getElementById(`${filterRT ? "threaded" : "unthreaded"}-${event.activity_uid}`);
-    console.log(`threaded-${event.activity_uid}`)
-    console.log("el:", el);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
     // TODO: convert?
     /*
     if (filterRT) {
