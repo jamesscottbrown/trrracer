@@ -324,7 +324,7 @@ export const getAppStateReducer = (
             color: '#84309b',
           },
         ],
-        // citations: citationData
+        
       };
     };
 
@@ -440,6 +440,29 @@ export const getAppStateReducer = (
         );
         // saveJSON(state.projectData, state)
         return { ...state, filteredActivities: newFiltered };
+      }
+
+      // type: 'ADD_ARTIFACT_UID',
+      //               activityID: selectedArtifact.activity.activity_uid,
+      //               artifactIndex: selectedArtifact.artifactIndex,
+      //               artifactUID: selectedArtifactTest.goog_ids.googId
+
+      case 'ADD_ARTIFACT_UID': {
+        const {activityID, artifactIndex, artifactUID} = action;
+        console.log()
+
+        const entries = [...state.projectData.entries].map((d: EntryType) => {
+          if (d.activity_uid === activityID) {
+            d.files[artifactIndex].artifact_uid = artifactUID;
+
+          }
+
+          return d;
+        });
+
+        const newProjectData = { ...state.projectData, entries };
+        return saveJSON(newProjectData, state);
+     
       }
 
       case 'VIEW_PARAMS': {
