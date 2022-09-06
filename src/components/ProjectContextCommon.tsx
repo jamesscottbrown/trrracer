@@ -257,12 +257,18 @@ export const getAppStateReducer = (
             selectedActivity = views.id;
           } else if (views.granularity === 'artifact') {
             const activityTest = newEntries.filter((e) => {
-              const test = e.files.filter((f) => f.artifact_uid === views.id);
+              // if(e.files.length > 0){
+              //   console.log(e.files.map(m => m.artifact_uid));
+              //   // e.files.map(m => m.artifact_uid);
+              // }
+              const test = e.files.length > 0 ? e.files.filter((f) => f.artifact_uid === views.id || f.fileId === views.id) : [];
+              // console.log('test in entry', test);
               return test.length > 0;
             })[0];
-            const artIn = activityTest.files
+
+            const artIn = activityTest ? activityTest.files
               .map((m) => m.artifact_uid)
-              .indexOf(views.id);
+              .indexOf(views.id) : null;
 
             selectedArtifact = {
               activity: activityTest,
