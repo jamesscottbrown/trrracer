@@ -522,7 +522,7 @@ const PaperView = (props: any) => {
   console.log('location search?', window.location.href);
   console.log('folderPath', folderPath);
 
-  let pathCheck = folderPath.includes('http://localhost:9999/') ? folderPath : `trrracer/${folderPath}`;
+  let pathCheck = folderPath.includes('http://localhost:9999/') || window.location.href.includes('https://trrracer.netlify.app/') ? folderPath : `trrracer/${folderPath}`;
   // const perf = joinPath(`trrracer/${folderPath}`, 'paper.pdf');
   const perf = joinPath(pathCheck, 'paper.pdf');
 
