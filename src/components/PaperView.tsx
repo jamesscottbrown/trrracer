@@ -519,7 +519,7 @@ const PaperView = (props: any) => {
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
 
   // const perf = joinPath(`trrracer/${folderPath}`, '2022_trevo_new_links-compressed.pdf');
-  console.log('location search?',location.search);
+  console.log('location search?', window.location.href);
   console.log('folderPath', folderPath);
 
   let pathCheck = folderPath.includes('http://localhost:9999/') ? folderPath : `trrracer/${folderPath}`;
