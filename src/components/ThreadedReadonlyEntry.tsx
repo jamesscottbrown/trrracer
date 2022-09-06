@@ -208,6 +208,8 @@ type ActivityTitleLogicProps = {
 };
 const ActivityTitleLogic = (props: ActivityTitleLogicProps) => {
   const { thisEntry, color } = props;
+  const [, dispatch] = useProjectState();
+
   return (
     <div
       style={{
@@ -215,14 +217,10 @@ const ActivityTitleLogic = (props: ActivityTitleLogicProps) => {
         display: 'inline',
       }}
       onMouseOver={() => {
-        const circles = d3.selectAll('circle.all-activities');
-        circles.filter((f) => f.title === thisEntry.title).attr('fill', 'red');
+        dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: thisEntry });
       }}
       onMouseLeave={() => {
-        const circles = d3.selectAll('circle.all-activities');
-        circles
-          .filter((f) => f.title === thisEntry.title)
-          .attr('fill', d3co.hsl(color).copy({ l: 0.9 }));
+        dispatch({ type: 'HOVER_OVER_ACTIVITY', hoverActivity: null });
       }}
     >
       <span>{thisEntry.title}</span>

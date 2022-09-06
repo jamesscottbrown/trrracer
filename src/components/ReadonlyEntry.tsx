@@ -164,7 +164,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
   return (
-    <Box>
+    <Box  id={`unthreaded-${thisEntry.activity_uid}`}>
       <div style={{ padding: 10 }}>
         <span style={{ fontSize: 22, fontWeight: 'bold' }}>
           {thisEntry.isPrivate && (
