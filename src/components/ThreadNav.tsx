@@ -458,7 +458,7 @@ type ThreadComponentPropType = {
 
 const ThreadComponent = (props: ThreadComponentPropType) => {
   const { rt, index, editMode, setEditMode, filteredThreads } = props;
-  const [{ projectData, isReadOnly, filterRT, researchThreads }, dispatch] = useProjectState();
+  const [{ projectData, isReadOnly, filterRT, researchThreads, folderPath }, dispatch] = useProjectState();
   const [expanded, setExpanded] = useState(false);
 
   const checkIfSelectThread = (i: any) => {
