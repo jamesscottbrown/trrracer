@@ -274,7 +274,7 @@ type CitationIconProps = {
 };
 const CitationIcon = (props: CitationIconProps) => {
   const { link, setPosition, setHTML, index, rectWidth } = props;
-  const [{ projectData, researchThreads }] = useProjectState();
+  const [{ projectData, researchThreads, folderPath }] = useProjectState();
 
   const moveBack = rectWidth - 20;
   const parsed = queryString.parse(link.url);
@@ -290,17 +290,29 @@ const CitationIcon = (props: CitationIconProps) => {
     <g
       onMouseOver={(event) => {
         setPosition([200, event.clientY - 50]);
-        setHTML(`<div>
-      <span
-      style="font-weight:800"
-      >Cited ${parsed.granularity}: ${getName(
-          parsed,
-          projectData.entries,
-          researchThreads
-        )}</span><br />
-      <span
-      style="font-style:italic; font-size: 11px; line-height:1"
-      >"${link.text[0]}"</span><div>`);
+    
+        let pathKey = Object.keys(parsed).filter(f => f.includes('path'))[0]
+        console.log('parsed key', parsed[pathKey], folderPath);
+        console.log(folderPath?.split('folderName=')[1]);
+
+        if(parsed[pathKey]){
+          setHTML(`<div>
+          <span
+          style="font-weight:800"
+          >Cited ${parsed.granularity}: ${getName(
+            parsed,
+            projectData.entries,
+            researchThreads
+            )}</span><br />
+          <div>`);
+        }else{
+          setHTML(`<div>
+          <span
+          style="font-weight:800"
+          >Website Link</span><br />
+          <div>`);
+        }
+       
         d3.select('#tooltip-cite').style('opacity', 1);
       }}
       onMouseOut={() => {
@@ -433,11 +445,12 @@ const CitationVis = (props: CitationVisProps) => {
               calWidth(maxAnno) - calWidth(prd.anno.length) - 10
             }, ${rectHeight * i + 2})`}
           >
+           
             <rect
               height={rectHeight}
               width={prd.anno.length > 0 ? calWidth(prd.anno.length) + 10 : 23}
               fill="#d3d3d3"
-              fillOpacity={i + 1 === pageNumber ? 0.7 : 0.25}
+              fillOpacity={i + 1 === pageNumber ? 0.8 : 0.25}
             />
             <g
               transform={`translate(0, ${
@@ -454,6 +467,17 @@ const CitationVis = (props: CitationVisProps) => {
                 />
               ))}
             </g>
+
+            {
+              (i + 1 === pageNumber) && (
+                <g 
+                transform={`translate(0, 10)`}>
+                <text
+                style={{fontSize:9, textAnchor:'start'}}
+                >{`Page ${pageNumber}`}</text>
+                </g>
+              )
+            }
           </g>
         ))}
       </svg>
@@ -519,16 +543,12 @@ const PaperView = (props: any) => {
   // const perf = joinPath(folderPath, 'paper_2020_insights.pdf');
 
   // const perf = joinPath(`trrracer/${folderPath}`, '2022_trevo_new_links-compressed.pdf');
-  console.log('location search?', window.location.href);
-  console.log('folderPath', folderPath);
 
   let pathCheck = folderPath.includes('http://localhost:9999/') || window.location.href.includes('https://trrracer.netlify.app/') ? folderPath : `trrracer/${folderPath}`;
   // const perf = joinPath(`trrracer/${folderPath}`, 'paper.pdf');
   const perf = joinPath(pathCheck, 'paper.pdf');
 
   const [{ filterRT, linkData, isReadOnly, viewParams }] = useProjectState();
-
-  console.log('PERF in paper view', perf);
 
   let passedLink = linkData
     ? linkData.filter((f) => viewParams && f.cIndex === viewParams.cIndex)
@@ -543,6 +563,9 @@ const PaperView = (props: any) => {
   const [beenClicked, setBeenClicked] = useState(false);
   const [position, setPosition] = useState([0, 0]);
   const [toolhtml, setToolHtml] = useState('<div>This is a start</div>');
+
+
+  console.log('ANNO', anno);
 
   useEffect(() => {
     if (passedLink.length > 0 && !beenClicked)
