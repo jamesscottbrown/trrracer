@@ -67,6 +67,8 @@ exports.handler = async function (event) {
   const filePieces = fileName.split('.');
   const fileExtension = filePieces[filePieces.length - 1];
 
+  let shouldReverseBase64Encoding = false;
+
   if (fileType.includes('application/vnd.google-apps.document')) {
     file = await drive.files.export({
       alt: 'media',
@@ -110,8 +112,12 @@ exports.handler = async function (event) {
       }
     }
 
+    if (queryStringParameters.raw){
+      shouldReverseBase64Encoding = true;
+    }
     fileData = new Uint8Array(file.data);
     fileData = Buffer.from(fileData).toString('base64');
+
   } else if (fileExtension === 'json') {
     file = await drive.files.get({
       alt: 'media',
@@ -131,5 +137,6 @@ exports.handler = async function (event) {
   return {
     statusCode: 200,
     body: fileData,
+    isBase64Encoded: shouldReverseBase64Encoding,
   };
 };
