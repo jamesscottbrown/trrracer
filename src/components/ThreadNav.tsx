@@ -481,7 +481,10 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
     });
 
     let tags = [...tagArrayMain, ...tagArrayMerged].flatMap((fm) => {
-      return projectData.entries.filter((f) => f.title === fm.activityTitle)[0]
+
+      let test =  projectData.entries.filter((f) => f.title === fm.activityTitle);
+      
+      return test.length > 0 ? test[0]
         .tags.map((t) => {
           let temp = {
             tag: t,
@@ -489,7 +492,7 @@ const ThreadComponent = (props: ThreadComponentPropType) => {
           }
           
           return temp;
-        });
+        }) : [];
     });
     let groupTags = Array.from(d3.group(tags.map(t => t.tag), (d) => d));
     let sorted = groupTags.sort((a, b) => b[1].length - a[1].length);
