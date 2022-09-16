@@ -16,7 +16,6 @@ import { HiddenActivity } from './bubbleVis/HiddenActivity';
 import { TimeLine } from './bubbleVis/TimeLine';
 import { TimeLineBrush } from './bubbleVis/TimeLineBrush';
 import { ToolTip } from './bubbleVis/ToolTip';
-import * as d3 from 'd3';
 
 interface BubbleProps {
   setGroupBy: (gb: any) => void;

@@ -2,19 +2,10 @@ import React, { useEffect, useState } from 'react';
 import * as Showdown from 'showdown';
 import { readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
-// import * as fs from 'fs';
-// import path from 'path';
 
 const EmailRender = (props: any) => {
-  const { title, setFragSelected, artifactData, activityData } = props;
+  const { title } = props;
   const [{ folderPath }] = useProjectState();
-
-  const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true,
-  });
 
   const [emailData, setEmailData] = useState<null|any>(null);
 
@@ -24,8 +15,6 @@ const EmailRender = (props: any) => {
 
       let parsed = test.map((m, i) => {
         let stringTemp = `Date: ${m}`;
-
-        let temp = stringTemp.split('/[\n\r]+[-a-zA-Z]+:/');
 
         return stringTemp;
       });

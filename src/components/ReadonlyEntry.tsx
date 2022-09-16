@@ -255,9 +255,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               ) : (
                 <ReactMde
                   value={thisEntry.description}
-                  // onChange={setValue}
                   selectedTab="preview"
-                  // onTabChange={()=> null}
                   minPreviewHeight={100}
                   generateMarkdownPreview={(markdown) =>
                     Promise.resolve(converter.makeHtml(markdown))

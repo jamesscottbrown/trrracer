@@ -9,8 +9,6 @@ import {
 
 import { BiLinkExternal } from 'react-icons/bi';
 
-// const { ipcRenderer } = require('electron');
-
 const projectChoices = [
   { name: 'Evo Bio', data: 'evobio' },
   { name: 'tRRRacer meta', data: 'jen' },
