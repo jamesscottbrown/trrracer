@@ -5,11 +5,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Spinner, ChakraProvider } from '@chakra-ui/react';
-
 import Project from './components/Project';
-
 import './App.global.css';
-
 import { useProjectState } from './components/ProjectContext';
 import SplashWeb from './components/SplashWeb';
 
@@ -45,8 +42,8 @@ export default function App() {
   const [{ projectData }, dispatch] = useProjectState();
 
 
-  const isDev = process.env.NODE_ENV === 'development';
-  // const isDev = true;
+  // const isDev = process.env.NODE_ENV === 'development';
+  const isDev = true;
  
   let views = queryString.parse(location.search);
 

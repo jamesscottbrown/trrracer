@@ -364,10 +364,7 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
   if (title.endsWith('.eml')) {
     return (
       <EmailRender
-        setFragSelected={setFragSelected}
         title={title}
-        artifactData={artifact}
-        activityData={activity}
       />
     );
   }

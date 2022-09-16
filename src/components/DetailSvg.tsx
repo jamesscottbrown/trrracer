@@ -7,7 +7,6 @@ import Bubbles from '../Bubbles';
 import { dataStructureForTimeline } from './VerticalAxis';
 import { calcCircles } from '../PackMagic';
 import { getIndexOfMonth } from '../timeHelperFunctions';
-import ActivityTitlePopoverLogic from './PopoverTitle';
 
 interface BubbleDetProps {
   widthSvg: number;

@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import * as d3 from 'd3';
-import * as d3co from 'd3-color';
+
 import {
   Button,
   ListItem,
@@ -262,9 +261,7 @@ const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
   const files = thisEntry.files.filter((f) => f.fileType !== 'url');
 
   const activitiesAsEvidence = isEntryInThread;
-  // .filter(
-  //   (f) => f.type === 'fragment' || f.type === 'artifact'
-  // );
+
 
   const threadedFiles = files
     .filter((f) =>
@@ -279,7 +276,6 @@ const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
 
   const otherFiles = files.filter(
     (f) => threadedFiles.map(m => m.title).indexOf(f.title) === -1
-      // activitiesAsEvidence.map((m) => m.artifactTitle).indexOf(f.title) === -1 && 
   );
 
   const threadedActivity = isEntryInThread.filter((f) => f.type === 'activity');
@@ -336,8 +332,6 @@ const ThreadedReadonlyEntry = (props: ThreadedReadonlyEntryProps) => {
                       size="sm"
                       style={{
                         marginLeft: '5px',
-                        // backgroundColor: '#ff726f',
-                        // borderRadius: 30
                       }}
                     >
                       <GiCancel size={18} />

@@ -195,7 +195,6 @@ const TopBar = (ProjectPropValues: TopbarProps) => {
               <Button
                 marginLeft="3px"
                 alignSelf="end"
-                // onClick={addEntry}
                 onClick={() => setAddEntrySplash(true)}
                 type="button"
               >

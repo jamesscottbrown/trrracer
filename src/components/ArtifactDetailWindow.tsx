@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react';
 
 import { FaArrowLeft, FaArrowRight, FaMapPin } from 'react-icons/fa';
-import * as Showdown from 'showdown';
 
 import { openFile } from '../fileUtil';
 import DetailPreview from './DetailPreview';
