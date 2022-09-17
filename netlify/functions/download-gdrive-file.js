@@ -138,5 +138,8 @@ exports.handler = async function (event) {
     statusCode: 200,
     body: fileData,
     isBase64Encoded: shouldReverseBase64Encoding,
+    headers: {
+      "Cache-Control": "max-age=172800" // 2 days in seconds
+    },
   };
 };
