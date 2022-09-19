@@ -67,8 +67,6 @@ const GoogDriveSpans = (googProps: any) => {
   const { googEl, index, comments, setFragSelected, artifactBookmarks, searchTermArtifact } =
     googProps;
 
-  console.log('searchTermArtifact in span',searchTermArtifact)
-
   const [spanColor, setSpanColor] = useState(false);
 
   const [{isReadOnly, query}] = useProjectState();

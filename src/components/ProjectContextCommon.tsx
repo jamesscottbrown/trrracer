@@ -257,12 +257,9 @@ export const getAppStateReducer = (
             selectedActivity = views.id;
           } else if (views.granularity === 'artifact') {
             const activityTest = newEntries.filter((e) => {
-              // if(e.files.length > 0){
-              //   console.log(e.files.map(m => m.artifact_uid));
-              //   // e.files.map(m => m.artifact_uid);
-              // }
+        
               const test = e.files.length > 0 ? e.files.filter((f) => f.artifact_uid === views.id || f.fileId === views.id) : [];
-              // console.log('test in entry', test);
+          
               return test.length > 0;
             })[0];
 
@@ -455,8 +452,7 @@ export const getAppStateReducer = (
 
       case 'ADD_ARTIFACT_UID': {
         const {activityID, artifactIndex, artifactUID} = action;
-        console.log()
-
+      
         const entries = [...state.projectData.entries].map((d: EntryType) => {
           if (d.activity_uid === activityID) {
             d.files[artifactIndex].artifact_uid = artifactUID;

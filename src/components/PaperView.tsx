@@ -292,9 +292,7 @@ const CitationIcon = (props: CitationIconProps) => {
         setPosition([200, event.clientY - 50]);
     
         let pathKey = Object.keys(parsed).filter(f => f.includes('path'))[0]
-        console.log('parsed key', parsed[pathKey], folderPath);
-        console.log(folderPath?.split('folderName=')[1]);
-
+    
         if(parsed[pathKey]){
           setHTML(`<div>
           <span
