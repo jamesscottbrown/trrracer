@@ -18,8 +18,7 @@ import { TimeLineBrush } from './bubbleVis/TimeLineBrush';
 import { ToolTip } from './bubbleVis/ToolTip';
 
 interface BubbleProps {
-  setGroupBy: (gb: any) => void;
-  groupBy: any;
+ 
   flexAmount: number;
   setDefineEvent: (value: ((prevState: boolean) => boolean) | boolean) => void;
   defineEvent: boolean;
@@ -30,8 +29,6 @@ interface BubbleProps {
 
 const BubbleVis = (props: BubbleProps) => {
   const {
-    groupBy,
-    setGroupBy,
     flexAmount,
     setDefineEvent,
     windowDimension,
@@ -92,9 +89,9 @@ const BubbleVis = (props: BubbleProps) => {
   useEffect(() => {
     setHeight(windowDimension.height - 200);
 
-    if (groupBy) {
-      setBubbleDivWidth(windowDimension.width);
-    }
+    // if (groupBy) {
+    //   setBubbleDivWidth(windowDimension.width);
+    // }
   }, [windowDimension]);
 
   let packedCircData = useMemo(() => calcCircles([...projectData.entries]), [
@@ -162,7 +159,6 @@ const BubbleVis = (props: BubbleProps) => {
   }, [
     selectedActivityURL,
     usedEntries,
-    groupBy,
     eventArray,
     filterType,
     defineEvent,
@@ -175,7 +171,7 @@ const BubbleVis = (props: BubbleProps) => {
       style={{
         flex: flexAmount,
         paddingTop: '30px',
-        paddingLeft: groupBy ? 30 : 0,
+        paddingLeft: 0,
         width: 500,
         overflowX: 'auto'
       }}
@@ -192,54 +188,11 @@ const BubbleVis = (props: BubbleProps) => {
             Add events to timeline
           </Button>
         )}
-        {!selectedActivityURL && !viewParams && (
-          <Box
-            marginLeft='3px'
-            padding='3px'
-            height='40px'
-            display='inline-block'
-          >
-            <FormControl display='flex' alignItems='center' marginBottom={10}>
-              <FormLabel
-                htmlFor='split-by'
-                mb='0'
-                textAlign='right'
-                fontSize='12px'
-              >
-                Facet by research threads
-              </FormLabel>
-              <Switch
-                id='split-by'
-                onChange={(event) => {
-                  event.target.checked
-                    ? setGroupBy(
-                      researchThreads?.research_threads.map((rt) => {
-                        return {
-                          title: rt.title,
-                          color: rt.color,
-                          id: rt.rt_id,
-                          activities: rt.evidence.map((m) => m.activityTitle),
-                          dob: rt.actions.filter(
-                            (a) => a.action === 'created'
-                          )[0].when
-                        };
-                      })
-                    )
-                    : setGroupBy(null);
-                }}
-              />
-            </FormControl>
-          </Box>
-        )}
       </div>
 
       <svg
         ref={svgRef}
-        width={
-          groupBy !== null
-            ? researchThreads.research_threads.length * 280
-            : '600px'
-        }
+        width={600}
         height={height}
         style={{ display: 'inline', cursor: 'crosshair' }}
         onMouseDown={(ev) => setMouseDownTime(yScale.invert(ev.clientY - svgRef.current.getBoundingClientRect().y - translateY))}
@@ -288,19 +241,28 @@ const BubbleVis = (props: BubbleProps) => {
           transform={`translate(${translateXforWraps}, ${translateY})`}
           ref={wrapRef}
         >
-          {eventArray.map((event) => (
-            <EventRect event={event} yScale={yScale} />
+          {eventArray.map((event, i) => (
+            <React.Fragment key={`event-${i}`}>
+              <EventRect event={event} yScale={yScale} />
+            </React.Fragment>
           ))}
-          {highlightedNodes.map(event => <HighlightedActivity event={event} onActivityColor={onActivityColor}
-                                                              key={event.activity_uid} filterRT={filterRT}
-                                                              filterType={filterType}
-                                                              filterTags={filterTags}
-                                                              selectedActivityURL={selectedActivityURL}
-                                                              mousedOverActivity={mousedOverActivity}
-                                                              setMousedOverActivity={setMousedOverActivity}
-                                                              setToolPosition={setToolPosition}
-                                                              setHoverData={setHoverData}
-          />)}
+          {highlightedNodes.map((event, i)=> (
+            <React.Fragment key={`highlighted-${i}`}>
+              <HighlightedActivity 
+                event={event} 
+                onActivityColor={onActivityColor}
+                key={event.activity_uid} filterRT={filterRT}
+                filterType={filterType}
+                filterTags={filterTags}
+                selectedActivityURL={selectedActivityURL}
+                mousedOverActivity={mousedOverActivity}
+                setMousedOverActivity={setMousedOverActivity}
+                setToolPosition={setToolPosition}
+                setHoverData={setHoverData}
+              />
+          </React.Fragment>
+          )
+          )}
 
           {hoverData &&
             <line id='date_line' y1={hoverData.y} y2={forced.yScale(new Date(hoverData.date))} x1={+hoverData.x}
@@ -328,7 +290,7 @@ const BubbleVis = (props: BubbleProps) => {
 
         </g>
       </svg>
-      {filterRT || groupBy ? (
+      {filterRT ? (
         <RTtooltip
           activityData={hoverData}
           position={toolPosition}
