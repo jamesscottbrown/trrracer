@@ -650,8 +650,7 @@ const PaperView = (props: any) => {
             <div>
               <BubbLabel />
               <BubbleVis
-                groupBy={null}
-                setGroupBy={null}
+                
                 flexAmount={null}
                 setDefineEvent={null}
                 defineEvent={null}

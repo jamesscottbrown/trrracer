@@ -211,7 +211,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
   const [newTitle, setNewTitle] = useState<string>(
     projectData.title === 'Jen' ? 'tRRRacer Meta' : projectData.title
   );
-  const [groupBy, setGroupBy] = useState(null);
+ 
   const [defineEvent, setDefineEvent] = useState<boolean>(false);
   const [hideByDefault, setHideByDefault] = useState<boolean>(false);
   const [addEntrySplash, setAddEntrySplash] = useState<boolean>(false);
@@ -291,8 +291,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
         <Flex position="relative" top={`${fromTop}px`}>
           <LeftSidebar fromTop={fromTop} />
           <BubbleVis
-            groupBy={groupBy}
-            setGroupBy={setGroupBy}
+            flexAmount={null}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             bubbleDivWidth={bubbleDivWidth}
@@ -350,10 +349,8 @@ const Project = (ProjectPropValues: ProjectProps) => {
           setPath={setPath}
         />
         <Flex position="relative" top={`${fromTop}px`}>
-          {!groupBy && <LeftSidebar fromTop={fromTop} groupBy={groupBy} />}
+          <LeftSidebar fromTop={fromTop} />
           <BubbleVis
-            groupBy={groupBy}
-            setGroupBy={setGroupBy}
             defineEvent={defineEvent}
             setDefineEvent={setDefineEvent}
             windowDimension={windowDimension}
@@ -365,7 +362,7 @@ const Project = (ProjectPropValues: ProjectProps) => {
             <AddEntryForm setAddEntrySplash={setAddEntrySplash} />
           )}
 
-          {!groupBy && !hideByDefault && (
+          {!hideByDefault && (
             <div
             style={{
               width: barWidth,

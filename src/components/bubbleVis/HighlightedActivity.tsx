@@ -132,13 +132,16 @@ export const HighlightedActivity = (props: any) => {
         onClick={onClick}
       />
 
-      {event.files.map((artifact) => (
-        <HighLightedArtifact
-          artifact={artifact}
-          filterType={filterType}
-          selectedActivityURL={selectedActivityURL}
-          mousedOverActivity={mousedOverActivity}
-        />
+      {event.files.map((artifact, i) => (
+        <React.Fragment key={`art-${artifact.title}`}>
+          <HighLightedArtifact
+            artifact={artifact}
+            filterType={filterType}
+            selectedActivityURL={selectedActivityURL}
+            mousedOverActivity={mousedOverActivity}
+          />
+        </React.Fragment>
+        
       ))}
     </g>
   );
