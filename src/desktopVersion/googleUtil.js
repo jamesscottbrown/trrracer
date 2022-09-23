@@ -1,4 +1,4 @@
-import { readFileSync } from './fileUtil';
+import { readFileSync } from '../fileUtil';
 // const {google} = require('googleapis');
 const isElectron = process.env.NODE_ENV === 'development';
 const { google } = isElectron ? require('googleapis') : {};

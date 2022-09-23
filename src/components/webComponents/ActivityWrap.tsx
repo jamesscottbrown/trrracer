@@ -1,11 +1,9 @@
 import React, { useRef } from 'react';
-import { Divider } from '@chakra-ui/react';
-import Entry from './Entry';
-import ReadonlyEntry from './ReadonlyEntry';
-import { openFile } from '../fileUtil';
-import ThreadedReadonlyEntry from './ThreadedReadonlyEntry';
-import { EntryTypeWithIndex, ResearchThreadEvidence } from './types';
-import { useProjectState } from './ProjectContext';
+import ReadonlyEntry from '../ReadonlyEntry';
+import { openFile } from '../../fileUtil';
+import ThreadedReadonlyEntry from '../ThreadedReadonlyEntry';
+import { EntryTypeWithIndex, ResearchThreadEvidence } from '../types';
+import { useProjectState } from '../ProjectContext';
 
 type ActivityWrapPropType = {
   activityData: EntryTypeWithIndex;
@@ -26,7 +24,7 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     viewType,
   } = props;
 
-  const [{ filterRT, researchThreads }, dispatch] = useProjectState();
+  const [{ filterRT, researchThreads }] = useProjectState();
   const myRef = useRef(null);
 
   const foundIn = researchThreads?.research_threads.filter((m) => {
@@ -35,35 +33,6 @@ const ActivityWrap = (props: ActivityWrapPropType) => {
     );
     return test.length > 0;
   });
-
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const updateEntryField = (fieldName: string, newValue: any) => {
-    dispatch({
-      type: 'UPDATE_ENTRY_FIELD',
-      fieldName,
-      newValue,
-      activityID: activityData.activity_uid,
-    });
-  };
-
-  if (editable[activityData.index]) {
-    return (
-      <div className="list-activity" ref={myRef}>
-        <Entry
-          /* eslint-disable-next-line react/no-array-index-key */
-          key={`en-${activityData.title}-${activityData.activity_uid}`}
-          foundIn={foundIn || []}
-          activityID={activityData.activity_uid}
-          files={activityData.files}
-          entryIndex={activityData.index}
-          openFile={openFile}
-          updateEntryField={updateEntryField}
-          makeNonEditable={() => setEditableStatus(activityData.index, false)}
-        />
-        <Divider marginTop="1em" marginBottom="1em" />
-      </div>
-    );
-  }
 
   if (filterRT) {
     return (

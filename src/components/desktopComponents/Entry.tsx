@@ -22,11 +22,14 @@ import {
 } from 'react-icons/fa';
 import { WithContext as ReactTags } from 'react-tag-input';
 import * as Showdown from 'showdown';
+import { File, FileObj, ResearchThread } from '../types';
+import URLList from '../URLList';
+import { useProjectState } from '../ProjectContext';
+const isElectron = process.env.NODE_ENV === 'development';
+
+import GoogFileInit from './GoogleFileInit';//'./desktopComponents/GoogleFileInit';
 import FileUpload from './FileUpload';
-import { File, FileObj, ResearchThread } from './types';
-import URLList from './URLList';
-import { useProjectState } from './ProjectContext';
-import GoogFileInit from './GoogleFileInit';
+
 
 interface EditDateTypes {
   date: string;
@@ -115,10 +118,10 @@ const Entry = (props: EntryPropTypes) => {
     openFile,
     updateEntryField,
     makeNonEditable,
-    foundIn,
+    foundIn
   } = props;
 
-  const [{ projectData, filterRT, folderPath }, dispatch] = useProjectState();
+  const [{ projectData, filterRT, folderPath, isReadOnly }, dispatch] = useProjectState();
 
   const allTags = projectData.tags;
 
@@ -387,7 +390,7 @@ const Entry = (props: EntryPropTypes) => {
       </div>
       <br />
 
-      {showFileUpload ? (
+      {(isElectron && showFileUpload) ? (
         <>
           <Flex
             style={{

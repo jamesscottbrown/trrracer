@@ -22,8 +22,8 @@ import ArtifactDetailWindow from './ArtifactDetailWindow';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
-import AddEntryForm from './AddEntryForm';
-import { autoType } from 'd3';
+import AddEntryForm from './desktopComponents/AddEntryForm';//'./AddEntryForm';
+
 
 // CHANGE THE SEARCH PARAMS
 // See https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams

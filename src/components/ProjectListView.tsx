@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { EntryTypeWithIndex } from './types';
-import ActivityWrap from './ActivityWrap';
+const isElectron = true;
+// let ActivityWrap;//import ActivityWrap from './ActivityWrap';
 import { useProjectState } from './ProjectContext';
+
+// if(isElectron){
+//   import('./ActivityWrap').then((act) => ActivityWrap = act);
+// }else{
+//   import('./webComponents/ActivityWrap').then((act) => ActivityWrap = act);
+// }
 
 const ProjectListView = (ProjectPropValues: any) => {
   const { setViewType, viewType, width } = ProjectPropValues;
   const [{ 
     projectData, 
     selectedActivityURL, 
-    filteredActivities }] =
+    filteredActivities,
+    isReadOnly }] =
     useProjectState();
 
   const [usedEntries, setUsedEntries] = useState(filteredActivities);
@@ -48,6 +56,8 @@ const ProjectListView = (ProjectPropValues: any) => {
     );
   };
 
+  const ActivityWrap = lazy(() => isReadOnly ? import("./webComponents/ActivityWrap") : import("./desktopComponents/ActivityWrap"));
+
   return (
     <div style={{ 
       padding: '10px', 
@@ -55,8 +65,9 @@ const ProjectListView = (ProjectPropValues: any) => {
       width: width ? width : '100%',
       float: 'right'
       }}>
+       <Suspense fallback={<div>Loading... </div>}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
-        <ActivityWrap
+          <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
           activityData={activityData}
           editable={editable}
@@ -65,7 +76,9 @@ const ProjectListView = (ProjectPropValues: any) => {
           viewType={viewType}
           index={i}
         />
+        
       ))}
+      </Suspense>
     </div>
   );
 };

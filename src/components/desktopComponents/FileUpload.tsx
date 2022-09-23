@@ -2,7 +2,7 @@
 import { useDropzone } from 'react-dropzone';
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { FileObj } from './types';
+import { FileObj } from '../types';
 
 const smalltalk = require('smalltalk');
 

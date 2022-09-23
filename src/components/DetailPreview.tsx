@@ -13,7 +13,7 @@ import EmailRender from './EmailRender';
 import { joinPath, readFileSync } from '../fileUtil';
 import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
-import { getDriveFiles } from '../googleUtil';
+import { getDriveFiles } from '../desktopVersion/googleUtil';
 import { TextArray } from './types';
 import { replaceNames } from '../nameReplacer';
 

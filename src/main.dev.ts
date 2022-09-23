@@ -17,7 +17,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
 import ProjectLoader from './ProjectLoader';
-import { authenticate } from './authenticateGoogle';
+import { authenticate } from './desktopVersion/authenticateGoogle';
 
 export default class AppUpdater {
   constructor() {

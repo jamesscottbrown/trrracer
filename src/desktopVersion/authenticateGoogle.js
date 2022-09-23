@@ -1,11 +1,11 @@
 import ElectronGoogleOAuth2 from '@getstation/electron-google-oauth2';
-import { readFile, writeFile } from './fileUtil';
-import * as CREDENTIALS_PATH from '../assets/google_cred_desktop_app.json';
+import { readFile, writeFile } from '../fileUtil'; 
+import * as CREDENTIALS_PATH from '../../assets/google_cred_desktop_app.json';
 
 const { google } = require('googleapis');
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
-const TOKEN_PATH = 'token.json';
+const TOKEN_PATH = '../token.json';
 
 export async function authenticate() {
   // eslint-disable-next-line
