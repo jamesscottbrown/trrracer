@@ -21,8 +21,8 @@ export const HiddenActivity = (props) => {
         cx={0}
         cy={0}
       />
-      {event.files.map((f) => (
-        <circle className="artifact" r={3} cx={f.x} cy={f.y} fill="#d3d3d3" />
+      {event.files.map((f, i) => (
+        <circle key={`bubb-${i}`} className="artifact" r={3} cx={f.x} cy={f.y} fill="#d3d3d3" />
       ))}
     </g>
   );
