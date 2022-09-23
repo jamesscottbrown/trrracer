@@ -14,7 +14,7 @@ type QueryMatchComponentProps = {
 
 const QueryMatchComponent = (props: QueryMatchComponentProps) => {
   const { m, tm, j, setViewType } = props;
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   return (
 
@@ -25,12 +25,12 @@ const QueryMatchComponent = (props: QueryMatchComponentProps) => {
           entry={m.entry}
           setViewType={setViewType}
         />
-        <Button
+        {/* <Button
           size="xs"
           onClick={() => (show ? setShow(false) : setShow(true))}
         >
           {show ? 'Hide ' : 'Show '} text
-        </Button>
+        </Button> */}
       </div>
       {show && (
         <div>
