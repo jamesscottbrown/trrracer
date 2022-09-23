@@ -60,7 +60,7 @@ const TextRender = (textProps: { textArray: TextArray }) => {
 
 const DetailPreview = (props: DetailPreviewPropsType) => {
   const { setFragSelected, searchTermArtifact, openFile } = props;
-  console.log('SEARCH TERM ARTIFACT IN DETAIL VIEW', searchTermArtifact);
+
   const [
     {
       googleData,
@@ -304,10 +304,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
 
     let path = isReadOnly ? `${folderPath}${title}` : `${folderPath}/${title}`;
 
-    console.log('searchTermArtifact', searchTermArtifact);
-
     useEffect(() => {
-      console.log('SEARCHHHH TERMMMM ARTIFACTTTT', searchTermArtifact);
+     
       if (isReadOnly) {
         readFileSync(path)
           .then((res) => res.text())

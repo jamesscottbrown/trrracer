@@ -556,7 +556,7 @@ const ArtifactDetailSidebar = (props: ArtifactDetailSidebarProps) => {
                 if(selectedArtifactTest.goog_ids && selectedArtifactTest.goog_ids.googId){
                   selectedArtifactTest.artifact_uid = selectedArtifactTest.goog_ids.googId;
 
-                  console.log('ARTIFACT GOOG ID', selectedArtifactTest);
+               
 
                   dispatch({
                     type: 'ADD_ARTIFACT_UID',
