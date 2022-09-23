@@ -23,7 +23,7 @@
    ],
    output: {
      path: path.join(__dirname, '../../src/web-dist'),
-     publicPath: './dist/',
+     publicPath: '',
      filename: 'indexWeb.prod.js',
    },
    module: {
