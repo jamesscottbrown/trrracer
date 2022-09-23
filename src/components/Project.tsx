@@ -22,7 +22,7 @@ import ArtifactDetailWindow from './ArtifactDetailWindow';
 import QueryView from './QueryView';
 import BubbleVis from './BubbleVis';
 import PaperView from './PaperView';
-import AddEntryForm from './AddEntryForm';
+import AddEntryForm from './desktopComponents/AddEntryForm';//'./AddEntryForm';
 import { autoType } from 'd3';
 
 // CHANGE THE SEARCH PARAMS

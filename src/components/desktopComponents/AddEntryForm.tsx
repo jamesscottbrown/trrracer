@@ -11,7 +11,7 @@ import DatePicker from 'react-datepicker';
 import ReactMde from 'react-mde';
 import Showdown from 'showdown';
 import { MdCancel } from 'react-icons/md';
-import { useProjectState } from './ProjectContext';
+import { useProjectState } from '../ProjectContext';
 
 const converter = new Showdown.Converter({
   tables: true,

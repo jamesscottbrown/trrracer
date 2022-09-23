@@ -7,14 +7,15 @@ import {
   EditablePreview,
 } from '@chakra-ui/react';
 
-import { getDriveFiles, createGoogleFile } from '../googleUtil';
-import { useProjectState } from './ProjectContext';
+import { getDriveFiles, createGoogleFile } from '../../desktopVersion/googleUtil';
+import { useProjectState } from '../ProjectContext';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
 
 if (isElectron) {
-  googleCred = require('../../assets/google_cred_desktop_app.json');
+
+  googleCred = require('../../../assets/google_cred_desktop_app.json');
 }
 
 const GoogFileInit = (props: {
