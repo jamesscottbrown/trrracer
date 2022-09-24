@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import ReactMde from 'react-mde';
 import * as Showdown from 'showdown';
-import * as d3 from 'd3';
+
 import {
   Button,
   ListItem,
@@ -12,16 +12,14 @@ import {
   SimpleGrid,
   Tooltip,
 } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
 import { FaExternalLinkAlt, FaLock } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { IconChartDots3 } from '@tabler/icons';
 
-import AttachmentPreview from './AttachmentPreview';
-import type { EntryType, File, ResearchThread } from './types';
-import ActivityTitlePopoverLogic from './PopoverTitle';
-import { useProjectState } from './ProjectContext';
-import { joinPath, readFileSync } from '../fileUtil';
+import AttachmentPreview from '../AttachmentPreview';//'../AttachmentPreview';
+import type { EntryType, File, ResearchThread } from '../types';
+import { useProjectState } from '../ProjectContext';
+
 
 interface EntryPropTypes {
   activityID: string;
@@ -134,7 +132,7 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
   const { activityID, makeEditable, openFile, setViewType, viewType, foundIn } =
     props;
 
-  const [{ projectData, researchThreads, isReadOnly }, dispatch] =
+  const [{ projectData }, dispatch] =
     useProjectState();
 
   const thisEntry = useMemo(() => {
@@ -162,21 +160,15 @@ const ReadonlyEntry = (props: EntryPropTypes) => {
               style={{ display: 'inline', fill: 'lightgrey' }}
             />
           )}
-          {viewType !== 'detail' && (
-            <ActivityTitlePopoverLogic
-              activityData={thisEntry}
-              researchThreads={researchThreads}
-            />
-          )}
-          {!isReadOnly && makeEditable && (
-            <Button
-              leftIcon={<EditIcon />}
-              onClick={makeEditable}
-              style={{ display: 'inline', float: 'right' }}
-            >
-              Edit
-            </Button>
-          )}
+            <div
+            style={{
+              display: 'inline',
+              marginTop: 2,
+            }}
+          >
+            {thisEntry.title}
+          </div>
+   
         </span>
 
         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>

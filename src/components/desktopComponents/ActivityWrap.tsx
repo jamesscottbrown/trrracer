@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Divider } from '@chakra-ui/react';
 import Entry from './Entry';
-import ReadonlyEntry from '../ReadonlyEntry';
+import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../../fileUtil';
 import ThreadedReadonlyEntry from '../ThreadedReadonlyEntry';
 import { EntryTypeWithIndex, ResearchThreadEvidence } from '../types';

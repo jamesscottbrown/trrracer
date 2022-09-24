@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import ReadonlyEntry from '../ReadonlyEntry';
+import ReadonlyEntry from './ReadonlyEntry';
 import { openFile } from '../../fileUtil';
 import ThreadedReadonlyEntry from '../ThreadedReadonlyEntry';
 import { EntryTypeWithIndex, ResearchThreadEvidence } from '../types';

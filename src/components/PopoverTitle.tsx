@@ -28,16 +28,7 @@ const ActivityTitlePopoverLogic = (
 
   const [{ projectData, isReadOnly, folderPath }, dispatch] = useProjectState();
 
-  return isReadOnly ? (
-    <div
-      style={{
-        display: 'inline',
-        marginTop: 2,
-      }}
-    >
-      {activityData.title}
-    </div>
-  ) : (
+  return (
     <Popover trigger="hover" style={{ display: 'inline' }}>
       <PopoverTrigger>
         <div
@@ -129,7 +120,7 @@ const ActivityTitlePopoverLogic = (
         </PopoverFooter>
       </PopoverContent>
     </Popover>
-  );
+ );
 };
 
 export default ActivityTitlePopoverLogic;
