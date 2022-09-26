@@ -110,7 +110,8 @@
      ],
    },
    optimization: {
-     minimize: false,
+     usedExports: true,
+     minimize: true,
      minimizer:
        [
          new TerserPlugin({
