@@ -4,7 +4,7 @@
 // This is the entrypoint for the React app displayed in the Web App. It *is not* able to use node and electron APIs.
 
 import React, { useEffect, useState } from 'react';
-import { Spinner, ChakraProvider } from '@chakra-ui/react';
+import { Spinner, ChakraProvider, Container } from '@chakra-ui/react';
 import Project from './components/Project';
 import './App.global.css';
 import { useProjectState } from './components/ProjectContext';
@@ -44,7 +44,7 @@ export default function App() {
 
   const isDev = process.env.NODE_ENV === 'development';
   // const isDev = true;
- 
+
   let views = queryString.parse(location.search);
 
   let testCookie = document.cookie.split(';').filter(f => f.includes('folderName'))
@@ -58,9 +58,9 @@ export default function App() {
         }/.netlify/functions/download-gdrive-file/?folderName=${path}&fileName=`
       ); // TODO: make not a constant
     }else if(views.path){
-      
+
       let path = views.path;
-     
+
        setPath(
         `${
           isDev ? 'http://localhost:9999' : '.'
@@ -68,10 +68,10 @@ export default function App() {
       ); // TODO: make not a constant
     }
   }, [folderPath, views]);
-  
+
 
   if (!folderPath) {
-  
+
     return <SplashWeb setPath={setPath} isDev={isDev}/>
     // setPath(
     //   `${
@@ -102,7 +102,11 @@ export default function App() {
   if (!projectData) {
     return (
       <ChakraProvider>
-        <Spinner /> <p>Loading...</p>
+        <div style={{ display: 'flex', alignItems: 'center', height: '100vh' }}>
+          <Container style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+            <Spinner /> <p>Loading...</p>
+          </Container>
+        </div>
       </ChakraProvider>
     );
   }
