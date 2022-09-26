@@ -65,6 +65,12 @@ const ProjectListView = (ProjectPropValues: any) => {
       width: width ? width : '100%',
       float: 'right'
       }}>
+        {
+          usedEntries.length === 1 && (
+          <div style={{'right': 10, 'top':200}}>
+            Last One!
+          </div>)
+        }
        <Suspense fallback={<div>Loading... </div>}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
           <ActivityWrap
