@@ -47,9 +47,11 @@ const replaceNames = (text) => {
 
 const removeNameFromGoogleData = (data) => {
   for (const id of Object.keys(data)) {
-    for (const e of data[id].body.content) {
-      for (const el of (e.paragraph || {})?.elements || []) {
-        el.textRun.content = replaceNames(el.textRun.content);
+    for (const e of (data[id].body || {}).content) {
+      if (e.paragraph && e.paragraph.elements) {
+        for (const el of e.paragraph.elements || []) {
+          el.textRun.content = replaceNames(el.textRun.content);
+        }
       }
     }
   }
