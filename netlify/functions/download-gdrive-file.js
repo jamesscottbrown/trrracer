@@ -62,6 +62,8 @@ const removeNameFromGoogleData = (data) => {
       }
     }
   }
+
+  return data;
 };
 
 // eslint-disable-next-line func-names
