@@ -15,7 +15,6 @@ import { useProjectState } from './ProjectContext';
 import ImageRender from './ImageRender';
 import { getDriveFiles } from '../desktopVersion/googleUtil';
 import { TextArray } from './types';
-import { replaceNames } from '../nameReplacer';
 
 let googleCred: any;
 const isElectron = process.env.NODE_ENV === 'development';
@@ -309,12 +308,8 @@ const DetailPreview = (props: DetailPreviewPropsType) => {
       if (isReadOnly) {
         readFileSync(path)
           .then((res) => res.text())
-          .then((tex) => {
-
-            let textAnon = replaceNames(tex)
-            let textArray = textProcess(textAnon, searchTermArtifact);
-            setText(textArray);
-            
+          .then((text) => {
+            setText(textProcess(text, searchTermArtifact));
           });
       }else{
         readFileSync(path).then((text) => {
