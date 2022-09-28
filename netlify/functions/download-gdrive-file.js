@@ -55,7 +55,9 @@ const removeNameFromGoogleData = (data) => {
     for (const e of data[id].body.content) {
       if (e.paragraph && e.paragraph.elements) {
         for (const el of e.paragraph.elements || []) {
-          el.textRun.content = replaceNames(el.textRun.content);
+          if (el.textRun && el.textRun.content){
+            el.textRun.content = replaceNames(el.textRun.content);
+          }
         }
       }
     }
