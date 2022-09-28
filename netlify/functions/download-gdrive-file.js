@@ -1,9 +1,69 @@
+const ner = require('wink-ner');
+
 const { GOOGLE_DRIVE_CREDENTIALS } = process.env;
 
 const FOLDER_MAP = {
   jen: '1-SzcYM_4-ezaFaFguQTJ0sOCtW2gB0Rp',
   evobio: '120QnZNEmJNF40VEEDnxq1F80Dy6esxGC',
-  ethics: '1GOu9GPI3_mLk8zXc08CNYkG-WfapQkAj'
+  ethics: '1GOu9GPI3_mLk8zXc08CNYkG-WfapQkAj',
+};
+
+const trainingData = [
+  { text: 'Derya', entityType: 'name', uid: 'DA' },
+  { text: 'Darya', entityType: 'name', uid: 'DA' },
+  { text: 'dariya', entityType: 'name', uid: 'DA' },
+  { text: 'Dario', entityType: 'name', uid: 'DA' },
+  { text: 'James', entityType: 'name', uid: 'JSB' },
+  { text: 'Jen', entityType: 'name', uid: 'J' },
+  { text: 'Alex', entityType: 'name', uid: 'A' },
+  { text: 'Jim', entityType: 'name', uid: 'J' },
+  { text: 'John', entityType: 'name', uid: 'J' },
+  { text: 'Jason', entityType: 'name', uid: 'JD' },
+  { text: 'Miriah', entityType: 'name', uid: 'MM' },
+  { text: 'Mariah', entityType: 'name', uid: 'MM' },
+];
+
+const replaceNames = (text) => {
+  let myNER = ner();
+  var winkTokenizer = require('wink-tokenizer');
+
+  // Learn from the training data.
+  myNER.learn(trainingData);
+
+  var tokenize = winkTokenizer().tokenize;
+  // Tokenize the sentence.
+  var tokens = tokenize(text);
+  // Simply Detect entities!
+  tokens = myNER.recognize(tokens);
+
+  tokens
+    .filter((f) => f.entityType === 'name')
+    .forEach((n, i) => {
+      text = text.replace(n.originalSeq[0], n.uid);
+    });
+
+  return text;
+};
+
+const removeNameFromGoogleData = (data) => {
+  for (const id of Object.keys(data)) {
+    if (!data[id].body || !data[id].body.content) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    for (const e of data[id].body.content) {
+      if (e.paragraph && e.paragraph.elements) {
+        for (const el of e.paragraph.elements || []) {
+          if (el.textRun && el.textRun.content){
+            el.textRun.content = replaceNames(el.textRun.content);
+          }
+        }
+      }
+    }
+  }
+
+  return data;
 };
 
 // eslint-disable-next-line func-names
@@ -112,19 +172,23 @@ exports.handler = async function (event) {
       }
     }
 
-    if (queryStringParameters.raw){
+    if (queryStringParameters.raw) {
       shouldReverseBase64Encoding = true;
     }
     fileData = new Uint8Array(file.data);
     fileData = Buffer.from(fileData).toString('base64');
-
   } else if (fileExtension === 'json') {
     file = await drive.files.get({
       alt: 'media',
       fileId,
       supportsAllDrives: true,
     });
-    fileData = JSON.stringify(file.data);
+
+    if (fileName === 'goog_doc_data.json') {
+      fileData = JSON.stringify(removeNameFromGoogleData(file.data));
+    } else {
+      fileData = JSON.stringify(file.data);
+    }
   } else {
     file = await drive.files.get({
       alt: 'media',
@@ -132,6 +196,11 @@ exports.handler = async function (event) {
       supportsAllDrives: true,
     });
     fileData = file.data;
+
+    // Replace names in Otter AI transcript files
+    if (fileExtension === 'txt') {
+      fileData = replaceNames(fileData);
+    }
   }
 
   return {
@@ -139,7 +208,7 @@ exports.handler = async function (event) {
     body: fileData,
     isBase64Encoded: shouldReverseBase64Encoding,
     headers: {
-      "Cache-Control": "max-age=172800" // 2 days in seconds
+      'Cache-Control': 'max-age=172800', // 2 days in seconds
     },
   };
 };

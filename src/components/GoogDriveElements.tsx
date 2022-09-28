@@ -6,7 +6,6 @@ import {
   PopoverContent,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { replaceNames } from '../nameReplacer';
 import { useProjectState } from './ProjectContext';
 import type { GoogleDocParagraph, GoogleParagraphStyle } from './types';
 
@@ -107,10 +106,10 @@ const GoogDriveSpans = (googProps: any) => {
           <span 
           key={`elem-${index}`} 
           style={{backgroundColor: '#ff5f1f', color:'#fff'}}>
-             {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
-          </span> :  
+             {googEl.textRun.content}
+          </span> :
           <span key={`elem-${index}`} style={styleOb}>
-            {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+            {googEl.textRun.content}
           </span>
         }
        
@@ -146,7 +145,7 @@ const GoogDriveSpans = (googProps: any) => {
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
       >
-         {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+         {googEl.textRun.content}
       </span> :
       <span
       key={`elem-${index}`}
@@ -155,7 +154,7 @@ const GoogDriveSpans = (googProps: any) => {
       onMouseOut={() => setSpanColor(false)}
       onClick={() => setFragSelected(googEl.textRun.content)}
     >
-      {isReadOnly ? replaceNames(googEl.textRun.content) : googEl.textRun.content}
+      {googEl.textRun.content}
     </span>
     
    
