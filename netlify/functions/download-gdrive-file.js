@@ -198,7 +198,7 @@ exports.handler = async function (event) {
     fileData = file.data;
 
     // Replace names in Otter AI transcript files
-    if (fileName.endsWith('_otter_ai.txt')) {
+    if (fileExtension === 'txt') {
       fileData = replaceNames(fileData);
     }
   }
