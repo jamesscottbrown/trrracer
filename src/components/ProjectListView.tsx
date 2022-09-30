@@ -65,6 +65,7 @@ const ProjectListView = (ProjectPropValues: any) => {
       width: width ? width : '100%',
       float: 'right'
       }}>
+        <Suspense fallback={<div>Loading... </div>}>
         {
           usedEntries.length === 1 ? 
           <div>
@@ -79,7 +80,6 @@ const ProjectListView = (ProjectPropValues: any) => {
           index={0}
           /></div>
        :
-       <Suspense fallback={<div>Loading... </div>}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
           <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
@@ -91,8 +91,8 @@ const ProjectListView = (ProjectPropValues: any) => {
           index={i}
         />
       ))}
-      </Suspense>
- }
+      
+ }</Suspense>
     </div>
   );
 };
