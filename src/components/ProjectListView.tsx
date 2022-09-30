@@ -76,7 +76,7 @@ const ProjectListView = (ProjectPropValues: any) => {
           setEditableStatus={setEditableStatus}
           setViewType={setViewType}
           viewType={viewType}
-          index={i}
+          index={0}
           /></div>
        :
        <Suspense fallback={<div>Loading... </div>}>
