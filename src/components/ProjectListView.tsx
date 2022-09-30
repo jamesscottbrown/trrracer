@@ -70,7 +70,7 @@ const ProjectListView = (ProjectPropValues: any) => {
           <div>
             <div>{'x'}</div>
           <ActivityWrap
-          key={`fr-${usedEntries[0].title}-${i}`}
+          key={`fr-${usedEntries[0].title}`}
           activityData={usedEntries[0]}
           editable={editable}
           setEditableStatus={setEditableStatus}
