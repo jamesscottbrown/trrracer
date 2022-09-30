@@ -57,7 +57,27 @@ const ProjectListView = (ProjectPropValues: any) => {
   };
 
   const ActivityWrap = lazy(() => isReadOnly ? import("./webComponents/ActivityWrap") : import("./desktopComponents/ActivityWrap"));
-
+  if(usedEntries.length === 1){
+  
+    <div style={{ 
+      padding: '10px', 
+      marginTop: '20px', 
+      width: width ? width : '100%',
+      float: 'right'
+      }}>
+          <div>{'x'}</div>
+        <ActivityWrap
+        key={`fr-${usedEntries[0].title}`}
+        activityData={usedEntries[0]}
+        editable={editable}
+        setEditableStatus={setEditableStatus}
+        setViewType={setViewType}
+        viewType={viewType}
+        index={0}
+        /></div>
+    
+    
+  }
   return (
     <div style={{ 
       padding: '10px', 
@@ -66,21 +86,7 @@ const ProjectListView = (ProjectPropValues: any) => {
       float: 'right'
       }}>
         <Suspense fallback={<div>Loading... </div>}>
-        {
-          usedEntries.length === 1 ? 
-          <div>
-            <div>{'x'}</div>
-          <ActivityWrap
-          key={`fr-${usedEntries[0].title}`}
-          activityData={usedEntries[0]}
-          editable={editable}
-          setEditableStatus={setEditableStatus}
-          setViewType={setViewType}
-          viewType={viewType}
-          index={0}
-          /></div>
-       :
-      {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
+{ usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
           <ActivityWrap
           key={`fr-${activityData.title}-${activityData.index}-${i}`}
           activityData={activityData}
@@ -92,7 +98,7 @@ const ProjectListView = (ProjectPropValues: any) => {
         />
       ))}
       
- }</Suspense>
+ </Suspense>
     </div>
   );
 };
