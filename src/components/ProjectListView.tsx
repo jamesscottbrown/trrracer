@@ -65,6 +65,20 @@ const ProjectListView = (ProjectPropValues: any) => {
       width: width ? width : '100%',
       float: 'right'
       }}>
+        {
+          usedEntries.length === 1 ? 
+          <div>
+            <div>{'x'}</div>
+          <ActivityWrap
+          key={`fr-${usedEntries[0].title}-${i}`}
+          activityData={usedEntries[0]}
+          editable={editable}
+          setEditableStatus={setEditableStatus}
+          setViewType={setViewType}
+          viewType={viewType}
+          index={i}
+          /></div>
+       :
        <Suspense fallback={<div>Loading... </div>}>
       {usedEntries.map((activityData: EntryTypeWithIndex, i: number) => (
           <ActivityWrap
@@ -76,9 +90,9 @@ const ProjectListView = (ProjectPropValues: any) => {
           viewType={viewType}
           index={i}
         />
-        
       ))}
       </Suspense>
+ }
     </div>
   );
 };
